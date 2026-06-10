@@ -102,7 +102,9 @@ export const WAVES: WaveDef[] = [
         title: 'יסודות Angular',
         blurb: 'המודל המנטלי של zoneless, signals / computed / effect עם דמו חי, bootstrap ו-DI.',
         wave: 2,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch06-angular-foundation/content').then((m) => m.CH06_CONTENT),
       },
       {
         id: 'ch07',
