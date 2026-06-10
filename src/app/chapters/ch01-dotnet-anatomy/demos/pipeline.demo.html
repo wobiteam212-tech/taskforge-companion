@@ -1,0 +1,37 @@
+<div class="pl">
+  <div class="pl-actions">
+    <button type="button" class="btn btn--primary" (click)="send()" [disabled]="running()">
+      {{ running() ? 'הבקשה בדרך…' : 'שליחת GET /healthz' }}
+    </button>
+    @if (doneOnce() && !running()) {
+      <span class="pl-result ltr">200 OK · X-Elapsed-Ms: 3</span>
+    }
+  </div>
+
+  <div class="pl-pipe">
+    <div class="pl-edge ltr">Request ⬇</div>
+    @for (s of stages; track s.name; let i = $index) {
+      <button
+        type="button"
+        class="pl-stage"
+        [class.sel]="selected() === i"
+        [class.down]="stateOf(i) === 'down'"
+        [class.up]="stateOf(i) === 'up'"
+        (click)="selected.set(i)"
+      >
+        <span class="name ltr">{{ s.name }}</span>
+        @if (stateOf(i) === 'down') {
+          <span class="dot dot--down" aria-hidden="true">⬇</span>
+        } @else if (stateOf(i) === 'up') {
+          <span class="dot dot--up" aria-hidden="true">⬆</span>
+        }
+      </button>
+    }
+    <div class="pl-edge ltr">Response ⬆</div>
+  </div>
+
+  <p class="pl-desc">
+    <strong class="ltr">{{ stages[selected()].name }}:</strong>
+    {{ stages[selected()].desc }}
+  </p>
+</div>

@@ -1,0 +1,44 @@
+<header class="drill-head">
+  <h1>🎯 תרגול ראיונות</h1>
+  <p class="sub">
+    כל שאלות הראיון והחידונים מכל הפרקים שכבר פתוחים — קוראים שאלה, מנסחים תשובה בקול,
+    ורק אז חושפים את התשובה המלאה.
+  </p>
+  @if (cards.value()?.length) {
+    <div class="actions">
+      <button type="button" class="btn" (click)="revealAll()">חשיפת הכול</button>
+      <button type="button" class="btn btn--ghost" (click)="hideAll()">הסתרת הכול</button>
+    </div>
+  }
+</header>
+
+@if (cards.value(); as list) {
+  @if (!list.length) {
+    <p class="empty">עוד אין שאלות — הן נאספות אוטומטית מכל פרק חדש שנפתח.</p>
+  }
+  <div class="cards">
+    @for (c of list; track $index; let i = $index) {
+      <div class="card" [class.open]="revealed().has(i)">
+        <button type="button" class="q" (click)="toggle(i)" [attr.aria-expanded]="revealed().has(i)">
+          <span class="kind" [class.kind--quiz]="c.kind === 'quiz'">
+            {{ c.kind === 'interview' ? 'ראיון' : 'חידון' }}
+          </span>
+          <span class="q-text">{{ c.q }}</span>
+          <span class="chev" aria-hidden="true">{{ revealed().has(i) ? '−' : '+' }}</span>
+        </button>
+        @if (revealed().has(i)) {
+          <div class="a">
+            @for (line of c.a; track $index) {
+              <p>{{ line }}</p>
+            }
+            <a class="src" [routerLink]="['/chapters', c.slug]" [fragment]="c.stepId ? 'step-' + c.stepId : undefined">
+              מתוך: {{ c.chapterTitle }}
+            </a>
+          </div>
+        }
+      </div>
+    }
+  </div>
+} @else {
+  <p class="empty">טוען שאלות…</p>
+}

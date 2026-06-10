@@ -1,0 +1,115 @@
+<div class="shell">
+  <a class="skip" href="#main">דילוג לתוכן</a>
+
+  <!-- mobile topbar -->
+  <header class="topbar">
+    <button
+      type="button"
+      class="burger"
+      (click)="sidebarOpen.set(!sidebarOpen())"
+      [attr.aria-expanded]="sidebarOpen()"
+      aria-label="תפריט"
+    >
+      ☰
+    </button>
+    <a class="brand-min" routerLink="/">TaskForge<span class="accent"> Companion</span></a>
+    <button type="button" class="theme-btn" (click)="theme.toggle()" aria-label="החלפת ערכת נושא">
+      {{ theme.theme() === 'dark' ? '☀' : '🌙' }}
+    </button>
+  </header>
+
+  @if (sidebarOpen()) {
+    <div class="backdrop" (click)="closeNav()" aria-hidden="true"></div>
+  }
+
+  <aside class="sidebar" [class.open]="sidebarOpen()">
+    <div class="brand">
+      <a class="brand-link" routerLink="/" (click)="closeNav()">
+        <span class="logo" aria-hidden="true">⚒</span>
+        <span class="brand-text">
+          <strong>TaskForge Companion</strong>
+          <small class="ltr">.NET 10 · Angular v22 · by hand</small>
+        </span>
+      </a>
+      <button type="button" class="theme-btn" (click)="theme.toggle()" aria-label="החלפת ערכת נושא">
+        {{ theme.theme() === 'dark' ? '☀' : '🌙' }}
+      </button>
+    </div>
+
+    <div class="search">
+      <input
+        type="search"
+        placeholder="חיפוש בכל הפרקים…"
+        [value]="q()"
+        (input)="onSearch($any($event.target).value)"
+        aria-label="חיפוש בכל הפרקים"
+      />
+      @if (hits().length) {
+        <ul class="hits" role="listbox">
+          @for (h of hits(); track $index) {
+            <li>
+              <button type="button" role="option" (click)="openHit(h)">
+                <span class="hit-title">{{ h.title }}</span>
+                <span class="hit-ch">{{ h.chapterTitle }}</span>
+                <span class="hit-snip">{{ h.snippet }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      } @else if (q().trim().length >= 2) {
+        <div class="no-hits">אין תוצאות</div>
+      }
+    </div>
+
+    @if (resume(); as r) {
+      <a class="resume" [routerLink]="['/chapters', r.slug]" [fragment]="r.fragment" (click)="closeNav()">
+        <span class="resume-label">המשך מאיפה שעצרת</span>
+        <span class="resume-title">{{ r.title }}</span>
+      </a>
+    }
+
+    <nav class="nav" aria-label="פרקי המדריך">
+      @for (w of waves; track w.no) {
+        <div class="wave">
+          <div class="wave-head">
+            <span class="wave-no ltr">W{{ w.no }}</span>
+            <span class="wave-title">{{ w.title }}</span>
+          </div>
+          @for (c of w.chapters; track c.id) {
+            @if (c.status === 'ready') {
+              <a
+                class="item"
+                [routerLink]="['/chapters', c.slug]"
+                routerLinkActive="on"
+                (click)="closeNav()"
+              >
+                <span class="no ltr">{{ pad(c.no) }}</span>
+                <span class="ttl">{{ c.title }}</span>
+                @if (progress.isDone(c.id)) {
+                  <span class="done" aria-label="הושלם">✓</span>
+                } @else if (progress.isBookmarked(c.id)) {
+                  <span class="mark" aria-label="מסומן">★</span>
+                }
+              </a>
+            } @else {
+              <span class="item item--soon">
+                <span class="no ltr">{{ pad(c.no) }}</span>
+                <span class="ttl">{{ c.title }}</span>
+                <span class="soon">בקרוב</span>
+              </span>
+            }
+          }
+        </div>
+      }
+    </nav>
+
+    <div class="side-foot">
+      <a routerLink="/drill" routerLinkActive="on" (click)="closeNav()">🎯 תרגול ראיונות</a>
+      <a routerLink="/glossary" routerLinkActive="on" (click)="closeNav()">📖 מילון מונחים</a>
+    </div>
+  </aside>
+
+  <main id="main" class="main">
+    <router-outlet />
+  </main>
+</div>

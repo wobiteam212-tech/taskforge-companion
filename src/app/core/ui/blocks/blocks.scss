@@ -1,0 +1,180 @@
+:host {
+  display: block;
+}
+
+.b-h {
+  font-size: 17px;
+  margin: 1.4em 0 0.4em;
+  color: var(--txt);
+}
+
+.b-p {
+  color: var(--txt2);
+  margin: 0 0 0.9em;
+}
+
+.b-list {
+  color: var(--txt2);
+  margin: 0 0 1em;
+  padding-inline-start: 1.3em;
+
+  li {
+    margin-bottom: 0.35em;
+
+    &::marker {
+      color: var(--ember);
+    }
+  }
+}
+
+/* ---------- callouts ---------- */
+.callout {
+  border-inline-start: 3px solid var(--bdr3);
+  background: var(--sur2);
+  border-radius: var(--rad-sm);
+  padding: 12px 16px;
+  margin: 0 0 1em;
+
+  .callout-line {
+    margin: 0 0 0.4em;
+    color: var(--txt2);
+    font-size: 14.5px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.callout-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.callout-tone {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.callout-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--txt);
+}
+
+.callout--tip {
+  border-color: var(--grn);
+  background: var(--gdim);
+  .callout-tone {
+    color: var(--grn);
+  }
+}
+
+.callout--warn {
+  border-color: var(--ylw);
+  background: var(--ydim);
+  .callout-tone {
+    color: var(--ylw);
+  }
+}
+
+.callout--gotcha {
+  border-color: var(--red);
+  background: var(--rdim);
+  .callout-tone {
+    color: var(--red);
+  }
+}
+
+.callout--why {
+  border-color: var(--ember);
+  background: var(--edim);
+  .callout-tone {
+    color: var(--ember);
+  }
+}
+
+.callout--alt {
+  border-color: var(--teal);
+  background: var(--tdim);
+  .callout-tone {
+    color: var(--teal);
+  }
+}
+
+.callout--dotnet10 {
+  border-color: var(--blue);
+  background: var(--bdim);
+  .callout-tone {
+    color: var(--blue);
+  }
+}
+
+.callout--v22 {
+  border-color: var(--pur);
+  background: var(--pdim);
+  .callout-tone {
+    color: var(--pur);
+  }
+}
+
+.callout--interview {
+  border-color: var(--pur);
+  background: var(--pdim);
+  .callout-tone {
+    color: var(--pur);
+  }
+}
+
+/* ---------- glossary term ---------- */
+.term {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  background: var(--sur2);
+  border: 1px dashed var(--bdr2);
+  border-radius: var(--rad-sm);
+  padding: 9px 14px;
+  margin: 0 0 1em;
+  font-size: 14.5px;
+
+  .term-name {
+    font-weight: 700;
+    color: var(--teal);
+    font-size: 13.5px;
+    white-space: nowrap;
+  }
+
+  .term-def {
+    color: var(--txt2);
+  }
+}
+
+/* ---------- inline code blocks ---------- */
+.b-code {
+  margin: 0 0 1em;
+  border-radius: var(--rad-sm);
+  overflow: hidden;
+  border: 1px solid var(--code-bdr);
+
+  .b-code-title {
+    background: var(--code-bg);
+    border-bottom: 1px solid var(--code-bdr);
+    color: var(--txt3);
+    font-size: 12px;
+    padding: 6px 14px;
+  }
+
+  pre {
+    margin: 0;
+    background: var(--code-bg);
+    color: var(--code-txt);
+    padding: 12px 16px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+}

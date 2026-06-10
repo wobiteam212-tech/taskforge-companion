@@ -1,0 +1,58 @@
+@if (scenario(); as sc) {
+  <div class="sim">
+    <div class="sim-head">
+      <span class="sim-live" aria-hidden="true"></span>
+      <span class="sim-title">{{ sc.title }}</span>
+    </div>
+    <p class="sim-blurb">{{ sc.blurb }}</p>
+
+    <div class="sim-grid">
+      <div class="sim-requests" role="listbox" aria-label="בקשות לדוגמה">
+        @for (r of sc.requests; track $index; let i = $index) {
+          <button
+            type="button"
+            class="req"
+            role="option"
+            [attr.aria-selected]="i === active()"
+            [class.on]="i === active()"
+            (click)="active.set(i)"
+          >
+            <span class="method ltr" [class]="methodClass(r.method)">{{ r.method }}</span>
+            <span class="path ltr">{{ r.path }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="sim-wire">
+        @if (request(); as req) {
+          @if (req.body) {
+            <div class="wire-block">
+              <div class="wire-label">Request body</div>
+              <pre class="ltr">{{ req.body }}</pre>
+            </div>
+          }
+          @if (req.note) {
+            <p class="req-note">{{ req.note }}</p>
+          }
+        }
+        @if (response(); as res) {
+          <div class="wire-block">
+            <div class="wire-label">
+              Response
+              <span class="status ltr" [class]="statusClass(res.status)">{{ res.status }} {{ res.title }}</span>
+            </div>
+            @if (res.body) {
+              <pre class="ltr">{{ res.body }}</pre>
+            } @else {
+              <div class="empty-body">(גוף תשובה ריק)</div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (sc.insight) {
+      <p class="sim-insight">💡 {{ sc.insight }}</p>
+    }
+  </div>
+}

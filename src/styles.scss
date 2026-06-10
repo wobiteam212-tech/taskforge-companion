@@ -1,0 +1,388 @@
+/* ============================================================
+   TaskForge Companion — the "forge" design system
+   Dark graphite + ember/amber primary + teal secondary.
+   RTL-first: layout uses logical properties only; code is LTR.
+   ============================================================ */
+
+/* ---------- design tokens: dark (default) ---------- */
+:root {
+  color-scheme: dark;
+
+  /* surfaces — graphite, blue-leaning black */
+  --bg: #0b0c10;
+  --sur: #14161d;
+  --sur2: #1a1d26;
+  --sur3: #222632;
+  --sur4: #2a2f3d;
+
+  /* borders */
+  --bdr: #262a36;
+  --bdr2: #323848;
+  --bdr3: #424a5e;
+
+  /* brand: ember (primary) + teal (secondary) */
+  --ember: #ff8a3d;
+  --ember2: #ffb25e;
+  --edim: rgba(255, 138, 61, 0.13);
+  --eglow: rgba(255, 138, 61, 0.35);
+  --teal: #2dd4bf;
+  --tdim: rgba(45, 212, 191, 0.12);
+
+  /* accent palette (badges, levels, callouts) */
+  --blue: #7c9aff;
+  --bdim: rgba(124, 154, 255, 0.13);
+  --grn: #4ade80;
+  --gdim: rgba(74, 222, 128, 0.12);
+  --ylw: #fbbf24;
+  --ydim: rgba(251, 191, 36, 0.13);
+  --red: #f87171;
+  --rdim: rgba(248, 113, 113, 0.13);
+  --pur: #c084fc;
+  --pdim: rgba(192, 132, 252, 0.13);
+
+  /* text */
+  --txt: #edf0f7;
+  --txt2: #b8bfce;
+  --txt3: #8b93a7;
+  --txt4: #5d6477;
+
+  /* code blocks are ALWAYS dark, in both themes */
+  --code-bg: #101218;
+  --code-bdr: #262a36;
+  --code-txt: #dde3f0;
+
+  /* typography */
+  --heb: 'Heebo', 'Segoe UI', sans-serif;
+  --sans: 'Inter', 'Heebo', sans-serif;
+  --mono: 'JetBrains Mono', Consolas, monospace;
+
+  /* metrics */
+  --rad-sm: 7px;
+  --rad: 11px;
+  --rad-lg: 18px;
+  --sidebar-w: 304px;
+  --topbar-h: 56px;
+  --measure: 70ch;
+  --shadow-1: 0 2px 10px rgba(0, 0, 0, 0.35);
+  --shadow-2: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ---------- design tokens: light (warm paper) ---------- */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #f5f3ef;
+  --sur: #ffffff;
+  --sur2: #faf8f4;
+  --sur3: #f1eee7;
+  --sur4: #e8e4da;
+
+  --bdr: #e3dfd5;
+  --bdr2: #d3cec1;
+  --bdr3: #b9b3a3;
+
+  --ember: #d96d1f;
+  --ember2: #b35309;
+  --edim: rgba(217, 109, 31, 0.12);
+  --eglow: rgba(217, 109, 31, 0.25);
+  --teal: #0f9d8f;
+  --tdim: rgba(15, 157, 143, 0.12);
+
+  --blue: #4163d8;
+  --bdim: rgba(65, 99, 216, 0.1);
+  --grn: #1f9d63;
+  --gdim: rgba(31, 157, 99, 0.11);
+  --ylw: #b07d10;
+  --ydim: rgba(176, 125, 16, 0.12);
+  --red: #d64545;
+  --rdim: rgba(214, 69, 69, 0.1);
+  --pur: #8b50d6;
+  --pdim: rgba(139, 80, 214, 0.1);
+
+  --txt: #23262e;
+  --txt2: #494e5c;
+  --txt3: #6e7484;
+  --txt4: #9aa0af;
+
+  --shadow-1: 0 2px 10px rgba(35, 30, 20, 0.08);
+  --shadow-2: 0 12px 36px rgba(35, 30, 20, 0.14);
+}
+
+/* ---------- reset & base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--txt);
+  font-family: var(--heb);
+  font-size: 16px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.3;
+  font-weight: 700;
+  margin: 0 0 0.5em;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+a {
+  color: var(--ember);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--ember2);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: var(--eglow);
+}
+
+/* scrollbar (webkit) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--sur4);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bdr3);
+}
+
+/* ---------- code: always LTR, always dark ---------- */
+code,
+pre,
+kbd,
+.ltr {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-family: var(--mono);
+}
+
+/* inline code inside Hebrew prose */
+code.ic {
+  font-size: 0.86em;
+  background: var(--sur3);
+  border: 1px solid var(--bdr);
+  border-radius: 5px;
+  padding: 0.08em 0.42em;
+  color: var(--ember2);
+  white-space: nowrap;
+}
+
+/* ---------- shared chips & badges ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 2px 11px;
+  border: 1px solid var(--bdr2);
+  background: var(--sur2);
+  color: var(--txt2);
+  white-space: nowrap;
+}
+
+.badge--ember {
+  background: var(--edim);
+  border-color: transparent;
+  color: var(--ember);
+}
+.badge--teal {
+  background: var(--tdim);
+  border-color: transparent;
+  color: var(--teal);
+}
+.badge--blue {
+  background: var(--bdim);
+  border-color: transparent;
+  color: var(--blue);
+}
+.badge--grn {
+  background: var(--gdim);
+  border-color: transparent;
+  color: var(--grn);
+}
+.badge--pur {
+  background: var(--pdim);
+  border-color: transparent;
+  color: var(--pur);
+}
+
+/* ---------- shared buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: var(--rad-sm);
+  border: 1px solid var(--bdr2);
+  background: var(--sur2);
+  color: var(--txt);
+  font-family: var(--heb);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 16px;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn:hover {
+  background: var(--sur3);
+  border-color: var(--bdr3);
+}
+
+.btn--primary {
+  background: var(--ember);
+  border-color: var(--ember);
+  color: #1a0e04;
+}
+
+.btn--primary:hover {
+  background: var(--ember2);
+  border-color: var(--ember2);
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--txt2);
+}
+
+.btn--ghost:hover {
+  background: var(--sur2);
+  color: var(--txt);
+}
+
+/* ---------- Prism token theme (dark code on every theme) ---------- */
+pre[class*='language-'],
+code[class*='language-'] {
+  color: var(--code-txt);
+  text-shadow: none;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #6f7a90;
+  font-style: italic;
+}
+.token.punctuation {
+  color: #9aa5bc;
+}
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #ff9d6e;
+}
+.token.boolean,
+.token.number {
+  color: #ffb25e;
+}
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #7ee0c2;
+}
+.token.operator,
+.token.entity,
+.token.url {
+  color: #9aa5bc;
+}
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #8fa7ff;
+}
+.token.function,
+.token.class-name {
+  color: #ffd08a;
+}
+.token.regex,
+.token.important,
+.token.variable {
+  color: #e3a8ff;
+}
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+.token.italic {
+  font-style: italic;
+}
+
+/* ---------- shared animations ---------- */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,83 @@
+<section class="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <h1 class="hero-title">
+    בונים פולסטאק <span class="forge">בַּמַּסְגֵּרָה</span> — ביד, ולא בקסם
+  </h1>
+  <p class="hero-sub">
+    המדריך האולטימטיבי לבניית <strong>TaskForge</strong> — מערכת ניהול פרויקטים ו-Issues שלמה —
+    שורה אחרי שורה, קובץ אחרי קובץ: ‎.NET 10 Minimal APIs בצד השרת, Angular v22 בצד הקליינט,
+    וכל מודל מנטלי שצריך בשביל לשלוט בזה באמת.
+  </p>
+  <div class="hero-badges">
+    <span class="badge badge--ember ltr">.NET 10 Minimal APIs</span>
+    <span class="badge badge--teal ltr">Angular v22 · zoneless · signals</span>
+    <span class="badge">{{ totalChapters }} פרקים · 6 גלים</span>
+    <span class="badge badge--grn">כל קובץ מוסבר. אפס קסם.</span>
+  </div>
+  @if (resume(); as r) {
+    <a class="continue" [routerLink]="['/chapters', r.slug]" [fragment]="r.fragment">
+      <span class="c-label">ממשיכים מאיפה שעצרתם</span>
+      <span class="c-title">{{ r.title }}</span>
+    </a>
+  }
+</section>
+
+<section class="waves">
+  @for (w of waves; track w.no) {
+    <div class="wave">
+      <header class="wave-head">
+        <span class="wave-chip ltr">Wave {{ w.no }}</span>
+        <h2 class="wave-title">{{ w.title }}</h2>
+        <p class="wave-tag">{{ w.tagline }}</p>
+      </header>
+      <div class="cards">
+        @for (c of w.chapters; track c.id) {
+          @if (c.status === 'ready') {
+            <a class="card" [routerLink]="['/chapters', c.slug]">
+              <div class="card-top">
+                <span class="card-no ltr">{{ pad(c.no) }}</span>
+                @if (progress.isDone(c.id)) {
+                  <span class="card-done">הושלם ✓</span>
+                } @else if (progress.seenCount(c.id) > 0) {
+                  <span class="card-progress">בתהליך</span>
+                }
+                @if (progress.isBookmarked(c.id)) {
+                  <span class="card-mark">★</span>
+                }
+              </div>
+              <h3 class="card-title">{{ c.title }}</h3>
+              <p class="card-blurb">{{ c.blurb }}</p>
+              <span class="card-open">פתיחת הפרק ›</span>
+            </a>
+          } @else {
+            <div class="card card--soon" aria-disabled="true">
+              <div class="card-top">
+                <span class="card-no ltr">{{ pad(c.no) }}</span>
+                <span class="card-soon">בקרוב</span>
+              </div>
+              <h3 class="card-title">{{ c.title }}</h3>
+              <p class="card-blurb">{{ c.blurb }}</p>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+</section>
+
+<section class="extras">
+  <a class="extra" routerLink="/drill">
+    <span class="x-icon" aria-hidden="true">🎯</span>
+    <span class="x-text">
+      <strong>תרגול ראיונות</strong>
+      <small>כל שאלות הראיון והחידונים מכל הפרקים, במסך חזרה אחד</small>
+    </span>
+  </a>
+  <a class="extra" routerLink="/glossary">
+    <span class="x-icon" aria-hidden="true">📖</span>
+    <span class="x-text">
+      <strong>מילון מונחים</strong>
+      <small>כל מונח שהמדריך מלמד, עם קישור לצעד שמסביר אותו</small>
+    </span>
+  </a>
+</section>

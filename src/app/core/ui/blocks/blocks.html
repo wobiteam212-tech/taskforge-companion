@@ -1,0 +1,51 @@
+@for (b of vm(); track $index) {
+  @switch (b.kind) {
+    @case ('h') {
+      <h3 class="b-h"><inline-parts [parts]="b.parts!" /></h3>
+    }
+    @case ('p') {
+      <p class="b-p"><inline-parts [parts]="b.parts!" /></p>
+    }
+    @case ('ul') {
+      <ul class="b-list">
+        @for (item of b.items!; track $index) {
+          <li><inline-parts [parts]="item" /></li>
+        }
+      </ul>
+    }
+    @case ('ol') {
+      <ol class="b-list">
+        @for (item of b.items!; track $index) {
+          <li><inline-parts [parts]="item" /></li>
+        }
+      </ol>
+    }
+    @case ('callout') {
+      <div class="callout" [class]="'callout--' + b.tone">
+        <div class="callout-head">
+          <span class="callout-tone">{{ b.toneLabel }}</span>
+          @if (b.title) {
+            <span class="callout-title">{{ b.title }}</span>
+          }
+        </div>
+        @for (line of b.items!; track $index) {
+          <p class="callout-line"><inline-parts [parts]="line" /></p>
+        }
+      </div>
+    }
+    @case ('term') {
+      <div class="term">
+        <span class="term-name ltr">{{ b.termName }}</span>
+        <span class="term-def"><inline-parts [parts]="b.parts!" /></span>
+      </div>
+    }
+    @case ('code') {
+      <div class="b-code">
+        @if (b.title) {
+          <div class="b-code-title ltr">{{ b.title }}</div>
+        }
+        <pre class="ltr"><code [innerHTML]="b.codeHtml"></code></pre>
+      </div>
+    }
+  }
+}

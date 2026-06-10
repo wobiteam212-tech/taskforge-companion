@@ -1,0 +1,124 @@
+.tk-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+
+  .pending {
+    background: #1a0e04;
+    color: var(--ember2);
+    border-radius: 999px;
+    font-size: 11px;
+    padding: 0 7px;
+    margin-inline-start: 4px;
+  }
+}
+
+.tk-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.tk-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 110px;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--bdr2);
+  border-radius: var(--rad-sm);
+  padding: 8px 13px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+
+  .id {
+    color: var(--txt4);
+  }
+
+  .name {
+    color: var(--txt);
+
+    &.struck {
+      text-decoration: line-through;
+      color: var(--txt4);
+    }
+  }
+
+  .state {
+    text-align: end;
+    font-weight: 700;
+    font-size: 11px;
+  }
+
+  &.st-unchanged .state {
+    color: var(--txt3);
+  }
+
+  &.st-added {
+    border-color: var(--grn);
+    background: var(--gdim);
+
+    .state {
+      color: var(--grn);
+    }
+  }
+
+  &.st-modified {
+    border-color: var(--ylw);
+    background: var(--ydim);
+
+    .state {
+      color: var(--ylw);
+    }
+  }
+
+  &.st-deleted {
+    border-color: var(--red);
+    background: var(--rdim);
+
+    .state {
+      color: var(--red);
+    }
+  }
+}
+
+.tk-empty {
+  color: var(--txt4);
+  font-size: 13px;
+  text-align: center;
+  padding: 18px 0;
+  border: 1px dashed var(--bdr2);
+  border-radius: var(--rad-sm);
+}
+
+.tk-sql {
+  border: 1px solid var(--code-bdr);
+  border-radius: var(--rad-sm);
+  background: var(--code-bg);
+  overflow: hidden;
+  margin-bottom: 12px;
+
+  .tk-sql-title {
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--code-bdr);
+    color: #8b93a7;
+    font-size: 11.5px;
+    font-family: var(--mono);
+  }
+
+  pre {
+    margin: 0;
+    padding: 10px 14px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #7ee0c2;
+    overflow-x: auto;
+  }
+}
+
+.tk-hint {
+  color: var(--txt3);
+  font-size: 13px;
+  margin: 0;
+}

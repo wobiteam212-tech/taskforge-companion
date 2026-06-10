@@ -1,0 +1,89 @@
+@host = http://localhost:5080
+
+### Hello — האם השרת חי?
+GET {{host}}/
+
+### Health check
+GET {{host}}/healthz
+
+### ─────────── Projects ───────────
+
+### רשימת פרויקטים עם ספירת Issues פתוחים (projection)
+GET {{host}}/api/projects
+
+### פרויקט בודד
+GET {{host}}/api/projects/1
+
+### פרויקט שלא קיים — ProblemDetails 404
+GET {{host}}/api/projects/999
+
+### יצירת פרויקט — 201 עם Location
+POST {{host}}/api/projects
+Content-Type: application/json
+
+{
+  "name": "API Hardening",
+  "description": "Rate limits, caching, observability"
+}
+
+### יצירה לא חוקית — 400 ValidationProblem (שם קצר מדי)
+POST {{host}}/api/projects
+Content-Type: application/json
+
+{
+  "name": "x"
+}
+
+### ─────────── Issues ───────────
+
+### לוח ה-Issues של פרויקט 1 — ברירות מחדל (עמוד 1, מיון יורד לפי יצירה)
+GET {{host}}/api/projects/1/issues
+
+### סינון + מיון + דפדוף: פתוחים, לפי עדיפות, עמוד 1 בגודל 5
+GET {{host}}/api/projects/1/issues?status=Open&sort=priority&page=1&pageSize=5
+
+### חיפוש בכותרת
+GET {{host}}/api/projects/1/issues?search=login
+
+### pageSize מחוץ לטווח — 400 ValidationProblem עוד לפני ה-handler
+GET {{host}}/api/projects/1/issues?pageSize=999
+
+### Issue בודד
+GET {{host}}/api/issues/1
+
+### יצירת Issue — 201 + Location לפי ה-route בעל השם
+POST {{host}}/api/projects/1/issues
+Content-Type: application/json
+
+{
+  "title": "Add dark mode toggle",
+  "description": "Header button, persists to localStorage",
+  "priority": "High"
+}
+
+### יצירה לא חוקית — כותרת ריקה
+POST {{host}}/api/projects/1/issues
+Content-Type: application/json
+
+{
+  "title": ""
+}
+
+### עדכון מלא — כולל מעבר סטטוס
+PUT {{host}}/api/issues/1
+Content-Type: application/json
+
+{
+  "title": "Fix login redirect loop",
+  "description": "Users bounce between /login and /home",
+  "status": "Done",
+  "priority": "Critical"
+}
+
+### מחיקה — 204, ופעם שנייה 404
+DELETE {{host}}/api/issues/2
+
+### ─────────── OpenAPI ───────────
+
+### תיאור ה-API המלא, שנוצר מהקוד (פיתוח בלבד)
+GET {{host}}/openapi/v1.json

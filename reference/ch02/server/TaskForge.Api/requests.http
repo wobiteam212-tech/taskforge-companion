@@ -1,0 +1,14 @@
+@host = http://localhost:5080
+
+### Hello — האם השרת חי?
+GET {{host}}/
+
+### Health check
+GET {{host}}/healthz
+
+### DI lifetimes — הריצו פעמיים והשוו מזהים:
+### singleton זהה בין בקשות, scoped זהה רק בתוך בקשה, transient שונה תמיד
+GET {{host}}/di/lifetimes
+
+### Projects — הבקשה העסקית הראשונה, דרך ה-seam של ה-repository
+GET {{host}}/api/projects

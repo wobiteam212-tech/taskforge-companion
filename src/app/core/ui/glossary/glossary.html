@@ -1,0 +1,23 @@
+<header class="gloss-head">
+  <h1>📖 מילון מונחים</h1>
+  <p class="sub">
+    כל מונח שהמדריך מלמד, נאסף אוטומטית מהפרקים. לחיצה על מונח קופצת בדיוק לצעד שמסביר אותו.
+  </p>
+</header>
+
+@if (entries.value(); as list) {
+  @if (!list.length) {
+    <p class="empty">עוד אין מונחים — הם נאספים אוטומטית מכל פרק חדש שנפתח.</p>
+  }
+  <div class="entries">
+    @for (e of list; track $index) {
+      <a class="entry" [routerLink]="['/chapters', e.slug]" [fragment]="'step-' + e.stepId">
+        <span class="name ltr">{{ e.name }}</span>
+        <span class="def">{{ e.definition }}</span>
+        <span class="src">{{ e.chapterTitle }}</span>
+      </a>
+    }
+  </div>
+} @else {
+  <p class="empty">טוען מונחים…</p>
+}

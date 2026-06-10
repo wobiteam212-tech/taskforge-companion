@@ -1,0 +1,4 @@
+[
+  "server/TaskForge.Api/Services/LifetimeProbes.cs",
+  "server/TaskForge.Infrastructure/Repositories/InMemoryProjectRepository.cs"
+]

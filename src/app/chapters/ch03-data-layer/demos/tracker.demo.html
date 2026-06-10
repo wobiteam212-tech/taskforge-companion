@@ -1,0 +1,38 @@
+<div class="tk">
+  <div class="tk-actions">
+    <button type="button" class="btn" (click)="reload()">טעינה מה-DB</button>
+    <button type="button" class="btn" (click)="modifyFirst()">שינוי שם</button>
+    <button type="button" class="btn" (click)="addNew()">הוספת ישות</button>
+    <button type="button" class="btn" (click)="deleteLast()">סימון למחיקה</button>
+    <button type="button" class="btn btn--primary" (click)="saveChanges()">
+      SaveChanges()
+      @if (pendingCount()) {
+        <span class="pending ltr">{{ pendingCount() }}</span>
+      }
+    </button>
+  </div>
+
+  <div class="tk-rows">
+    @for (r of rows(); track r.id) {
+      <div class="tk-row" [class]="'st-' + r.state.toLowerCase()">
+        <span class="id ltr">#{{ r.id }}</span>
+        <span class="name ltr" [class.struck]="r.state === 'Deleted'">{{ r.name }}</span>
+        <span class="state ltr">{{ r.state }}</span>
+      </div>
+    } @empty {
+      <div class="tk-empty">ה-context ריק — טענו מה-DB או הוסיפו ישות.</div>
+    }
+  </div>
+
+  @if (sql().length) {
+    <div class="tk-sql">
+      <div class="tk-sql-title ltr">SQL emitted by SaveChanges()</div>
+      <pre class="ltr"><code>{{ sqlText() }}</code></pre>
+    </div>
+  }
+
+  <p class="tk-hint">
+    כל ישות שה-context פגש מקבלת מצב. ‏SaveChanges קורא את המצבים, שולח בדיוק את ה-SQL
+    הנדרש בטרנזקציה אחת, ומאפס הכול ל-Unchanged. שימו לב: שום SQL לא נשלח לפני SaveChanges.
+  </p>
+</div>

@@ -1,0 +1,35 @@
+@if (vm(); as v) {
+  @if (v.error) {
+    <div class="code-error" role="alert">
+      <strong>שגיאת עריכה במדריך:</strong>
+      <code class="ltr">{{ v.error }}</code>
+    </div>
+  } @else {
+    <figure class="code-card">
+      <figcaption class="code-head">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        @if (v.file) {
+          <span class="file ltr">{{ v.file }}</span>
+        }
+        <span class="lang ltr">{{ v.langLabel }}</span>
+        @if (vm().changed.size) {
+          <span class="diff-badge" title="שורות שהשתנו בפרק הזה">{{ vm().changed.size }} שורות חדשות</span>
+        }
+        <button type="button" class="copy" (click)="copy()">
+          {{ copied() ? 'הועתק ✓' : 'העתקה' }}
+        </button>
+      </figcaption>
+      @if (v.note) {
+        <div class="code-note">{{ v.note }}</div>
+      }
+      <div class="code-body ltr">
+        <div class="gutter" aria-hidden="true">
+          @for (n of v.lines; track n) {
+            <span class="ln" [class.ln--new]="v.changed.has(n)">{{ n }}</span>
+          }
+        </div>
+        <pre><code [innerHTML]="v.html"></code></pre>
+      </div>
+    </figure>
+  }
+}

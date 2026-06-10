@@ -1,0 +1,36 @@
+<div class="lt">
+  <div class="lt-actions">
+    <button type="button" class="btn btn--primary" (click)="sendRequest()">שליחת בקשה ל-‎/di/lifetimes</button>
+    <button type="button" class="btn btn--ghost" (click)="restartApp()">אתחול האפליקציה</button>
+  </div>
+
+  <p class="lt-hint">
+    צבע זהה פירושו אותו מופע בדיוק. שלחו כמה בקשות וצפו: ה-singleton לא מתחלף לעולם,
+    ה-scoped מקבל צבע חדש לכל בקשה (אבל זהה בתוך הבקשה), וה-transient שונה אפילו באותה שורה.
+  </p>
+
+  @if (rows().length) {
+    <div class="lt-table ltr" role="table" aria-label="DI lifetimes per request">
+      <div class="lt-row lt-row--head" role="row">
+        <span role="columnheader">req</span>
+        <span role="columnheader">singleton</span>
+        <span role="columnheader">scoped (A)</span>
+        <span role="columnheader">scoped (B)</span>
+        <span role="columnheader">transient (A)</span>
+        <span role="columnheader">transient (B)</span>
+      </div>
+      @for (r of rows(); track r.req) {
+        <div class="lt-row" role="row">
+          <span class="no" role="cell">#{{ r.req }}</span>
+          <span class="chip" role="cell" [style]="chipStyle(r.singleton)">{{ r.singleton }}</span>
+          <span class="chip" role="cell" [style]="chipStyle(r.scopedA)">{{ r.scopedA }}</span>
+          <span class="chip" role="cell" [style]="chipStyle(r.scopedB)">{{ r.scopedB }}</span>
+          <span class="chip" role="cell" [style]="chipStyle(r.transientA)">{{ r.transientA }}</span>
+          <span class="chip" role="cell" [style]="chipStyle(r.transientB)">{{ r.transientB }}</span>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="lt-empty">עוד לא נשלחו בקשות — לחצו על הכפתור ותתחילו לחקור.</div>
+  }
+</div>

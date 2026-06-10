@@ -1,0 +1,109 @@
+@host = http://localhost:5080
+
+### Hello — האם השרת חי?
+GET {{host}}/
+
+### Health check
+GET {{host}}/healthz
+
+### ─────────── Auth ───────────
+
+### התחברות עם משתמש הדמו — העתיקו accessToken ו-refreshToken מהתשובה
+# @name login
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "demo@taskforge.dev",
+  "password": "Passw0rd!"
+}
+
+### משתני עזר — REST Client שולף אותם מתשובת ה-login האחרונה
+@accessToken = {{login.response.body.accessToken}}
+@refreshToken = {{login.response.body.refreshToken}}
+
+### מי אני? — דורש Bearer token
+GET {{host}}/api/auth/me
+Authorization: Bearer {{accessToken}}
+
+### בלי טוקן — 401 עוד לפני שה-handler רץ
+GET {{host}}/api/auth/me
+
+### הרשמה — 201 + זוג טוקנים (התחברות אוטומטית)
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "oleg@taskforge.dev",
+  "displayName": "Oleg",
+  "password": "S3curePass!"
+}
+
+### הרשמה עם אימייל תפוס — 409 Conflict
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "demo@taskforge.dev",
+  "displayName": "Imposter",
+  "password": "S3curePass!"
+}
+
+### סיסמה שגויה — 401, אותה תשובה כמו אימייל לא קיים (לא מסגירים כלום)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "demo@taskforge.dev",
+  "password": "wrong-password"
+}
+
+### Refresh — מנפיק זוג חדש ושורף את הישן (rotation)
+POST {{host}}/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### אותו refresh פעם שנייה — 401: הטוקן כבר בוטל. ככה נחשפת גניבה.
+POST {{host}}/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### ─────────── Projects (קריאה פתוחה, יצירה למאומתים) ───────────
+
+### רשימת פרויקטים — עדיין פתוח לכולם
+GET {{host}}/api/projects
+
+### יצירת פרויקט — היוצר הופך ל-Owner אוטומטית
+POST {{host}}/api/projects
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "API Hardening",
+  "description": "Rate limits, caching, observability"
+}
+
+### ─────────── Issues (הכול דורש אימות) ───────────
+
+### הלוח — עכשיו עם Bearer
+GET {{host}}/api/projects/1/issues?status=Open
+Authorization: Bearer {{accessToken}}
+
+### בלי טוקן — 401
+GET {{host}}/api/projects/1/issues
+
+### יצירת Issue — דורש גם חברות בפרויקט (אחרת 403)
+POST {{host}}/api/projects/1/issues
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "title": "Add dark mode toggle",
+  "priority": "High"
+}

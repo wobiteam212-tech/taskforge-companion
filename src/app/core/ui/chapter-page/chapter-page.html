@@ -1,0 +1,206 @@
+@if (meta(); as m) {
+  <!-- chapter-scoped reading progress -->
+  <div class="ch-progress" aria-hidden="true">
+    <div class="ch-progress-fill" [style.width.%]="pct()"></div>
+  </div>
+
+  <header class="ch-head">
+    <nav class="crumbs">
+      <a routerLink="/">כל הפרקים</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <span class="badge badge--ember ltr">Chapter {{ m.no.toString().padStart(2, '0') }}</span>
+      <span class="badge">גל {{ m.wave }}</span>
+      @if (progress.quizScore(m.id); as qs) {
+        <span class="badge badge--teal ltr">Quiz {{ qs.score }}/{{ qs.total }}</span>
+      }
+    </nav>
+    <h1 class="ch-title">{{ m.title }}</h1>
+    <p class="ch-blurb">{{ m.blurb }}</p>
+    <div class="ch-actions">
+      <button type="button" class="btn" [class.btn--primary]="progress.isDone(m.id)" (click)="toggleDone()">
+        {{ progress.isDone(m.id) ? 'הפרק הושלם ✓' : 'סיימתי את הפרק' }}
+      </button>
+      <button type="button" class="btn btn--ghost" (click)="toggleBookmark()">
+        {{ progress.isBookmarked(m.id) ? '★ מסומן' : '☆ סימנייה' }}
+      </button>
+    </div>
+  </header>
+
+  @if (contentRes.value(); as content) {
+    <div class="scrolly" [class.scrolly--narrow]="isNarrow()">
+      <div class="narrative">
+        @for (s of content.steps; track s.id; let i = $index) {
+          <section
+            class="step"
+            #stepEl
+            [id]="'step-' + s.id"
+            [class.is-active]="i === activeIndex()"
+          >
+            <span class="step-no ltr">// {{ s.id }}</span>
+            <h2 class="step-title">{{ s.title }}</h2>
+            <guide-blocks [blocks]="s.blocks" />
+            @if (isNarrow()) {
+              <div class="inline-panel">
+                <panel-host [def]="s.panel" />
+              </div>
+            }
+          </section>
+        }
+      </div>
+
+      @if (!isNarrow()) {
+        <aside class="stage" aria-hidden="false">
+          <div class="stage-inner">
+            @for (s of content.steps; track s.id; let i = $index) {
+              <div class="panel" [class.is-active]="i === activeIndex()">
+                @if (shouldRenderPanel(i)) {
+                  <panel-host [def]="s.panel" />
+                }
+              </div>
+            }
+          </div>
+        </aside>
+      }
+    </div>
+
+    <!-- step rail -->
+    @if (!isNarrow()) {
+      <nav class="rail" aria-label="שלבי הפרק">
+        @for (s of content.steps; track s.id; let i = $index) {
+          <button
+            type="button"
+            class="rail-item"
+            [class.on]="i === activeIndex()"
+            [attr.aria-label]="s.id + ' ' + s.title"
+            [attr.aria-current]="i === activeIndex() ? 'step' : null"
+            (click)="goTo(i)"
+          >
+            <i class="dot" aria-hidden="true"></i>
+            <span class="rail-label">{{ s.title }}</span>
+          </button>
+        }
+      </nav>
+    }
+
+    <!-- end-of-chapter checkpoint -->
+    <section class="endcap">
+      <h2 class="endcap-title">נקודת ביקורת</h2>
+      <div class="endcap-tabs" role="tablist" aria-label="סיכום הפרק">
+        <button type="button" role="tab" [attr.aria-selected]="endTab() === 'quiz'" class="etab" [class.on]="endTab() === 'quiz'" (click)="endTab.set('quiz')">
+          חידון <span class="count ltr">{{ content.quiz.length }}</span>
+        </button>
+        <button type="button" role="tab" [attr.aria-selected]="endTab() === 'prove'" class="etab" [class.on]="endTab() === 'prove'" (click)="endTab.set('prove')">
+          הוכיחו שזה עובד
+        </button>
+        @if (content.exercise) {
+          <button type="button" role="tab" [attr.aria-selected]="endTab() === 'exercise'" class="etab" [class.on]="endTab() === 'exercise'" (click)="endTab.set('exercise')">
+            תרגיל
+          </button>
+        }
+        <button type="button" role="tab" [attr.aria-selected]="endTab() === 'source'" class="etab" [class.on]="endTab() === 'source'" (click)="endTab.set('source')">
+          כל הקוד <span class="count ltr">{{ sourceFiles().length }}</span>
+        </button>
+      </div>
+
+      <div class="endcap-body">
+        @switch (endTab()) {
+          @case ('quiz') {
+            <chapter-quiz [questions]="content.quiz" [chapterId]="m.id" />
+          }
+          @case ('prove') {
+            <div class="prove">
+              @for (t of content.proveIt; track $index) {
+                <div class="prove-item">
+                  <h3 class="prove-title">{{ t.title }}</h3>
+                  <p class="prove-body">{{ t.body }}</p>
+                  @if (t.command) {
+                    <pre class="prove-cmd ltr"><code>{{ t.command }}</code></pre>
+                  }
+                  @if (t.expect) {
+                    <p class="prove-expect">מה אמורים לראות: {{ t.expect }}</p>
+                  }
+                </div>
+              }
+            </div>
+          }
+          @case ('exercise') {
+            @if (content.exercise; as ex) {
+              <div class="exercise">
+                <p class="ex-prompt">{{ ex.prompt }}</p>
+                <h3>משימות</h3>
+                <ol>
+                  @for (t of ex.tasks; track $index) {
+                    <li>{{ t }}</li>
+                  }
+                </ol>
+                <h3>תנאי קבלה</h3>
+                <ul>
+                  @for (a of ex.acceptance; track $index) {
+                    <li>{{ a }}</li>
+                  }
+                </ul>
+              </div>
+            }
+          }
+          @case ('source') {
+            @if (!sourceFiles().length) {
+              <p class="src-empty">בפרק הזה עוד לא נכתב קוד אפליקציה — הקבצים הראשונים מגיעים בפרק 01.</p>
+            } @else if (openSource(); as path) {
+              <div class="src-open">
+                <div class="src-open-head">
+                  <button type="button" class="btn btn--ghost" (click)="openSource.set(null)">חזרה לרשימה</button>
+                  <span class="ltr path">{{ path }}</span>
+                </div>
+                <pre class="ltr"><code [innerHTML]="openSourceHtml()"></code></pre>
+              </div>
+            } @else {
+              <ul class="src-list ltr">
+                @for (f of sourceFiles(); track f) {
+                  <li><button type="button" (click)="openSource.set(f)">{{ f }}</button></li>
+                }
+              </ul>
+            }
+          }
+        }
+      </div>
+    </section>
+
+    <!-- prev / next -->
+    <nav class="ch-nav">
+      @if (prev(); as p) {
+        @if (p.status === 'ready') {
+          <a class="nav-card" [routerLink]="['/chapters', p.slug]">
+            <span class="dir">הפרק הקודם</span>
+            <span class="ttl">{{ p.title }}</span>
+          </a>
+        } @else {
+          <span class="nav-card nav-card--soon">
+            <span class="dir">הפרק הקודם</span>
+            <span class="ttl">{{ p.title }} (בקרוב)</span>
+          </span>
+        }
+      } @else {
+        <span></span>
+      }
+      @if (next(); as n) {
+        @if (n.status === 'ready') {
+          <a class="nav-card nav-card--next" [routerLink]="['/chapters', n.slug]">
+            <span class="dir">הפרק הבא</span>
+            <span class="ttl">{{ n.title }}</span>
+          </a>
+        } @else {
+          <span class="nav-card nav-card--soon nav-card--next">
+            <span class="dir">הפרק הבא</span>
+            <span class="ttl">{{ n.title }} (בקרוב)</span>
+          </span>
+        }
+      }
+    </nav>
+  } @else if (contentRes.isLoading()) {
+    <div class="ch-loading">טוען את הפרק…</div>
+  } @else {
+    <div class="ch-loading">לפרק הזה עוד אין תוכן.</div>
+  }
+} @else {
+  <div class="ch-loading">הפרק לא נמצא. <a routerLink="/">חזרה לכל הפרקים</a></div>
+}

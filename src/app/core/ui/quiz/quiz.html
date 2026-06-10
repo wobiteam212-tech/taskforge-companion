@@ -1,0 +1,40 @@
+<div class="quiz">
+  @for (q of questions(); track $index; let qi = $index) {
+    <div class="q">
+      <div class="q-head">
+        <span class="q-no">{{ qi + 1 }}</span>
+        <span class="q-text">{{ q.q }}</span>
+      </div>
+      <div class="q-options" role="group" [attr.aria-label]="'שאלה ' + (qi + 1)">
+        @for (opt of q.options; track $index; let oi = $index) {
+          <button
+            type="button"
+            class="opt"
+            [class.opt--correct]="stateOf(qi, oi) === 'correct'"
+            [class.opt--reveal]="stateOf(qi, oi) === 'reveal'"
+            [class.opt--wrong]="stateOf(qi, oi) === 'wrong'"
+            [disabled]="answers()[qi] !== null"
+            (click)="pick(qi, oi)"
+          >
+            {{ opt }}
+          </button>
+        }
+      </div>
+      @if (answers()[qi] !== null) {
+        <p class="q-explain" [class.ok]="answers()[qi] === q.answer">
+          {{ answers()[qi] === q.answer ? 'נכון! ' : 'לא מדויק. ' }}{{ q.explain }}
+        </p>
+      }
+    </div>
+  }
+
+  @if (allAnswered()) {
+    <div class="quiz-result" role="status">
+      <span class="score">{{ score() }} / {{ questions().length }}</span>
+      <span class="verdict">
+        {{ score() === questions().length ? 'מושלם — שולטים בחומר!' : 'שווה לחזור על הצעדים שפספסתם ולנסות שוב.' }}
+      </span>
+      <button type="button" class="btn" (click)="reset()">איפוס וניסיון נוסף</button>
+    </div>
+  }
+</div>

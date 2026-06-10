@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="TaskForge.Api/TaskForge.Api.csproj" />
+  <Project Path="TaskForge.Core/TaskForge.Core.csproj" />
+  <Project Path="TaskForge.Infrastructure/TaskForge.Infrastructure.csproj" />
+</Solution>
