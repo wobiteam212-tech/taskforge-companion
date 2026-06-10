@@ -34,6 +34,8 @@ import { FileTreeLine } from '../../registry/chapter.types';
   styles: `
     :host {
       display: block;
+      min-width: 0;
+      max-width: 100%;
     }
 
     .tree-card {
@@ -43,6 +45,8 @@ import { FileTreeLine } from '../../registry/chapter.types';
       background: var(--code-bg);
       overflow: hidden;
       box-shadow: var(--shadow-1);
+      min-width: 0;
+      max-width: 100%;
     }
 
     .tree-title {
@@ -58,12 +62,16 @@ import { FileTreeLine } from '../../registry/chapter.types';
       font-family: var(--mono);
       font-size: 13px;
       line-height: 1.9;
+      overflow: auto;
+      max-height: 62vh;
     }
 
     .row {
       display: flex;
       align-items: center;
       gap: 10px;
+      width: max-content;
+      min-width: 100%;
       padding-inline-end: 14px;
       color: #aeb6c8;
       white-space: nowrap;

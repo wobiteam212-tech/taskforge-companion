@@ -148,6 +148,47 @@ export const CH04_CONTENT: ChapterContent = {
       },
     },
 
+    /* ------------------------------------------------------------ 4.1b */
+    {
+      id: '4.1b',
+      title: 'מפת הזרימה של בקשת API',
+      blocks: [
+        {
+          kind: 'p',
+          text:
+            'לפני שנצלול לקבצים, כדאי לראות את המסלול כולו: routing בוחר endpoint, binding בונה פרמטרים, ' +
+            'validation עוצר קלט לא תקין, filter מודד את ה-handler, וה-handler מחזיר TypedResults.',
+        },
+        {
+          kind: 'p',
+          text:
+            'זה המודל שיעזור לכם לקרוא את שאר הפרק. כל קובץ שנפתח אחר כך יושב על תחנה אחרת במסלול הזה, ' +
+            'ולכן קל יותר להבין למה הוא קיים.',
+        },
+        {
+          kind: 'callout',
+          tone: 'interview',
+          title: 'איפה בדיוק נולדת תשובת 400 בפרק הזה?',
+          body:
+            'היא נולדת לפני ה-handler, בשלב ה-validation של הקלט שנקשר ל-DTO. לכן handler לא צריך לבדוק ידנית ' +
+            'אם title ריק או pageSize מחוץ לטווח.',
+        },
+      ],
+      panel: {
+        kind: 'diagram',
+        caption: 'בקשה אחת עוברת תחנות קבועות לפני שהיא הופכת לתגובה.',
+        mermaid: `flowchart LR
+  Request["HTTP request"]
+  Routing["Routing chooses endpoint"]
+  Binding["Binding builds params"]
+  Validation[".NET 10 validation"]
+  Filter["Endpoint filter"]
+  Handler["Typed handler"]
+  Response["ProblemDetails / TypedResults"]
+  Request --> Routing --> Binding --> Validation --> Filter --> Handler --> Response`,
+      },
+    },
+
     /* ------------------------------------------------------------ 4.2 */
     {
       id: '4.2',

@@ -84,7 +84,9 @@ export const WAVES: WaveDef[] = [
         title: 'Auth — JWT ביד',
         blurb: 'PBKDF2, JWT + refresh rotation, AddJwtBearer, roles ו-policies, והרשאות ProjectMember.',
         wave: 1,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch05-auth-jwt/content').then((m) => m.CH05_CONTENT),
       },
     ],
   },

@@ -23,6 +23,10 @@
     border-radius: 2px;
     transition: width 0.3s ease;
   }
+
+  @media (max-width: 900px) {
+    top: var(--topbar-h);
+  }
 }
 
 /* ---------- header ---------- */
@@ -72,6 +76,12 @@
   gap: 40px;
   align-items: start;
   margin-top: 26px;
+  min-width: 0;
+
+  &.scrolly--rail {
+    grid-template-columns: minmax(400px, 0.95fr) minmax(440px, 1.15fr) 148px;
+    gap: 28px;
+  }
 
   &.scrolly--narrow {
     grid-template-columns: 1fr;
@@ -118,6 +128,8 @@
 
 .inline-panel {
   margin-top: 18px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* ---------- sticky stage ---------- */
@@ -128,12 +140,15 @@
   display: flex;
   align-items: center;
   min-width: 0;
+  max-width: 100%;
 }
 
 .stage-inner {
   position: relative;
   width: 100%;
   max-height: 88vh;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .panel {
@@ -142,6 +157,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0;
+  max-width: 100%;
   opacity: 0;
   visibility: hidden;
   transform: translateY(14px);
@@ -155,20 +172,24 @@
   }
 }
 
+.panel-host,
+panel-host {
+  min-width: 0;
+  max-width: 100%;
+}
+
 /* ---------- step rail ---------- */
 .rail {
-  position: fixed;
-  inset-inline-end: 14px;
-  top: 50%;
+  position: sticky;
+  top: 50vh;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   gap: 6px;
-  z-index: 20;
-
-  @media (max-width: 1460px) {
-    display: none;
-  }
+  align-self: start;
+  max-height: 78vh;
+  overflow: auto;
+  z-index: 2;
 }
 
 .rail-item {
@@ -341,61 +362,6 @@
 /* full source */
 .src-empty {
   color: var(--txt3);
-}
-
-.src-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 7px;
-
-  button {
-    width: 100%;
-    text-align: start;
-    border: 1px solid var(--bdr);
-    background: var(--sur2);
-    color: var(--txt2);
-    border-radius: var(--rad-sm);
-    font-family: var(--mono);
-    font-size: 12.5px;
-    padding: 8px 13px;
-    direction: ltr;
-    overflow-wrap: anywhere;
-
-    &:hover {
-      border-color: var(--ember);
-      color: var(--ember);
-    }
-  }
-}
-
-.src-open {
-  .src-open-head {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-
-    .path {
-      color: var(--txt3);
-      font-size: 12.5px;
-    }
-  }
-
-  pre {
-    margin: 0;
-    background: var(--code-bg);
-    border: 1px solid var(--code-bdr);
-    border-radius: var(--rad);
-    padding: 14px 18px;
-    font-size: 13px;
-    line-height: 1.65;
-    color: var(--code-txt);
-    overflow: auto;
-    max-height: 70vh;
-  }
 }
 
 /* ---------- prev / next ---------- */

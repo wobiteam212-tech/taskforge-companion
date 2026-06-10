@@ -24,8 +24,12 @@ const outFile = join(root, 'src', 'app', 'core', 'source', 'guide-manifest.gener
 const REGION_OPEN = /^\s*(?:\/\/|#|<!--)?\s*#region\s+(.+?)\s*(?:-->)?\s*$/;
 const REGION_CLOSE = /^\s*(?:\/\/|#|<!--)?\s*#endregion\b.*$/;
 
+function normalizeText(raw) {
+  return raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+}
+
 function extractRegions(raw) {
-  const lines = raw.split('\n');
+  const lines = normalizeText(raw).split('\n');
   const out = [];
   const regions = {};
   const stack = [];
@@ -51,8 +55,8 @@ function extractRegions(raw) {
 // Returns the 1-based line numbers in `next` that are not part of the
 // longest common subsequence with `prev` — i.e. added or changed lines.
 function changedLineNumbers(prev, next) {
-  const a = prev.split('\n');
-  const b = next.split('\n');
+  const a = normalizeText(prev).split('\n');
+  const b = normalizeText(next).split('\n');
   const n = a.length;
   const m = b.length;
   // dp[i][j] = LCS length of a[i..] and b[j..]
@@ -87,12 +91,18 @@ export function buildManifest() {
   let prevClean = {}; // path → cleaned content of previous cumulative state
 
   for (const ch of chapterDirs) {
-    const cumulative = overlayFiles(referenceDir, chapterDirs.slice(0, chapterDirs.indexOf(ch) + 1));
+    const chapterIndex = chapterDirs.indexOf(ch);
+    const cumulative = overlayFiles(referenceDir, chapterDirs.slice(0, chapterIndex + 1));
     const ownFiles = new Set(Object.keys(overlayFiles(referenceDir, [ch])));
+    const deleteFile = join(referenceDir, ch, '_delete.json');
+    const deletedPaths = existsSync(deleteFile)
+      ? JSON.parse(readFileSync(deleteFile, 'utf8')).sort()
+      : [];
     const files = {};
+    const changes = {};
     const nextClean = {};
 
-    for (const [path, raw] of Object.entries(cumulative)) {
+    for (const [path, raw] of Object.entries(cumulative).sort(([a], [b]) => a.localeCompare(b))) {
       const { content, regions } = extractRegions(raw);
       nextClean[path] = content;
       const before = prevClean[path];
@@ -106,9 +116,21 @@ export function buildManifest() {
         changedLines = changedLineNumbers(before, content);
       }
       files[path] = { content, status, regions, changedLines };
+      if (status !== 'unchanged') changes[path] = files[path];
     }
 
-    chapters[ch] = { files };
+    for (const path of deletedPaths) {
+      const before = prevClean[path];
+      if (before === undefined) continue;
+      changes[path] = {
+        content: before,
+        status: 'deleted',
+        regions: {},
+        changedLines: [],
+      };
+    }
+
+    chapters[ch] = { files, changes };
     prevClean = nextClean;
   }
 

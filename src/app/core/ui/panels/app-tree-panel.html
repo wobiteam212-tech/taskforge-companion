@@ -1,51 +1,6 @@
-<div class="atree">
-  <div class="atree-head">
-    <span class="atree-title">{{ title() || 'עץ האפליקציה עד כה' }}</span>
-    @if (files().length) {
-      <input
-        class="atree-filter ltr"
-        type="search"
-        placeholder="filter…"
-        [value]="filter()"
-        (input)="filter.set($any($event.target).value)"
-        aria-label="סינון קבצים"
-      />
-    }
-  </div>
-
-  @if (!files().length) {
-    <div class="atree-empty">עוד אין קבצים בנקודה הזו — הקוד הראשון נכתב בפרק 01.</div>
-  } @else if (openPath(); as path) {
-    <div class="atree-file">
-      <div class="atree-file-head">
-        <button type="button" class="back" (click)="openPath.set(null)">חזרה לעץ</button>
-        <span class="path ltr">{{ path }}</span>
-      </div>
-      <pre class="ltr"><code [innerHTML]="openHtml()"></code></pre>
-    </div>
-  } @else {
-    <div class="atree-rows ltr">
-      @for (row of rows(); track $index) {
-        @if (row.path) {
-          <button
-            type="button"
-            class="row row--file"
-            [style.padding-inline-start.px]="14 + row.depth * 16"
-            (click)="open(row.path)"
-          >
-            <span class="lbl">{{ row.label }}</span>
-            @if (row.badge === 'new') {
-              <span class="b b--new">new</span>
-            } @else if (row.badge === 'mod') {
-              <span class="b b--mod">mod</span>
-            }
-          </button>
-        } @else {
-          <div class="row row--dir" [style.padding-inline-start.px]="14 + row.depth * 16">
-            <span class="lbl">{{ row.label }}</span>
-          </div>
-        }
-      }
-    </div>
-  }
-</div>
+<source-browser
+  [chapter]="chapter()"
+  [title]="title() || 'עץ האפליקציה עד כה'"
+  initialStatus="all"
+  variant="panel"
+/>

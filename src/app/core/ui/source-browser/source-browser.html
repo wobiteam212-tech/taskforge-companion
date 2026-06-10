@@ -1,0 +1,89 @@
+<div class="source-browser" [class.source-browser--panel]="variant() === 'panel'">
+  <header class="sb-head">
+    <div class="sb-title">
+      <strong>{{ title() }}</strong>
+      <span class="sb-count ltr">{{ summary().changed }}/{{ summary().total }}</span>
+      @if (summary().deleted) {
+        <span class="sb-deleted">כולל מחיקות</span>
+      }
+    </div>
+    <input
+      class="sb-search ltr"
+      type="search"
+      placeholder="filter files..."
+      [value]="query()"
+      (input)="query.set($any($event.target).value)"
+      aria-label="סינון קבצים"
+    />
+  </header>
+
+  <div class="sb-filters" aria-label="סינון תצוגת קבצים">
+    <div class="seg" role="group" aria-label="סינון לפי שינוי">
+      @for (option of statusOptions; track option.value) {
+        <button
+          type="button"
+          [class.on]="statusFilter() === option.value"
+          (click)="statusFilter.set(option.value)"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </div>
+    <div class="seg seg--scope" role="group" aria-label="סינון לפי אזור באפליקציה">
+      @for (option of visibleScopes(); track option.value) {
+        <button
+          type="button"
+          [class.on]="scopeFilter() === option.value"
+          (click)="scopeFilter.set(option.value)"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (openEntry(); as entry) {
+    <section class="sb-file">
+      <div class="sb-file-head">
+        <button type="button" class="back" (click)="openPath.set(null)">חזרה לעץ</button>
+        <span class="path ltr">{{ entry.path }}</span>
+        @if (statusLabel(entry.status)) {
+          <span class="status ltr" [class.status--new]="entry.status === 'added'" [class.status--mod]="entry.status === 'modified'" [class.status--del]="entry.status === 'deleted'">
+            {{ statusLabel(entry.status) }}
+          </span>
+        }
+      </div>
+      @if (!entry.exists) {
+        <p class="deleted-note">הקובץ נמחק בפרק הזה. התצוגה מציגה את הגרסה האחרונה לפני המחיקה.</p>
+      }
+      <pre class="ltr"><code [innerHTML]="openHtml()"></code></pre>
+    </section>
+  } @else if (!visibleEntries().length) {
+    <div class="sb-empty">אין קבצים שמתאימים לסינון הנוכחי.</div>
+  } @else {
+    <div class="sb-tree ltr">
+      @for (row of rows(); track row.id) {
+        @if (row.path) {
+          <button
+            type="button"
+            class="tree-row tree-row--file"
+            [class.tree-row--deleted]="row.status === 'deleted'"
+            [style.padding-inline-start.px]="14 + row.depth * 16"
+            (click)="open(row.path)"
+          >
+            <span class="lbl">{{ row.label }}</span>
+            @if (row.status && statusLabel(row.status)) {
+              <span class="status ltr" [class.status--new]="row.status === 'added'" [class.status--mod]="row.status === 'modified'" [class.status--del]="row.status === 'deleted'">
+                {{ statusLabel(row.status) }}
+              </span>
+            }
+          </button>
+        } @else {
+          <div class="tree-row tree-row--dir" [style.padding-inline-start.px]="14 + row.depth * 16">
+            <span class="lbl">{{ row.label }}</span>
+          </div>
+        }
+      }
+    </div>
+  }
+</div>

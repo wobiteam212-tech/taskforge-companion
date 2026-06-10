@@ -1,6 +1,5 @@
 import {
   Component,
-  DestroyRef,
   ElementRef,
   afterRenderEffect,
   computed,
@@ -8,18 +7,18 @@ import {
   input,
   resource,
   signal,
+  viewChild,
   viewChildren,
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { findChapter, nextChapter, prevChapter } from '../../registry/registry';
 import { ProgressService } from '../../state/progress';
-import { chapterFiles, snapshotFile } from '../../source/manifest';
-import { highlight, langFromFile } from '../../source/highlight';
+import { chapterFiles } from '../../source/manifest';
 import { Blocks } from '../blocks/blocks';
 import { PanelHost } from '../panels/panel-host';
 import { Quiz } from '../quiz/quiz';
+import { SourceBrowser } from '../source-browser/source-browser';
 
 type EndTab = 'quiz' | 'prove' | 'exercise' | 'source';
 
@@ -35,14 +34,12 @@ type EndTab = 'quiz' | 'prove' | 'exercise' | 'source';
  */
 @Component({
   selector: 'chapter-page',
-  imports: [RouterLink, Blocks, PanelHost, Quiz],
+  imports: [RouterLink, Blocks, PanelHost, Quiz, SourceBrowser],
   templateUrl: './chapter-page.html',
   styleUrl: './chapter-page.scss',
 })
 export class ChapterPage {
   private readonly route = inject(ActivatedRoute);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly sanitizer = inject(DomSanitizer);
   protected readonly progress = inject(ProgressService);
 
   /** bound from route data via withComponentInputBinding() */
@@ -66,9 +63,11 @@ export class ChapterPage {
   /** panels render lazily as you approach them, then stay alive (no flicker) */
   private readonly renderedUpTo = signal(1);
 
+  private readonly scrollyEl = viewChild<ElementRef<HTMLElement>>('scrollyEl');
   private readonly stepEls = viewChildren<ElementRef<HTMLElement>>('stepEl');
 
   protected readonly isNarrow = signal(false);
+  protected readonly showRail = signal(false);
 
   private readonly fragment = toSignal(this.route.fragment);
   private fragmentConsumed = false;
@@ -79,12 +78,21 @@ export class ChapterPage {
   });
 
   constructor() {
-    // viewport watcher — drives the narrative/stage vs single-column layout
-    const mq = window.matchMedia('(max-width: 900px)');
-    this.isNarrow.set(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => this.isNarrow.set(e.matches);
-    mq.addEventListener('change', onChange);
-    this.destroyRef.onDestroy(() => mq.removeEventListener('change', onChange));
+    // Container watcher — the sidebar consumes viewport space, so chapter
+    // layout must react to the actual main-column width, not window width.
+    afterRenderEffect((onCleanup) => {
+      const el = this.scrollyEl()?.nativeElement;
+      if (!el) return;
+      const update = () => {
+        const width = el.getBoundingClientRect().width;
+        this.isNarrow.set(width < 1040);
+        this.showRail.set(width >= 1260);
+      };
+      update();
+      const ro = new ResizeObserver(update);
+      ro.observe(el);
+      onCleanup(() => ro.disconnect());
+    });
 
     // step↔panel sync: observe rendered steps with a center activation band
     afterRenderEffect((onCleanup) => {
@@ -138,15 +146,6 @@ export class ChapterPage {
   protected readonly endTab = signal<EndTab>('quiz');
 
   protected readonly sourceFiles = computed(() => chapterFiles(this.chapterId()));
-
-  protected readonly openSource = signal<string | null>(null);
-
-  protected readonly openSourceHtml = computed<SafeHtml | null>(() => {
-    const path = this.openSource();
-    if (!path) return null;
-    const f = snapshotFile(this.chapterId(), path);
-    return this.sanitizer.bypassSecurityTrustHtml(highlight(f.content, langFromFile(path)));
-  });
 
   protected toggleDone(): void {
     this.progress.toggleDone(this.chapterId());

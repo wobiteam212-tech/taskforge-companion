@@ -17,9 +17,16 @@ export interface SnapshotFile {
   changedLines: number[];
 }
 
+export interface SnapshotChange extends Omit<SnapshotFile, 'status'> {
+  /** relative to the previous chapter's cumulative state */
+  status: 'added' | 'modified' | 'deleted';
+}
+
 export interface ChapterSnapshot {
   /** cumulative file state at this chapter: path → file */
   files: Record<string, SnapshotFile>;
+  /** files added, modified or deleted by this chapter */
+  changes?: Record<string, SnapshotChange>;
 }
 
 export interface GuideManifest {
@@ -49,12 +56,19 @@ export function chapterFiles(chapterId: string): string[] {
   return Object.keys(manifest.chapters[chapterId]?.files ?? {}).sort();
 }
 
-/** Paths added or modified in this specific chapter. */
-export function chapterChangedFiles(chapterId: string): string[] {
+/** File changes introduced in this specific chapter, including deletions. */
+export function chapterFileChanges(chapterId: string): Record<string, SnapshotChange> {
   const snap = manifest.chapters[chapterId];
-  if (!snap) return [];
-  return Object.entries(snap.files)
-    .filter(([, f]) => f.status !== 'unchanged')
-    .map(([p]) => p)
-    .sort();
+  if (!snap) return {};
+  if (snap.changes) return snap.changes;
+  return Object.fromEntries(
+    Object.entries(snap.files)
+      .filter(([, f]) => f.status !== 'unchanged')
+      .map(([path, f]) => [path, { ...f, status: f.status as 'added' | 'modified' }]),
+  );
+}
+
+/** Paths added, modified or deleted in this specific chapter. */
+export function chapterChangedFiles(chapterId: string): string[] {
+  return Object.keys(chapterFileChanges(chapterId)).sort();
 }

@@ -27,7 +27,7 @@
   </header>
 
   @if (contentRes.value(); as content) {
-    <div class="scrolly" [class.scrolly--narrow]="isNarrow()">
+    <div class="scrolly" #scrollyEl [class.scrolly--narrow]="isNarrow()" [class.scrolly--rail]="showRail()">
       <div class="narrative">
         @for (s of content.steps; track s.id; let i = $index) {
           <section
@@ -61,26 +61,25 @@
           </div>
         </aside>
       }
-    </div>
 
-    <!-- step rail -->
-    @if (!isNarrow()) {
-      <nav class="rail" aria-label="שלבי הפרק">
-        @for (s of content.steps; track s.id; let i = $index) {
-          <button
-            type="button"
-            class="rail-item"
-            [class.on]="i === activeIndex()"
-            [attr.aria-label]="s.id + ' ' + s.title"
-            [attr.aria-current]="i === activeIndex() ? 'step' : null"
-            (click)="goTo(i)"
-          >
-            <i class="dot" aria-hidden="true"></i>
-            <span class="rail-label">{{ s.title }}</span>
-          </button>
-        }
-      </nav>
-    }
+      @if (!isNarrow() && showRail()) {
+        <nav class="rail" aria-label="שלבי הפרק">
+          @for (s of content.steps; track s.id; let i = $index) {
+            <button
+              type="button"
+              class="rail-item"
+              [class.on]="i === activeIndex()"
+              [attr.aria-label]="s.id + ' ' + s.title"
+              [attr.aria-current]="i === activeIndex() ? 'step' : null"
+              (click)="goTo(i)"
+            >
+              <i class="dot" aria-hidden="true"></i>
+              <span class="rail-label">{{ s.title }}</span>
+            </button>
+          }
+        </nav>
+      }
+    </div>
 
     <!-- end-of-chapter checkpoint -->
     <section class="endcap">
@@ -145,20 +144,8 @@
           @case ('source') {
             @if (!sourceFiles().length) {
               <p class="src-empty">בפרק הזה עוד לא נכתב קוד אפליקציה — הקבצים הראשונים מגיעים בפרק 01.</p>
-            } @else if (openSource(); as path) {
-              <div class="src-open">
-                <div class="src-open-head">
-                  <button type="button" class="btn btn--ghost" (click)="openSource.set(null)">חזרה לרשימה</button>
-                  <span class="ltr path">{{ path }}</span>
-                </div>
-                <pre class="ltr"><code [innerHTML]="openSourceHtml()"></code></pre>
-              </div>
             } @else {
-              <ul class="src-list ltr">
-                @for (f of sourceFiles(); track f) {
-                  <li><button type="button" (click)="openSource.set(f)">{{ f }}</button></li>
-                }
-              </ul>
+              <source-browser [chapter]="m.id" title="קבצי הפרק" initialStatus="changed" variant="endcap" />
             }
           }
         }

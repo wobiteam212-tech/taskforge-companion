@@ -1,5 +1,7 @@
 :host {
   display: block;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .code-error {
@@ -26,6 +28,8 @@
   background: var(--code-bg);
   overflow: hidden;
   box-shadow: var(--shadow-1);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .code-head {
@@ -117,6 +121,7 @@
   overflow: auto;
   font-size: 13px;
   line-height: 1.65;
+  min-width: 0;
 
   .gutter {
     display: flex;
@@ -151,6 +156,7 @@
     color: var(--code-txt);
     background: transparent;
     flex: 1;
+    min-width: max-content;
 
     code {
       font-size: inherit;
