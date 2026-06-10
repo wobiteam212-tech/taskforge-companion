@@ -1,0 +1,3 @@
+# The manifest generator always writes LF; keep git from flagging it as
+# modified on Windows (autocrlf) after every gen:manifest run.
+src/app/core/source/guide-manifest.generated.ts text eol=lf

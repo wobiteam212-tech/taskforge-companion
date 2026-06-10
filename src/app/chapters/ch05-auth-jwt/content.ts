@@ -160,6 +160,55 @@ export const CH05_CONTENT: ChapterContent = {
       },
     },
 
+    /* ------------------------------------------------------------ 5.3b */
+    {
+      id: '5.3b',
+      title: 'החוזים לפני המימושים',
+      blocks: [
+        {
+          kind: 'p',
+          text:
+            'לפני שכותבים שורת קריפטוגרפיה אחת, Core מגדיר מה הדומיין צריך: לגבב סיסמאות, להנפיק טוקנים, ' +
+            'למצוא משתמשים ולנהל refresh tokens. אותו חוק תלות מפרקים 02 ו-03, הפעם סביב אבטחה.',
+        },
+        {
+          kind: 'code',
+          lang: 'csharp',
+          title: 'server/TaskForge.Core/Abstractions/IPasswordHasher.cs',
+          code: `namespace TaskForge.Core.Abstractions;
+
+// הדומיין מגדיר את הצורך ("לגבב ולאמת סיסמאות"); הקריפטוגרפיה
+// עצמה היא פרט מימוש של ה-Infrastructure. אותו חוק תלות, שוב.
+public interface IPasswordHasher
+{
+    string Hash(string password);
+
+    bool Verify(string password, string passwordHash);
+}`,
+        },
+        {
+          kind: 'ul',
+          items: [
+            '`server/TaskForge.Core/Abstractions/ITokenService.cs` — מנפיק access ו-refresh; לא יודע כלום על HTTP.',
+            '`server/TaskForge.Core/Abstractions/IUserRepository.cs` — חיפוש לפי אימייל, בדיקת כפילות, הוספה.',
+            '`server/TaskForge.Core/Abstractions/IRefreshTokenRepository.cs` — בפאנל: ‏`GetActiveAsync` ו-`RevokeAsync` הם אבני הבניין של ה-rotation בצעד 5.13.',
+          ],
+        },
+        {
+          kind: 'callout',
+          tone: 'why',
+          body:
+            'הסיבה היא לא רק טוהר ארכיטקטוני. כשה-endpoints מדברים עם ממשקים, אפשר להחליף PBKDF2 ב-Argon2 ' +
+            'או EF ב-fake לבדיקות בלי לגעת בקוד ה-HTTP. הסים הזה כבר שילם לנו בפרק 03, והוא ישלם שוב בפרק הבדיקות.',
+        },
+      ],
+      panel: {
+        kind: 'code',
+        chapter: 'ch05',
+        file: 'server/TaskForge.Core/Abstractions/IRefreshTokenRepository.cs',
+      },
+    },
+
     /* ------------------------------------------------------------ 5.4 */
     {
       id: '5.4',
@@ -252,6 +301,42 @@ export const CH05_CONTENT: ChapterContent = {
         file: 'server/TaskForge.Infrastructure/Data/TaskForgeDbContext.cs',
         region: 'step-5.6',
         diff: true,
+      },
+    },
+
+    /* ------------------------------------------------------------ 5.6b */
+    {
+      id: '5.6b',
+      title: 'מיגרציה שנייה: המודל גדל, הכלי עוקב',
+      blocks: [
+        {
+          kind: 'p',
+          text:
+            'זה הרגע שפרק 03 הבטיח: המודל השתנה, אז מריצים ‏`dotnet ef migrations add AddAuth` והכלי מחשב ' +
+            'את הדלתא מול ה-ModelSnapshot. לא כותבים SQL ביד, אבל כן קוראים את מה שנוצר.',
+        },
+        {
+          kind: 'ul',
+          items: [
+            'ב-`Up` נוצרות שלוש טבלאות: Users, RefreshTokens ו-ProjectMembers.',
+            'כל אילוץ מצעד 5.6 מופיע כאן: אינדקס ייחודי על Email, אינדקס ייחודי על Token, ומפתח מורכב ProjectId+UserId עם שני FK עם cascade.',
+            '`server/TaskForge.Infrastructure/Migrations/20260610153208_AddAuth.Designer.cs` ו-`server/TaskForge.Infrastructure/Migrations/TaskForgeDbContextModelSnapshot.cs` התעדכנו גם הם — הצילום שמולו תחושב המיגרציה הבאה.',
+          ],
+        },
+        {
+          kind: 'callout',
+          tone: 'gotcha',
+          title: 'מול מה מחושבת מיגרציה חדשה?',
+          body:
+            'לא מול ה-DB ולא מול המיגרציה הקודמת, אלא מול ModelSnapshot. לכן הקובץ הזה חייב להיות ' +
+            'ב-git ולזוז יחד עם המיגרציות. שני מפתחים שמוסיפים מיגרציות במקביל יקבלו כאן conflict, וזה פיצ׳ר.',
+        },
+      ],
+      panel: {
+        kind: 'code',
+        chapter: 'ch05',
+        file: 'server/TaskForge.Infrastructure/Migrations/20260610153208_AddAuth.cs',
+        title: 'נוצר על ידי הכלי — נקרא על ידכם',
       },
     },
 
@@ -363,6 +448,45 @@ export const CH05_CONTENT: ChapterContent = {
       },
     },
 
+    /* ------------------------------------------------------------ 5.10b */
+    {
+      id: '5.10b',
+      title: 'מהטוקן ל-ClaimsPrincipal',
+      blocks: [
+        {
+          kind: 'p',
+          text:
+            'אחרי ש-`UseAuthentication` אימת את החתימה, ה-claims מהטוקן הופכים ל-`ClaimsPrincipal` שזמין ' +
+            'לכל handler דרך `HttpContext.User`. ‏`CurrentUserExtensions.GetUserId` הוא הגשר הקטן שכל endpoint משתמש בו.',
+        },
+        {
+          kind: 'callout',
+          tone: 'interview',
+          title: 'חתמנו על claim בשם sub. למה הקוד קורא אותו דרך ClaimTypes.NameIdentifier?',
+          body:
+            'ה-handler של JwtBearer ממפה כברירת מחדל שמות claims סטנדרטיים של JWT לשמות הארוכים של .NET, ' +
+            'ולכן sub מגיע כ-NameIdentifier. אפשר לבטל את המיפוי עם MapInboundClaims = false, אבל אז כל הקוד שקורא claims חייב להתיישר.',
+        },
+        {
+          kind: 'callout',
+          tone: 'why',
+          body:
+            'אם אין claim של מזהה משתמש בתוך endpoint מוגן, זו לא שגיאת משתמש אלא באג שלנו — endpoint ששכח ' +
+            '`RequireAuthorization`. לכן GetUserId זורק חריגה במקום להחזיר null: באג כזה צריך להתפוצץ בפיתוח, לא לזלוג לפרודקשן.',
+        },
+        {
+          kind: 'term',
+          name: 'ClaimsPrincipal',
+          definition: 'ייצוג המשתמש המאומת בבקשה הנוכחית: אוסף claims שה-authentication handler בנה מהטוקן.',
+        },
+      ],
+      panel: {
+        kind: 'code',
+        chapter: 'ch05',
+        file: 'server/TaskForge.Api/Auth/CurrentUserExtensions.cs',
+      },
+    },
+
     /* ------------------------------------------------------------ 5.11 */
     {
       id: '5.11',
@@ -397,6 +521,26 @@ export const CH05_CONTENT: ChapterContent = {
           kind: 'p',
           text:
             'הרשמה יוצרת משתמש ומחזירה 201. התחברות מאתרת משתמש, מאמתת סיסמה, ומחזירה 200. בשני המקרים, הנפקת הטוקנים עוברת דרך `IssueTokensAsync` אחד.',
+        },
+        {
+          kind: 'code',
+          lang: 'csharp',
+          title: 'server/TaskForge.Api/Contracts/AuthContracts.cs — חוזה הכניסה',
+          code: `public sealed record RegisterRequest(
+    [property: Required, EmailAddress, StringLength(254)] string Email,
+    [property: Required, StringLength(60, MinimumLength = 2)] string DisplayName,
+    [property: Required, StringLength(100, MinimumLength = 8)] string Password);
+
+public sealed record LoginRequest(
+    [property: Required, EmailAddress] string Email,
+    [property: Required] string Password);`,
+        },
+        {
+          kind: 'callout',
+          tone: 'dotnet10',
+          body:
+            'אותו ‏`AddValidation` מפרק 04 עובד גם כאן: סיסמה קצרה משמונה תווים או אימייל לא תקין נעצרים ' +
+            'עם 400 לפני שה-handler בכלל רץ. ה-`[property:]` מכוון את ה-attribute לפרופרטי של ה-record, לא לפרמטר.',
         },
         {
           kind: 'callout',
