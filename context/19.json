@@ -1,0 +1,9 @@
+{
+  "id": "19",
+  "subject": "Review ch05 agent content + verify gates",
+  "description": "When ch05 content agent completes: spot-check quality (esp. interview callouts, rotation step, simulator data), confirm gates green, check no hacks like ch04's path-dump.",
+  "activeForm": "Reviewing ch05 content",
+  "status": "pending",
+  "blocks": [],
+  "blockedBy": []
+}

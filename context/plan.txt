@@ -1,0 +1,135 @@
+# TaskForge Companion — the Ultimate Fullstack Guide (Plan)
+
+## Context
+
+Three learning apps have been built in this repo, each proving a different piece:
+
+| Project | What it proved | Its core weakness |
+|---|---|---|
+| `companion/` (HireHub) | The **pedagogy**: scrollytelling narrative, mental models, interview Q&A, per-step teaching contract | ~12,500 lines of hand-duplicated HTML; 3,240-line vanilla JS engine; App Tree hardcoded (~1,500 lines); no search/progress/quizzes; code correctness needed painful after-the-fact audit passes |
+| `ng-ninja-playground/` | The **architecture**: registry-driven (one def → routes/nav/home), generated source manifest = zero drift, typed `NoteBlock` content, zoneless Angular v22 | No scroll narrative, no quizzes, no per-chapter app evolution |
+| `aspnet-minimal-api-playground/` | The **backend teaching tools**: HTTP simulator (request/response scenarios), progress/bookmarks/search, exercises with acceptance criteria | Static scenarios only; no app-building narrative |
+
+**Goal:** build the ultimate synthesis — a guide that teaches Oleg to hand-build one complete, modern, production-grade **.NET 10 Minimal API + Angular v22** app, file by file, understanding every concept and mental model. Oleg types every line of the taught app himself; Claude builds only the guide + the verified reference snapshots.
+
+## Locked decisions (from Q&A)
+
+1. **Guide platform** = a real **Angular v22 app** (registry-driven like ng-ninja) with a new scrollytelling chapter engine. New sibling dir: `taskforge-companion/`. Preview port **4400** (launch config name `taskforge-companion`), pnpm, zoneless, signals, SCSS.
+2. **Taught app** = **new domain**: **TaskForge** — a project/issue tracker (projects, issues with status/priority/labels, comments, Admin/Member roles, board with filter/search/sort/paging, optimistic updates, real-time board in the production wave). Rich enough for every interview-relevant pattern, zero HireHub muscle memory.
+3. **Reference implementation** = **verified per-chapter snapshots** in-repo; guide code panels and App Tree are *generated* from them. Zero drift, no audit passes.
+4. **Scope** = core chapters + full production waves, **plus dedicated deep chapters on CSS/design-system and overall app architecture** (front and back).
+5. Language = Hebrew RTL prose + English code (established convention). No →/➜/⇒ arrows in Hebrew prose.
+6. **Visual identity** = new **"forge" theme**: dark graphite surfaces + ember/amber primary accent + teal secondary, with a full **light mode** and toggle. Distinct from ng-ninja (red) and HireHub (indigo). Code blocks always dark in both modes.
+7. **Chapter layout** = **scrollytelling + end sections**: the narrative is pure two-pane scrollytelling (steps right RTL, sticky panel left); each chapter ends with tabbed sections — **Quiz / Prove-it / Exercise / Full source (this chapter's snapshot)**.
+8. **Navigation shell** = persistent **sidebar** (waves → chapters with progress checkmarks, search box, resume button) + a rich **roadmap home** (wave map, progress overview, "continue where you left off").
+9. **Extras in scope**: progress tracking, per-chapter quizzes + prove-it + exercises, global search, bookmarks, interview drill page, **glossary page** (auto-collected terms, each linking back to the step that teaches it). Explicitly out of scope for v1: keyboard nav/command palette, personal notes, printable summaries.
+
+---
+
+## Part 1 — The taught app: TaskForge spec
+
+**Backend** (.NET 10 Minimal APIs): layered `TaskForge.Core` / `TaskForge.Infrastructure` / `TaskForge.Api`; EF Core + SQLite; entities `User`, `Project`, `ProjectMember(role)`, `Issue(status, priority)`, `Label`, `IssueLabel`, `Comment`; DTOs as records; MapGroup-organized endpoints; .NET 10 built-in validation; `TypedResults` + `Results<…>` unions; ProblemDetails (RFC 7807); endpoint filters; OpenAPI; manual JWT auth (PBKDF2 hashing, refresh-token rotation, roles/policies); global exception handler; xUnit + WebApplicationFactory tests. Production wave adds: OutputCaching, RateLimiter, health checks, SignalR hub for live board updates, Dockerfile, CI.
+
+**Frontend** (Angular v22): standalone, zoneless (`provideZonelessChangeDetection()`), signals everywhere, `core/shared/features` layout, smart/dumb split, signal forms, `httpResource`/`resource`, functional interceptors (auth + error), router with guards (`CanActivate`/`CanMatch`) + lazy `loadComponent`/`loadChildren`, signal-based store services with optimistic updates + rollback, `@defer`, OnPush-by-default, NgOptimizedImage, a11y, native animations + View Transitions, Vitest + Playwright.
+
+## Part 2 — Reference snapshots (the answer key)
+
+```
+taskforge-companion/
+└── reference/
+    ├── ch01/  ch02/  …          # each chapter folder = ONLY files created/changed in that chapter
+    ├── overlay.config.json       # deletion markers / renames if ever needed
+    └── .build/                   # gitignored; materialized cumulative trees for compile checks
+```
+
+- **Overlay model:** chapter N's full app state = overlay of `ch01..chN` (later files override earlier). Each chapter folder is exactly "what you type this chapter" — the same unit the guide teaches.
+- **`tools/materialize-snapshots.mjs`** composes cumulative trees into `reference/.build/chXX/` and **`pnpm verify:snapshots`** runs `dotnet build` (+ tests) on every backend milestone and `ng build` on frontend milestones. A chapter is not "authored" until its snapshot compiles.
+- **Region markers** in reference files (`// #region step-3.2` … `// #endregion`): the manifest generator extracts both the full file and named slices, so a panel can show a focused excerpt of a file that still compiles whole.
+- **`tools/generate-guide-manifest.mjs`** (evolution of ng-ninja's `generate-source-manifest.mjs`): walks materialized snapshots → emits a generated TS manifest with (a) per-chapter file trees (feeds the App Tree explorer — kills HireHub's 1,500 hardcoded lines), (b) file contents + regions (feeds code panels), (c) **per-file diffs between consecutive chapters** (feeds a new "what changed this chapter" view). Chained into `start`/`build` like ng-ninja's `gen:source`.
+
+## Part 3 — The guide app architecture
+
+Reuse the proven ng-ninja patterns (reference implementations live in `ng-ninja-playground/src/app/core/`):
+
+- **Registry** (`core/registry/`): `ChapterDef { id, no, title, wave, blurb, steps: StepDef[], quiz, exercise, proveIt }`; `StepDef { id, title, blocks: ContentBlock[], panel: PanelDef }`. `ContentBlock` extends ng-ninja's typed `NoteBlock` (`p/h/ul/ol/code/steps/callout/he`) with callout tones `tip|warn|gotcha|dotnet10|v22|interview|why|alt`. Routes/nav/home/progress all generate from the registry. Chapter content lazy-loaded per route (fixes ng-ninja's eager-registry bundle growth — registry holds metadata only, `loadChapter()` dynamic-imports the steps).
+- **Scrollytelling engine** (`core/ui/chapter-page/`): Angular port of `companion/assets/scrolly.js`'s IntersectionObserver step↔panel sync (−45% activation band), sticky stage, step rail with **always-visible accessible labels**, progress bar, mobile single-column fallback (panel inline after step — as data-driven rendering, not DOM reparenting).
+- **Panel components** (`core/ui/panels/`), selected by `PanelDef.kind`:
+  - `code` — Prism, filename header, copy button, region slicing, optional **diff mode** (added/removed line highlighting from the manifest diffs)
+  - `diagram` — Mermaid, lazy-loaded via `@defer` (fixes HireHub's 3.2 MB eager Mermaid), theme-aware re-render
+  - `filetree` — rendered from manifest tree data
+  - `simulator` — the aspnet-playground HTTP simulator (`DemoScenario` request/response pairs) for backend chapters: "you just wrote this endpoint; here's how it behaves"
+  - `live-demo` — `NgComponentOutlet` of real interactive Angular components for frontend chapters (signals demo, CD visualizer, JWT decoder, middleware-pipeline animation — ported from scrolly.js as components)
+  - `app-tree` — per-chapter snapshot explorer fed by the manifest (search, file viewer, "files added this chapter" badge)
+- **Chapter end sections** (per locked layout decision): after the scrollytelling narrative, a tabbed block — Quiz / Prove-it / Exercise / Full source — rendered from `ChapterDef.quiz/proveIt/exercise` + the chapter's snapshot file list.
+- **Learning systems** (`core/state/`, modeled on aspnet-playground's `ProgressService`):
+  - Progress: per-step completion + resume-where-you-left (sidebar checkmarks + home "continue" banner), localStorage signals
+  - Checkpoint **quiz** per chapter (typed quiz blocks, score stored) + **prove-it** tasks ("run this, expect this output") + exercise with acceptance criteria
+  - Global **search** across all registry content; bookmarks
+  - **Interview drill page**: aggregates every `interview` callout + quiz across chapters into one spaced-repetition-style review screen (Oleg's actual goal)
+  - **Glossary page**: terms declared inline in content blocks (`{ kind: 'term', name, definition }` or a per-chapter `terms[]`), auto-collected into one alphabetical page, each entry deep-linking to the step that teaches it
+- **Theme/UX** (`styles.scss`): the **"forge" design-token system** (dark graphite surfaces, ember/amber primary, teal secondary) with **light/dark toggle**; code blocks always dark; RTL-first with CSS logical properties; Heebo (Hebrew) + Inter + JetBrains Mono; level/wave badges; reduced-motion support; visible focus states; responsive shell = persistent sidebar (desktop) / burger + overlay (mobile).
+
+## Part 3.5 — Content quality guarantees (richer than every previous version)
+
+These are hard rules, several of them machine-enforced:
+
+1. **100% file coverage — every file mentioned, no file appears by magic.** Every file in the final reference app is either (a) **typed by hand in a step** with full explanation, or (b) **toured** in a dedicated step if it's generated/boilerplate (csproj, angular.json, tsconfig, launchSettings, migrations — you don't type these, but the guide opens them and explains every meaningful line). Machine-enforced: `verify:coverage` diffs the final snapshot's file list against all files referenced by registry steps and **fails if any file is never mentioned**. This is the fix for HireHub's worst bug class (referenced-but-never-shown files that needed a backfill "pre-flight" section).
+2. **Richer per-step teaching contract** (a superset of HireHub's): *what / why-now / mental model / the code you type / **line-by-line breakdown of every non-obvious line or signature** / alternatives & why-not (with trade-offs) / gotchas (the mistake you'd actually make) / diagram where it helps / interview Q&A*. Merges the best of all three: HireHub's narrative + ng-ninja's deep typed notes + aspnet-playground's teaching brief (story/focus/watch/verify).
+3. **Per-file "anatomy" moment**: the first time any file is created, a step explains its role, where it sits in the architecture (with the file tree panel highlighting it), who will reference it, and why it lives there and not elsewhere.
+4. **Cumulative correctness**: because panels are generated from compiling snapshots, every `using`/import is present, every type referenced exists by that point in the course, and "build it chapter by chapter ⇒ it compiles" is guaranteed by `verify:snapshots`, not by manual audit.
+5. **Nothing hand-waved**: no "add the usual imports", no "create these DTOs" as comments (HireHub's ch04 bug). If the app needs it, the guide shows it.
+
+## Part 4 — Chapter roadmap (waves)
+
+Per-step teaching contract: see Part 3.5 rule 2 — plus per-chapter quiz, prove-it, exercise.
+
+- **Wave 0 — Guide infrastructure** (no taught content): scaffold `taskforge-companion/`, registry + chapter engine + panel components + manifest pipeline + theme + home + progress/search. Plus `ch00 — Setup`: tooling, .NET 10 SDK, Node/pnpm, repo layout, how to use the guide.
+- **Wave 1 — Backend core**
+  - ch01 — .NET anatomy deep: Program.cs two halves, DI lifetimes, middleware pipeline (interactive pipeline panel)
+  - ch02 — **Backend architecture**: why layers, Core/Infrastructure/Api, dependency rule, project references, where everything lives (deep architecture chapter per scope decision)
+  - ch03 — Data layer: EF Core + SQLite, entities, DbContext, fluent API, migrations, seeding, change tracker mental model
+  - ch04 — Projects & Issues API: records as DTOs, MapGroup, IQueryable/projection/AsNoTracking, filter/sort/page (`PagedResult`), TypedResults unions, ProblemDetails, .NET 10 validation, endpoint filters, OpenAPI
+  - ch05 — Auth: PBKDF2 hashing, JWT + refresh rotation, AddJwtBearer, roles/policies, ProjectMember authorization (JWT decoder panel)
+- **Wave 2 — Frontend foundation**
+  - ch06 — Angular foundation: zoneless mental model, signals/computed/effect (live demo panel), bootstrap + app.config, DI
+  - ch07 — **Frontend architecture**: core/shared/features, smart/dumb, state boundaries, API contracts mirroring backend DTOs, proxy vs CORS (deep architecture chapter)
+  - ch08 — **Design system & modern CSS**: design tokens, `@layer`, logical properties + RTL, container queries, `color-mix`, fluid type with `clamp`, dark mode architecture, component styling strategy (`:host`, no `::ng-deep`) — LandingLab learnings folded in
+  - ch09 — Shared UI kit: button/field/badge/dialog/toast as signal-based dumb components, content projection, host bindings, a11y baked in
+  - ch10 — Routing: lazy loading, guards/resolvers, URL-as-state, route input binding
+  - ch11 — HTTP & state: httpResource/resource, functional interceptors (auth + error), signal store services, error handling end-to-end with ProblemDetails
+- **Wave 3 — Features (the heart)**
+  - ch12 — Projects feature: list/create/manage members, roles in the UI
+  - ch13 — Issue board: filter/search/sort/paging synced to URL, optimistic updates + rollback, @defer, virtual scroll
+  - ch14 — Issue detail & comments: signal forms deep (validators, async validation, custom controls), View Transitions
+- **Wave 4 — Quality**
+  - ch15 — Testing: xUnit + WebApplicationFactory, Vitest + TestBed, Playwright e2e — the testing pyramid for this exact app
+  - ch16 — Performance & a11y: OnPush/zoneless audit, bundle budgets, NgOptimizedImage, CWV, keyboard/screen-reader pass
+- **Wave 5 — Production**
+  - ch17 — Hardening: OutputCaching, RateLimiter, health checks, logging
+  - ch18 — Real-time: SignalR live board (server hub + Angular client, reconnect strategy)
+  - ch19 — Ship it: Dockerfile (multi-stage), docker-compose, CI (GitHub Actions build+test), deployment mental models
+  - ch20 — Capstone: full-app recap map, interview drill finale
+
+## Part 5 — Build order (sessions)
+
+1. **Session 1 (first implementation session):** scaffold guide app + engine + panels + manifest pipeline + theme + home + ch00. This is the big one — everything after is content.
+2. Then **one chapter per session** (HireHub pace), each with a fixed loop:
+   a. Build/extend the reference snapshot for the chapter → `pnpm verify:snapshots` green (dotnet/ng build + tests)
+   b. Author the chapter registry content from the snapshot (panels reference manifest files/regions)
+   c. Verify in preview: 0 console errors, every step has a wired panel, no arrows in Hebrew prose, quiz/prove-it present
+3. Waves in order; production wave chapters are full chapters, not bonus stubs.
+
+## Verification
+
+- **Guide app:** `pnpm -C taskforge-companion build` green; preview via new `.claude/launch.json` entry `taskforge-companion` (port 4400); use `preview_eval`/`preview_inspect` for DOM checks (screenshots are flaky in this env — established); check steps===panels per chapter, 0 console errors, theme toggle + RTL render, progress persists across reload.
+- **Reference snapshots:** `pnpm verify:snapshots` materializes overlays and compiles every milestone (`dotnet build` + `dotnet test`, `ng build`); a chapter cannot merge without it.
+- **File coverage:** `pnpm verify:coverage` fails if any file in the final snapshot is never typed-by-hand or toured in a step (Part 3.5 rule 1).
+- **Content rules (from HireHub lessons):** scan ALL Hebrew prose containers (including captions/accordion bodies) for arrow characters; every code panel's file must exist in the manifest (generator fails loudly on missing refs — fixes ng-ninja's silent "source not found").
+
+## Known risks / notes
+
+- Confirm **.NET 10 SDK** is installed before Wave 1 (`dotnet --list-sdks`).
+- Frontend snapshot compiles are slow (~30s × N chapters) — `verify:snapshots` checks milestones on demand, not on every `pnpm start`.
+- Prettier is NOT enforced in the sibling projects — keep house style, never run `prettier --write`.
+- Mermaid must be lazy (`@defer` / dynamic import), never in the initial bundle.
+- After approval, update memory with a new `taskforge-companion-project` file (scope, decisions, roadmap) following the existing project-memory pattern.

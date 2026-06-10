@@ -1,0 +1,9 @@
+{
+  "id": "18",
+  "subject": "Build ch05 reference snapshot (Auth: JWT by hand) + migration #2",
+  "description": "User/RefreshToken/ProjectMember entities, IUserRepository/IRefreshTokenRepository/IPasswordHasher/ITokenService, JwtOptions, PBKDF2 hasher, TokenService, EF repos, DbContext+seeder updates, AuthEndpoints (register/login/refresh/me), JwtBearer config, RequireAuthorization + membership check, AddAuth migration, runtime smoke.",
+  "activeForm": "Building ch05 auth snapshot",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

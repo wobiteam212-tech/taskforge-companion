@@ -1,0 +1,11 @@
+Chapter 04 — "Projects & Issues API" is complete (snapshot + content + all gates green). The snapshot was runtime-proven before any prose was written: filtered/sorted/paged queries, .NET 10's AddValidation() returning real 400 ValidationProblems, 201+Location, 404 ProblemDetails, and a generated OpenAPI document. It also introduced overlay deletion support — ch04 retires the ch01 probes and the in-memory repository ("the scaffolding comes down" step).
+
+Chapter 05 — Auth snapshot is built and runtime-proven: hand-rolled PBKDF2 hashing, JWT issuing + AddJwtBearer validation, refresh-token rotation (replaying a used token → 401), resource-based authorization (non-member creating an issue → 403, creator auto-becomes Owner), migration #2 (AddAuth) generated for real. Its content chapter is being authored by an agent right now.
+
+How the speed-up works (your request)
+I do the precision work: reference snapshots (every line compile- and runtime-gated), architecture decisions, and exact step-by-step outlines with panel/region specs.
+Sonnet agents author the Hebrew content in the background from those outlines, with the ch03 chapter as their gold-standard exemplar.
+Quality is enforced by machines, not trust — I added content-rules.spec.ts: 30+ assertions per run covering step structure, the arrow ban, manifest/region resolution, interview-callout format, quiz integrity, and glossary terms. Agents must pass gen:manifest + test + verify:coverage + build before returning.
+The review loop caught exactly the kind of thing it's designed for: the ch04 agent dumped 17 future-file paths into a callout to satisfy the coverage gate. I cleaned the prose and fixed the root cause — the coverage tool is now "ready-chapter aware," so files from not-yet-authored chapters are pending, not failures.
+
+Five chapters live (ch00–ch04), ch05 content in flight — I'll review it against the gates the moment the agent reports back, then start the frontend wave (ch06) with the same pipeline.

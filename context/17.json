@@ -1,0 +1,9 @@
+{
+  "id": "17",
+  "subject": "Author ch04 content + registry flip + verify",
+  "description": "~18 Hebrew steps (contract simulator opener, query/paging deep-dive, DTOs/validation, endpoint groups, filter-vs-middleware, projection, scaffolding removal w/ full Program diff, OpenAPI), quiz/prove-it/exercise, terms. gen+coverage+build+verify.",
+  "activeForm": "Authoring ch04 content",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": []
+}

@@ -7,7 +7,7 @@ export const GUIDE_MANIFEST = {
     "ch01": {
       "files": {
         "server/TaskForge.Api/appsettings.Development.json": {
-          "content": "{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Information\"\n    }\n  }\n}\n",
+          "content": "{\r\n  \"Logging\": {\r\n    \"LogLevel\": {\r\n      \"Default\": \"Information\",\r\n      \"Microsoft.AspNetCore\": \"Information\"\r\n    }\r\n  }\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -23,7 +23,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Api/appsettings.json": {
-          "content": "{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Warning\"\n    }\n  },\n  \"AllowedHosts\": \"*\"\n}\n",
+          "content": "{\r\n  \"Logging\": {\r\n    \"LogLevel\": {\r\n      \"Default\": \"Information\",\r\n      \"Microsoft.AspNetCore\": \"Warning\"\r\n    }\r\n  },\r\n  \"AllowedHosts\": \"*\"\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -40,24 +40,24 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Api/Program.cs": {
-          "content": "using TaskForge.Api.Services;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// ── המחצית הראשונה: רישום שירותים ב-DI Container ──\n// כאן רק \"מלמדים\" את האפליקציה איך לייצר כל שירות.\n// שום מופע עוד לא נוצר — מופעים נוצרים רק כשמישהו מבקש אותם.\n\nbuilder.Services.AddSingleton<SingletonProbe>();\nbuilder.Services.AddScoped<ScopedProbe>();\nbuilder.Services.AddTransient<TransientProbe>();\n\nvar app = builder.Build();\n\n// ── המחצית השנייה: בניית ה-pipeline. הסדר כאן הוא הכול ──\n\n// middleware 1: לוג לכל בקשה — נכנס ראשון, מסיים אחרון\napp.Use(async (context, next) =>\n{\n    app.Logger.LogInformation(\"{Method} {Path} started\",\n        context.Request.Method, context.Request.Path);\n\n    await next(context);\n\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\n});\n\n// middleware 2: מדידת זמן. הכותרת נקבעת בתוך OnStarting,\n// כי אחרי שגוף התשובה התחיל לזרום אסור לגעת ב-headers.\napp.Use(async (context, next) =>\n{\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\n\n    context.Response.OnStarting(() =>\n    {\n        stopwatch.Stop();\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n        return Task.CompletedTask;\n    });\n\n    await next(context);\n});\n\n// ── endpoints: היעד הסופי של המסע ──\n\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\n\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\n\n// endpoint הגילוי: מזריקים כל probe פעמיים ומשווים מזהים\napp.MapGet(\"/di/lifetimes\", (\n    SingletonProbe singleton,\n    ScopedProbe scopedA,\n    ScopedProbe scopedB,\n    TransientProbe transientA,\n    TransientProbe transientB) => Results.Ok(new\n{\n    singleton = singleton.Id,\n    scopedA = scopedA.Id,\n    scopedB = scopedB.Id,\n    transientA = transientA.Id,\n    transientB = transientB.Id,\n}));\n\napp.Run();\n",
+          "content": "using TaskForge.Api.Services;\r\n\r\nvar builder = WebApplication.CreateBuilder(args);\r\n\r\n// ── המחצית הראשונה: רישום שירותים ב-DI Container ──\r\n// כאן רק \"מלמדים\" את האפליקציה איך לייצר כל שירות.\r\n// שום מופע עוד לא נוצר — מופעים נוצרים רק כשמישהו מבקש אותם.\r\n\r\nbuilder.Services.AddSingleton<SingletonProbe>();\r\nbuilder.Services.AddScoped<ScopedProbe>();\r\nbuilder.Services.AddTransient<TransientProbe>();\r\n// #endregion\r\n\r\nvar app = builder.Build();\r\n\r\n// ── המחצית השנייה: בניית ה-pipeline. הסדר כאן הוא הכול ──\r\n\r\n// middleware 1: לוג לכל בקשה — נכנס ראשון, מסיים אחרון\r\napp.Use(async (context, next) =>\r\n{\r\n    app.Logger.LogInformation(\"{Method} {Path} started\",\r\n        context.Request.Method, context.Request.Path);\r\n\r\n    await next(context);\r\n\r\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\r\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\r\n});\r\n\r\n// middleware 2: מדידת זמן. הכותרת נקבעת בתוך OnStarting,\r\n// כי אחרי שגוף התשובה התחיל לזרום אסור לגעת ב-headers.\r\napp.Use(async (context, next) =>\r\n{\r\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\r\n\r\n    context.Response.OnStarting(() =>\r\n    {\r\n        stopwatch.Stop();\r\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\r\n            stopwatch.ElapsedMilliseconds.ToString());\r\n        return Task.CompletedTask;\r\n    });\r\n\r\n    await next(context);\r\n});\r\n// #endregion\r\n\r\n// ── endpoints: היעד הסופי של המסע ──\r\n\r\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\r\n\r\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\r\n// #endregion\r\n\r\n// endpoint הגילוי: מזריקים כל probe פעמיים ומשווים מזהים\r\napp.MapGet(\"/di/lifetimes\", (\r\n    SingletonProbe singleton,\r\n    ScopedProbe scopedA,\r\n    ScopedProbe scopedB,\r\n    TransientProbe transientA,\r\n    TransientProbe transientB) => Results.Ok(new\r\n{\r\n    singleton = singleton.Id,\r\n    scopedA = scopedA.Id,\r\n    scopedB = scopedB.Id,\r\n    transientA = transientA.Id,\r\n    transientB = transientB.Id,\r\n}));\r\n// #endregion\r\n\r\napp.Run();\r\n",
           "status": "added",
           "regions": {
             "step-1.5": {
               "start": 5,
-              "end": 11
+              "end": 72
             },
             "step-1.10": {
-              "start": 15,
-              "end": 44
+              "start": 16,
+              "end": 72
             },
             "step-1.11": {
-              "start": 46,
-              "end": 50
+              "start": 48,
+              "end": 72
             },
             "step-1.8": {
-              "start": 52,
-              "end": 65
+              "start": 55,
+              "end": 72
             }
           },
           "changedLines": [
@@ -128,11 +128,15 @@ export const GUIDE_MANIFEST = {
             65,
             66,
             67,
-            68
+            68,
+            69,
+            70,
+            71,
+            72
           ]
         },
         "server/TaskForge.Api/Properties/launchSettings.json": {
-          "content": "{\n  \"$schema\": \"https://json.schemastore.org/launchsettings.json\",\n  \"profiles\": {\n    \"http\": {\n      \"commandName\": \"Project\",\n      \"dotnetRunMessages\": true,\n      \"launchBrowser\": false,\n      \"applicationUrl\": \"http://localhost:5080\",\n      \"environmentVariables\": {\n        \"ASPNETCORE_ENVIRONMENT\": \"Development\"\n      }\n    }\n  }\n}\n",
+          "content": "{\r\n  \"$schema\": \"https://json.schemastore.org/launchsettings.json\",\r\n  \"profiles\": {\r\n    \"http\": {\r\n      \"commandName\": \"Project\",\r\n      \"dotnetRunMessages\": true,\r\n      \"launchBrowser\": false,\r\n      \"applicationUrl\": \"http://localhost:5080\",\r\n      \"environmentVariables\": {\r\n        \"ASPNETCORE_ENVIRONMENT\": \"Development\"\r\n      }\r\n    }\r\n  }\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -154,7 +158,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Api/requests.http": {
-          "content": "@host = http://localhost:5080\n\n### Hello — האם השרת חי?\nGET {{host}}/\n\n### Health check\nGET {{host}}/healthz\n\n### DI lifetimes — הריצו פעמיים והשוו מזהים:\n### singleton זהה בין בקשות, scoped זהה רק בתוך בקשה, transient שונה תמיד\nGET {{host}}/di/lifetimes\n",
+          "content": "@host = http://localhost:5080\r\n\r\n### Hello — האם השרת חי?\r\nGET {{host}}/\r\n\r\n### Health check\r\nGET {{host}}/healthz\r\n\r\n### DI lifetimes — הריצו פעמיים והשוו מזהים:\r\n### singleton זהה בין בקשות, scoped זהה רק בתוך בקשה, transient שונה תמיד\r\nGET {{host}}/di/lifetimes\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -173,7 +177,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Api/Services/LifetimeProbes.cs": {
-          "content": "namespace TaskForge.Api.Services;\n\n// שלושה \"גששים\" זהים לחלוטין — חוץ מאופן הרישום שלהם ב-DI.\n// לכל מופע נולד Guid ברגע היצירה, ולכן המזהה חושף בדיוק\n// מתי ה-Container ייצר מופע חדש ומתי הוא מיחזר קיים.\n\npublic sealed class SingletonProbe\n{\n    public Guid Id { get; } = Guid.NewGuid();\n}\n\npublic sealed class ScopedProbe\n{\n    public Guid Id { get; } = Guid.NewGuid();\n}\n\npublic sealed class TransientProbe\n{\n    public Guid Id { get; } = Guid.NewGuid();\n}\n",
+          "content": "namespace TaskForge.Api.Services;\r\n\r\n// שלושה \"גששים\" זהים לחלוטין — חוץ מאופן הרישום שלהם ב-DI.\r\n// לכל מופע נולד Guid ברגע היצירה, ולכן המזהה חושף בדיוק\r\n// מתי ה-Container ייצר מופע חדש ומתי הוא מיחזר קיים.\r\n\r\npublic sealed class SingletonProbe\r\n{\r\n    public Guid Id { get; } = Guid.NewGuid();\r\n}\r\n\r\npublic sealed class ScopedProbe\r\n{\r\n    public Guid Id { get; } = Guid.NewGuid();\r\n}\r\n\r\npublic sealed class TransientProbe\r\n{\r\n    public Guid Id { get; } = Guid.NewGuid();\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -201,7 +205,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Api/TaskForge.Api.csproj": {
-          "content": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n</Project>\n",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net10.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n</Project>\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -222,87 +226,89 @@ export const GUIDE_MANIFEST = {
     "ch02": {
       "files": {
         "server/TaskForge.Api/appsettings.Development.json": {
-          "content": "{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Information\"\n    }\n  }\n}\n",
+          "content": "{\r\n  \"Logging\": {\r\n    \"LogLevel\": {\r\n      \"Default\": \"Information\",\r\n      \"Microsoft.AspNetCore\": \"Information\"\r\n    }\r\n  }\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/appsettings.json": {
-          "content": "{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Warning\"\n    }\n  },\n  \"AllowedHosts\": \"*\"\n}\n",
+          "content": "{\r\n  \"Logging\": {\r\n    \"LogLevel\": {\r\n      \"Default\": \"Information\",\r\n      \"Microsoft.AspNetCore\": \"Warning\"\r\n    }\r\n  },\r\n  \"AllowedHosts\": \"*\"\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/Program.cs": {
-          "content": "using TaskForge.Api.Services;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Infrastructure.Repositories;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// ── המחצית הראשונה: רישום שירותים ב-DI Container ──\n// כאן רק \"מלמדים\" את האפליקציה איך לייצר כל שירות.\n// שום מופע עוד לא נוצר — מופעים נוצרים רק כשמישהו מבקש אותם.\n\nbuilder.Services.AddSingleton<SingletonProbe>();\nbuilder.Services.AddScoped<ScopedProbe>();\nbuilder.Services.AddTransient<TransientProbe>();\n\n// ה-seam: ה-Api מכיר רק את הממשק מה-Core; המימוש מגיע מה-Infrastructure.\n// Scoped — מופע אחד לכל בקשה, בדיוק כמו שיהיה DbContext בפרק 03.\nbuilder.Services.AddScoped<IProjectRepository, InMemoryProjectRepository>();\n\nvar app = builder.Build();\n\n// ── המחצית השנייה: בניית ה-pipeline. הסדר כאן הוא הכול ──\n\n// middleware 1: לוג לכל בקשה — נכנס ראשון, מסיים אחרון\napp.Use(async (context, next) =>\n{\n    app.Logger.LogInformation(\"{Method} {Path} started\",\n        context.Request.Method, context.Request.Path);\n\n    await next(context);\n\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\n});\n\n// middleware 2: מדידת זמן. הכותרת נקבעת בתוך OnStarting,\n// כי אחרי שגוף התשובה התחיל לזרום אסור לגעת ב-headers.\napp.Use(async (context, next) =>\n{\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\n\n    context.Response.OnStarting(() =>\n    {\n        stopwatch.Stop();\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n        return Task.CompletedTask;\n    });\n\n    await next(context);\n});\n\n// ── endpoints: היעד הסופי של המסע ──\n\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\n\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\n\n// ה-endpoint העסקי הראשון: מדבר עם הדומיין דרך הממשק בלבד.\n// אין לו מושג אם מאחור יש רשימה בזיכרון או בסיס נתונים — וזו הנקודה.\napp.MapGet(\"/api/projects\", async (IProjectRepository projects, CancellationToken ct) =>\n{\n    var all = await projects.GetAllAsync(ct);\n    return Results.Ok(all.Select(p => new { p.Id, p.Name, p.Description }));\n});\n\n// endpoint הגילוי: מזריקים כל probe פעמיים ומשווים מזהים\napp.MapGet(\"/di/lifetimes\", (\n    SingletonProbe singleton,\n    ScopedProbe scopedA,\n    ScopedProbe scopedB,\n    TransientProbe transientA,\n    TransientProbe transientB) => Results.Ok(new\n{\n    singleton = singleton.Id,\n    scopedA = scopedA.Id,\n    scopedB = scopedB.Id,\n    transientA = transientA.Id,\n    transientB = transientB.Id,\n}));\n\napp.Run();\n",
+          "content": "using TaskForge.Api.Services;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Infrastructure.Repositories;\r\n\r\nvar builder = WebApplication.CreateBuilder(args);\r\n\r\n// ── המחצית הראשונה: רישום שירותים ב-DI Container ──\r\n// כאן רק \"מלמדים\" את האפליקציה איך לייצר כל שירות.\r\n// שום מופע עוד לא נוצר — מופעים נוצרים רק כשמישהו מבקש אותם.\r\n\r\nbuilder.Services.AddSingleton<SingletonProbe>();\r\nbuilder.Services.AddScoped<ScopedProbe>();\r\nbuilder.Services.AddTransient<TransientProbe>();\r\n// #endregion\r\n\r\n// ה-seam: ה-Api מכיר רק את הממשק מה-Core; המימוש מגיע מה-Infrastructure.\r\n// Scoped — מופע אחד לכל בקשה, בדיוק כמו שיהיה DbContext בפרק 03.\r\nbuilder.Services.AddScoped<IProjectRepository, InMemoryProjectRepository>();\r\n// #endregion\r\n\r\nvar app = builder.Build();\r\n\r\n// ── המחצית השנייה: בניית ה-pipeline. הסדר כאן הוא הכול ──\r\n\r\n// middleware 1: לוג לכל בקשה — נכנס ראשון, מסיים אחרון\r\napp.Use(async (context, next) =>\r\n{\r\n    app.Logger.LogInformation(\"{Method} {Path} started\",\r\n        context.Request.Method, context.Request.Path);\r\n\r\n    await next(context);\r\n\r\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\r\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\r\n});\r\n\r\n// middleware 2: מדידת זמן. הכותרת נקבעת בתוך OnStarting,\r\n// כי אחרי שגוף התשובה התחיל לזרום אסור לגעת ב-headers.\r\napp.Use(async (context, next) =>\r\n{\r\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\r\n\r\n    context.Response.OnStarting(() =>\r\n    {\r\n        stopwatch.Stop();\r\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\r\n            stopwatch.ElapsedMilliseconds.ToString());\r\n        return Task.CompletedTask;\r\n    });\r\n\r\n    await next(context);\r\n});\r\n// #endregion\r\n\r\n// ── endpoints: היעד הסופי של המסע ──\r\n\r\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\r\n\r\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\r\n// #endregion\r\n\r\n// ה-endpoint העסקי הראשון: מדבר עם הדומיין דרך הממשק בלבד.\r\n// אין לו מושג אם מאחור יש רשימה בזיכרון או בסיס נתונים — וזו הנקודה.\r\napp.MapGet(\"/api/projects\", async (IProjectRepository projects, CancellationToken ct) =>\r\n{\r\n    var all = await projects.GetAllAsync(ct);\r\n    return Results.Ok(all.Select(p => new { p.Id, p.Name, p.Description }));\r\n});\r\n// #endregion\r\n\r\n// endpoint הגילוי: מזריקים כל probe פעמיים ומשווים מזהים\r\napp.MapGet(\"/di/lifetimes\", (\r\n    SingletonProbe singleton,\r\n    ScopedProbe scopedA,\r\n    ScopedProbe scopedB,\r\n    TransientProbe transientA,\r\n    TransientProbe transientB) => Results.Ok(new\r\n{\r\n    singleton = singleton.Id,\r\n    scopedA = scopedA.Id,\r\n    scopedB = scopedB.Id,\r\n    transientA = transientA.Id,\r\n    transientB = transientB.Id,\r\n}));\r\n// #endregion\r\n\r\napp.Run();\r\n",
           "status": "modified",
           "regions": {
             "step-1.5": {
               "start": 7,
-              "end": 13
+              "end": 88
             },
             "step-2.8": {
-              "start": 15,
-              "end": 17
+              "start": 16,
+              "end": 88
             },
             "step-1.10": {
-              "start": 21,
-              "end": 50
+              "start": 23,
+              "end": 88
             },
             "step-1.11": {
-              "start": 52,
-              "end": 56
+              "start": 55,
+              "end": 88
             },
             "step-2.9": {
-              "start": 58,
-              "end": 64
+              "start": 62,
+              "end": 88
             },
             "step-1.8": {
-              "start": 66,
-              "end": 79
+              "start": 71,
+              "end": 88
             }
           },
           "changedLines": [
             2,
             3,
-            15,
             16,
             17,
             18,
-            58,
-            59,
-            60,
-            61,
+            19,
+            20,
             62,
             63,
             64,
-            65
+            65,
+            66,
+            67,
+            68,
+            69,
+            70
           ]
         },
         "server/TaskForge.Api/Properties/launchSettings.json": {
-          "content": "{\n  \"$schema\": \"https://json.schemastore.org/launchsettings.json\",\n  \"profiles\": {\n    \"http\": {\n      \"commandName\": \"Project\",\n      \"dotnetRunMessages\": true,\n      \"launchBrowser\": false,\n      \"applicationUrl\": \"http://localhost:5080\",\n      \"environmentVariables\": {\n        \"ASPNETCORE_ENVIRONMENT\": \"Development\"\n      }\n    }\n  }\n}\n",
+          "content": "{\r\n  \"$schema\": \"https://json.schemastore.org/launchsettings.json\",\r\n  \"profiles\": {\r\n    \"http\": {\r\n      \"commandName\": \"Project\",\r\n      \"dotnetRunMessages\": true,\r\n      \"launchBrowser\": false,\r\n      \"applicationUrl\": \"http://localhost:5080\",\r\n      \"environmentVariables\": {\r\n        \"ASPNETCORE_ENVIRONMENT\": \"Development\"\r\n      }\r\n    }\r\n  }\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/requests.http": {
-          "content": "@host = http://localhost:5080\n\n### Hello — האם השרת חי?\nGET {{host}}/\n\n### Health check\nGET {{host}}/healthz\n\n### DI lifetimes — הריצו פעמיים והשוו מזהים:\n### singleton זהה בין בקשות, scoped זהה רק בתוך בקשה, transient שונה תמיד\nGET {{host}}/di/lifetimes\n\n### Projects — הבקשה העסקית הראשונה, דרך ה-seam של ה-repository\nGET {{host}}/api/projects\n",
+          "content": "@host = http://localhost:5080\r\n\r\n### Hello — האם השרת חי?\r\nGET {{host}}/\r\n\r\n### Health check\r\nGET {{host}}/healthz\r\n\r\n### DI lifetimes — הריצו פעמיים והשוו מזהים:\r\n### singleton זהה בין בקשות, scoped זהה רק בתוך בקשה, transient שונה תמיד\r\nGET {{host}}/di/lifetimes\r\n\r\n### Projects — הבקשה העסקית הראשונה, דרך ה-seam של ה-repository\r\nGET {{host}}/api/projects\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
+            12,
             13,
-            14,
-            15
+            14
           ]
         },
         "server/TaskForge.Api/Services/LifetimeProbes.cs": {
-          "content": "namespace TaskForge.Api.Services;\n\n// שלושה \"גששים\" זהים לחלוטין — חוץ מאופן הרישום שלהם ב-DI.\n// לכל מופע נולד Guid ברגע היצירה, ולכן המזהה חושף בדיוק\n// מתי ה-Container ייצר מופע חדש ומתי הוא מיחזר קיים.\n\npublic sealed class SingletonProbe\n{\n    public Guid Id { get; } = Guid.NewGuid();\n}\n\npublic sealed class ScopedProbe\n{\n    public Guid Id { get; } = Guid.NewGuid();\n}\n\npublic sealed class TransientProbe\n{\n    public Guid Id { get; } = Guid.NewGuid();\n}\n",
+          "content": "namespace TaskForge.Api.Services;\r\n\r\n// שלושה \"גששים\" זהים לחלוטין — חוץ מאופן הרישום שלהם ב-DI.\r\n// לכל מופע נולד Guid ברגע היצירה, ולכן המזהה חושף בדיוק\r\n// מתי ה-Container ייצר מופע חדש ומתי הוא מיחזר קיים.\r\n\r\npublic sealed class SingletonProbe\r\n{\r\n    public Guid Id { get; } = Guid.NewGuid();\r\n}\r\n\r\npublic sealed class ScopedProbe\r\n{\r\n    public Guid Id { get; } = Guid.NewGuid();\r\n}\r\n\r\npublic sealed class TransientProbe\r\n{\r\n    public Guid Id { get; } = Guid.NewGuid();\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/TaskForge.Api.csproj": {
-          "content": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n  <ItemGroup>\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\n    <ProjectReference Include=\"..\\TaskForge.Infrastructure\\TaskForge.Infrastructure.csproj\" />\n  </ItemGroup>\n\n</Project>\n",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net10.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n  <ItemGroup>\r\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\r\n    <ProjectReference Include=\"..\\TaskForge.Infrastructure\\TaskForge.Infrastructure.csproj\" />\r\n  </ItemGroup>\r\n\r\n</Project>\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -314,7 +320,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Abstractions/IProjectRepository.cs": {
-          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// החוזה מוגדר בדומיין: \"ככה ניגשים לפרויקטים\".\n// מי שמממש אותו ואיך — לא עניינו של ה-Core. זה חוק התלות בפעולה.\npublic interface IProjectRepository\n{\n    Task<IReadOnlyList<Project>> GetAllAsync(CancellationToken cancellationToken = default);\n\n    Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n}\n",
+          "content": "using TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Core.Abstractions;\r\n\r\n// החוזה מוגדר בדומיין: \"ככה ניגשים לפרויקטים\".\r\n// מי שמממש אותו ואיך — לא עניינו של ה-Core. זה חוק התלות בפעולה.\r\npublic interface IProjectRepository\r\n{\r\n    Task<IReadOnlyList<Project>> GetAllAsync(CancellationToken cancellationToken = default);\r\n\r\n    Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -334,7 +340,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Entities/Project.cs": {
-          "content": "namespace TaskForge.Core.Entities;\n\n// הישות הראשונה של הדומיין. שימו לב מה אין כאן:\n// אין JSON, אין HTTP, אין SQL — רק העסק עצמו.\npublic sealed class Project\n{\n    public int Id { get; set; }\n\n    // required: אי אפשר לייצר Project בלי שם — המהדר אוכף את זה\n    public required string Name { get; set; }\n\n    // string? — תיאור הוא אופציונלי במפורש\n    public string? Description { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n}\n",
+          "content": "namespace TaskForge.Core.Entities;\r\n\r\n// הישות הראשונה של הדומיין. שימו לב מה אין כאן:\r\n// אין JSON, אין HTTP, אין SQL — רק העסק עצמו.\r\npublic sealed class Project\r\n{\r\n    public int Id { get; set; }\r\n\r\n    // required: אי אפשר לייצר Project בלי שם — המהדר אוכף את זה\r\n    public required string Name { get; set; }\r\n\r\n    // string? — תיאור הוא אופציונלי במפורש\r\n    public string? Description { get; set; }\r\n\r\n    public DateTime CreatedAtUtc { get; set; }\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -358,7 +364,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/TaskForge.Core.csproj": {
-          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n</Project>\n",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net10.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n</Project>\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -375,7 +381,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Infrastructure/Repositories/InMemoryProjectRepository.cs": {
-          "content": "using TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\n// מימוש ראשון של החוזה: רשימה בזיכרון.\n// בפרק 03 הקובץ הזה יוחלף ב-EF Core + SQLite — וה-Core וה-Api\n// לא ירגישו כלום. בדיוק בשביל הרגע הזה בנינו את ה-seam.\npublic sealed class InMemoryProjectRepository : IProjectRepository\n{\n    private static readonly List<Project> Seed =\n    [\n        new()\n        {\n            Id = 1,\n            Name = \"Website Redesign\",\n            Description = \"Refresh the marketing site end to end\",\n            CreatedAtUtc = new DateTime(2026, 1, 12, 0, 0, 0, DateTimeKind.Utc),\n        },\n        new()\n        {\n            Id = 2,\n            Name = \"Mobile App\",\n            Description = \"iOS + Android companion app\",\n            CreatedAtUtc = new DateTime(2026, 2, 3, 0, 0, 0, DateTimeKind.Utc),\n        },\n        new()\n        {\n            Id = 3,\n            Name = \"Internal Tools\",\n            Description = null,\n            CreatedAtUtc = new DateTime(2026, 3, 21, 0, 0, 0, DateTimeKind.Utc),\n        },\n    ];\n\n    public Task<IReadOnlyList<Project>> GetAllAsync(CancellationToken cancellationToken = default) =>\n        Task.FromResult<IReadOnlyList<Project>>(Seed);\n\n    public Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        Task.FromResult(Seed.FirstOrDefault(p => p.Id == id));\n}\n",
+          "content": "using TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Infrastructure.Repositories;\r\n\r\n// מימוש ראשון של החוזה: רשימה בזיכרון.\r\n// בפרק 03 הקובץ הזה יוחלף ב-EF Core + SQLite — וה-Core וה-Api\r\n// לא ירגישו כלום. בדיוק בשביל הרגע הזה בנינו את ה-seam.\r\npublic sealed class InMemoryProjectRepository : IProjectRepository\r\n{\r\n    private static readonly List<Project> Seed =\r\n    [\r\n        new()\r\n        {\r\n            Id = 1,\r\n            Name = \"Website Redesign\",\r\n            Description = \"Refresh the marketing site end to end\",\r\n            CreatedAtUtc = new DateTime(2026, 1, 12, 0, 0, 0, DateTimeKind.Utc),\r\n        },\r\n        new()\r\n        {\r\n            Id = 2,\r\n            Name = \"Mobile App\",\r\n            Description = \"iOS + Android companion app\",\r\n            CreatedAtUtc = new DateTime(2026, 2, 3, 0, 0, 0, DateTimeKind.Utc),\r\n        },\r\n        new()\r\n        {\r\n            Id = 3,\r\n            Name = \"Internal Tools\",\r\n            Description = null,\r\n            CreatedAtUtc = new DateTime(2026, 3, 21, 0, 0, 0, DateTimeKind.Utc),\r\n        },\r\n    ];\r\n\r\n    public Task<IReadOnlyList<Project>> GetAllAsync(CancellationToken cancellationToken = default) =>\r\n        Task.FromResult<IReadOnlyList<Project>>(Seed);\r\n\r\n    public Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\r\n        Task.FromResult(Seed.FirstOrDefault(p => p.Id == id));\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -424,7 +430,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Infrastructure/TaskForge.Infrastructure.csproj": {
-          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n  <ItemGroup>\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\n  </ItemGroup>\n\n</Project>\n",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net10.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n  <ItemGroup>\r\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\r\n  </ItemGroup>\r\n\r\n</Project>\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -445,7 +451,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.slnx": {
-          "content": "<Solution>\n  <Project Path=\"TaskForge.Api/TaskForge.Api.csproj\" />\n  <Project Path=\"TaskForge.Core/TaskForge.Core.csproj\" />\n  <Project Path=\"TaskForge.Infrastructure/TaskForge.Infrastructure.csproj\" />\n</Solution>\n",
+          "content": "<Solution>\r\n  <Project Path=\"TaskForge.Api/TaskForge.Api.csproj\" />\r\n  <Project Path=\"TaskForge.Core/TaskForge.Core.csproj\" />\r\n  <Project Path=\"TaskForge.Infrastructure/TaskForge.Infrastructure.csproj\" />\r\n</Solution>\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -462,13 +468,13 @@ export const GUIDE_MANIFEST = {
     "ch03": {
       "files": {
         "server/TaskForge.Api/appsettings.Development.json": {
-          "content": "{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Information\"\n    }\n  }\n}\n",
+          "content": "{\r\n  \"Logging\": {\r\n    \"LogLevel\": {\r\n      \"Default\": \"Information\",\r\n      \"Microsoft.AspNetCore\": \"Information\"\r\n    }\r\n  }\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/appsettings.json": {
-          "content": "{\n  \"ConnectionStrings\": {\n    \"Default\": \"Data Source=taskforge.db\"\n  },\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Warning\"\n    }\n  },\n  \"AllowedHosts\": \"*\"\n}\n",
+          "content": "{\r\n  \"ConnectionStrings\": {\r\n    \"Default\": \"Data Source=taskforge.db\"\r\n  },\r\n  \"Logging\": {\r\n    \"LogLevel\": {\r\n      \"Default\": \"Information\",\r\n      \"Microsoft.AspNetCore\": \"Warning\"\r\n    }\r\n  },\r\n  \"AllowedHosts\": \"*\"\r\n}\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -478,83 +484,85 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Api/Program.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Api.Services;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Infrastructure.Data;\nusing TaskForge.Infrastructure.Repositories;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// ── המחצית הראשונה: רישום שירותים ב-DI Container ──\n// כאן רק \"מלמדים\" את האפליקציה איך לייצר כל שירות.\n// שום מופע עוד לא נוצר — מופעים נוצרים רק כשמישהו מבקש אותם.\n\nbuilder.Services.AddSingleton<SingletonProbe>();\nbuilder.Services.AddScoped<ScopedProbe>();\nbuilder.Services.AddTransient<TransientProbe>();\n\n// ה-DbContext נרשם Scoped מעצם הגדרתו: יחידת עבודה אחת לכל בקשה.\n// מחרוזת החיבור מגיעה מהקונפיגורציה — לא מקובעת בקוד.\nbuilder.Services.AddDbContext<TaskForgeDbContext>(options =>\n    options.UseSqlite(builder.Configuration.GetConnectionString(\"Default\")));\n\n// ההבטחה מפרק 02 נפדית: מימוש חדש, אותו חוזה, שורה אחת.\nbuilder.Services.AddScoped<IProjectRepository, EfProjectRepository>();\n\nvar app = builder.Build();\n\n// בעליית האפליקציה: מיישמים מיגרציות שחסרות ומזריעים DB ריק.\n// CreateScope חובה — DbContext הוא Scoped, ומחוץ לבקשה אין scope.\nusing (var scope = app.Services.CreateScope())\n{\n    var db = scope.ServiceProvider.GetRequiredService<TaskForgeDbContext>();\n    await db.Database.MigrateAsync();\n    await DbSeeder.SeedAsync(db);\n}\n\n// ── המחצית השנייה: בניית ה-pipeline. הסדר כאן הוא הכול ──\n\n// middleware 1: לוג לכל בקשה — נכנס ראשון, מסיים אחרון\napp.Use(async (context, next) =>\n{\n    app.Logger.LogInformation(\"{Method} {Path} started\",\n        context.Request.Method, context.Request.Path);\n\n    await next(context);\n\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\n});\n\n// middleware 2: מדידת זמן. הכותרת נקבעת בתוך OnStarting,\n// כי אחרי שגוף התשובה התחיל לזרום אסור לגעת ב-headers.\napp.Use(async (context, next) =>\n{\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\n\n    context.Response.OnStarting(() =>\n    {\n        stopwatch.Stop();\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n        return Task.CompletedTask;\n    });\n\n    await next(context);\n});\n\n// ── endpoints: היעד הסופי של המסע ──\n\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\n\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\n\n// ה-endpoint העסקי הראשון: מדבר עם הדומיין דרך הממשק בלבד.\n// אין לו מושג אם מאחור יש רשימה בזיכרון או בסיס נתונים — וזו הנקודה.\napp.MapGet(\"/api/projects\", async (IProjectRepository projects, CancellationToken ct) =>\n{\n    var all = await projects.GetAllAsync(ct);\n    return Results.Ok(all.Select(p => new { p.Id, p.Name, p.Description }));\n});\n\n// endpoint הגילוי: מזריקים כל probe פעמיים ומשווים מזהים\napp.MapGet(\"/di/lifetimes\", (\n    SingletonProbe singleton,\n    ScopedProbe scopedA,\n    ScopedProbe scopedB,\n    TransientProbe transientA,\n    TransientProbe transientB) => Results.Ok(new\n{\n    singleton = singleton.Id,\n    scopedA = scopedA.Id,\n    scopedB = scopedB.Id,\n    transientA = transientA.Id,\n    transientB = transientB.Id,\n}));\n\napp.Run();\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Api.Services;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Infrastructure.Data;\r\nusing TaskForge.Infrastructure.Repositories;\r\n\r\nvar builder = WebApplication.CreateBuilder(args);\r\n\r\n// ── המחצית הראשונה: רישום שירותים ב-DI Container ──\r\n// כאן רק \"מלמדים\" את האפליקציה איך לייצר כל שירות.\r\n// שום מופע עוד לא נוצר — מופעים נוצרים רק כשמישהו מבקש אותם.\r\n\r\nbuilder.Services.AddSingleton<SingletonProbe>();\r\nbuilder.Services.AddScoped<ScopedProbe>();\r\nbuilder.Services.AddTransient<TransientProbe>();\r\n// #endregion\r\n\r\n// ה-DbContext נרשם Scoped מעצם הגדרתו: יחידת עבודה אחת לכל בקשה.\r\n// מחרוזת החיבור מגיעה מהקונפיגורציה — לא מקובעת בקוד.\r\nbuilder.Services.AddDbContext<TaskForgeDbContext>(options =>\r\n    options.UseSqlite(builder.Configuration.GetConnectionString(\"Default\")));\r\n// #endregion\r\n\r\n// ההבטחה מפרק 02 נפדית: מימוש חדש, אותו חוזה, שורה אחת.\r\nbuilder.Services.AddScoped<IProjectRepository, EfProjectRepository>();\r\n// #endregion\r\n\r\nvar app = builder.Build();\r\n\r\n// בעליית האפליקציה: מיישמים מיגרציות שחסרות ומזריעים DB ריק.\r\n// CreateScope חובה — DbContext הוא Scoped, ומחוץ לבקשה אין scope.\r\nusing (var scope = app.Services.CreateScope())\r\n{\r\n    var db = scope.ServiceProvider.GetRequiredService<TaskForgeDbContext>();\r\n    await db.Database.MigrateAsync();\r\n    await DbSeeder.SeedAsync(db);\r\n}\r\n// #endregion\r\n\r\n// ── המחצית השנייה: בניית ה-pipeline. הסדר כאן הוא הכול ──\r\n\r\n// middleware 1: לוג לכל בקשה — נכנס ראשון, מסיים אחרון\r\napp.Use(async (context, next) =>\r\n{\r\n    app.Logger.LogInformation(\"{Method} {Path} started\",\r\n        context.Request.Method, context.Request.Path);\r\n\r\n    await next(context);\r\n\r\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\r\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\r\n});\r\n\r\n// middleware 2: מדידת זמן. הכותרת נקבעת בתוך OnStarting,\r\n// כי אחרי שגוף התשובה התחיל לזרום אסור לגעת ב-headers.\r\napp.Use(async (context, next) =>\r\n{\r\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\r\n\r\n    context.Response.OnStarting(() =>\r\n    {\r\n        stopwatch.Stop();\r\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\r\n            stopwatch.ElapsedMilliseconds.ToString());\r\n        return Task.CompletedTask;\r\n    });\r\n\r\n    await next(context);\r\n});\r\n// #endregion\r\n\r\n// ── endpoints: היעד הסופי של המסע ──\r\n\r\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\r\n\r\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\r\n// #endregion\r\n\r\n// ה-endpoint העסקי הראשון: מדבר עם הדומיין דרך הממשק בלבד.\r\n// אין לו מושג אם מאחור יש רשימה בזיכרון או בסיס נתונים — וזו הנקודה.\r\napp.MapGet(\"/api/projects\", async (IProjectRepository projects, CancellationToken ct) =>\r\n{\r\n    var all = await projects.GetAllAsync(ct);\r\n    return Results.Ok(all.Select(p => new { p.Id, p.Name, p.Description }));\r\n});\r\n// #endregion\r\n\r\n// endpoint הגילוי: מזריקים כל probe פעמיים ומשווים מזהים\r\napp.MapGet(\"/di/lifetimes\", (\r\n    SingletonProbe singleton,\r\n    ScopedProbe scopedA,\r\n    ScopedProbe scopedB,\r\n    TransientProbe transientA,\r\n    TransientProbe transientB) => Results.Ok(new\r\n{\r\n    singleton = singleton.Id,\r\n    scopedA = scopedA.Id,\r\n    scopedB = scopedB.Id,\r\n    transientA = transientA.Id,\r\n    transientB = transientB.Id,\r\n}));\r\n// #endregion\r\n\r\napp.Run();\r\n",
           "status": "modified",
           "regions": {
             "step-1.5": {
               "start": 9,
-              "end": 15
+              "end": 105
             },
             "step-3.7": {
-              "start": 17,
-              "end": 20
+              "start": 18,
+              "end": 105
             },
             "step-3.13": {
-              "start": 22,
-              "end": 23
+              "start": 24,
+              "end": 105
             },
             "step-3.11": {
-              "start": 27,
-              "end": 34
+              "start": 30,
+              "end": 105
             },
             "step-1.10": {
-              "start": 36,
-              "end": 65
+              "start": 40,
+              "end": 105
             },
             "step-1.11": {
-              "start": 67,
-              "end": 71
+              "start": 72,
+              "end": 105
             },
             "step-2.9": {
-              "start": 73,
-              "end": 79
+              "start": 79,
+              "end": 105
             },
             "step-1.8": {
-              "start": 81,
-              "end": 94
+              "start": 88,
+              "end": 105
             }
           },
           "changedLines": [
             1,
             4,
-            17,
             18,
             19,
             20,
-            22,
-            23,
+            21,
             24,
+            25,
+            26,
             27,
-            28,
-            29,
             30,
             31,
             32,
             33,
             34,
-            35
+            35,
+            36,
+            37,
+            38,
+            39
           ]
         },
         "server/TaskForge.Api/Properties/launchSettings.json": {
-          "content": "{\n  \"$schema\": \"https://json.schemastore.org/launchsettings.json\",\n  \"profiles\": {\n    \"http\": {\n      \"commandName\": \"Project\",\n      \"dotnetRunMessages\": true,\n      \"launchBrowser\": false,\n      \"applicationUrl\": \"http://localhost:5080\",\n      \"environmentVariables\": {\n        \"ASPNETCORE_ENVIRONMENT\": \"Development\"\n      }\n    }\n  }\n}\n",
+          "content": "{\r\n  \"$schema\": \"https://json.schemastore.org/launchsettings.json\",\r\n  \"profiles\": {\r\n    \"http\": {\r\n      \"commandName\": \"Project\",\r\n      \"dotnetRunMessages\": true,\r\n      \"launchBrowser\": false,\r\n      \"applicationUrl\": \"http://localhost:5080\",\r\n      \"environmentVariables\": {\r\n        \"ASPNETCORE_ENVIRONMENT\": \"Development\"\r\n      }\r\n    }\r\n  }\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/requests.http": {
-          "content": "@host = http://localhost:5080\n\n### Hello — האם השרת חי?\nGET {{host}}/\n\n### Health check\nGET {{host}}/healthz\n\n### DI lifetimes — הריצו פעמיים והשוו מזהים:\n### singleton זהה בין בקשות, scoped זהה רק בתוך בקשה, transient שונה תמיד\nGET {{host}}/di/lifetimes\n\n### Projects — הבקשה העסקית הראשונה, דרך ה-seam של ה-repository\nGET {{host}}/api/projects\n",
+          "content": "@host = http://localhost:5080\r\n\r\n### Hello — האם השרת חי?\r\nGET {{host}}/\r\n\r\n### Health check\r\nGET {{host}}/healthz\r\n\r\n### DI lifetimes — הריצו פעמיים והשוו מזהים:\r\n### singleton זהה בין בקשות, scoped זהה רק בתוך בקשה, transient שונה תמיד\r\nGET {{host}}/di/lifetimes\r\n\r\n### Projects — הבקשה העסקית הראשונה, דרך ה-seam של ה-repository\r\nGET {{host}}/api/projects\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/Services/LifetimeProbes.cs": {
-          "content": "namespace TaskForge.Api.Services;\n\n// שלושה \"גששים\" זהים לחלוטין — חוץ מאופן הרישום שלהם ב-DI.\n// לכל מופע נולד Guid ברגע היצירה, ולכן המזהה חושף בדיוק\n// מתי ה-Container ייצר מופע חדש ומתי הוא מיחזר קיים.\n\npublic sealed class SingletonProbe\n{\n    public Guid Id { get; } = Guid.NewGuid();\n}\n\npublic sealed class ScopedProbe\n{\n    public Guid Id { get; } = Guid.NewGuid();\n}\n\npublic sealed class TransientProbe\n{\n    public Guid Id { get; } = Guid.NewGuid();\n}\n",
+          "content": "namespace TaskForge.Api.Services;\r\n\r\n// שלושה \"גששים\" זהים לחלוטין — חוץ מאופן הרישום שלהם ב-DI.\r\n// לכל מופע נולד Guid ברגע היצירה, ולכן המזהה חושף בדיוק\r\n// מתי ה-Container ייצר מופע חדש ומתי הוא מיחזר קיים.\r\n\r\npublic sealed class SingletonProbe\r\n{\r\n    public Guid Id { get; } = Guid.NewGuid();\r\n}\r\n\r\npublic sealed class ScopedProbe\r\n{\r\n    public Guid Id { get; } = Guid.NewGuid();\r\n}\r\n\r\npublic sealed class TransientProbe\r\n{\r\n    public Guid Id { get; } = Guid.NewGuid();\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/TaskForge.Api.csproj": {
-          "content": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n  <ItemGroup>\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\n    <ProjectReference Include=\"..\\TaskForge.Infrastructure\\TaskForge.Infrastructure.csproj\" />\n  </ItemGroup>\n\n  <ItemGroup>\n    <!-- design-time בלבד: מאפשר ל-dotnet ef להריץ מיגרציות דרך הפרויקט הזה -->\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Design\" Version=\"10.0.9\">\n      <PrivateAssets>all</PrivateAssets>\n      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>\n    </PackageReference>\n  </ItemGroup>\n\n</Project>\n",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net10.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n  <ItemGroup>\r\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\r\n    <ProjectReference Include=\"..\\TaskForge.Infrastructure\\TaskForge.Infrastructure.csproj\" />\r\n  </ItemGroup>\r\n\r\n  <ItemGroup>\r\n    <!-- design-time בלבד: מאפשר ל-dotnet ef להריץ מיגרציות דרך הפרויקט הזה -->\r\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Design\" Version=\"10.0.9\">\r\n      <PrivateAssets>all</PrivateAssets>\r\n      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>\r\n    </PackageReference>\r\n  </ItemGroup>\r\n\r\n</Project>\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -569,13 +577,13 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Abstractions/IProjectRepository.cs": {
-          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// החוזה מוגדר בדומיין: \"ככה ניגשים לפרויקטים\".\n// מי שמממש אותו ואיך — לא עניינו של ה-Core. זה חוק התלות בפעולה.\npublic interface IProjectRepository\n{\n    Task<IReadOnlyList<Project>> GetAllAsync(CancellationToken cancellationToken = default);\n\n    Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n}\n",
+          "content": "using TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Core.Abstractions;\r\n\r\n// החוזה מוגדר בדומיין: \"ככה ניגשים לפרויקטים\".\r\n// מי שמממש אותו ואיך — לא עניינו של ה-Core. זה חוק התלות בפעולה.\r\npublic interface IProjectRepository\r\n{\r\n    Task<IReadOnlyList<Project>> GetAllAsync(CancellationToken cancellationToken = default);\r\n\r\n    Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Core/Entities/Project.cs": {
-          "content": "namespace TaskForge.Core.Entities;\n\n// הישות הראשונה של הדומיין. שימו לב מה אין כאן:\n// אין JSON, אין HTTP, אין SQL — רק העסק עצמו.\npublic sealed class Project\n{\n    public int Id { get; set; }\n\n    // required: אי אפשר לייצר Project בלי שם — המהדר אוכף את זה\n    public required string Name { get; set; }\n\n    // string? — תיאור הוא אופציונלי במפורש\n    public string? Description { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    // צד ה\"אחד\" של אחד-לרבים: לפרויקט יש אוסף Issues\n    public List<Issue> Issues { get; set; } = [];\n}\n",
+          "content": "namespace TaskForge.Core.Entities;\r\n\r\n// הישות הראשונה של הדומיין. שימו לב מה אין כאן:\r\n// אין JSON, אין HTTP, אין SQL — רק העסק עצמו.\r\npublic sealed class Project\r\n{\r\n    public int Id { get; set; }\r\n\r\n    // required: אי אפשר לייצר Project בלי שם — המהדר אוכף את זה\r\n    public required string Name { get; set; }\r\n\r\n    // string? — תיאור הוא אופציונלי במפורש\r\n    public string? Description { get; set; }\r\n\r\n    public DateTime CreatedAtUtc { get; set; }\r\n\r\n    // צד ה\"אחד\" של אחד-לרבים: לפרויקט יש אוסף Issues\r\n    public List<Issue> Issues { get; set; } = [];\r\n}\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -585,19 +593,19 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/TaskForge.Core.csproj": {
-          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n</Project>\n",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net10.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n</Project>\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Infrastructure/Repositories/InMemoryProjectRepository.cs": {
-          "content": "using TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\n// מימוש ראשון של החוזה: רשימה בזיכרון.\n// בפרק 03 הקובץ הזה יוחלף ב-EF Core + SQLite — וה-Core וה-Api\n// לא ירגישו כלום. בדיוק בשביל הרגע הזה בנינו את ה-seam.\npublic sealed class InMemoryProjectRepository : IProjectRepository\n{\n    private static readonly List<Project> Seed =\n    [\n        new()\n        {\n            Id = 1,\n            Name = \"Website Redesign\",\n            Description = \"Refresh the marketing site end to end\",\n            CreatedAtUtc = new DateTime(2026, 1, 12, 0, 0, 0, DateTimeKind.Utc),\n        },\n        new()\n        {\n            Id = 2,\n            Name = \"Mobile App\",\n            Description = \"iOS + Android companion app\",\n            CreatedAtUtc = new DateTime(2026, 2, 3, 0, 0, 0, DateTimeKind.Utc),\n        },\n        new()\n        {\n            Id = 3,\n            Name = \"Internal Tools\",\n            Description = null,\n            CreatedAtUtc = new DateTime(2026, 3, 21, 0, 0, 0, DateTimeKind.Utc),\n        },\n    ];\n\n    public Task<IReadOnlyList<Project>> GetAllAsync(CancellationToken cancellationToken = default) =>\n        Task.FromResult<IReadOnlyList<Project>>(Seed);\n\n    public Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        Task.FromResult(Seed.FirstOrDefault(p => p.Id == id));\n}\n",
+          "content": "using TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Infrastructure.Repositories;\r\n\r\n// מימוש ראשון של החוזה: רשימה בזיכרון.\r\n// בפרק 03 הקובץ הזה יוחלף ב-EF Core + SQLite — וה-Core וה-Api\r\n// לא ירגישו כלום. בדיוק בשביל הרגע הזה בנינו את ה-seam.\r\npublic sealed class InMemoryProjectRepository : IProjectRepository\r\n{\r\n    private static readonly List<Project> Seed =\r\n    [\r\n        new()\r\n        {\r\n            Id = 1,\r\n            Name = \"Website Redesign\",\r\n            Description = \"Refresh the marketing site end to end\",\r\n            CreatedAtUtc = new DateTime(2026, 1, 12, 0, 0, 0, DateTimeKind.Utc),\r\n        },\r\n        new()\r\n        {\r\n            Id = 2,\r\n            Name = \"Mobile App\",\r\n            Description = \"iOS + Android companion app\",\r\n            CreatedAtUtc = new DateTime(2026, 2, 3, 0, 0, 0, DateTimeKind.Utc),\r\n        },\r\n        new()\r\n        {\r\n            Id = 3,\r\n            Name = \"Internal Tools\",\r\n            Description = null,\r\n            CreatedAtUtc = new DateTime(2026, 3, 21, 0, 0, 0, DateTimeKind.Utc),\r\n        },\r\n    ];\r\n\r\n    public Task<IReadOnlyList<Project>> GetAllAsync(CancellationToken cancellationToken = default) =>\r\n        Task.FromResult<IReadOnlyList<Project>>(Seed);\r\n\r\n    public Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\r\n        Task.FromResult(Seed.FirstOrDefault(p => p.Id == id));\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Infrastructure/TaskForge.Infrastructure.csproj": {
-          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n  <ItemGroup>\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\n  </ItemGroup>\n\n  <ItemGroup>\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Sqlite\" Version=\"10.0.9\" />\n  </ItemGroup>\n\n</Project>\n",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net10.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n  <ItemGroup>\r\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\r\n  </ItemGroup>\r\n\r\n  <ItemGroup>\r\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Sqlite\" Version=\"10.0.9\" />\r\n  </ItemGroup>\r\n\r\n</Project>\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -608,13 +616,13 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.slnx": {
-          "content": "<Solution>\n  <Project Path=\"TaskForge.Api/TaskForge.Api.csproj\" />\n  <Project Path=\"TaskForge.Core/TaskForge.Core.csproj\" />\n  <Project Path=\"TaskForge.Infrastructure/TaskForge.Infrastructure.csproj\" />\n</Solution>\n",
+          "content": "<Solution>\r\n  <Project Path=\"TaskForge.Api/TaskForge.Api.csproj\" />\r\n  <Project Path=\"TaskForge.Core/TaskForge.Core.csproj\" />\r\n  <Project Path=\"TaskForge.Infrastructure/TaskForge.Infrastructure.csproj\" />\r\n</Solution>\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/.config/dotnet-tools.json": {
-          "content": "{\n  \"version\": 1,\n  \"isRoot\": true,\n  \"tools\": {\n    \"dotnet-ef\": {\n      \"version\": \"10.0.9\",\n      \"commands\": [\"dotnet-ef\"]\n    }\n  }\n}\n",
+          "content": "{\r\n  \"version\": 1,\r\n  \"isRoot\": true,\r\n  \"tools\": {\r\n    \"dotnet-ef\": {\r\n      \"version\": \"10.0.9\",\r\n      \"commands\": [\"dotnet-ef\"]\r\n    }\r\n  }\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -632,7 +640,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Entities/Issue.cs": {
-          "content": "namespace TaskForge.Core.Entities;\n\n// enum = שפת הדומיין: סט ערכים סגור שהמהדר אוכף.\n// \"Open\" שגוי-איות פשוט לא יתקמפל — לעומת string חופשי.\n\npublic enum IssueStatus\n{\n    Open,\n    InProgress,\n    Done,\n}\n\npublic enum IssuePriority\n{\n    Low,\n    Medium,\n    High,\n    Critical,\n}\n\npublic sealed class Issue\n{\n    public int Id { get; set; }\n\n    public required string Title { get; set; }\n\n    public string? Description { get; set; }\n\n    public IssueStatus Status { get; set; } = IssueStatus.Open;\n\n    public IssuePriority Priority { get; set; } = IssuePriority.Medium;\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    // הזוג הקלאסי: מפתח זר + navigation property.\n    // ה-FK הוא העמודה בטבלה; ה-nav הוא הדרך של הקוד \"ללכת\" לפרויקט.\n    public int ProjectId { get; set; }\n    public Project? Project { get; set; }\n\n    // many-to-many: ‏EF יבנה טבלת חיבור לבד (skip navigation)\n    public List<Label> Labels { get; set; } = [];\n}\n",
+          "content": "namespace TaskForge.Core.Entities;\r\n\r\n// enum = שפת הדומיין: סט ערכים סגור שהמהדר אוכף.\r\n// \"Open\" שגוי-איות פשוט לא יתקמפל — לעומת string חופשי.\r\n\r\npublic enum IssueStatus\r\n{\r\n    Open,\r\n    InProgress,\r\n    Done,\r\n}\r\n\r\npublic enum IssuePriority\r\n{\r\n    Low,\r\n    Medium,\r\n    High,\r\n    Critical,\r\n}\r\n\r\npublic sealed class Issue\r\n{\r\n    public int Id { get; set; }\r\n\r\n    public required string Title { get; set; }\r\n\r\n    public string? Description { get; set; }\r\n\r\n    public IssueStatus Status { get; set; } = IssueStatus.Open;\r\n\r\n    public IssuePriority Priority { get; set; } = IssuePriority.Medium;\r\n\r\n    public DateTime CreatedAtUtc { get; set; }\r\n\r\n    // הזוג הקלאסי: מפתח זר + navigation property.\r\n    // ה-FK הוא העמודה בטבלה; ה-nav הוא הדרך של הקוד \"ללכת\" לפרויקט.\r\n    public int ProjectId { get; set; }\r\n    public Project? Project { get; set; }\r\n\r\n    // many-to-many: ‏EF יבנה טבלת חיבור לבד (skip navigation)\r\n    public List<Label> Labels { get; set; } = [];\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -682,7 +690,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Entities/Label.cs": {
-          "content": "namespace TaskForge.Core.Entities;\n\npublic sealed class Label\n{\n    public int Id { get; set; }\n\n    public required string Name { get; set; }\n\n    // צבע תצוגה הקסדצימלי, למשל \"#f87171\" — אופציונלי\n    public string? Color { get; set; }\n\n    // הצד השני של ה-many-to-many עם Issue\n    public List<Issue> Issues { get; set; } = [];\n}\n",
+          "content": "namespace TaskForge.Core.Entities;\r\n\r\npublic sealed class Label\r\n{\r\n    public int Id { get; set; }\r\n\r\n    public required string Name { get; set; }\r\n\r\n    // צבע תצוגה הקסדצימלי, למשל \"#f87171\" — אופציונלי\r\n    public string? Color { get; set; }\r\n\r\n    // הצד השני של ה-many-to-many עם Issue\r\n    public List<Issue> Issues { get; set; } = [];\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -704,7 +712,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Infrastructure/Data/DbSeeder.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Infrastructure.Data;\n\n// נתוני פיתוח: רצים פעם אחת, רק על DB ריק.\n// אותם שלושה פרויקטים מהפרק הקודם — עכשיו עם Issues ותוויות.\npublic static class DbSeeder\n{\n    public static async Task SeedAsync(TaskForgeDbContext db)\n    {\n        if (await db.Projects.AnyAsync())\n        {\n            return; // יש כבר נתונים — לא נוגעים\n        }\n\n        var bug = new Label { Name = \"bug\", Color = \"#f87171\" };\n        var feature = new Label { Name = \"feature\", Color = \"#4ade80\" };\n        var design = new Label { Name = \"design\", Color = \"#c084fc\" };\n\n        var website = new Project\n        {\n            Name = \"Website Redesign\",\n            Description = \"Refresh the marketing site end to end\",\n            CreatedAtUtc = new DateTime(2026, 1, 12, 0, 0, 0, DateTimeKind.Utc),\n            Issues =\n            [\n                new Issue\n                {\n                    Title = \"Fix login redirect loop\",\n                    Description = \"Users bounce between /login and /home\",\n                    Status = IssueStatus.InProgress,\n                    Priority = IssuePriority.Critical,\n                    CreatedAtUtc = new DateTime(2026, 1, 14, 9, 0, 0, DateTimeKind.Utc),\n                    Labels = [bug],\n                },\n                new Issue\n                {\n                    Title = \"New hero section\",\n                    Status = IssueStatus.Open,\n                    Priority = IssuePriority.Medium,\n                    CreatedAtUtc = new DateTime(2026, 1, 20, 11, 30, 0, DateTimeKind.Utc),\n                    Labels = [feature, design],\n                },\n            ],\n        };\n\n        var mobile = new Project\n        {\n            Name = \"Mobile App\",\n            Description = \"iOS + Android companion app\",\n            CreatedAtUtc = new DateTime(2026, 2, 3, 0, 0, 0, DateTimeKind.Utc),\n            Issues =\n            [\n                new Issue\n                {\n                    Title = \"Push notifications opt-in\",\n                    Status = IssueStatus.Open,\n                    Priority = IssuePriority.High,\n                    CreatedAtUtc = new DateTime(2026, 2, 10, 8, 15, 0, DateTimeKind.Utc),\n                    Labels = [feature],\n                },\n                new Issue\n                {\n                    Title = \"Crash on cold start (Android 15)\",\n                    Status = IssueStatus.Done,\n                    Priority = IssuePriority.Critical,\n                    CreatedAtUtc = new DateTime(2026, 2, 12, 16, 45, 0, DateTimeKind.Utc),\n                    Labels = [bug],\n                },\n            ],\n        };\n\n        var tools = new Project\n        {\n            Name = \"Internal Tools\",\n            Description = null,\n            CreatedAtUtc = new DateTime(2026, 3, 21, 0, 0, 0, DateTimeKind.Utc),\n        };\n\n        // מוסיפים רק את השורשים — ה-Change Tracker מגלה את כל הגרף\n        // (Issues, ‏Labels וטבלת החיבור) ושומר הכול ב-SaveChanges אחד.\n        db.Projects.AddRange(website, mobile, tools);\n        await db.SaveChangesAsync();\n    }\n}\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Infrastructure.Data;\r\n\r\n// נתוני פיתוח: רצים פעם אחת, רק על DB ריק.\r\n// אותם שלושה פרויקטים מהפרק הקודם — עכשיו עם Issues ותוויות.\r\npublic static class DbSeeder\r\n{\r\n    public static async Task SeedAsync(TaskForgeDbContext db)\r\n    {\r\n        if (await db.Projects.AnyAsync())\r\n        {\r\n            return; // יש כבר נתונים — לא נוגעים\r\n        }\r\n\r\n        var bug = new Label { Name = \"bug\", Color = \"#f87171\" };\r\n        var feature = new Label { Name = \"feature\", Color = \"#4ade80\" };\r\n        var design = new Label { Name = \"design\", Color = \"#c084fc\" };\r\n\r\n        var website = new Project\r\n        {\r\n            Name = \"Website Redesign\",\r\n            Description = \"Refresh the marketing site end to end\",\r\n            CreatedAtUtc = new DateTime(2026, 1, 12, 0, 0, 0, DateTimeKind.Utc),\r\n            Issues =\r\n            [\r\n                new Issue\r\n                {\r\n                    Title = \"Fix login redirect loop\",\r\n                    Description = \"Users bounce between /login and /home\",\r\n                    Status = IssueStatus.InProgress,\r\n                    Priority = IssuePriority.Critical,\r\n                    CreatedAtUtc = new DateTime(2026, 1, 14, 9, 0, 0, DateTimeKind.Utc),\r\n                    Labels = [bug],\r\n                },\r\n                new Issue\r\n                {\r\n                    Title = \"New hero section\",\r\n                    Status = IssueStatus.Open,\r\n                    Priority = IssuePriority.Medium,\r\n                    CreatedAtUtc = new DateTime(2026, 1, 20, 11, 30, 0, DateTimeKind.Utc),\r\n                    Labels = [feature, design],\r\n                },\r\n            ],\r\n        };\r\n\r\n        var mobile = new Project\r\n        {\r\n            Name = \"Mobile App\",\r\n            Description = \"iOS + Android companion app\",\r\n            CreatedAtUtc = new DateTime(2026, 2, 3, 0, 0, 0, DateTimeKind.Utc),\r\n            Issues =\r\n            [\r\n                new Issue\r\n                {\r\n                    Title = \"Push notifications opt-in\",\r\n                    Status = IssueStatus.Open,\r\n                    Priority = IssuePriority.High,\r\n                    CreatedAtUtc = new DateTime(2026, 2, 10, 8, 15, 0, DateTimeKind.Utc),\r\n                    Labels = [feature],\r\n                },\r\n                new Issue\r\n                {\r\n                    Title = \"Crash on cold start (Android 15)\",\r\n                    Status = IssueStatus.Done,\r\n                    Priority = IssuePriority.Critical,\r\n                    CreatedAtUtc = new DateTime(2026, 2, 12, 16, 45, 0, DateTimeKind.Utc),\r\n                    Labels = [bug],\r\n                },\r\n            ],\r\n        };\r\n\r\n        var tools = new Project\r\n        {\r\n            Name = \"Internal Tools\",\r\n            Description = null,\r\n            CreatedAtUtc = new DateTime(2026, 3, 21, 0, 0, 0, DateTimeKind.Utc),\r\n        };\r\n\r\n        // מוסיפים רק את השורשים — ה-Change Tracker מגלה את כל הגרף\r\n        // (Issues, ‏Labels וטבלת החיבור) ושומר הכול ב-SaveChanges אחד.\r\n        db.Projects.AddRange(website, mobile, tools);\r\n        await db.SaveChangesAsync();\r\n    }\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -798,12 +806,12 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Infrastructure/Data/TaskForgeDbContext.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Infrastructure.Data;\n\n// ה-DbContext הוא יחידת העבודה: צוהר אחד ל-DB לכל בקשה,\n// שעוקב אחרי כל ישות שהוא הגיש ויודע לתרגם שינויים ל-SQL.\npublic sealed class TaskForgeDbContext(DbContextOptions<TaskForgeDbContext> options)\n    : DbContext(options)\n{\n    // כל DbSet = טבלה. Set<T>() במקום setter — אין מצב ביניים null.\n    public DbSet<Project> Projects => Set<Project>();\n    public DbSet<Issue> Issues => Set<Issue>();\n    public DbSet<Label> Labels => Set<Label>();\n\n    // Fluent API: כל חוקי המיפוי כאן, והישויות ב-Core נשארות נקיות —\n    // בלי attributes של EF. זה חוק התלות מפרק 02, מיושם על שכבת הנתונים.\n    protected override void OnModelCreating(ModelBuilder modelBuilder)\n    {\n        modelBuilder.Entity<Project>(project =>\n        {\n            project.Property(p => p.Name)\n                   .HasMaxLength(120)\n                   .IsRequired();\n\n            // אחד-לרבים: מחיקת פרויקט גוררת את ה-Issues שלו\n            project.HasMany(p => p.Issues)\n                   .WithOne(i => i.Project!)\n                   .HasForeignKey(i => i.ProjectId)\n                   .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<Issue>(issue =>\n        {\n            issue.Property(i => i.Title)\n                 .HasMaxLength(200)\n                 .IsRequired();\n\n            // enum נשמר כטקסט קריא ב-DB (\"Open\"), לא כמספר קסם (0)\n            issue.Property(i => i.Status)\n                 .HasConversion<string>()\n                 .HasMaxLength(20);\n\n            issue.Property(i => i.Priority)\n                 .HasConversion<string>()\n                 .HasMaxLength(20);\n\n            // האינדקס של שאילתת הלוח: \"כל ה-Issues הפתוחים בפרויקט X\"\n            issue.HasIndex(i => new { i.ProjectId, i.Status });\n\n            // many-to-many: ‏EF מסיק טבלת חיבור IssueLabel לבד\n            issue.HasMany(i => i.Labels)\n                 .WithMany(l => l.Issues);\n        });\n\n        modelBuilder.Entity<Label>(label =>\n        {\n            label.Property(l => l.Name)\n                 .HasMaxLength(40)\n                 .IsRequired();\n\n            // אין שתי תוויות באותו שם\n            label.HasIndex(l => l.Name).IsUnique();\n        });\n    }\n}\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Infrastructure.Data;\r\n\r\n// ה-DbContext הוא יחידת העבודה: צוהר אחד ל-DB לכל בקשה,\r\n// שעוקב אחרי כל ישות שהוא הגיש ויודע לתרגם שינויים ל-SQL.\r\npublic sealed class TaskForgeDbContext(DbContextOptions<TaskForgeDbContext> options)\r\n    : DbContext(options)\r\n{\r\n    // כל DbSet = טבלה. Set<T>() במקום setter — אין מצב ביניים null.\r\n    public DbSet<Project> Projects => Set<Project>();\r\n    public DbSet<Issue> Issues => Set<Issue>();\r\n    public DbSet<Label> Labels => Set<Label>();\r\n\r\n    // Fluent API: כל חוקי המיפוי כאן, והישויות ב-Core נשארות נקיות —\r\n    // בלי attributes של EF. זה חוק התלות מפרק 02, מיושם על שכבת הנתונים.\r\n    protected override void OnModelCreating(ModelBuilder modelBuilder)\r\n    {\r\n        modelBuilder.Entity<Project>(project =>\r\n        {\r\n            project.Property(p => p.Name)\r\n                   .HasMaxLength(120)\r\n                   .IsRequired();\r\n\r\n            // אחד-לרבים: מחיקת פרויקט גוררת את ה-Issues שלו\r\n            project.HasMany(p => p.Issues)\r\n                   .WithOne(i => i.Project!)\r\n                   .HasForeignKey(i => i.ProjectId)\r\n                   .OnDelete(DeleteBehavior.Cascade);\r\n        });\r\n\r\n        modelBuilder.Entity<Issue>(issue =>\r\n        {\r\n            issue.Property(i => i.Title)\r\n                 .HasMaxLength(200)\r\n                 .IsRequired();\r\n\r\n            // enum נשמר כטקסט קריא ב-DB (\"Open\"), לא כמספר קסם (0)\r\n            issue.Property(i => i.Status)\r\n                 .HasConversion<string>()\r\n                 .HasMaxLength(20);\r\n\r\n            issue.Property(i => i.Priority)\r\n                 .HasConversion<string>()\r\n                 .HasMaxLength(20);\r\n\r\n            // האינדקס של שאילתת הלוח: \"כל ה-Issues הפתוחים בפרויקט X\"\r\n            issue.HasIndex(i => new { i.ProjectId, i.Status });\r\n\r\n            // many-to-many: ‏EF מסיק טבלת חיבור IssueLabel לבד\r\n            issue.HasMany(i => i.Labels)\r\n                 .WithMany(l => l.Issues);\r\n        });\r\n\r\n        modelBuilder.Entity<Label>(label =>\r\n        {\r\n            label.Property(l => l.Name)\r\n                 .HasMaxLength(40)\r\n                 .IsRequired();\r\n\r\n            // אין שתי תוויות באותו שם\r\n            label.HasIndex(l => l.Name).IsUnique();\r\n        });\r\n    }\r\n    // #endregion\r\n}\r\n",
           "status": "added",
           "regions": {
             "step-3.6": {
               "start": 16,
-              "end": 65
+              "end": 68
             }
           },
           "changedLines": [
@@ -873,7 +881,8 @@ export const GUIDE_MANIFEST = {
             64,
             65,
             66,
-            67
+            67,
+            68
           ]
         },
         "server/TaskForge.Infrastructure/Migrations/20260610091413_InitialCreate.cs": {
@@ -1326,7 +1335,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Infrastructure/Repositories/EfProjectRepository.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\n// המימוש השני של אותו חוזה מפרק 02 — הפעם מול DB אמיתי.\n// ה-Core וה-endpoint לא יודעים שמשהו השתנה. זה ה-seam משלם.\npublic sealed class EfProjectRepository(TaskForgeDbContext db) : IProjectRepository\n{\n    public async Task<IReadOnlyList<Project>> GetAllAsync(CancellationToken cancellationToken = default) =>\n        await db.Projects\n            .AsNoTracking() // קריאה בלבד: בלי מעקב, בלי עלות זיכרון מיותרת\n            .OrderBy(p => p.Id)\n            .ToListAsync(cancellationToken);\n\n    public Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Projects\n            .AsNoTracking()\n            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);\n}\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Entities;\r\nusing TaskForge.Infrastructure.Data;\r\n\r\nnamespace TaskForge.Infrastructure.Repositories;\r\n\r\n// המימוש השני של אותו חוזה מפרק 02 — הפעם מול DB אמיתי.\r\n// ה-Core וה-endpoint לא יודעים שמשהו השתנה. זה ה-seam משלם.\r\npublic sealed class EfProjectRepository(TaskForgeDbContext db) : IProjectRepository\r\n{\r\n    public async Task<IReadOnlyList<Project>> GetAllAsync(CancellationToken cancellationToken = default) =>\r\n        await db.Projects\r\n            .AsNoTracking() // קריאה בלבד: בלי מעקב, בלי עלות זיכרון מיותרת\r\n            .OrderBy(p => p.Id)\r\n            .ToListAsync(cancellationToken);\r\n\r\n    public Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\r\n        db.Projects\r\n            .AsNoTracking()\r\n            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -1360,56 +1369,56 @@ export const GUIDE_MANIFEST = {
     "ch04": {
       "files": {
         "server/TaskForge.Api/appsettings.Development.json": {
-          "content": "{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Information\"\n    }\n  }\n}\n",
+          "content": "{\r\n  \"Logging\": {\r\n    \"LogLevel\": {\r\n      \"Default\": \"Information\",\r\n      \"Microsoft.AspNetCore\": \"Information\"\r\n    }\r\n  }\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/appsettings.json": {
-          "content": "{\n  \"ConnectionStrings\": {\n    \"Default\": \"Data Source=taskforge.db\"\n  },\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Warning\"\n    }\n  },\n  \"AllowedHosts\": \"*\"\n}\n",
+          "content": "{\r\n  \"ConnectionStrings\": {\r\n    \"Default\": \"Data Source=taskforge.db\"\r\n  },\r\n  \"Logging\": {\r\n    \"LogLevel\": {\r\n      \"Default\": \"Information\",\r\n      \"Microsoft.AspNetCore\": \"Warning\"\r\n    }\r\n  },\r\n  \"AllowedHosts\": \"*\"\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/Program.cs": {
-          "content": "using System.Text.Json.Serialization;\nusing Microsoft.EntityFrameworkCore;\nusing TaskForge.Api.Endpoints;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Infrastructure.Data;\nusing TaskForge.Infrastructure.Repositories;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// enums נכנסים ויוצאים כטקסט (\"Open\") בכל ה-API — הגדרה אחת, לכולם\nbuilder.Services.ConfigureHttpJsonOptions(options =>\n    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));\n\n// ה-DbContext נרשם Scoped מעצם הגדרתו: יחידת עבודה אחת לכל בקשה.\n// מחרוזת החיבור מגיעה מהקונפיגורציה — לא מקובעת בקוד.\nbuilder.Services.AddDbContext<TaskForgeDbContext>(options =>\n    options.UseSqlite(builder.Configuration.GetConnectionString(\"Default\")));\n\n// שני ה-seams של הדומיין: חוזה מה-Core, מימוש מה-Infrastructure\nbuilder.Services.AddScoped<IProjectRepository, EfProjectRepository>();\nbuilder.Services.AddScoped<IIssueRepository, EfIssueRepository>();\n\n// הוולידציה המובנית של .NET 10: כל DTO מסומן ב-DataAnnotations נבדק\n// אוטומטית לפני ה-handler; כישלון מחזיר 400 ValidationProblem אחיד.\nbuilder.Services.AddValidation();\n\n// ProblemDetails (RFC 7807) כברירת מחדל לכל שגיאה וסטטוס ללא גוף\nbuilder.Services.AddProblemDetails();\n\nbuilder.Services.AddOpenApi();\n\nvar app = builder.Build();\n\n// בעליית האפליקציה: מיישמים מיגרציות שחסרות ומזריעים DB ריק.\n// CreateScope חובה — DbContext הוא Scoped, ומחוץ לבקשה אין scope.\nusing (var scope = app.Services.CreateScope())\n{\n    var db = scope.ServiceProvider.GetRequiredService<TaskForgeDbContext>();\n    await db.Database.MigrateAsync();\n    await DbSeeder.SeedAsync(db);\n}\n\n// העוטפים החיצוניים: חריגה לא מטופלת הופכת ל-500 ProblemDetails,\n// וכל תשובת סטטוס בלי גוף (כמו 404 של routing) מקבלת גוף אחיד.\napp.UseExceptionHandler();\napp.UseStatusCodePages();\n\n// ── ה-pipeline המוכר מפרק 01: לוגים ומדידת זמן ──\n\napp.Use(async (context, next) =>\n{\n    app.Logger.LogInformation(\"{Method} {Path} started\",\n        context.Request.Method, context.Request.Path);\n\n    await next(context);\n\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\n});\n\napp.Use(async (context, next) =>\n{\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\n\n    context.Response.OnStarting(() =>\n    {\n        stopwatch.Stop();\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n        return Task.CompletedTask;\n    });\n\n    await next(context);\n});\n\n// תיאור ה-API נוצר מהקוד עצמו — בסביבת פיתוח בלבד\nif (app.Environment.IsDevelopment())\n{\n    app.MapOpenApi(); // GET /openapi/v1.json\n}\n\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\n\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\n\n// כל ה-API העסקי — מאורגן בקבצים לפי פיצ׳ר\napp.MapProjectEndpoints();\napp.MapIssueEndpoints();\n\napp.Run();\n",
+          "content": "using System.Text.Json.Serialization;\r\nusing Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Api.Endpoints;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Infrastructure.Data;\r\nusing TaskForge.Infrastructure.Repositories;\r\n\r\nvar builder = WebApplication.CreateBuilder(args);\r\n\r\n// enums נכנסים ויוצאים כטקסט (\"Open\") בכל ה-API — הגדרה אחת, לכולם\r\nbuilder.Services.ConfigureHttpJsonOptions(options =>\r\n    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));\r\n// #endregion\r\n\r\n// ה-DbContext נרשם Scoped מעצם הגדרתו: יחידת עבודה אחת לכל בקשה.\r\n// מחרוזת החיבור מגיעה מהקונפיגורציה — לא מקובעת בקוד.\r\nbuilder.Services.AddDbContext<TaskForgeDbContext>(options =>\r\n    options.UseSqlite(builder.Configuration.GetConnectionString(\"Default\")));\r\n// #endregion\r\n\r\n// שני ה-seams של הדומיין: חוזה מה-Core, מימוש מה-Infrastructure\r\nbuilder.Services.AddScoped<IProjectRepository, EfProjectRepository>();\r\nbuilder.Services.AddScoped<IIssueRepository, EfIssueRepository>();\r\n// #endregion\r\n\r\n// הוולידציה המובנית של .NET 10: כל DTO מסומן ב-DataAnnotations נבדק\r\n// אוטומטית לפני ה-handler; כישלון מחזיר 400 ValidationProblem אחיד.\r\nbuilder.Services.AddValidation();\r\n// #endregion\r\n\r\n// ProblemDetails (RFC 7807) כברירת מחדל לכל שגיאה וסטטוס ללא גוף\r\nbuilder.Services.AddProblemDetails();\r\n\r\nbuilder.Services.AddOpenApi();\r\n\r\nvar app = builder.Build();\r\n\r\n// בעליית האפליקציה: מיישמים מיגרציות שחסרות ומזריעים DB ריק.\r\n// CreateScope חובה — DbContext הוא Scoped, ומחוץ לבקשה אין scope.\r\nusing (var scope = app.Services.CreateScope())\r\n{\r\n    var db = scope.ServiceProvider.GetRequiredService<TaskForgeDbContext>();\r\n    await db.Database.MigrateAsync();\r\n    await DbSeeder.SeedAsync(db);\r\n}\r\n// #endregion\r\n\r\n// העוטפים החיצוניים: חריגה לא מטופלת הופכת ל-500 ProblemDetails,\r\n// וכל תשובת סטטוס בלי גוף (כמו 404 של routing) מקבלת גוף אחיד.\r\napp.UseExceptionHandler();\r\napp.UseStatusCodePages();\r\n// #endregion\r\n\r\n// ── ה-pipeline המוכר מפרק 01: לוגים ומדידת זמן ──\r\n\r\napp.Use(async (context, next) =>\r\n{\r\n    app.Logger.LogInformation(\"{Method} {Path} started\",\r\n        context.Request.Method, context.Request.Path);\r\n\r\n    await next(context);\r\n\r\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\r\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\r\n});\r\n\r\napp.Use(async (context, next) =>\r\n{\r\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\r\n\r\n    context.Response.OnStarting(() =>\r\n    {\r\n        stopwatch.Stop();\r\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\r\n            stopwatch.ElapsedMilliseconds.ToString());\r\n        return Task.CompletedTask;\r\n    });\r\n\r\n    await next(context);\r\n});\r\n// #endregion\r\n\r\n// תיאור ה-API נוצר מהקוד עצמו — בסביבת פיתוח בלבד\r\nif (app.Environment.IsDevelopment())\r\n{\r\n    app.MapOpenApi(); // GET /openapi/v1.json\r\n}\r\n// #endregion\r\n\r\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\r\n\r\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\r\n\r\n// כל ה-API העסקי — מאורגן בקבצים לפי פיצ׳ר\r\napp.MapProjectEndpoints();\r\napp.MapIssueEndpoints();\r\n// #endregion\r\n\r\napp.Run();\r\n",
           "status": "modified",
           "regions": {
             "step-4.2": {
               "start": 10,
-              "end": 12
+              "end": 100
             },
             "step-3.7": {
-              "start": 14,
-              "end": 17
+              "start": 15,
+              "end": 100
             },
             "step-4.4": {
-              "start": 19,
-              "end": 21
+              "start": 21,
+              "end": 100
             },
             "step-4.9": {
-              "start": 23,
-              "end": 25
+              "start": 26,
+              "end": 100
             },
             "step-3.11": {
-              "start": 34,
-              "end": 41
+              "start": 38,
+              "end": 100
             },
             "step-4.10": {
-              "start": 43,
-              "end": 46
+              "start": 48,
+              "end": 100
             },
             "step-1.10": {
-              "start": 48,
-              "end": 74
+              "start": 54,
+              "end": 100
             },
             "step-4.17": {
-              "start": 76,
-              "end": 80
+              "start": 83,
+              "end": 100
             },
             "step-4.16": {
-              "start": 82,
-              "end": 88
+              "start": 90,
+              "end": 100
             }
           },
           "changedLines": [
@@ -1418,46 +1427,50 @@ export const GUIDE_MANIFEST = {
             10,
             11,
             12,
-            19,
             21,
             23,
-            24,
-            25,
             26,
             27,
             28,
             29,
             30,
             31,
-            43,
-            44,
-            45,
-            46,
+            32,
+            33,
+            34,
+            35,
             48,
             49,
-            76,
-            77,
-            78,
-            79,
-            80,
+            50,
+            51,
+            52,
+            54,
+            55,
+            83,
+            84,
+            85,
             86,
             87,
-            88
+            88,
+            94,
+            95,
+            96
           ]
         },
         "server/TaskForge.Api/Properties/launchSettings.json": {
-          "content": "{\n  \"$schema\": \"https://json.schemastore.org/launchsettings.json\",\n  \"profiles\": {\n    \"http\": {\n      \"commandName\": \"Project\",\n      \"dotnetRunMessages\": true,\n      \"launchBrowser\": false,\n      \"applicationUrl\": \"http://localhost:5080\",\n      \"environmentVariables\": {\n        \"ASPNETCORE_ENVIRONMENT\": \"Development\"\n      }\n    }\n  }\n}\n",
+          "content": "{\r\n  \"$schema\": \"https://json.schemastore.org/launchsettings.json\",\r\n  \"profiles\": {\r\n    \"http\": {\r\n      \"commandName\": \"Project\",\r\n      \"dotnetRunMessages\": true,\r\n      \"launchBrowser\": false,\r\n      \"applicationUrl\": \"http://localhost:5080\",\r\n      \"environmentVariables\": {\r\n        \"ASPNETCORE_ENVIRONMENT\": \"Development\"\r\n      }\r\n    }\r\n  }\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/requests.http": {
-          "content": "@host = http://localhost:5080\n\n### Hello — האם השרת חי?\nGET {{host}}/\n\n### Health check\nGET {{host}}/healthz\n\n### ─────────── Projects ───────────\n\n### רשימת פרויקטים עם ספירת Issues פתוחים (projection)\nGET {{host}}/api/projects\n\n### פרויקט בודד\nGET {{host}}/api/projects/1\n\n### פרויקט שלא קיים — ProblemDetails 404\nGET {{host}}/api/projects/999\n\n### יצירת פרויקט — 201 עם Location\nPOST {{host}}/api/projects\nContent-Type: application/json\n\n{\n  \"name\": \"API Hardening\",\n  \"description\": \"Rate limits, caching, observability\"\n}\n\n### יצירה לא חוקית — 400 ValidationProblem (שם קצר מדי)\nPOST {{host}}/api/projects\nContent-Type: application/json\n\n{\n  \"name\": \"x\"\n}\n\n### ─────────── Issues ───────────\n\n### לוח ה-Issues של פרויקט 1 — ברירות מחדל (עמוד 1, מיון יורד לפי יצירה)\nGET {{host}}/api/projects/1/issues\n\n### סינון + מיון + דפדוף: פתוחים, לפי עדיפות, עמוד 1 בגודל 5\nGET {{host}}/api/projects/1/issues?status=Open&sort=priority&page=1&pageSize=5\n\n### חיפוש בכותרת\nGET {{host}}/api/projects/1/issues?search=login\n\n### pageSize מחוץ לטווח — 400 ValidationProblem עוד לפני ה-handler\nGET {{host}}/api/projects/1/issues?pageSize=999\n\n### Issue בודד\nGET {{host}}/api/issues/1\n\n### יצירת Issue — 201 + Location לפי ה-route בעל השם\nPOST {{host}}/api/projects/1/issues\nContent-Type: application/json\n\n{\n  \"title\": \"Add dark mode toggle\",\n  \"description\": \"Header button, persists to localStorage\",\n  \"priority\": \"High\"\n}\n\n### יצירה לא חוקית — כותרת ריקה\nPOST {{host}}/api/projects/1/issues\nContent-Type: application/json\n\n{\n  \"title\": \"\"\n}\n\n### עדכון מלא — כולל מעבר סטטוס\nPUT {{host}}/api/issues/1\nContent-Type: application/json\n\n{\n  \"title\": \"Fix login redirect loop\",\n  \"description\": \"Users bounce between /login and /home\",\n  \"status\": \"Done\",\n  \"priority\": \"Critical\"\n}\n\n### מחיקה — 204, ופעם שנייה 404\nDELETE {{host}}/api/issues/2\n\n### ─────────── OpenAPI ───────────\n\n### תיאור ה-API המלא, שנוצר מהקוד (פיתוח בלבד)\nGET {{host}}/openapi/v1.json\n",
+          "content": "@host = http://localhost:5080\r\n\r\n### Hello — האם השרת חי?\r\nGET {{host}}/\r\n\r\n### Health check\r\nGET {{host}}/healthz\r\n\r\n### ─────────── Projects ───────────\r\n\r\n### רשימת פרויקטים עם ספירת Issues פתוחים (projection)\r\nGET {{host}}/api/projects\r\n\r\n### פרויקט בודד\r\nGET {{host}}/api/projects/1\r\n\r\n### פרויקט שלא קיים — ProblemDetails 404\r\nGET {{host}}/api/projects/999\r\n\r\n### יצירת פרויקט — 201 עם Location\r\nPOST {{host}}/api/projects\r\nContent-Type: application/json\r\n\r\n{\r\n  \"name\": \"API Hardening\",\r\n  \"description\": \"Rate limits, caching, observability\"\r\n}\r\n\r\n### יצירה לא חוקית — 400 ValidationProblem (שם קצר מדי)\r\nPOST {{host}}/api/projects\r\nContent-Type: application/json\r\n\r\n{\r\n  \"name\": \"x\"\r\n}\r\n\r\n### ─────────── Issues ───────────\r\n\r\n### לוח ה-Issues של פרויקט 1 — ברירות מחדל (עמוד 1, מיון יורד לפי יצירה)\r\nGET {{host}}/api/projects/1/issues\r\n\r\n### סינון + מיון + דפדוף: פתוחים, לפי עדיפות, עמוד 1 בגודל 5\r\nGET {{host}}/api/projects/1/issues?status=Open&sort=priority&page=1&pageSize=5\r\n\r\n### חיפוש בכותרת\r\nGET {{host}}/api/projects/1/issues?search=login\r\n\r\n### pageSize מחוץ לטווח — 400 ValidationProblem עוד לפני ה-handler\r\nGET {{host}}/api/projects/1/issues?pageSize=999\r\n\r\n### Issue בודד\r\nGET {{host}}/api/issues/1\r\n\r\n### יצירת Issue — 201 + Location לפי ה-route בעל השם\r\nPOST {{host}}/api/projects/1/issues\r\nContent-Type: application/json\r\n\r\n{\r\n  \"title\": \"Add dark mode toggle\",\r\n  \"description\": \"Header button, persists to localStorage\",\r\n  \"priority\": \"High\"\r\n}\r\n\r\n### יצירה לא חוקית — כותרת ריקה\r\nPOST {{host}}/api/projects/1/issues\r\nContent-Type: application/json\r\n\r\n{\r\n  \"title\": \"\"\r\n}\r\n\r\n### עדכון מלא — כולל מעבר סטטוס\r\nPUT {{host}}/api/issues/1\r\nContent-Type: application/json\r\n\r\n{\r\n  \"title\": \"Fix login redirect loop\",\r\n  \"description\": \"Users bounce between /login and /home\",\r\n  \"status\": \"Done\",\r\n  \"priority\": \"Critical\"\r\n}\r\n\r\n### מחיקה — 204, ופעם שנייה 404\r\nDELETE {{host}}/api/issues/2\r\n\r\n### ─────────── OpenAPI ───────────\r\n\r\n### תיאור ה-API המלא, שנוצר מהקוד (פיתוח בלבד)\r\nGET {{host}}/openapi/v1.json\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
             9,
             11,
+            13,
             14,
             15,
             16,
@@ -1533,12 +1546,11 @@ export const GUIDE_MANIFEST = {
             86,
             87,
             88,
-            89,
-            90
+            89
           ]
         },
         "server/TaskForge.Api/TaskForge.Api.csproj": {
-          "content": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n  <ItemGroup>\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\n    <ProjectReference Include=\"..\\TaskForge.Infrastructure\\TaskForge.Infrastructure.csproj\" />\n  </ItemGroup>\n\n  <ItemGroup>\n    <!-- design-time בלבד: מאפשר ל-dotnet ef להריץ מיגרציות דרך הפרויקט הזה -->\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Design\" Version=\"10.0.9\">\n      <PrivateAssets>all</PrivateAssets>\n      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>\n    </PackageReference>\n    <PackageReference Include=\"Microsoft.AspNetCore.OpenApi\" Version=\"10.0.9\" />\n  </ItemGroup>\n\n</Project>\n",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net10.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n  <ItemGroup>\r\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\r\n    <ProjectReference Include=\"..\\TaskForge.Infrastructure\\TaskForge.Infrastructure.csproj\" />\r\n  </ItemGroup>\r\n\r\n  <ItemGroup>\r\n    <!-- design-time בלבד: מאפשר ל-dotnet ef להריץ מיגרציות דרך הפרויקט הזה -->\r\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Design\" Version=\"10.0.9\">\r\n      <PrivateAssets>all</PrivateAssets>\r\n      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>\r\n    </PackageReference>\r\n    <PackageReference Include=\"Microsoft.AspNetCore.OpenApi\" Version=\"10.0.9\" />\r\n  </ItemGroup>\r\n\r\n</Project>\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -1546,7 +1558,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Abstractions/IProjectRepository.cs": {
-          "content": "using TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// החוזה מוגדר בדומיין: \"ככה ניגשים לפרויקטים\".\n// מי שמממש אותו ואיך — לא עניינו של ה-Core. זה חוק התלות בפעולה.\npublic interface IProjectRepository\n{\n    Task<IReadOnlyList<ProjectSummary>> GetSummariesAsync(CancellationToken cancellationToken = default);\n\n    Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n\n    Task<Project> AddAsync(Project project, CancellationToken cancellationToken = default);\n\n    Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);\n}\n",
+          "content": "using TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Core.Abstractions;\r\n\r\n// החוזה מוגדר בדומיין: \"ככה ניגשים לפרויקטים\".\r\n// מי שמממש אותו ואיך — לא עניינו של ה-Core. זה חוק התלות בפעולה.\r\npublic interface IProjectRepository\r\n{\r\n    Task<IReadOnlyList<ProjectSummary>> GetSummariesAsync(CancellationToken cancellationToken = default);\r\n\r\n    Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\r\n\r\n    Task<Project> AddAsync(Project project, CancellationToken cancellationToken = default);\r\n\r\n    Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);\r\n}\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -1559,60 +1571,60 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Entities/Project.cs": {
-          "content": "namespace TaskForge.Core.Entities;\n\n// הישות הראשונה של הדומיין. שימו לב מה אין כאן:\n// אין JSON, אין HTTP, אין SQL — רק העסק עצמו.\npublic sealed class Project\n{\n    public int Id { get; set; }\n\n    // required: אי אפשר לייצר Project בלי שם — המהדר אוכף את זה\n    public required string Name { get; set; }\n\n    // string? — תיאור הוא אופציונלי במפורש\n    public string? Description { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    // צד ה\"אחד\" של אחד-לרבים: לפרויקט יש אוסף Issues\n    public List<Issue> Issues { get; set; } = [];\n}\n",
+          "content": "namespace TaskForge.Core.Entities;\r\n\r\n// הישות הראשונה של הדומיין. שימו לב מה אין כאן:\r\n// אין JSON, אין HTTP, אין SQL — רק העסק עצמו.\r\npublic sealed class Project\r\n{\r\n    public int Id { get; set; }\r\n\r\n    // required: אי אפשר לייצר Project בלי שם — המהדר אוכף את זה\r\n    public required string Name { get; set; }\r\n\r\n    // string? — תיאור הוא אופציונלי במפורש\r\n    public string? Description { get; set; }\r\n\r\n    public DateTime CreatedAtUtc { get; set; }\r\n\r\n    // צד ה\"אחד\" של אחד-לרבים: לפרויקט יש אוסף Issues\r\n    public List<Issue> Issues { get; set; } = [];\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Core/TaskForge.Core.csproj": {
-          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n</Project>\n",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net10.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n</Project>\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Infrastructure/TaskForge.Infrastructure.csproj": {
-          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n  <ItemGroup>\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\n  </ItemGroup>\n\n  <ItemGroup>\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Sqlite\" Version=\"10.0.9\" />\n  </ItemGroup>\n\n</Project>\n",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net10.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n  <ItemGroup>\r\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\r\n  </ItemGroup>\r\n\r\n  <ItemGroup>\r\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Sqlite\" Version=\"10.0.9\" />\r\n  </ItemGroup>\r\n\r\n</Project>\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.slnx": {
-          "content": "<Solution>\n  <Project Path=\"TaskForge.Api/TaskForge.Api.csproj\" />\n  <Project Path=\"TaskForge.Core/TaskForge.Core.csproj\" />\n  <Project Path=\"TaskForge.Infrastructure/TaskForge.Infrastructure.csproj\" />\n</Solution>\n",
+          "content": "<Solution>\r\n  <Project Path=\"TaskForge.Api/TaskForge.Api.csproj\" />\r\n  <Project Path=\"TaskForge.Core/TaskForge.Core.csproj\" />\r\n  <Project Path=\"TaskForge.Infrastructure/TaskForge.Infrastructure.csproj\" />\r\n</Solution>\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/.config/dotnet-tools.json": {
-          "content": "{\n  \"version\": 1,\n  \"isRoot\": true,\n  \"tools\": {\n    \"dotnet-ef\": {\n      \"version\": \"10.0.9\",\n      \"commands\": [\"dotnet-ef\"]\n    }\n  }\n}\n",
+          "content": "{\r\n  \"version\": 1,\r\n  \"isRoot\": true,\r\n  \"tools\": {\r\n    \"dotnet-ef\": {\r\n      \"version\": \"10.0.9\",\r\n      \"commands\": [\"dotnet-ef\"]\r\n    }\r\n  }\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Core/Entities/Issue.cs": {
-          "content": "namespace TaskForge.Core.Entities;\n\n// enum = שפת הדומיין: סט ערכים סגור שהמהדר אוכף.\n// \"Open\" שגוי-איות פשוט לא יתקמפל — לעומת string חופשי.\n\npublic enum IssueStatus\n{\n    Open,\n    InProgress,\n    Done,\n}\n\npublic enum IssuePriority\n{\n    Low,\n    Medium,\n    High,\n    Critical,\n}\n\npublic sealed class Issue\n{\n    public int Id { get; set; }\n\n    public required string Title { get; set; }\n\n    public string? Description { get; set; }\n\n    public IssueStatus Status { get; set; } = IssueStatus.Open;\n\n    public IssuePriority Priority { get; set; } = IssuePriority.Medium;\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    // הזוג הקלאסי: מפתח זר + navigation property.\n    // ה-FK הוא העמודה בטבלה; ה-nav הוא הדרך של הקוד \"ללכת\" לפרויקט.\n    public int ProjectId { get; set; }\n    public Project? Project { get; set; }\n\n    // many-to-many: ‏EF יבנה טבלת חיבור לבד (skip navigation)\n    public List<Label> Labels { get; set; } = [];\n}\n",
+          "content": "namespace TaskForge.Core.Entities;\r\n\r\n// enum = שפת הדומיין: סט ערכים סגור שהמהדר אוכף.\r\n// \"Open\" שגוי-איות פשוט לא יתקמפל — לעומת string חופשי.\r\n\r\npublic enum IssueStatus\r\n{\r\n    Open,\r\n    InProgress,\r\n    Done,\r\n}\r\n\r\npublic enum IssuePriority\r\n{\r\n    Low,\r\n    Medium,\r\n    High,\r\n    Critical,\r\n}\r\n\r\npublic sealed class Issue\r\n{\r\n    public int Id { get; set; }\r\n\r\n    public required string Title { get; set; }\r\n\r\n    public string? Description { get; set; }\r\n\r\n    public IssueStatus Status { get; set; } = IssueStatus.Open;\r\n\r\n    public IssuePriority Priority { get; set; } = IssuePriority.Medium;\r\n\r\n    public DateTime CreatedAtUtc { get; set; }\r\n\r\n    // הזוג הקלאסי: מפתח זר + navigation property.\r\n    // ה-FK הוא העמודה בטבלה; ה-nav הוא הדרך של הקוד \"ללכת\" לפרויקט.\r\n    public int ProjectId { get; set; }\r\n    public Project? Project { get; set; }\r\n\r\n    // many-to-many: ‏EF יבנה טבלת חיבור לבד (skip navigation)\r\n    public List<Label> Labels { get; set; } = [];\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Core/Entities/Label.cs": {
-          "content": "namespace TaskForge.Core.Entities;\n\npublic sealed class Label\n{\n    public int Id { get; set; }\n\n    public required string Name { get; set; }\n\n    // צבע תצוגה הקסדצימלי, למשל \"#f87171\" — אופציונלי\n    public string? Color { get; set; }\n\n    // הצד השני של ה-many-to-many עם Issue\n    public List<Issue> Issues { get; set; } = [];\n}\n",
+          "content": "namespace TaskForge.Core.Entities;\r\n\r\npublic sealed class Label\r\n{\r\n    public int Id { get; set; }\r\n\r\n    public required string Name { get; set; }\r\n\r\n    // צבע תצוגה הקסדצימלי, למשל \"#f87171\" — אופציונלי\r\n    public string? Color { get; set; }\r\n\r\n    // הצד השני של ה-many-to-many עם Issue\r\n    public List<Issue> Issues { get; set; } = [];\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Infrastructure/Data/DbSeeder.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Infrastructure.Data;\n\n// נתוני פיתוח: רצים פעם אחת, רק על DB ריק.\n// אותם שלושה פרויקטים מהפרק הקודם — עכשיו עם Issues ותוויות.\npublic static class DbSeeder\n{\n    public static async Task SeedAsync(TaskForgeDbContext db)\n    {\n        if (await db.Projects.AnyAsync())\n        {\n            return; // יש כבר נתונים — לא נוגעים\n        }\n\n        var bug = new Label { Name = \"bug\", Color = \"#f87171\" };\n        var feature = new Label { Name = \"feature\", Color = \"#4ade80\" };\n        var design = new Label { Name = \"design\", Color = \"#c084fc\" };\n\n        var website = new Project\n        {\n            Name = \"Website Redesign\",\n            Description = \"Refresh the marketing site end to end\",\n            CreatedAtUtc = new DateTime(2026, 1, 12, 0, 0, 0, DateTimeKind.Utc),\n            Issues =\n            [\n                new Issue\n                {\n                    Title = \"Fix login redirect loop\",\n                    Description = \"Users bounce between /login and /home\",\n                    Status = IssueStatus.InProgress,\n                    Priority = IssuePriority.Critical,\n                    CreatedAtUtc = new DateTime(2026, 1, 14, 9, 0, 0, DateTimeKind.Utc),\n                    Labels = [bug],\n                },\n                new Issue\n                {\n                    Title = \"New hero section\",\n                    Status = IssueStatus.Open,\n                    Priority = IssuePriority.Medium,\n                    CreatedAtUtc = new DateTime(2026, 1, 20, 11, 30, 0, DateTimeKind.Utc),\n                    Labels = [feature, design],\n                },\n            ],\n        };\n\n        var mobile = new Project\n        {\n            Name = \"Mobile App\",\n            Description = \"iOS + Android companion app\",\n            CreatedAtUtc = new DateTime(2026, 2, 3, 0, 0, 0, DateTimeKind.Utc),\n            Issues =\n            [\n                new Issue\n                {\n                    Title = \"Push notifications opt-in\",\n                    Status = IssueStatus.Open,\n                    Priority = IssuePriority.High,\n                    CreatedAtUtc = new DateTime(2026, 2, 10, 8, 15, 0, DateTimeKind.Utc),\n                    Labels = [feature],\n                },\n                new Issue\n                {\n                    Title = \"Crash on cold start (Android 15)\",\n                    Status = IssueStatus.Done,\n                    Priority = IssuePriority.Critical,\n                    CreatedAtUtc = new DateTime(2026, 2, 12, 16, 45, 0, DateTimeKind.Utc),\n                    Labels = [bug],\n                },\n            ],\n        };\n\n        var tools = new Project\n        {\n            Name = \"Internal Tools\",\n            Description = null,\n            CreatedAtUtc = new DateTime(2026, 3, 21, 0, 0, 0, DateTimeKind.Utc),\n        };\n\n        // מוסיפים רק את השורשים — ה-Change Tracker מגלה את כל הגרף\n        // (Issues, ‏Labels וטבלת החיבור) ושומר הכול ב-SaveChanges אחד.\n        db.Projects.AddRange(website, mobile, tools);\n        await db.SaveChangesAsync();\n    }\n}\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Infrastructure.Data;\r\n\r\n// נתוני פיתוח: רצים פעם אחת, רק על DB ריק.\r\n// אותם שלושה פרויקטים מהפרק הקודם — עכשיו עם Issues ותוויות.\r\npublic static class DbSeeder\r\n{\r\n    public static async Task SeedAsync(TaskForgeDbContext db)\r\n    {\r\n        if (await db.Projects.AnyAsync())\r\n        {\r\n            return; // יש כבר נתונים — לא נוגעים\r\n        }\r\n\r\n        var bug = new Label { Name = \"bug\", Color = \"#f87171\" };\r\n        var feature = new Label { Name = \"feature\", Color = \"#4ade80\" };\r\n        var design = new Label { Name = \"design\", Color = \"#c084fc\" };\r\n\r\n        var website = new Project\r\n        {\r\n            Name = \"Website Redesign\",\r\n            Description = \"Refresh the marketing site end to end\",\r\n            CreatedAtUtc = new DateTime(2026, 1, 12, 0, 0, 0, DateTimeKind.Utc),\r\n            Issues =\r\n            [\r\n                new Issue\r\n                {\r\n                    Title = \"Fix login redirect loop\",\r\n                    Description = \"Users bounce between /login and /home\",\r\n                    Status = IssueStatus.InProgress,\r\n                    Priority = IssuePriority.Critical,\r\n                    CreatedAtUtc = new DateTime(2026, 1, 14, 9, 0, 0, DateTimeKind.Utc),\r\n                    Labels = [bug],\r\n                },\r\n                new Issue\r\n                {\r\n                    Title = \"New hero section\",\r\n                    Status = IssueStatus.Open,\r\n                    Priority = IssuePriority.Medium,\r\n                    CreatedAtUtc = new DateTime(2026, 1, 20, 11, 30, 0, DateTimeKind.Utc),\r\n                    Labels = [feature, design],\r\n                },\r\n            ],\r\n        };\r\n\r\n        var mobile = new Project\r\n        {\r\n            Name = \"Mobile App\",\r\n            Description = \"iOS + Android companion app\",\r\n            CreatedAtUtc = new DateTime(2026, 2, 3, 0, 0, 0, DateTimeKind.Utc),\r\n            Issues =\r\n            [\r\n                new Issue\r\n                {\r\n                    Title = \"Push notifications opt-in\",\r\n                    Status = IssueStatus.Open,\r\n                    Priority = IssuePriority.High,\r\n                    CreatedAtUtc = new DateTime(2026, 2, 10, 8, 15, 0, DateTimeKind.Utc),\r\n                    Labels = [feature],\r\n                },\r\n                new Issue\r\n                {\r\n                    Title = \"Crash on cold start (Android 15)\",\r\n                    Status = IssueStatus.Done,\r\n                    Priority = IssuePriority.Critical,\r\n                    CreatedAtUtc = new DateTime(2026, 2, 12, 16, 45, 0, DateTimeKind.Utc),\r\n                    Labels = [bug],\r\n                },\r\n            ],\r\n        };\r\n\r\n        var tools = new Project\r\n        {\r\n            Name = \"Internal Tools\",\r\n            Description = null,\r\n            CreatedAtUtc = new DateTime(2026, 3, 21, 0, 0, 0, DateTimeKind.Utc),\r\n        };\r\n\r\n        // מוסיפים רק את השורשים — ה-Change Tracker מגלה את כל הגרף\r\n        // (Issues, ‏Labels וטבלת החיבור) ושומר הכול ב-SaveChanges אחד.\r\n        db.Projects.AddRange(website, mobile, tools);\r\n        await db.SaveChangesAsync();\r\n    }\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Infrastructure/Data/TaskForgeDbContext.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Infrastructure.Data;\n\n// ה-DbContext הוא יחידת העבודה: צוהר אחד ל-DB לכל בקשה,\n// שעוקב אחרי כל ישות שהוא הגיש ויודע לתרגם שינויים ל-SQL.\npublic sealed class TaskForgeDbContext(DbContextOptions<TaskForgeDbContext> options)\n    : DbContext(options)\n{\n    // כל DbSet = טבלה. Set<T>() במקום setter — אין מצב ביניים null.\n    public DbSet<Project> Projects => Set<Project>();\n    public DbSet<Issue> Issues => Set<Issue>();\n    public DbSet<Label> Labels => Set<Label>();\n\n    // Fluent API: כל חוקי המיפוי כאן, והישויות ב-Core נשארות נקיות —\n    // בלי attributes של EF. זה חוק התלות מפרק 02, מיושם על שכבת הנתונים.\n    protected override void OnModelCreating(ModelBuilder modelBuilder)\n    {\n        modelBuilder.Entity<Project>(project =>\n        {\n            project.Property(p => p.Name)\n                   .HasMaxLength(120)\n                   .IsRequired();\n\n            // אחד-לרבים: מחיקת פרויקט גוררת את ה-Issues שלו\n            project.HasMany(p => p.Issues)\n                   .WithOne(i => i.Project!)\n                   .HasForeignKey(i => i.ProjectId)\n                   .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<Issue>(issue =>\n        {\n            issue.Property(i => i.Title)\n                 .HasMaxLength(200)\n                 .IsRequired();\n\n            // enum נשמר כטקסט קריא ב-DB (\"Open\"), לא כמספר קסם (0)\n            issue.Property(i => i.Status)\n                 .HasConversion<string>()\n                 .HasMaxLength(20);\n\n            issue.Property(i => i.Priority)\n                 .HasConversion<string>()\n                 .HasMaxLength(20);\n\n            // האינדקס של שאילתת הלוח: \"כל ה-Issues הפתוחים בפרויקט X\"\n            issue.HasIndex(i => new { i.ProjectId, i.Status });\n\n            // many-to-many: ‏EF מסיק טבלת חיבור IssueLabel לבד\n            issue.HasMany(i => i.Labels)\n                 .WithMany(l => l.Issues);\n        });\n\n        modelBuilder.Entity<Label>(label =>\n        {\n            label.Property(l => l.Name)\n                 .HasMaxLength(40)\n                 .IsRequired();\n\n            // אין שתי תוויות באותו שם\n            label.HasIndex(l => l.Name).IsUnique();\n        });\n    }\n}\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Infrastructure.Data;\r\n\r\n// ה-DbContext הוא יחידת העבודה: צוהר אחד ל-DB לכל בקשה,\r\n// שעוקב אחרי כל ישות שהוא הגיש ויודע לתרגם שינויים ל-SQL.\r\npublic sealed class TaskForgeDbContext(DbContextOptions<TaskForgeDbContext> options)\r\n    : DbContext(options)\r\n{\r\n    // כל DbSet = טבלה. Set<T>() במקום setter — אין מצב ביניים null.\r\n    public DbSet<Project> Projects => Set<Project>();\r\n    public DbSet<Issue> Issues => Set<Issue>();\r\n    public DbSet<Label> Labels => Set<Label>();\r\n\r\n    // Fluent API: כל חוקי המיפוי כאן, והישויות ב-Core נשארות נקיות —\r\n    // בלי attributes של EF. זה חוק התלות מפרק 02, מיושם על שכבת הנתונים.\r\n    protected override void OnModelCreating(ModelBuilder modelBuilder)\r\n    {\r\n        modelBuilder.Entity<Project>(project =>\r\n        {\r\n            project.Property(p => p.Name)\r\n                   .HasMaxLength(120)\r\n                   .IsRequired();\r\n\r\n            // אחד-לרבים: מחיקת פרויקט גוררת את ה-Issues שלו\r\n            project.HasMany(p => p.Issues)\r\n                   .WithOne(i => i.Project!)\r\n                   .HasForeignKey(i => i.ProjectId)\r\n                   .OnDelete(DeleteBehavior.Cascade);\r\n        });\r\n\r\n        modelBuilder.Entity<Issue>(issue =>\r\n        {\r\n            issue.Property(i => i.Title)\r\n                 .HasMaxLength(200)\r\n                 .IsRequired();\r\n\r\n            // enum נשמר כטקסט קריא ב-DB (\"Open\"), לא כמספר קסם (0)\r\n            issue.Property(i => i.Status)\r\n                 .HasConversion<string>()\r\n                 .HasMaxLength(20);\r\n\r\n            issue.Property(i => i.Priority)\r\n                 .HasConversion<string>()\r\n                 .HasMaxLength(20);\r\n\r\n            // האינדקס של שאילתת הלוח: \"כל ה-Issues הפתוחים בפרויקט X\"\r\n            issue.HasIndex(i => new { i.ProjectId, i.Status });\r\n\r\n            // many-to-many: ‏EF מסיק טבלת חיבור IssueLabel לבד\r\n            issue.HasMany(i => i.Labels)\r\n                 .WithMany(l => l.Issues);\r\n        });\r\n\r\n        modelBuilder.Entity<Label>(label =>\r\n        {\r\n            label.Property(l => l.Name)\r\n                 .HasMaxLength(40)\r\n                 .IsRequired();\r\n\r\n            // אין שתי תוויות באותו שם\r\n            label.HasIndex(l => l.Name).IsUnique();\r\n        });\r\n    }\r\n    // #endregion\r\n}\r\n",
           "status": "unchanged",
           "regions": {
             "step-3.6": {
               "start": 16,
-              "end": 65
+              "end": 68
             }
           },
           "changedLines": []
@@ -1636,12 +1648,12 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "server/TaskForge.Infrastructure/Repositories/EfProjectRepository.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfProjectRepository(TaskForgeDbContext db) : IProjectRepository\n{\n    // הקרנה (projection): ‏Select לתוך record. ‏EF מתרגם את הכול —\n    // כולל ספירת ה-Issues הפתוחים — לשאילתת SQL אחת עם COUNT מקונן.\n    // ה-Issues עצמם לא נטענים לזיכרון לעולם.\n    public async Task<IReadOnlyList<ProjectSummary>> GetSummariesAsync(CancellationToken cancellationToken = default) =>\n        await db.Projects\n            .AsNoTracking()\n            .OrderBy(p => p.Id)\n            .Select(p => new ProjectSummary(\n                p.Id,\n                p.Name,\n                p.Description,\n                p.Issues.Count(i => i.Status != IssueStatus.Done)))\n            .ToListAsync(cancellationToken);\n\n    public Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Projects\n            .AsNoTracking()\n            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);\n\n    public async Task<Project> AddAsync(Project project, CancellationToken cancellationToken = default)\n    {\n        db.Projects.Add(project);\n        await db.SaveChangesAsync(cancellationToken);\n        return project;\n    }\n\n    // בדיקת קיום רזה: ‏EXISTS ב-SQL, בלי לטעון את הישות\n    public Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Projects.AnyAsync(p => p.Id == id, cancellationToken);\n}\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\nusing TaskForge.Infrastructure.Data;\r\n\r\nnamespace TaskForge.Infrastructure.Repositories;\r\n\r\npublic sealed class EfProjectRepository(TaskForgeDbContext db) : IProjectRepository\r\n{\r\n    // הקרנה (projection): ‏Select לתוך record. ‏EF מתרגם את הכול —\r\n    // כולל ספירת ה-Issues הפתוחים — לשאילתת SQL אחת עם COUNT מקונן.\r\n    // ה-Issues עצמם לא נטענים לזיכרון לעולם.\r\n    public async Task<IReadOnlyList<ProjectSummary>> GetSummariesAsync(CancellationToken cancellationToken = default) =>\r\n        await db.Projects\r\n            .AsNoTracking()\r\n            .OrderBy(p => p.Id)\r\n            .Select(p => new ProjectSummary(\r\n                p.Id,\r\n                p.Name,\r\n                p.Description,\r\n                p.Issues.Count(i => i.Status != IssueStatus.Done)))\r\n            .ToListAsync(cancellationToken);\r\n    // #endregion\r\n\r\n    public Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\r\n        db.Projects\r\n            .AsNoTracking()\r\n            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);\r\n\r\n    public async Task<Project> AddAsync(Project project, CancellationToken cancellationToken = default)\r\n    {\r\n        db.Projects.Add(project);\r\n        await db.SaveChangesAsync(cancellationToken);\r\n        return project;\r\n    }\r\n\r\n    // בדיקת קיום רזה: ‏EXISTS ב-SQL, בלי לטעון את הישות\r\n    public Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default) =>\r\n        db.Projects.AnyAsync(p => p.Id == id, cancellationToken);\r\n}\r\n",
           "status": "modified",
           "regions": {
             "step-4.14": {
               "start": 11,
-              "end": 23
+              "end": 42
             }
           },
           "changedLines": [
@@ -1656,7 +1668,7 @@ export const GUIDE_MANIFEST = {
             20,
             21,
             22,
-            29,
+            24,
             30,
             31,
             32,
@@ -1666,16 +1678,17 @@ export const GUIDE_MANIFEST = {
             36,
             37,
             38,
-            39
+            39,
+            40
           ]
         },
         "server/TaskForge.Api/Contracts/IssueContracts.cs": {
-          "content": "using System.ComponentModel.DataAnnotations;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\n// חוזה ה-HTTP של Issues. ‏records: ‏immutable, שוויון לפי ערך, ושורה אחת לכל טיפוס.\n// הישות היא פנים-המערכת; ה-DTOs האלה הם מה שעובר על הקו — בכוונה בנפרד.\n\npublic sealed record CreateIssueRequest(\n    [property: Required, StringLength(200, MinimumLength = 3)] string Title,\n    [property: StringLength(4000)] string? Description,\n    IssuePriority Priority = IssuePriority.Medium);\n\npublic sealed record UpdateIssueRequest(\n    [property: Required, StringLength(200, MinimumLength = 3)] string Title,\n    [property: StringLength(4000)] string? Description,\n    IssueStatus Status,\n    IssuePriority Priority);\n\npublic sealed record LabelResponse(int Id, string Name, string? Color);\n\npublic sealed record IssueResponse(\n    int Id,\n    string Title,\n    string? Description,\n    IssueStatus Status,\n    IssuePriority Priority,\n    int ProjectId,\n    DateTime CreatedAtUtc,\n    IReadOnlyList<LabelResponse> Labels)\n{\n    public static IssueResponse FromEntity(Issue issue) => new(\n        issue.Id,\n        issue.Title,\n        issue.Description,\n        issue.Status,\n        issue.Priority,\n        issue.ProjectId,\n        issue.CreatedAtUtc,\n        issue.Labels.Select(l => new LabelResponse(l.Id, l.Name, l.Color)).ToList());\n}\n\n// [AsParameters]: כל ה-query string נקשר לאובייקט אחד במקום שישה פרמטרים.\n// הוולידציה של .NET 10 רצה גם כאן — pageSize=999 ייפסל לפני ה-handler.\npublic sealed record IssueListParams(\n    IssueStatus? Status,\n    IssuePriority? Priority,\n    [property: StringLength(100)] string? Search,\n    string Sort = \"-created\",\n    [property: Range(1, int.MaxValue)] int Page = 1,\n    [property: Range(1, 100)] int PageSize = 20)\n{\n    public IssueQuery ToQuery(int projectId) =>\n        new(projectId, Status, Priority, Search, Sort, Page, PageSize);\n}\n",
+          "content": "using System.ComponentModel.DataAnnotations;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Api.Contracts;\r\n\r\n// חוזה ה-HTTP של Issues. ‏records: ‏immutable, שוויון לפי ערך, ושורה אחת לכל טיפוס.\r\n// הישות היא פנים-המערכת; ה-DTOs האלה הם מה שעובר על הקו — בכוונה בנפרד.\r\n\r\npublic sealed record CreateIssueRequest(\r\n    [property: Required, StringLength(200, MinimumLength = 3)] string Title,\r\n    [property: StringLength(4000)] string? Description,\r\n    IssuePriority Priority = IssuePriority.Medium);\r\n\r\npublic sealed record UpdateIssueRequest(\r\n    [property: Required, StringLength(200, MinimumLength = 3)] string Title,\r\n    [property: StringLength(4000)] string? Description,\r\n    IssueStatus Status,\r\n    IssuePriority Priority);\r\n\r\npublic sealed record LabelResponse(int Id, string Name, string? Color);\r\n\r\npublic sealed record IssueResponse(\r\n    int Id,\r\n    string Title,\r\n    string? Description,\r\n    IssueStatus Status,\r\n    IssuePriority Priority,\r\n    int ProjectId,\r\n    DateTime CreatedAtUtc,\r\n    IReadOnlyList<LabelResponse> Labels)\r\n{\r\n    public static IssueResponse FromEntity(Issue issue) => new(\r\n        issue.Id,\r\n        issue.Title,\r\n        issue.Description,\r\n        issue.Status,\r\n        issue.Priority,\r\n        issue.ProjectId,\r\n        issue.CreatedAtUtc,\r\n        issue.Labels.Select(l => new LabelResponse(l.Id, l.Name, l.Color)).ToList());\r\n}\r\n\r\n// [AsParameters]: כל ה-query string נקשר לאובייקט אחד במקום שישה פרמטרים.\r\n// הוולידציה של .NET 10 רצה גם כאן — pageSize=999 ייפסל לפני ה-handler.\r\npublic sealed record IssueListParams(\r\n    IssueStatus? Status,\r\n    IssuePriority? Priority,\r\n    [property: StringLength(100)] string? Search,\r\n    string Sort = \"-created\",\r\n    [property: Range(1, int.MaxValue)] int Page = 1,\r\n    [property: Range(1, 100)] int PageSize = 20)\r\n{\r\n    public IssueQuery ToQuery(int projectId) =>\r\n        new(projectId, Status, Priority, Search, Sort, Page, PageSize);\r\n}\r\n// #endregion\r\n",
           "status": "added",
           "regions": {
             "step-4.8": {
               "start": 44,
-              "end": 56
+              "end": 58
             }
           },
           "changedLines": [
@@ -1735,11 +1748,12 @@ export const GUIDE_MANIFEST = {
             54,
             55,
             56,
-            57
+            57,
+            58
           ]
         },
         "server/TaskForge.Api/Contracts/ProjectContracts.cs": {
-          "content": "using System.ComponentModel.DataAnnotations;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\npublic sealed record CreateProjectRequest(\n    [property: Required, StringLength(120, MinimumLength = 2)] string Name,\n    [property: StringLength(2000)] string? Description);\n\npublic sealed record ProjectResponse(\n    int Id,\n    string Name,\n    string? Description,\n    DateTime CreatedAtUtc)\n{\n    public static ProjectResponse FromEntity(Project project) =>\n        new(project.Id, project.Name, project.Description, project.CreatedAtUtc);\n}\n",
+          "content": "using System.ComponentModel.DataAnnotations;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Api.Contracts;\r\n\r\npublic sealed record CreateProjectRequest(\r\n    [property: Required, StringLength(120, MinimumLength = 2)] string Name,\r\n    [property: StringLength(2000)] string? Description);\r\n\r\npublic sealed record ProjectResponse(\r\n    int Id,\r\n    string Name,\r\n    string? Description,\r\n    DateTime CreatedAtUtc)\r\n{\r\n    public static ProjectResponse FromEntity(Project project) =>\r\n        new(project.Id, project.Name, project.Description, project.CreatedAtUtc);\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -1765,16 +1779,16 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Api/Endpoints/IssueEndpoints.cs": {
-          "content": "using Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Api.Filters;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class IssueEndpoints\n{\n    // קבוצה אחת לכל ה-Issues: prefix משותף, תג OpenAPI משותף, ופילטר משותף.\n    // רשימה ויצירה חיים תחת הפרויקט (הבעלים); פעולות על פריט בודד — בנתיב שטוח.\n    public static IEndpointRouteBuilder MapIssueEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api\")\n            .WithTags(\"Issues\")\n            .AddEndpointFilter<HandlerTimingFilter>();\n\n        group.MapGet(\"/projects/{projectId:int}/issues\", GetIssues);\n        group.MapPost(\"/projects/{projectId:int}/issues\", CreateIssue);\n\n        group.MapGet(\"/issues/{id:int}\", GetIssueById).WithName(\"GetIssueById\");\n        group.MapPut(\"/issues/{id:int}\", UpdateIssue);\n        group.MapDelete(\"/issues/{id:int}\", DeleteIssue);\n\n        return app;\n    }\n\n    // handlers עם שמות + Results<...>: החתימה עצמה היא תיעוד —\n    // המהדר אוכף שכל מסלול יציאה מוצהר, ו-OpenAPI קורא הכול לבד.\n    private static async Task<Results<Ok<PagedResult<IssueResponse>>, NotFound>> GetIssues(\n        int projectId,\n        [AsParameters] IssueListParams query,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        var page = await issues.GetPagedAsync(query.ToQuery(projectId), cancellationToken);\n\n        var mapped = new PagedResult<IssueResponse>(\n            page.Items.Select(IssueResponse.FromEntity).ToList(),\n            page.Total,\n            page.Page,\n            page.PageSize);\n\n        return TypedResults.Ok(mapped);\n    }\n\n    private static async Task<Results<CreatedAtRoute<IssueResponse>, NotFound>> CreateIssue(\n        int projectId,\n        CreateIssueRequest request,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        var issue = await issues.AddAsync(new Issue\n        {\n            Title = request.Title,\n            Description = request.Description,\n            Priority = request.Priority,\n            ProjectId = projectId,\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        // 201 + כותרת Location שמצביעה על ה-endpoint בעל השם — בלי לשרשר URL ביד\n        return TypedResults.CreatedAtRoute(\n            IssueResponse.FromEntity(issue),\n            \"GetIssueById\",\n            new { id = issue.Id });\n    }\n\n    private static async Task<Results<Ok<IssueResponse>, NotFound>> GetIssueById(\n        int id,\n        IIssueRepository issues,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.GetByIdAsync(id, cancellationToken);\n        return issue is null\n            ? TypedResults.NotFound()\n            : TypedResults.Ok(IssueResponse.FromEntity(issue));\n    }\n\n    private static async Task<Results<Ok<IssueResponse>, NotFound>> UpdateIssue(\n        int id,\n        UpdateIssueRequest request,\n        IIssueRepository issues,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.UpdateAsync(id, i =>\n        {\n            i.Title = request.Title;\n            i.Description = request.Description;\n            i.Status = request.Status;\n            i.Priority = request.Priority;\n        }, cancellationToken);\n\n        return issue is null\n            ? TypedResults.NotFound()\n            : TypedResults.Ok(IssueResponse.FromEntity(issue));\n    }\n\n    private static async Task<Results<NoContent, NotFound>> DeleteIssue(\n        int id,\n        IIssueRepository issues,\n        CancellationToken cancellationToken)\n    {\n        var deleted = await issues.DeleteAsync(id, cancellationToken);\n        return deleted ? TypedResults.NoContent() : TypedResults.NotFound();\n    }\n}\n",
+          "content": "using Microsoft.AspNetCore.Http.HttpResults;\r\nusing TaskForge.Api.Contracts;\r\nusing TaskForge.Api.Filters;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Api.Endpoints;\r\n\r\npublic static class IssueEndpoints\r\n{\r\n    // קבוצה אחת לכל ה-Issues: prefix משותף, תג OpenAPI משותף, ופילטר משותף.\r\n    // רשימה ויצירה חיים תחת הפרויקט (הבעלים); פעולות על פריט בודד — בנתיב שטוח.\r\n    public static IEndpointRouteBuilder MapIssueEndpoints(this IEndpointRouteBuilder app)\r\n    {\r\n        var group = app.MapGroup(\"/api\")\r\n            .WithTags(\"Issues\")\r\n            .AddEndpointFilter<HandlerTimingFilter>();\r\n\r\n        group.MapGet(\"/projects/{projectId:int}/issues\", GetIssues);\r\n        group.MapPost(\"/projects/{projectId:int}/issues\", CreateIssue);\r\n\r\n        group.MapGet(\"/issues/{id:int}\", GetIssueById).WithName(\"GetIssueById\");\r\n        group.MapPut(\"/issues/{id:int}\", UpdateIssue);\r\n        group.MapDelete(\"/issues/{id:int}\", DeleteIssue);\r\n\r\n        return app;\r\n    }\r\n    // #endregion\r\n\r\n    // handlers עם שמות + Results<...>: החתימה עצמה היא תיעוד —\r\n    // המהדר אוכף שכל מסלול יציאה מוצהר, ו-OpenAPI קורא הכול לבד.\r\n    private static async Task<Results<Ok<PagedResult<IssueResponse>>, NotFound>> GetIssues(\r\n        int projectId,\r\n        [AsParameters] IssueListParams query,\r\n        IIssueRepository issues,\r\n        IProjectRepository projects,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\r\n        {\r\n            return TypedResults.NotFound();\r\n        }\r\n\r\n        var page = await issues.GetPagedAsync(query.ToQuery(projectId), cancellationToken);\r\n\r\n        var mapped = new PagedResult<IssueResponse>(\r\n            page.Items.Select(IssueResponse.FromEntity).ToList(),\r\n            page.Total,\r\n            page.Page,\r\n            page.PageSize);\r\n\r\n        return TypedResults.Ok(mapped);\r\n    }\r\n\r\n    private static async Task<Results<CreatedAtRoute<IssueResponse>, NotFound>> CreateIssue(\r\n        int projectId,\r\n        CreateIssueRequest request,\r\n        IIssueRepository issues,\r\n        IProjectRepository projects,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\r\n        {\r\n            return TypedResults.NotFound();\r\n        }\r\n\r\n        var issue = await issues.AddAsync(new Issue\r\n        {\r\n            Title = request.Title,\r\n            Description = request.Description,\r\n            Priority = request.Priority,\r\n            ProjectId = projectId,\r\n            CreatedAtUtc = DateTime.UtcNow,\r\n        }, cancellationToken);\r\n\r\n        // 201 + כותרת Location שמצביעה על ה-endpoint בעל השם — בלי לשרשר URL ביד\r\n        return TypedResults.CreatedAtRoute(\r\n            IssueResponse.FromEntity(issue),\r\n            \"GetIssueById\",\r\n            new { id = issue.Id });\r\n    }\r\n\r\n    private static async Task<Results<Ok<IssueResponse>, NotFound>> GetIssueById(\r\n        int id,\r\n        IIssueRepository issues,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        var issue = await issues.GetByIdAsync(id, cancellationToken);\r\n        return issue is null\r\n            ? TypedResults.NotFound()\r\n            : TypedResults.Ok(IssueResponse.FromEntity(issue));\r\n    }\r\n\r\n    private static async Task<Results<Ok<IssueResponse>, NotFound>> UpdateIssue(\r\n        int id,\r\n        UpdateIssueRequest request,\r\n        IIssueRepository issues,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        var issue = await issues.UpdateAsync(id, i =>\r\n        {\r\n            i.Title = request.Title;\r\n            i.Description = request.Description;\r\n            i.Status = request.Status;\r\n            i.Priority = request.Priority;\r\n        }, cancellationToken);\r\n\r\n        return issue is null\r\n            ? TypedResults.NotFound()\r\n            : TypedResults.Ok(IssueResponse.FromEntity(issue));\r\n    }\r\n\r\n    private static async Task<Results<NoContent, NotFound>> DeleteIssue(\r\n        int id,\r\n        IIssueRepository issues,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        var deleted = await issues.DeleteAsync(id, cancellationToken);\r\n        return deleted ? TypedResults.NoContent() : TypedResults.NotFound();\r\n    }\r\n    // #endregion\r\n}\r\n",
           "status": "added",
           "regions": {
             "step-4.11": {
               "start": 12,
-              "end": 28
+              "end": 124
             },
             "step-4.12": {
-              "start": 30,
-              "end": 120
+              "start": 31,
+              "end": 124
             }
           },
           "changedLines": [
@@ -1899,11 +1913,13 @@ export const GUIDE_MANIFEST = {
             119,
             120,
             121,
-            122
+            122,
+            123,
+            124
           ]
         },
         "server/TaskForge.Api/Endpoints/ProjectEndpoints.cs": {
-          "content": "using Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class ProjectEndpoints\n{\n    public static IEndpointRouteBuilder MapProjectEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api/projects\").WithTags(\"Projects\");\n\n        group.MapGet(\"/\", GetProjects);\n        group.MapGet(\"/{id:int}\", GetProjectById).WithName(\"GetProjectById\");\n        group.MapPost(\"/\", CreateProject);\n\n        return app;\n    }\n\n    private static async Task<Ok<IReadOnlyList<ProjectSummary>>> GetProjects(\n        IProjectRepository projects,\n        CancellationToken cancellationToken) =>\n        TypedResults.Ok(await projects.GetSummariesAsync(cancellationToken));\n\n    private static async Task<Results<Ok<ProjectResponse>, NotFound>> GetProjectById(\n        int id,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        var project = await projects.GetByIdAsync(id, cancellationToken);\n        return project is null\n            ? TypedResults.NotFound()\n            : TypedResults.Ok(ProjectResponse.FromEntity(project));\n    }\n\n    private static async Task<CreatedAtRoute<ProjectResponse>> CreateProject(\n        CreateProjectRequest request,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        var project = await projects.AddAsync(new Project\n        {\n            Name = request.Name,\n            Description = request.Description,\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        return TypedResults.CreatedAtRoute(\n            ProjectResponse.FromEntity(project),\n            \"GetProjectById\",\n            new { id = project.Id });\n    }\n}\n",
+          "content": "using Microsoft.AspNetCore.Http.HttpResults;\r\nusing TaskForge.Api.Contracts;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Api.Endpoints;\r\n\r\npublic static class ProjectEndpoints\r\n{\r\n    public static IEndpointRouteBuilder MapProjectEndpoints(this IEndpointRouteBuilder app)\r\n    {\r\n        var group = app.MapGroup(\"/api/projects\").WithTags(\"Projects\");\r\n\r\n        group.MapGet(\"/\", GetProjects);\r\n        group.MapGet(\"/{id:int}\", GetProjectById).WithName(\"GetProjectById\");\r\n        group.MapPost(\"/\", CreateProject);\r\n\r\n        return app;\r\n    }\r\n\r\n    private static async Task<Ok<IReadOnlyList<ProjectSummary>>> GetProjects(\r\n        IProjectRepository projects,\r\n        CancellationToken cancellationToken) =>\r\n        TypedResults.Ok(await projects.GetSummariesAsync(cancellationToken));\r\n\r\n    private static async Task<Results<Ok<ProjectResponse>, NotFound>> GetProjectById(\r\n        int id,\r\n        IProjectRepository projects,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        var project = await projects.GetByIdAsync(id, cancellationToken);\r\n        return project is null\r\n            ? TypedResults.NotFound()\r\n            : TypedResults.Ok(ProjectResponse.FromEntity(project));\r\n    }\r\n\r\n    private static async Task<CreatedAtRoute<ProjectResponse>> CreateProject(\r\n        CreateProjectRequest request,\r\n        IProjectRepository projects,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        var project = await projects.AddAsync(new Project\r\n        {\r\n            Name = request.Name,\r\n            Description = request.Description,\r\n            CreatedAtUtc = DateTime.UtcNow,\r\n        }, cancellationToken);\r\n\r\n        return TypedResults.CreatedAtRoute(\r\n            ProjectResponse.FromEntity(project),\r\n            \"GetProjectById\",\r\n            new { id = project.Id });\r\n    }\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -1966,7 +1982,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Api/Filters/HandlerTimingFilter.cs": {
-          "content": "using System.Diagnostics;\n\nnamespace TaskForge.Api.Filters;\n\n// Endpoint filter: עוטף את ה-handler בלבד — לא את כל הצינור כמו middleware.\n// ההשוואה בין X-Handler-Ms לבין X-Elapsed-Ms (מפרק 01) מספרת\n// כמה זמן נבלע ב-middleware, ב-routing וב-binding מסביב ל-handler עצמו.\npublic sealed class HandlerTimingFilter : IEndpointFilter\n{\n    public async ValueTask<object?> InvokeAsync(\n        EndpointFilterInvocationContext context,\n        EndpointFilterDelegate next)\n    {\n        var stopwatch = Stopwatch.StartNew();\n\n        var result = await next(context); // ה-handler (או הפילטר הבא בשרשרת)\n\n        stopwatch.Stop();\n        context.HttpContext.Response.Headers.Append(\"X-Handler-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n\n        return result;\n    }\n}\n",
+          "content": "using System.Diagnostics;\r\n\r\nnamespace TaskForge.Api.Filters;\r\n\r\n// Endpoint filter: עוטף את ה-handler בלבד — לא את כל הצינור כמו middleware.\r\n// ההשוואה בין X-Handler-Ms לבין X-Elapsed-Ms (מפרק 01) מספרת\r\n// כמה זמן נבלע ב-middleware, ב-routing וב-binding מסביב ל-handler עצמו.\r\npublic sealed class HandlerTimingFilter : IEndpointFilter\r\n{\r\n    public async ValueTask<object?> InvokeAsync(\r\n        EndpointFilterInvocationContext context,\r\n        EndpointFilterDelegate next)\r\n    {\r\n        var stopwatch = Stopwatch.StartNew();\r\n\r\n        var result = await next(context); // ה-handler (או הפילטר הבא בשרשרת)\r\n\r\n        stopwatch.Stop();\r\n        context.HttpContext.Response.Headers.Append(\"X-Handler-Ms\",\r\n            stopwatch.ElapsedMilliseconds.ToString());\r\n\r\n        return result;\r\n    }\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -1998,7 +2014,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Abstractions/IIssueRepository.cs": {
-          "content": "using TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// שאילתת הלוח כחוזה: כל מה שאפשר לסנן, למיין ולדפדף בו —\n// במקום חמישה פרמטרים בודדים שמתרבים עם כל פיצ׳ר.\npublic sealed record IssueQuery(\n    int ProjectId,\n    IssueStatus? Status = null,\n    IssuePriority? Priority = null,\n    string? Search = null,\n    string Sort = \"-created\",\n    int Page = 1,\n    int PageSize = 20);\n\npublic interface IIssueRepository\n{\n    Task<PagedResult<Issue>> GetPagedAsync(IssueQuery query, CancellationToken cancellationToken = default);\n\n    Task<Issue?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n\n    Task<Issue> AddAsync(Issue issue, CancellationToken cancellationToken = default);\n\n    /// <summary>טוען ישות במעקב, מפעיל עליה את השינוי, ושומר. null אם לא נמצאה.</summary>\n    Task<Issue?> UpdateAsync(int id, Action<Issue> apply, CancellationToken cancellationToken = default);\n\n    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);\n}\n",
+          "content": "using TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Core.Abstractions;\r\n\r\n// שאילתת הלוח כחוזה: כל מה שאפשר לסנן, למיין ולדפדף בו —\r\n// במקום חמישה פרמטרים בודדים שמתרבים עם כל פיצ׳ר.\r\npublic sealed record IssueQuery(\r\n    int ProjectId,\r\n    IssueStatus? Status = null,\r\n    IssuePriority? Priority = null,\r\n    string? Search = null,\r\n    string Sort = \"-created\",\r\n    int Page = 1,\r\n    int PageSize = 20);\r\n\r\npublic interface IIssueRepository\r\n{\r\n    Task<PagedResult<Issue>> GetPagedAsync(IssueQuery query, CancellationToken cancellationToken = default);\r\n\r\n    Task<Issue?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\r\n\r\n    Task<Issue> AddAsync(Issue issue, CancellationToken cancellationToken = default);\r\n\r\n    /// <summary>טוען ישות במעקב, מפעיל עליה את השינוי, ושומר. null אם לא נמצאה.</summary>\r\n    Task<Issue?> UpdateAsync(int id, Action<Issue> apply, CancellationToken cancellationToken = default);\r\n\r\n    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -2035,7 +2051,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Common/PagedResult.cs": {
-          "content": "namespace TaskForge.Core.Common;\n\n// חוזה הדפדוף של כל רשימה ב-TaskForge: הפריטים של העמוד הנוכחי\n// לצד המספרים שהקליינט צריך כדי לצייר ניווט עמודים.\npublic sealed record PagedResult<T>(\n    IReadOnlyList<T> Items,\n    int Total,\n    int Page,\n    int PageSize)\n{\n    public int TotalPages => (int)Math.Ceiling((double)Total / PageSize);\n}\n",
+          "content": "namespace TaskForge.Core.Common;\r\n\r\n// חוזה הדפדוף של כל רשימה ב-TaskForge: הפריטים של העמוד הנוכחי\r\n// לצד המספרים שהקליינט צריך כדי לצייר ניווט עמודים.\r\npublic sealed record PagedResult<T>(\r\n    IReadOnlyList<T> Items,\r\n    int Total,\r\n    int Page,\r\n    int PageSize)\r\n{\r\n    public int TotalPages => (int)Math.Ceiling((double)Total / PageSize);\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -2055,7 +2071,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Common/ProjectSummary.cs": {
-          "content": "namespace TaskForge.Core.Common;\n\n// הקרנה לקריאה: בדיוק מה שמסך רשימת הפרויקטים צריך, כולל ספירה\n// שמחושבת ב-SQL — בלי לטעון את ה-Issues עצמם לזיכרון.\npublic sealed record ProjectSummary(\n    int Id,\n    string Name,\n    string? Description,\n    int OpenIssues);\n",
+          "content": "namespace TaskForge.Core.Common;\r\n\r\n// הקרנה לקריאה: בדיוק מה שמסך רשימת הפרויקטים צריך, כולל ספירה\r\n// שמחושבת ב-SQL — בלי לטעון את ה-Issues עצמם לזיכרון.\r\npublic sealed record ProjectSummary(\r\n    int Id,\r\n    string Name,\r\n    string? Description,\r\n    int OpenIssues);\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -2072,16 +2088,16 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Infrastructure/Repositories/EfIssueRepository.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfIssueRepository(TaskForgeDbContext db) : IIssueRepository\n{\n    // שאילתה דינמית: בונים IQueryable שלב-שלב, ושום SQL לא רץ\n    // עד CountAsync / ToListAsync. ה-DB מקבל בדיוק שאילתה אחת לכל קריאה.\n    public async Task<PagedResult<Issue>> GetPagedAsync(IssueQuery query, CancellationToken cancellationToken = default)\n    {\n        var issues = db.Issues\n            .AsNoTracking()\n            .Where(i => i.ProjectId == query.ProjectId);\n\n        // כל סינון מצטרף רק אם נתבקש — composition של ביטויים, לא SQL בידיים\n        if (query.Status is { } status)\n        {\n            issues = issues.Where(i => i.Status == status);\n        }\n\n        if (query.Priority is { } priority)\n        {\n            issues = issues.Where(i => i.Priority == priority);\n        }\n\n        if (!string.IsNullOrWhiteSpace(query.Search))\n        {\n            issues = issues.Where(i => EF.Functions.Like(i.Title, $\"%{query.Search}%\"));\n        }\n\n        issues = query.Sort switch\n        {\n            \"created\" => issues.OrderBy(i => i.CreatedAtUtc),\n            \"title\" => issues.OrderBy(i => i.Title),\n            \"priority\" => issues.OrderByDescending(i => i.Priority).ThenBy(i => i.CreatedAtUtc),\n            _ => issues.OrderByDescending(i => i.CreatedAtUtc), // \"-created\", ברירת המחדל\n        };\n\n        // קודם סופרים (שאילתת COUNT רזה), ואז שולפים עמוד אחד בלבד\n        var total = await issues.CountAsync(cancellationToken);\n\n        var items = await issues\n            .Skip((query.Page - 1) * query.PageSize)\n            .Take(query.PageSize)\n            .Include(i => i.Labels)\n            .ToListAsync(cancellationToken);\n\n        return new PagedResult<Issue>(items, total, query.Page, query.PageSize);\n    }\n\n    public Task<Issue?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Issues\n            .AsNoTracking()\n            .Include(i => i.Labels)\n            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);\n\n    public async Task<Issue> AddAsync(Issue issue, CancellationToken cancellationToken = default)\n    {\n        db.Issues.Add(issue);\n        await db.SaveChangesAsync(cancellationToken);\n        return issue; // ה-Id כבר מאוכלס — EF קרא אותו חזרה מה-DB\n    }\n\n    // עדכון בסגנון tracked: טוענים עם מעקב, נותנים לקורא לשנות, ושומרים.\n    // ה-Change Tracker (פרק 03) מזהה בדיוק אילו עמודות השתנו.\n    public async Task<Issue?> UpdateAsync(int id, Action<Issue> apply, CancellationToken cancellationToken = default)\n    {\n        var issue = await db.Issues\n            .Include(i => i.Labels)\n            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);\n\n        if (issue is null)\n        {\n            return null;\n        }\n\n        apply(issue);\n        await db.SaveChangesAsync(cancellationToken);\n        return issue;\n    }\n\n    // מחיקה בלי לטעון: ExecuteDelete שולח DELETE ישיר ומחזיר כמה שורות נמחקו\n    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default) =>\n        await db.Issues\n            .Where(i => i.Id == id)\n            .ExecuteDeleteAsync(cancellationToken) > 0;\n}\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\nusing TaskForge.Infrastructure.Data;\r\n\r\nnamespace TaskForge.Infrastructure.Repositories;\r\n\r\npublic sealed class EfIssueRepository(TaskForgeDbContext db) : IIssueRepository\r\n{\r\n    // שאילתה דינמית: בונים IQueryable שלב-שלב, ושום SQL לא רץ\r\n    // עד CountAsync / ToListAsync. ה-DB מקבל בדיוק שאילתה אחת לכל קריאה.\r\n    public async Task<PagedResult<Issue>> GetPagedAsync(IssueQuery query, CancellationToken cancellationToken = default)\r\n    {\r\n        var issues = db.Issues\r\n            .AsNoTracking()\r\n            .Where(i => i.ProjectId == query.ProjectId);\r\n\r\n        // כל סינון מצטרף רק אם נתבקש — composition של ביטויים, לא SQL בידיים\r\n        if (query.Status is { } status)\r\n        {\r\n            issues = issues.Where(i => i.Status == status);\r\n        }\r\n\r\n        if (query.Priority is { } priority)\r\n        {\r\n            issues = issues.Where(i => i.Priority == priority);\r\n        }\r\n\r\n        if (!string.IsNullOrWhiteSpace(query.Search))\r\n        {\r\n            issues = issues.Where(i => EF.Functions.Like(i.Title, $\"%{query.Search}%\"));\r\n        }\r\n\r\n        issues = query.Sort switch\r\n        {\r\n            \"created\" => issues.OrderBy(i => i.CreatedAtUtc),\r\n            \"title\" => issues.OrderBy(i => i.Title),\r\n            \"priority\" => issues.OrderByDescending(i => i.Priority).ThenBy(i => i.CreatedAtUtc),\r\n            _ => issues.OrderByDescending(i => i.CreatedAtUtc), // \"-created\", ברירת המחדל\r\n        };\r\n\r\n        // קודם סופרים (שאילתת COUNT רזה), ואז שולפים עמוד אחד בלבד\r\n        var total = await issues.CountAsync(cancellationToken);\r\n\r\n        var items = await issues\r\n            .Skip((query.Page - 1) * query.PageSize)\r\n            .Take(query.PageSize)\r\n            .Include(i => i.Labels)\r\n            .ToListAsync(cancellationToken);\r\n\r\n        return new PagedResult<Issue>(items, total, query.Page, query.PageSize);\r\n    }\r\n    // #endregion\r\n\r\n    public Task<Issue?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\r\n        db.Issues\r\n            .AsNoTracking()\r\n            .Include(i => i.Labels)\r\n            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);\r\n\r\n    public async Task<Issue> AddAsync(Issue issue, CancellationToken cancellationToken = default)\r\n    {\r\n        db.Issues.Add(issue);\r\n        await db.SaveChangesAsync(cancellationToken);\r\n        return issue; // ה-Id כבר מאוכלס — EF קרא אותו חזרה מה-DB\r\n    }\r\n\r\n    // עדכון בסגנון tracked: טוענים עם מעקב, נותנים לקורא לשנות, ושומרים.\r\n    // ה-Change Tracker (פרק 03) מזהה בדיוק אילו עמודות השתנו.\r\n    public async Task<Issue?> UpdateAsync(int id, Action<Issue> apply, CancellationToken cancellationToken = default)\r\n    {\r\n        var issue = await db.Issues\r\n            .Include(i => i.Labels)\r\n            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);\r\n\r\n        if (issue is null)\r\n        {\r\n            return null;\r\n        }\r\n\r\n        apply(issue);\r\n        await db.SaveChangesAsync(cancellationToken);\r\n        return issue;\r\n    }\r\n\r\n    // מחיקה בלי לטעון: ExecuteDelete שולח DELETE ישיר ומחזיר כמה שורות נמחקו\r\n    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default) =>\r\n        await db.Issues\r\n            .Where(i => i.Id == id)\r\n            .ExecuteDeleteAsync(cancellationToken) > 0;\r\n    // #endregion\r\n}\r\n",
           "status": "added",
           "regions": {
             "step-4.5": {
               "start": 11,
-              "end": 53
+              "end": 94
             },
             "step-4.6": {
-              "start": 61,
-              "end": 90
+              "start": 62,
+              "end": 94
             }
           },
           "changedLines": [
@@ -2176,7 +2192,9 @@ export const GUIDE_MANIFEST = {
             89,
             90,
             91,
-            92
+            92,
+            93,
+            94
           ]
         }
       }
@@ -2184,13 +2202,13 @@ export const GUIDE_MANIFEST = {
     "ch05": {
       "files": {
         "server/TaskForge.Api/appsettings.Development.json": {
-          "content": "{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Information\"\n    }\n  }\n}\n",
+          "content": "{\r\n  \"Logging\": {\r\n    \"LogLevel\": {\r\n      \"Default\": \"Information\",\r\n      \"Microsoft.AspNetCore\": \"Information\"\r\n    }\r\n  }\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/appsettings.json": {
-          "content": "{\n  \"ConnectionStrings\": {\n    \"Default\": \"Data Source=taskforge.db\"\n  },\n  \"Jwt\": {\n    \"Issuer\": \"TaskForge\",\n    \"Audience\": \"TaskForge.Client\",\n    \"Key\": \"dev-only-signing-key-CHANGE-IN-PRODUCTION-7f3a9c1e5b8d2046\",\n    \"AccessTokenMinutes\": 15,\n    \"RefreshTokenDays\": 7\n  },\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Warning\"\n    }\n  },\n  \"AllowedHosts\": \"*\"\n}\n",
+          "content": "{\r\n  \"ConnectionStrings\": {\r\n    \"Default\": \"Data Source=taskforge.db\"\r\n  },\r\n  \"Jwt\": {\r\n    \"Issuer\": \"TaskForge\",\r\n    \"Audience\": \"TaskForge.Client\",\r\n    \"Key\": \"dev-only-signing-key-CHANGE-IN-PRODUCTION-7f3a9c1e5b8d2046\",\r\n    \"AccessTokenMinutes\": 15,\r\n    \"RefreshTokenDays\": 7\r\n  },\r\n  \"Logging\": {\r\n    \"LogLevel\": {\r\n      \"Default\": \"Information\",\r\n      \"Microsoft.AspNetCore\": \"Warning\"\r\n    }\r\n  },\r\n  \"AllowedHosts\": \"*\"\r\n}\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -2204,56 +2222,56 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Api/Program.cs": {
-          "content": "using System.Text;\nusing System.Text.Json.Serialization;\nusing Microsoft.AspNetCore.Authentication.JwtBearer;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.IdentityModel.Tokens;\nusing TaskForge.Api.Endpoints;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Infrastructure.Auth;\nusing TaskForge.Infrastructure.Data;\nusing TaskForge.Infrastructure.Repositories;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// enums נכנסים ויוצאים כטקסט (\"Open\") בכל ה-API — הגדרה אחת, לכולם\nbuilder.Services.ConfigureHttpJsonOptions(options =>\n    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));\n\n// ה-DbContext נרשם Scoped מעצם הגדרתו: יחידת עבודה אחת לכל בקשה.\n// מחרוזת החיבור מגיעה מהקונפיגורציה — לא מקובעת בקוד.\nbuilder.Services.AddDbContext<TaskForgeDbContext>(options =>\n    options.UseSqlite(builder.Configuration.GetConnectionString(\"Default\")));\n\n// ה-seams של הדומיין: חוזה מה-Core, מימוש מה-Infrastructure\nbuilder.Services.AddScoped<IProjectRepository, EfProjectRepository>();\nbuilder.Services.AddScoped<IIssueRepository, EfIssueRepository>();\nbuilder.Services.AddScoped<IUserRepository, EfUserRepository>();\nbuilder.Services.AddScoped<IRefreshTokenRepository, EfRefreshTokenRepository>();\n\n// שירותי auth חסרי-state — ‏Singleton בלב שלם\nbuilder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();\nbuilder.Services.AddSingleton<ITokenService, TokenService>();\n\n// קושרים את סקציית \"Jwt\" מהקונפיגורציה אל ה-options — מקור אמת אחד\nbuilder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));\nvar jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()\n    ?? throw new InvalidOperationException(\"Missing Jwt configuration section\");\n\n// צד האימות: ה-handler של Bearer מצרף לכל בקשה את ה-ClaimsPrincipal\n// אם הטוקן חתום נכון, בתוקף, ומגיע מהמנפיק ולקהל הנכונים.\nbuilder.Services\n    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)\n    .AddJwtBearer(options =>\n    {\n        options.TokenValidationParameters = new TokenValidationParameters\n        {\n            ValidateIssuer = true,\n            ValidIssuer = jwt.Issuer,\n            ValidateAudience = true,\n            ValidAudience = jwt.Audience,\n            ValidateIssuerSigningKey = true,\n            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),\n            ValidateLifetime = true,\n            // ברירת המחדל היא 5 דקות חסד — נצמיד לשעון אמיתי\n            ClockSkew = TimeSpan.FromSeconds(30),\n        };\n    });\n\nbuilder.Services.AddAuthorization();\n\n// הוולידציה המובנית של .NET 10: כל DTO מסומן ב-DataAnnotations נבדק\n// אוטומטית לפני ה-handler; כישלון מחזיר 400 ValidationProblem אחיד.\nbuilder.Services.AddValidation();\n\n// ProblemDetails (RFC 7807) כברירת מחדל לכל שגיאה וסטטוס ללא גוף\nbuilder.Services.AddProblemDetails();\n\nbuilder.Services.AddOpenApi();\n\nvar app = builder.Build();\n\n// בעליית האפליקציה: מיישמים מיגרציות שחסרות ומזריעים DB ריק.\n// CreateScope חובה — DbContext הוא Scoped, ומחוץ לבקשה אין scope.\nusing (var scope = app.Services.CreateScope())\n{\n    var db = scope.ServiceProvider.GetRequiredService<TaskForgeDbContext>();\n    await db.Database.MigrateAsync();\n    await DbSeeder.SeedAsync(db);\n}\n\n// העוטפים החיצוניים: חריגה לא מטופלת הופכת ל-500 ProblemDetails,\n// וכל תשובת סטטוס בלי גוף (כמו 404 של routing) מקבלת גוף אחיד.\napp.UseExceptionHandler();\napp.UseStatusCodePages();\n\n// ── ה-pipeline המוכר מפרק 01: לוגים ומדידת זמן ──\n\napp.Use(async (context, next) =>\n{\n    app.Logger.LogInformation(\"{Method} {Path} started\",\n        context.Request.Method, context.Request.Path);\n\n    await next(context);\n\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\n});\n\napp.Use(async (context, next) =>\n{\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\n\n    context.Response.OnStarting(() =>\n    {\n        stopwatch.Stop();\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n        return Task.CompletedTask;\n    });\n\n    await next(context);\n});\n\n// קודם מזהים (מי אתה?), אחר כך מחליטים (מותר לך?) — הסדר קשיח\napp.UseAuthentication();\napp.UseAuthorization();\n\n// תיאור ה-API נוצר מהקוד עצמו — בסביבת פיתוח בלבד\nif (app.Environment.IsDevelopment())\n{\n    app.MapOpenApi(); // GET /openapi/v1.json\n}\n\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\n\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\n\n// כל ה-API העסקי — מאורגן בקבצים לפי פיצ׳ר\napp.MapAuthEndpoints();\napp.MapProjectEndpoints();\napp.MapIssueEndpoints();\n\napp.Run();\n",
+          "content": "using System.Text;\r\nusing System.Text.Json.Serialization;\r\nusing Microsoft.AspNetCore.Authentication.JwtBearer;\r\nusing Microsoft.EntityFrameworkCore;\r\nusing Microsoft.IdentityModel.Tokens;\r\nusing TaskForge.Api.Endpoints;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Common;\r\nusing TaskForge.Infrastructure.Auth;\r\nusing TaskForge.Infrastructure.Data;\r\nusing TaskForge.Infrastructure.Repositories;\r\n\r\nvar builder = WebApplication.CreateBuilder(args);\r\n\r\n// enums נכנסים ויוצאים כטקסט (\"Open\") בכל ה-API — הגדרה אחת, לכולם\r\nbuilder.Services.ConfigureHttpJsonOptions(options =>\r\n    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));\r\n// #endregion\r\n\r\n// ה-DbContext נרשם Scoped מעצם הגדרתו: יחידת עבודה אחת לכל בקשה.\r\n// מחרוזת החיבור מגיעה מהקונפיגורציה — לא מקובעת בקוד.\r\nbuilder.Services.AddDbContext<TaskForgeDbContext>(options =>\r\n    options.UseSqlite(builder.Configuration.GetConnectionString(\"Default\")));\r\n// #endregion\r\n\r\n// ה-seams של הדומיין: חוזה מה-Core, מימוש מה-Infrastructure\r\nbuilder.Services.AddScoped<IProjectRepository, EfProjectRepository>();\r\nbuilder.Services.AddScoped<IIssueRepository, EfIssueRepository>();\r\nbuilder.Services.AddScoped<IUserRepository, EfUserRepository>();\r\nbuilder.Services.AddScoped<IRefreshTokenRepository, EfRefreshTokenRepository>();\r\n// #endregion\r\n\r\n// שירותי auth חסרי-state — ‏Singleton בלב שלם\r\nbuilder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();\r\nbuilder.Services.AddSingleton<ITokenService, TokenService>();\r\n\r\n// קושרים את סקציית \"Jwt\" מהקונפיגורציה אל ה-options — מקור אמת אחד\r\nbuilder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));\r\nvar jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()\r\n    ?? throw new InvalidOperationException(\"Missing Jwt configuration section\");\r\n// #endregion\r\n\r\n// צד האימות: ה-handler של Bearer מצרף לכל בקשה את ה-ClaimsPrincipal\r\n// אם הטוקן חתום נכון, בתוקף, ומגיע מהמנפיק ולקהל הנכונים.\r\nbuilder.Services\r\n    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)\r\n    .AddJwtBearer(options =>\r\n    {\r\n        options.TokenValidationParameters = new TokenValidationParameters\r\n        {\r\n            ValidateIssuer = true,\r\n            ValidIssuer = jwt.Issuer,\r\n            ValidateAudience = true,\r\n            ValidAudience = jwt.Audience,\r\n            ValidateIssuerSigningKey = true,\r\n            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),\r\n            ValidateLifetime = true,\r\n            // ברירת המחדל היא 5 דקות חסד — נצמיד לשעון אמיתי\r\n            ClockSkew = TimeSpan.FromSeconds(30),\r\n        };\r\n    });\r\n\r\nbuilder.Services.AddAuthorization();\r\n// #endregion\r\n\r\n// הוולידציה המובנית של .NET 10: כל DTO מסומן ב-DataAnnotations נבדק\r\n// אוטומטית לפני ה-handler; כישלון מחזיר 400 ValidationProblem אחיד.\r\nbuilder.Services.AddValidation();\r\n// #endregion\r\n\r\n// ProblemDetails (RFC 7807) כברירת מחדל לכל שגיאה וסטטוס ללא גוף\r\nbuilder.Services.AddProblemDetails();\r\n\r\nbuilder.Services.AddOpenApi();\r\n\r\nvar app = builder.Build();\r\n\r\n// בעליית האפליקציה: מיישמים מיגרציות שחסרות ומזריעים DB ריק.\r\n// CreateScope חובה — DbContext הוא Scoped, ומחוץ לבקשה אין scope.\r\nusing (var scope = app.Services.CreateScope())\r\n{\r\n    var db = scope.ServiceProvider.GetRequiredService<TaskForgeDbContext>();\r\n    await db.Database.MigrateAsync();\r\n    await DbSeeder.SeedAsync(db);\r\n}\r\n// #endregion\r\n\r\n// העוטפים החיצוניים: חריגה לא מטופלת הופכת ל-500 ProblemDetails,\r\n// וכל תשובת סטטוס בלי גוף (כמו 404 של routing) מקבלת גוף אחיד.\r\napp.UseExceptionHandler();\r\napp.UseStatusCodePages();\r\n// #endregion\r\n\r\n// ── ה-pipeline המוכר מפרק 01: לוגים ומדידת זמן ──\r\n\r\napp.Use(async (context, next) =>\r\n{\r\n    app.Logger.LogInformation(\"{Method} {Path} started\",\r\n        context.Request.Method, context.Request.Path);\r\n\r\n    await next(context);\r\n\r\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\r\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\r\n});\r\n\r\napp.Use(async (context, next) =>\r\n{\r\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\r\n\r\n    context.Response.OnStarting(() =>\r\n    {\r\n        stopwatch.Stop();\r\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\r\n            stopwatch.ElapsedMilliseconds.ToString());\r\n        return Task.CompletedTask;\r\n    });\r\n\r\n    await next(context);\r\n});\r\n// #endregion\r\n\r\n// קודם מזהים (מי אתה?), אחר כך מחליטים (מותר לך?) — הסדר קשיח\r\napp.UseAuthentication();\r\napp.UseAuthorization();\r\n// #endregion\r\n\r\n// תיאור ה-API נוצר מהקוד עצמו — בסביבת פיתוח בלבד\r\nif (app.Environment.IsDevelopment())\r\n{\r\n    app.MapOpenApi(); // GET /openapi/v1.json\r\n}\r\n// #endregion\r\n\r\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\r\n\r\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\r\n\r\n// כל ה-API העסקי — מאורגן בקבצים לפי פיצ׳ר\r\napp.MapAuthEndpoints();\r\napp.MapProjectEndpoints();\r\napp.MapIssueEndpoints();\r\n// #endregion\r\n\r\napp.Run();\r\n",
           "status": "modified",
           "regions": {
             "step-4.2": {
               "start": 15,
-              "end": 17
+              "end": 146
             },
             "step-3.7": {
-              "start": 19,
-              "end": 22
+              "start": 20,
+              "end": 146
             },
             "step-4.4": {
-              "start": 24,
-              "end": 28
+              "start": 26,
+              "end": 146
             },
             "step-5.8": {
-              "start": 30,
-              "end": 37
+              "start": 33,
+              "end": 146
             },
             "step-5.9": {
-              "start": 39,
-              "end": 59
+              "start": 43,
+              "end": 146
             },
             "step-4.9": {
-              "start": 61,
-              "end": 63
+              "start": 66,
+              "end": 146
             },
             "step-3.11": {
-              "start": 72,
-              "end": 79
+              "start": 78,
+              "end": 146
             },
             "step-4.10": {
-              "start": 81,
-              "end": 84
+              "start": 88,
+              "end": 146
             },
             "step-1.10": {
-              "start": 86,
-              "end": 112
+              "start": 94,
+              "end": 146
             },
             "step-5.10": {
-              "start": 114,
-              "end": 116
+              "start": 123,
+              "end": 146
             },
             "step-4.17": {
-              "start": 118,
-              "end": 122
+              "start": 128,
+              "end": 146
             },
             "step-4.16": {
-              "start": 124,
-              "end": 131
+              "start": 135,
+              "end": 146
             }
           },
           "changedLines": [
@@ -2262,12 +2280,9 @@ export const GUIDE_MANIFEST = {
             5,
             8,
             9,
-            24,
-            27,
-            28,
+            26,
+            29,
             30,
-            31,
-            32,
             33,
             34,
             35,
@@ -2296,21 +2311,27 @@ export const GUIDE_MANIFEST = {
             58,
             59,
             60,
-            114,
-            115,
-            116,
-            117,
-            129
+            61,
+            62,
+            63,
+            64,
+            65,
+            123,
+            124,
+            125,
+            126,
+            127,
+            140
           ]
         },
         "server/TaskForge.Api/Properties/launchSettings.json": {
-          "content": "{\n  \"$schema\": \"https://json.schemastore.org/launchsettings.json\",\n  \"profiles\": {\n    \"http\": {\n      \"commandName\": \"Project\",\n      \"dotnetRunMessages\": true,\n      \"launchBrowser\": false,\n      \"applicationUrl\": \"http://localhost:5080\",\n      \"environmentVariables\": {\n        \"ASPNETCORE_ENVIRONMENT\": \"Development\"\n      }\n    }\n  }\n}\n",
+          "content": "{\r\n  \"$schema\": \"https://json.schemastore.org/launchsettings.json\",\r\n  \"profiles\": {\r\n    \"http\": {\r\n      \"commandName\": \"Project\",\r\n      \"dotnetRunMessages\": true,\r\n      \"launchBrowser\": false,\r\n      \"applicationUrl\": \"http://localhost:5080\",\r\n      \"environmentVariables\": {\r\n        \"ASPNETCORE_ENVIRONMENT\": \"Development\"\r\n      }\r\n    }\r\n  }\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/requests.http": {
-          "content": "@host = http://localhost:5080\n\n### Hello — האם השרת חי?\nGET {{host}}/\n\n### Health check\nGET {{host}}/healthz\n\n### ─────────── Auth ───────────\n\n### התחברות עם משתמש הדמו — העתיקו accessToken ו-refreshToken מהתשובה\n# @name login\nPOST {{host}}/api/auth/login\nContent-Type: application/json\n\n{\n  \"email\": \"demo@taskforge.dev\",\n  \"password\": \"Passw0rd!\"\n}\n\n### משתני עזר — REST Client שולף אותם מתשובת ה-login האחרונה\n@accessToken = {{login.response.body.accessToken}}\n@refreshToken = {{login.response.body.refreshToken}}\n\n### מי אני? — דורש Bearer token\nGET {{host}}/api/auth/me\nAuthorization: Bearer {{accessToken}}\n\n### בלי טוקן — 401 עוד לפני שה-handler רץ\nGET {{host}}/api/auth/me\n\n### הרשמה — 201 + זוג טוקנים (התחברות אוטומטית)\nPOST {{host}}/api/auth/register\nContent-Type: application/json\n\n{\n  \"email\": \"oleg@taskforge.dev\",\n  \"displayName\": \"Oleg\",\n  \"password\": \"S3curePass!\"\n}\n\n### הרשמה עם אימייל תפוס — 409 Conflict\nPOST {{host}}/api/auth/register\nContent-Type: application/json\n\n{\n  \"email\": \"demo@taskforge.dev\",\n  \"displayName\": \"Imposter\",\n  \"password\": \"S3curePass!\"\n}\n\n### סיסמה שגויה — 401, אותה תשובה כמו אימייל לא קיים (לא מסגירים כלום)\nPOST {{host}}/api/auth/login\nContent-Type: application/json\n\n{\n  \"email\": \"demo@taskforge.dev\",\n  \"password\": \"wrong-password\"\n}\n\n### Refresh — מנפיק זוג חדש ושורף את הישן (rotation)\nPOST {{host}}/api/auth/refresh\nContent-Type: application/json\n\n{\n  \"refreshToken\": \"{{refreshToken}}\"\n}\n\n### אותו refresh פעם שנייה — 401: הטוקן כבר בוטל. ככה נחשפת גניבה.\nPOST {{host}}/api/auth/refresh\nContent-Type: application/json\n\n{\n  \"refreshToken\": \"{{refreshToken}}\"\n}\n\n### ─────────── Projects (קריאה פתוחה, יצירה למאומתים) ───────────\n\n### רשימת פרויקטים — עדיין פתוח לכולם\nGET {{host}}/api/projects\n\n### יצירת פרויקט — היוצר הופך ל-Owner אוטומטית\nPOST {{host}}/api/projects\nAuthorization: Bearer {{accessToken}}\nContent-Type: application/json\n\n{\n  \"name\": \"API Hardening\",\n  \"description\": \"Rate limits, caching, observability\"\n}\n\n### ─────────── Issues (הכול דורש אימות) ───────────\n\n### הלוח — עכשיו עם Bearer\nGET {{host}}/api/projects/1/issues?status=Open\nAuthorization: Bearer {{accessToken}}\n\n### בלי טוקן — 401\nGET {{host}}/api/projects/1/issues\n\n### יצירת Issue — דורש גם חברות בפרויקט (אחרת 403)\nPOST {{host}}/api/projects/1/issues\nAuthorization: Bearer {{accessToken}}\nContent-Type: application/json\n\n{\n  \"title\": \"Add dark mode toggle\",\n  \"priority\": \"High\"\n}\n",
+          "content": "@host = http://localhost:5080\r\n\r\n### Hello — האם השרת חי?\r\nGET {{host}}/\r\n\r\n### Health check\r\nGET {{host}}/healthz\r\n\r\n### ─────────── Auth ───────────\r\n\r\n### התחברות עם משתמש הדמו — העתיקו accessToken ו-refreshToken מהתשובה\r\n# @name login\r\nPOST {{host}}/api/auth/login\r\nContent-Type: application/json\r\n\r\n{\r\n  \"email\": \"demo@taskforge.dev\",\r\n  \"password\": \"Passw0rd!\"\r\n}\r\n\r\n### משתני עזר — REST Client שולף אותם מתשובת ה-login האחרונה\r\n@accessToken = {{login.response.body.accessToken}}\r\n@refreshToken = {{login.response.body.refreshToken}}\r\n\r\n### מי אני? — דורש Bearer token\r\nGET {{host}}/api/auth/me\r\nAuthorization: Bearer {{accessToken}}\r\n\r\n### בלי טוקן — 401 עוד לפני שה-handler רץ\r\nGET {{host}}/api/auth/me\r\n\r\n### הרשמה — 201 + זוג טוקנים (התחברות אוטומטית)\r\nPOST {{host}}/api/auth/register\r\nContent-Type: application/json\r\n\r\n{\r\n  \"email\": \"oleg@taskforge.dev\",\r\n  \"displayName\": \"Oleg\",\r\n  \"password\": \"S3curePass!\"\r\n}\r\n\r\n### הרשמה עם אימייל תפוס — 409 Conflict\r\nPOST {{host}}/api/auth/register\r\nContent-Type: application/json\r\n\r\n{\r\n  \"email\": \"demo@taskforge.dev\",\r\n  \"displayName\": \"Imposter\",\r\n  \"password\": \"S3curePass!\"\r\n}\r\n\r\n### סיסמה שגויה — 401, אותה תשובה כמו אימייל לא קיים (לא מסגירים כלום)\r\nPOST {{host}}/api/auth/login\r\nContent-Type: application/json\r\n\r\n{\r\n  \"email\": \"demo@taskforge.dev\",\r\n  \"password\": \"wrong-password\"\r\n}\r\n\r\n### Refresh — מנפיק זוג חדש ושורף את הישן (rotation)\r\nPOST {{host}}/api/auth/refresh\r\nContent-Type: application/json\r\n\r\n{\r\n  \"refreshToken\": \"{{refreshToken}}\"\r\n}\r\n\r\n### אותו refresh פעם שנייה — 401: הטוקן כבר בוטל. ככה נחשפת גניבה.\r\nPOST {{host}}/api/auth/refresh\r\nContent-Type: application/json\r\n\r\n{\r\n  \"refreshToken\": \"{{refreshToken}}\"\r\n}\r\n\r\n### ─────────── Projects (קריאה פתוחה, יצירה למאומתים) ───────────\r\n\r\n### רשימת פרויקטים — עדיין פתוח לכולם\r\nGET {{host}}/api/projects\r\n\r\n### יצירת פרויקט — היוצר הופך ל-Owner אוטומטית\r\nPOST {{host}}/api/projects\r\nAuthorization: Bearer {{accessToken}}\r\nContent-Type: application/json\r\n\r\n{\r\n  \"name\": \"API Hardening\",\r\n  \"description\": \"Rate limits, caching, observability\"\r\n}\r\n\r\n### ─────────── Issues (הכול דורש אימות) ───────────\r\n\r\n### הלוח — עכשיו עם Bearer\r\nGET {{host}}/api/projects/1/issues?status=Open\r\nAuthorization: Bearer {{accessToken}}\r\n\r\n### בלי טוקן — 401\r\nGET {{host}}/api/projects/1/issues\r\n\r\n### יצירת Issue — דורש גם חברות בפרויקט (אחרת 403)\r\nPOST {{host}}/api/projects/1/issues\r\nAuthorization: Bearer {{accessToken}}\r\nContent-Type: application/json\r\n\r\n{\r\n  \"title\": \"Add dark mode toggle\",\r\n  \"priority\": \"High\"\r\n}\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -2372,6 +2393,7 @@ export const GUIDE_MANIFEST = {
             96,
             98,
             99,
+            100,
             101,
             102,
             103,
@@ -2380,12 +2402,11 @@ export const GUIDE_MANIFEST = {
             106,
             107,
             108,
-            109,
-            110
+            109
           ]
         },
         "server/TaskForge.Api/TaskForge.Api.csproj": {
-          "content": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n  <ItemGroup>\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\n    <ProjectReference Include=\"..\\TaskForge.Infrastructure\\TaskForge.Infrastructure.csproj\" />\n  </ItemGroup>\n\n  <ItemGroup>\n    <!-- design-time בלבד: מאפשר ל-dotnet ef להריץ מיגרציות דרך הפרויקט הזה -->\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Design\" Version=\"10.0.9\">\n      <PrivateAssets>all</PrivateAssets>\n      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>\n    </PackageReference>\n    <PackageReference Include=\"Microsoft.AspNetCore.OpenApi\" Version=\"10.0.9\" />\n    <!-- אימות Bearer tokens בצד השרת -->\n    <PackageReference Include=\"Microsoft.AspNetCore.Authentication.JwtBearer\" Version=\"10.0.9\" />\n  </ItemGroup>\n\n</Project>\n",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net10.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n  <ItemGroup>\r\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\r\n    <ProjectReference Include=\"..\\TaskForge.Infrastructure\\TaskForge.Infrastructure.csproj\" />\r\n  </ItemGroup>\r\n\r\n  <ItemGroup>\r\n    <!-- design-time בלבד: מאפשר ל-dotnet ef להריץ מיגרציות דרך הפרויקט הזה -->\r\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Design\" Version=\"10.0.9\">\r\n      <PrivateAssets>all</PrivateAssets>\r\n      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>\r\n    </PackageReference>\r\n    <PackageReference Include=\"Microsoft.AspNetCore.OpenApi\" Version=\"10.0.9\" />\r\n    <!-- אימות Bearer tokens בצד השרת -->\r\n    <PackageReference Include=\"Microsoft.AspNetCore.Authentication.JwtBearer\" Version=\"10.0.9\" />\r\n  </ItemGroup>\r\n\r\n</Project>\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -2394,7 +2415,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Abstractions/IProjectRepository.cs": {
-          "content": "using TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// החוזה מוגדר בדומיין: \"ככה ניגשים לפרויקטים\".\n// מי שמממש אותו ואיך — לא עניינו של ה-Core. זה חוק התלות בפעולה.\npublic interface IProjectRepository\n{\n    Task<IReadOnlyList<ProjectSummary>> GetSummariesAsync(CancellationToken cancellationToken = default);\n\n    Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n\n    /// <summary>יוצר פרויקט ומצרף את היוצר כ-Owner — פעולה אטומית אחת.</summary>\n    Task<Project> AddAsync(Project project, int ownerUserId, CancellationToken cancellationToken = default);\n\n    Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);\n\n    /// <summary>הרשאה מבוססת-משאב: האם המשתמש חבר בפרויקט הזה?</summary>\n    Task<bool> IsMemberAsync(int projectId, int userId, CancellationToken cancellationToken = default);\n}\n",
+          "content": "using TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Core.Abstractions;\r\n\r\n// החוזה מוגדר בדומיין: \"ככה ניגשים לפרויקטים\".\r\n// מי שמממש אותו ואיך — לא עניינו של ה-Core. זה חוק התלות בפעולה.\r\npublic interface IProjectRepository\r\n{\r\n    Task<IReadOnlyList<ProjectSummary>> GetSummariesAsync(CancellationToken cancellationToken = default);\r\n\r\n    Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\r\n\r\n    /// <summary>יוצר פרויקט ומצרף את היוצר כ-Owner — פעולה אטומית אחת.</summary>\r\n    Task<Project> AddAsync(Project project, int ownerUserId, CancellationToken cancellationToken = default);\r\n\r\n    Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);\r\n\r\n    /// <summary>הרשאה מבוססת-משאב: האם המשתמש חבר בפרויקט הזה?</summary>\r\n    Task<bool> IsMemberAsync(int projectId, int userId, CancellationToken cancellationToken = default);\r\n}\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -2406,19 +2427,19 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Entities/Project.cs": {
-          "content": "namespace TaskForge.Core.Entities;\n\n// הישות הראשונה של הדומיין. שימו לב מה אין כאן:\n// אין JSON, אין HTTP, אין SQL — רק העסק עצמו.\npublic sealed class Project\n{\n    public int Id { get; set; }\n\n    // required: אי אפשר לייצר Project בלי שם — המהדר אוכף את זה\n    public required string Name { get; set; }\n\n    // string? — תיאור הוא אופציונלי במפורש\n    public string? Description { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    // צד ה\"אחד\" של אחד-לרבים: לפרויקט יש אוסף Issues\n    public List<Issue> Issues { get; set; } = [];\n}\n",
+          "content": "namespace TaskForge.Core.Entities;\r\n\r\n// הישות הראשונה של הדומיין. שימו לב מה אין כאן:\r\n// אין JSON, אין HTTP, אין SQL — רק העסק עצמו.\r\npublic sealed class Project\r\n{\r\n    public int Id { get; set; }\r\n\r\n    // required: אי אפשר לייצר Project בלי שם — המהדר אוכף את זה\r\n    public required string Name { get; set; }\r\n\r\n    // string? — תיאור הוא אופציונלי במפורש\r\n    public string? Description { get; set; }\r\n\r\n    public DateTime CreatedAtUtc { get; set; }\r\n\r\n    // צד ה\"אחד\" של אחד-לרבים: לפרויקט יש אוסף Issues\r\n    public List<Issue> Issues { get; set; } = [];\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Core/TaskForge.Core.csproj": {
-          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n</Project>\n",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net10.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n</Project>\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Infrastructure/TaskForge.Infrastructure.csproj": {
-          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n  <ItemGroup>\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\n  </ItemGroup>\n\n  <ItemGroup>\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Sqlite\" Version=\"10.0.9\" />\n    <!-- יצירת JWT (חתימה) — האימות בצד ה-Api משתמש בחבילת ה-Bearer -->\n    <PackageReference Include=\"System.IdentityModel.Tokens.Jwt\" Version=\"8.19.1\" />\n  </ItemGroup>\n\n</Project>\n",
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net10.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n  <ItemGroup>\r\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\r\n  </ItemGroup>\r\n\r\n  <ItemGroup>\r\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Sqlite\" Version=\"10.0.9\" />\r\n    <!-- יצירת JWT (חתימה) — האימות בצד ה-Api משתמש בחבילת ה-Bearer -->\r\n    <PackageReference Include=\"System.IdentityModel.Tokens.Jwt\" Version=\"8.19.1\" />\r\n  </ItemGroup>\r\n\r\n</Project>\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -2427,40 +2448,40 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.slnx": {
-          "content": "<Solution>\n  <Project Path=\"TaskForge.Api/TaskForge.Api.csproj\" />\n  <Project Path=\"TaskForge.Core/TaskForge.Core.csproj\" />\n  <Project Path=\"TaskForge.Infrastructure/TaskForge.Infrastructure.csproj\" />\n</Solution>\n",
+          "content": "<Solution>\r\n  <Project Path=\"TaskForge.Api/TaskForge.Api.csproj\" />\r\n  <Project Path=\"TaskForge.Core/TaskForge.Core.csproj\" />\r\n  <Project Path=\"TaskForge.Infrastructure/TaskForge.Infrastructure.csproj\" />\r\n</Solution>\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/.config/dotnet-tools.json": {
-          "content": "{\n  \"version\": 1,\n  \"isRoot\": true,\n  \"tools\": {\n    \"dotnet-ef\": {\n      \"version\": \"10.0.9\",\n      \"commands\": [\"dotnet-ef\"]\n    }\n  }\n}\n",
+          "content": "{\r\n  \"version\": 1,\r\n  \"isRoot\": true,\r\n  \"tools\": {\r\n    \"dotnet-ef\": {\r\n      \"version\": \"10.0.9\",\r\n      \"commands\": [\"dotnet-ef\"]\r\n    }\r\n  }\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Core/Entities/Issue.cs": {
-          "content": "namespace TaskForge.Core.Entities;\n\n// enum = שפת הדומיין: סט ערכים סגור שהמהדר אוכף.\n// \"Open\" שגוי-איות פשוט לא יתקמפל — לעומת string חופשי.\n\npublic enum IssueStatus\n{\n    Open,\n    InProgress,\n    Done,\n}\n\npublic enum IssuePriority\n{\n    Low,\n    Medium,\n    High,\n    Critical,\n}\n\npublic sealed class Issue\n{\n    public int Id { get; set; }\n\n    public required string Title { get; set; }\n\n    public string? Description { get; set; }\n\n    public IssueStatus Status { get; set; } = IssueStatus.Open;\n\n    public IssuePriority Priority { get; set; } = IssuePriority.Medium;\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    // הזוג הקלאסי: מפתח זר + navigation property.\n    // ה-FK הוא העמודה בטבלה; ה-nav הוא הדרך של הקוד \"ללכת\" לפרויקט.\n    public int ProjectId { get; set; }\n    public Project? Project { get; set; }\n\n    // many-to-many: ‏EF יבנה טבלת חיבור לבד (skip navigation)\n    public List<Label> Labels { get; set; } = [];\n}\n",
+          "content": "namespace TaskForge.Core.Entities;\r\n\r\n// enum = שפת הדומיין: סט ערכים סגור שהמהדר אוכף.\r\n// \"Open\" שגוי-איות פשוט לא יתקמפל — לעומת string חופשי.\r\n\r\npublic enum IssueStatus\r\n{\r\n    Open,\r\n    InProgress,\r\n    Done,\r\n}\r\n\r\npublic enum IssuePriority\r\n{\r\n    Low,\r\n    Medium,\r\n    High,\r\n    Critical,\r\n}\r\n\r\npublic sealed class Issue\r\n{\r\n    public int Id { get; set; }\r\n\r\n    public required string Title { get; set; }\r\n\r\n    public string? Description { get; set; }\r\n\r\n    public IssueStatus Status { get; set; } = IssueStatus.Open;\r\n\r\n    public IssuePriority Priority { get; set; } = IssuePriority.Medium;\r\n\r\n    public DateTime CreatedAtUtc { get; set; }\r\n\r\n    // הזוג הקלאסי: מפתח זר + navigation property.\r\n    // ה-FK הוא העמודה בטבלה; ה-nav הוא הדרך של הקוד \"ללכת\" לפרויקט.\r\n    public int ProjectId { get; set; }\r\n    public Project? Project { get; set; }\r\n\r\n    // many-to-many: ‏EF יבנה טבלת חיבור לבד (skip navigation)\r\n    public List<Label> Labels { get; set; } = [];\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Core/Entities/Label.cs": {
-          "content": "namespace TaskForge.Core.Entities;\n\npublic sealed class Label\n{\n    public int Id { get; set; }\n\n    public required string Name { get; set; }\n\n    // צבע תצוגה הקסדצימלי, למשל \"#f87171\" — אופציונלי\n    public string? Color { get; set; }\n\n    // הצד השני של ה-many-to-many עם Issue\n    public List<Issue> Issues { get; set; } = [];\n}\n",
+          "content": "namespace TaskForge.Core.Entities;\r\n\r\npublic sealed class Label\r\n{\r\n    public int Id { get; set; }\r\n\r\n    public required string Name { get; set; }\r\n\r\n    // צבע תצוגה הקסדצימלי, למשל \"#f87171\" — אופציונלי\r\n    public string? Color { get; set; }\r\n\r\n    // הצד השני של ה-many-to-many עם Issue\r\n    public List<Issue> Issues { get; set; } = [];\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Infrastructure/Data/DbSeeder.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Auth;\n\nnamespace TaskForge.Infrastructure.Data;\n\n// נתוני פיתוח: רצים פעם אחת, רק על DB ריק.\n// מפרק 05 — כולל משתמש דמו שהוא ה-Owner של כל הפרויקטים.\npublic static class DbSeeder\n{\n    public static async Task SeedAsync(TaskForgeDbContext db)\n    {\n        if (await db.Projects.AnyAsync())\n        {\n            return; // יש כבר נתונים — לא נוגעים\n        }\n\n        // משתמש פיתוח: demo@taskforge.dev / Passw0rd!\n        // הסיסמה עוברת את אותו PBKDF2 כמו בהרשמה אמיתית — אין דלת אחורית.\n        var demo = new User\n        {\n            Email = \"demo@taskforge.dev\",\n            DisplayName = \"Demo User\",\n            PasswordHash = new PasswordHasher().Hash(\"Passw0rd!\"),\n            Role = UserRole.Admin,\n            CreatedAtUtc = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),\n        };\n        db.Users.Add(demo);\n\n        var bug = new Label { Name = \"bug\", Color = \"#f87171\" };\n        var feature = new Label { Name = \"feature\", Color = \"#4ade80\" };\n        var design = new Label { Name = \"design\", Color = \"#c084fc\" };\n\n        var website = new Project\n        {\n            Name = \"Website Redesign\",\n            Description = \"Refresh the marketing site end to end\",\n            CreatedAtUtc = new DateTime(2026, 1, 12, 0, 0, 0, DateTimeKind.Utc),\n            Issues =\n            [\n                new Issue\n                {\n                    Title = \"Fix login redirect loop\",\n                    Description = \"Users bounce between /login and /home\",\n                    Status = IssueStatus.InProgress,\n                    Priority = IssuePriority.Critical,\n                    CreatedAtUtc = new DateTime(2026, 1, 14, 9, 0, 0, DateTimeKind.Utc),\n                    Labels = [bug],\n                },\n                new Issue\n                {\n                    Title = \"New hero section\",\n                    Status = IssueStatus.Open,\n                    Priority = IssuePriority.Medium,\n                    CreatedAtUtc = new DateTime(2026, 1, 20, 11, 30, 0, DateTimeKind.Utc),\n                    Labels = [feature, design],\n                },\n            ],\n        };\n\n        var mobile = new Project\n        {\n            Name = \"Mobile App\",\n            Description = \"iOS + Android companion app\",\n            CreatedAtUtc = new DateTime(2026, 2, 3, 0, 0, 0, DateTimeKind.Utc),\n            Issues =\n            [\n                new Issue\n                {\n                    Title = \"Push notifications opt-in\",\n                    Status = IssueStatus.Open,\n                    Priority = IssuePriority.High,\n                    CreatedAtUtc = new DateTime(2026, 2, 10, 8, 15, 0, DateTimeKind.Utc),\n                    Labels = [feature],\n                },\n                new Issue\n                {\n                    Title = \"Crash on cold start (Android 15)\",\n                    Status = IssueStatus.Done,\n                    Priority = IssuePriority.Critical,\n                    CreatedAtUtc = new DateTime(2026, 2, 12, 16, 45, 0, DateTimeKind.Utc),\n                    Labels = [bug],\n                },\n            ],\n        };\n\n        var tools = new Project\n        {\n            Name = \"Internal Tools\",\n            Description = null,\n            CreatedAtUtc = new DateTime(2026, 3, 21, 0, 0, 0, DateTimeKind.Utc),\n        };\n\n        // מוסיפים רק את השורשים — ה-Change Tracker מגלה את כל הגרף\n        // (Issues, ‏Labels וטבלת החיבור) ושומר הכול ב-SaveChanges אחד.\n        db.Projects.AddRange(website, mobile, tools);\n        await db.SaveChangesAsync();\n\n        // חברות: עכשיו יש Ids אמיתיים, אפשר לקשור את המשתמש לפרויקטים\n        db.ProjectMembers.AddRange(\n            new ProjectMember { ProjectId = website.Id, UserId = demo.Id, Role = ProjectRole.Owner },\n            new ProjectMember { ProjectId = mobile.Id, UserId = demo.Id, Role = ProjectRole.Owner },\n            new ProjectMember { ProjectId = tools.Id, UserId = demo.Id, Role = ProjectRole.Owner });\n        await db.SaveChangesAsync();\n    }\n}\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Core.Entities;\r\nusing TaskForge.Infrastructure.Auth;\r\n\r\nnamespace TaskForge.Infrastructure.Data;\r\n\r\n// נתוני פיתוח: רצים פעם אחת, רק על DB ריק.\r\n// מפרק 05 — כולל משתמש דמו שהוא ה-Owner של כל הפרויקטים.\r\npublic static class DbSeeder\r\n{\r\n    public static async Task SeedAsync(TaskForgeDbContext db)\r\n    {\r\n        if (await db.Projects.AnyAsync())\r\n        {\r\n            return; // יש כבר נתונים — לא נוגעים\r\n        }\r\n\r\n        // משתמש פיתוח: demo@taskforge.dev / Passw0rd!\r\n        // הסיסמה עוברת את אותו PBKDF2 כמו בהרשמה אמיתית — אין דלת אחורית.\r\n        var demo = new User\r\n        {\r\n            Email = \"demo@taskforge.dev\",\r\n            DisplayName = \"Demo User\",\r\n            PasswordHash = new PasswordHasher().Hash(\"Passw0rd!\"),\r\n            Role = UserRole.Admin,\r\n            CreatedAtUtc = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),\r\n        };\r\n        db.Users.Add(demo);\r\n        // #endregion\r\n\r\n        var bug = new Label { Name = \"bug\", Color = \"#f87171\" };\r\n        var feature = new Label { Name = \"feature\", Color = \"#4ade80\" };\r\n        var design = new Label { Name = \"design\", Color = \"#c084fc\" };\r\n\r\n        var website = new Project\r\n        {\r\n            Name = \"Website Redesign\",\r\n            Description = \"Refresh the marketing site end to end\",\r\n            CreatedAtUtc = new DateTime(2026, 1, 12, 0, 0, 0, DateTimeKind.Utc),\r\n            Issues =\r\n            [\r\n                new Issue\r\n                {\r\n                    Title = \"Fix login redirect loop\",\r\n                    Description = \"Users bounce between /login and /home\",\r\n                    Status = IssueStatus.InProgress,\r\n                    Priority = IssuePriority.Critical,\r\n                    CreatedAtUtc = new DateTime(2026, 1, 14, 9, 0, 0, DateTimeKind.Utc),\r\n                    Labels = [bug],\r\n                },\r\n                new Issue\r\n                {\r\n                    Title = \"New hero section\",\r\n                    Status = IssueStatus.Open,\r\n                    Priority = IssuePriority.Medium,\r\n                    CreatedAtUtc = new DateTime(2026, 1, 20, 11, 30, 0, DateTimeKind.Utc),\r\n                    Labels = [feature, design],\r\n                },\r\n            ],\r\n        };\r\n\r\n        var mobile = new Project\r\n        {\r\n            Name = \"Mobile App\",\r\n            Description = \"iOS + Android companion app\",\r\n            CreatedAtUtc = new DateTime(2026, 2, 3, 0, 0, 0, DateTimeKind.Utc),\r\n            Issues =\r\n            [\r\n                new Issue\r\n                {\r\n                    Title = \"Push notifications opt-in\",\r\n                    Status = IssueStatus.Open,\r\n                    Priority = IssuePriority.High,\r\n                    CreatedAtUtc = new DateTime(2026, 2, 10, 8, 15, 0, DateTimeKind.Utc),\r\n                    Labels = [feature],\r\n                },\r\n                new Issue\r\n                {\r\n                    Title = \"Crash on cold start (Android 15)\",\r\n                    Status = IssueStatus.Done,\r\n                    Priority = IssuePriority.Critical,\r\n                    CreatedAtUtc = new DateTime(2026, 2, 12, 16, 45, 0, DateTimeKind.Utc),\r\n                    Labels = [bug],\r\n                },\r\n            ],\r\n        };\r\n\r\n        var tools = new Project\r\n        {\r\n            Name = \"Internal Tools\",\r\n            Description = null,\r\n            CreatedAtUtc = new DateTime(2026, 3, 21, 0, 0, 0, DateTimeKind.Utc),\r\n        };\r\n\r\n        // מוסיפים רק את השורשים — ה-Change Tracker מגלה את כל הגרף\r\n        // (Issues, ‏Labels וטבלת החיבור) ושומר הכול ב-SaveChanges אחד.\r\n        db.Projects.AddRange(website, mobile, tools);\r\n        await db.SaveChangesAsync();\r\n\r\n        // חברות: עכשיו יש Ids אמיתיים, אפשר לקשור את המשתמש לפרויקטים\r\n        db.ProjectMembers.AddRange(\r\n            new ProjectMember { ProjectId = website.Id, UserId = demo.Id, Role = ProjectRole.Owner },\r\n            new ProjectMember { ProjectId = mobile.Id, UserId = demo.Id, Role = ProjectRole.Owner },\r\n            new ProjectMember { ProjectId = tools.Id, UserId = demo.Id, Role = ProjectRole.Owner });\r\n        await db.SaveChangesAsync();\r\n        // #endregion\r\n    }\r\n}\r\n",
           "status": "modified",
           "regions": {
             "step-5.7": {
               "start": 18,
-              "end": 28
+              "end": 109
             },
             "step-5.7b": {
-              "start": 99,
-              "end": 104
+              "start": 100,
+              "end": 109
             }
           },
           "changedLines": [
@@ -2478,26 +2499,28 @@ export const GUIDE_MANIFEST = {
             27,
             28,
             29,
-            98,
+            30,
             99,
             100,
             101,
             102,
             103,
-            104
+            104,
+            105,
+            106
           ]
         },
         "server/TaskForge.Infrastructure/Data/TaskForgeDbContext.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Infrastructure.Data;\n\n// ה-DbContext הוא יחידת העבודה: צוהר אחד ל-DB לכל בקשה,\n// שעוקב אחרי כל ישות שהוא הגיש ויודע לתרגם שינויים ל-SQL.\npublic sealed class TaskForgeDbContext(DbContextOptions<TaskForgeDbContext> options)\n    : DbContext(options)\n{\n    // כל DbSet = טבלה. Set<T>() במקום setter — אין מצב ביניים null.\n    public DbSet<Project> Projects => Set<Project>();\n    public DbSet<Issue> Issues => Set<Issue>();\n    public DbSet<Label> Labels => Set<Label>();\n    public DbSet<User> Users => Set<User>();\n    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();\n    public DbSet<ProjectMember> ProjectMembers => Set<ProjectMember>();\n\n    // Fluent API: כל חוקי המיפוי כאן, והישויות ב-Core נשארות נקיות —\n    // בלי attributes של EF. זה חוק התלות מפרק 02, מיושם על שכבת הנתונים.\n    protected override void OnModelCreating(ModelBuilder modelBuilder)\n    {\n        modelBuilder.Entity<Project>(project =>\n        {\n            project.Property(p => p.Name)\n                   .HasMaxLength(120)\n                   .IsRequired();\n\n            // אחד-לרבים: מחיקת פרויקט גוררת את ה-Issues שלו\n            project.HasMany(p => p.Issues)\n                   .WithOne(i => i.Project!)\n                   .HasForeignKey(i => i.ProjectId)\n                   .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<Issue>(issue =>\n        {\n            issue.Property(i => i.Title)\n                 .HasMaxLength(200)\n                 .IsRequired();\n\n            // enum נשמר כטקסט קריא ב-DB (\"Open\"), לא כמספר קסם (0)\n            issue.Property(i => i.Status)\n                 .HasConversion<string>()\n                 .HasMaxLength(20);\n\n            issue.Property(i => i.Priority)\n                 .HasConversion<string>()\n                 .HasMaxLength(20);\n\n            // האינדקס של שאילתת הלוח: \"כל ה-Issues הפתוחים בפרויקט X\"\n            issue.HasIndex(i => new { i.ProjectId, i.Status });\n\n            // many-to-many: ‏EF מסיק טבלת חיבור IssueLabel לבד\n            issue.HasMany(i => i.Labels)\n                 .WithMany(l => l.Issues);\n        });\n\n        modelBuilder.Entity<Label>(label =>\n        {\n            label.Property(l => l.Name)\n                 .HasMaxLength(40)\n                 .IsRequired();\n\n            // אין שתי תוויות באותו שם\n            label.HasIndex(l => l.Name).IsUnique();\n        });\n\n        modelBuilder.Entity<User>(user =>\n        {\n            user.Property(u => u.Email).HasMaxLength(254).IsRequired();\n            user.Property(u => u.DisplayName).HasMaxLength(60).IsRequired();\n            user.Property(u => u.PasswordHash).HasMaxLength(300).IsRequired();\n            user.Property(u => u.Role).HasConversion<string>().HasMaxLength(20);\n\n            // אימייל הוא הזהות — אין שניים\n            user.HasIndex(u => u.Email).IsUnique();\n        });\n\n        modelBuilder.Entity<RefreshToken>(token =>\n        {\n            token.Property(t => t.Token).HasMaxLength(120).IsRequired();\n\n            // חיפוש הטוקן הוא הנתיב החם של /auth/refresh — אינדקס ייחודי\n            token.HasIndex(t => t.Token).IsUnique();\n\n            // מחיקת משתמש גוררת את הטוקנים שלו\n            token.HasOne(t => t.User)\n                 .WithMany()\n                 .HasForeignKey(t => t.UserId)\n                 .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<ProjectMember>(member =>\n        {\n            // מפתח מורכב: זוג (פרויקט, משתמש) הוא החברות עצמה — בלי Id מלאכותי\n            member.HasKey(m => new { m.ProjectId, m.UserId });\n\n            member.Property(m => m.Role).HasConversion<string>().HasMaxLength(20);\n\n            member.HasOne(m => m.Project)\n                  .WithMany()\n                  .HasForeignKey(m => m.ProjectId)\n                  .OnDelete(DeleteBehavior.Cascade);\n\n            member.HasOne(m => m.User)\n                  .WithMany()\n                  .HasForeignKey(m => m.UserId)\n                  .OnDelete(DeleteBehavior.Cascade);\n        });\n    }\n}\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Infrastructure.Data;\r\n\r\n// ה-DbContext הוא יחידת העבודה: צוהר אחד ל-DB לכל בקשה,\r\n// שעוקב אחרי כל ישות שהוא הגיש ויודע לתרגם שינויים ל-SQL.\r\npublic sealed class TaskForgeDbContext(DbContextOptions<TaskForgeDbContext> options)\r\n    : DbContext(options)\r\n{\r\n    // כל DbSet = טבלה. Set<T>() במקום setter — אין מצב ביניים null.\r\n    public DbSet<Project> Projects => Set<Project>();\r\n    public DbSet<Issue> Issues => Set<Issue>();\r\n    public DbSet<Label> Labels => Set<Label>();\r\n    public DbSet<User> Users => Set<User>();\r\n    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();\r\n    public DbSet<ProjectMember> ProjectMembers => Set<ProjectMember>();\r\n\r\n    // Fluent API: כל חוקי המיפוי כאן, והישויות ב-Core נשארות נקיות —\r\n    // בלי attributes של EF. זה חוק התלות מפרק 02, מיושם על שכבת הנתונים.\r\n    protected override void OnModelCreating(ModelBuilder modelBuilder)\r\n    {\r\n        modelBuilder.Entity<Project>(project =>\r\n        {\r\n            project.Property(p => p.Name)\r\n                   .HasMaxLength(120)\r\n                   .IsRequired();\r\n\r\n            // אחד-לרבים: מחיקת פרויקט גוררת את ה-Issues שלו\r\n            project.HasMany(p => p.Issues)\r\n                   .WithOne(i => i.Project!)\r\n                   .HasForeignKey(i => i.ProjectId)\r\n                   .OnDelete(DeleteBehavior.Cascade);\r\n        });\r\n\r\n        modelBuilder.Entity<Issue>(issue =>\r\n        {\r\n            issue.Property(i => i.Title)\r\n                 .HasMaxLength(200)\r\n                 .IsRequired();\r\n\r\n            // enum נשמר כטקסט קריא ב-DB (\"Open\"), לא כמספר קסם (0)\r\n            issue.Property(i => i.Status)\r\n                 .HasConversion<string>()\r\n                 .HasMaxLength(20);\r\n\r\n            issue.Property(i => i.Priority)\r\n                 .HasConversion<string>()\r\n                 .HasMaxLength(20);\r\n\r\n            // האינדקס של שאילתת הלוח: \"כל ה-Issues הפתוחים בפרויקט X\"\r\n            issue.HasIndex(i => new { i.ProjectId, i.Status });\r\n\r\n            // many-to-many: ‏EF מסיק טבלת חיבור IssueLabel לבד\r\n            issue.HasMany(i => i.Labels)\r\n                 .WithMany(l => l.Issues);\r\n        });\r\n\r\n        modelBuilder.Entity<Label>(label =>\r\n        {\r\n            label.Property(l => l.Name)\r\n                 .HasMaxLength(40)\r\n                 .IsRequired();\r\n\r\n            // אין שתי תוויות באותו שם\r\n            label.HasIndex(l => l.Name).IsUnique();\r\n        });\r\n\r\n        modelBuilder.Entity<User>(user =>\r\n        {\r\n            user.Property(u => u.Email).HasMaxLength(254).IsRequired();\r\n            user.Property(u => u.DisplayName).HasMaxLength(60).IsRequired();\r\n            user.Property(u => u.PasswordHash).HasMaxLength(300).IsRequired();\r\n            user.Property(u => u.Role).HasConversion<string>().HasMaxLength(20);\r\n\r\n            // אימייל הוא הזהות — אין שניים\r\n            user.HasIndex(u => u.Email).IsUnique();\r\n        });\r\n\r\n        modelBuilder.Entity<RefreshToken>(token =>\r\n        {\r\n            token.Property(t => t.Token).HasMaxLength(120).IsRequired();\r\n\r\n            // חיפוש הטוקן הוא הנתיב החם של /auth/refresh — אינדקס ייחודי\r\n            token.HasIndex(t => t.Token).IsUnique();\r\n\r\n            // מחיקת משתמש גוררת את הטוקנים שלו\r\n            token.HasOne(t => t.User)\r\n                 .WithMany()\r\n                 .HasForeignKey(t => t.UserId)\r\n                 .OnDelete(DeleteBehavior.Cascade);\r\n        });\r\n\r\n        modelBuilder.Entity<ProjectMember>(member =>\r\n        {\r\n            // מפתח מורכב: זוג (פרויקט, משתמש) הוא החברות עצמה — בלי Id מלאכותי\r\n            member.HasKey(m => new { m.ProjectId, m.UserId });\r\n\r\n            member.Property(m => m.Role).HasConversion<string>().HasMaxLength(20);\r\n\r\n            member.HasOne(m => m.Project)\r\n                  .WithMany()\r\n                  .HasForeignKey(m => m.ProjectId)\r\n                  .OnDelete(DeleteBehavior.Cascade);\r\n\r\n            member.HasOne(m => m.User)\r\n                  .WithMany()\r\n                  .HasForeignKey(m => m.UserId)\r\n                  .OnDelete(DeleteBehavior.Cascade);\r\n        });\r\n        // #endregion\r\n    }\r\n    // #endregion\r\n}\r\n",
           "status": "modified",
           "regions": {
-            "step-5.6": {
-              "start": 69,
-              "end": 110
-            },
             "step-3.6": {
               "start": 19,
-              "end": 111
+              "end": 115
+            },
+            "step-5.6": {
+              "start": 69,
+              "end": 115
             }
           },
           "changedLines": [
@@ -2546,7 +2569,8 @@ export const GUIDE_MANIFEST = {
             107,
             108,
             109,
-            110
+            110,
+            111
           ]
         },
         "server/TaskForge.Infrastructure/Migrations/20260610091413_InitialCreate.cs": {
@@ -2689,66 +2713,67 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Infrastructure/Repositories/EfProjectRepository.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfProjectRepository(TaskForgeDbContext db) : IProjectRepository\n{\n    // הקרנה (projection): ‏Select לתוך record. ‏EF מתרגם את הכול —\n    // כולל ספירת ה-Issues הפתוחים — לשאילתת SQL אחת עם COUNT מקונן.\n    // ה-Issues עצמם לא נטענים לזיכרון לעולם.\n    public async Task<IReadOnlyList<ProjectSummary>> GetSummariesAsync(CancellationToken cancellationToken = default) =>\n        await db.Projects\n            .AsNoTracking()\n            .OrderBy(p => p.Id)\n            .Select(p => new ProjectSummary(\n                p.Id,\n                p.Name,\n                p.Description,\n                p.Issues.Count(i => i.Status != IssueStatus.Done)))\n            .ToListAsync(cancellationToken);\n\n    public Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Projects\n            .AsNoTracking()\n            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);\n\n    // הפרויקט והחברות נכנסים באותו SaveChanges — טרנזקציה אחת.\n    // אין רגע שבו קיים פרויקט בלי Owner.\n    public async Task<Project> AddAsync(Project project, int ownerUserId, CancellationToken cancellationToken = default)\n    {\n        db.Projects.Add(project);\n        db.ProjectMembers.Add(new ProjectMember\n        {\n            Project = project,\n            UserId = ownerUserId,\n            Role = ProjectRole.Owner,\n        });\n        await db.SaveChangesAsync(cancellationToken);\n        return project;\n    }\n\n    // בדיקת קיום רזה: ‏EXISTS ב-SQL, בלי לטעון את הישות\n    public Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Projects.AnyAsync(p => p.Id == id, cancellationToken);\n\n    public Task<bool> IsMemberAsync(int projectId, int userId, CancellationToken cancellationToken = default) =>\n        db.ProjectMembers.AnyAsync(\n            m => m.ProjectId == projectId && m.UserId == userId, cancellationToken);\n}\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\nusing TaskForge.Infrastructure.Data;\r\n\r\nnamespace TaskForge.Infrastructure.Repositories;\r\n\r\npublic sealed class EfProjectRepository(TaskForgeDbContext db) : IProjectRepository\r\n{\r\n    // הקרנה (projection): ‏Select לתוך record. ‏EF מתרגם את הכול —\r\n    // כולל ספירת ה-Issues הפתוחים — לשאילתת SQL אחת עם COUNT מקונן.\r\n    // ה-Issues עצמם לא נטענים לזיכרון לעולם.\r\n    public async Task<IReadOnlyList<ProjectSummary>> GetSummariesAsync(CancellationToken cancellationToken = default) =>\r\n        await db.Projects\r\n            .AsNoTracking()\r\n            .OrderBy(p => p.Id)\r\n            .Select(p => new ProjectSummary(\r\n                p.Id,\r\n                p.Name,\r\n                p.Description,\r\n                p.Issues.Count(i => i.Status != IssueStatus.Done)))\r\n            .ToListAsync(cancellationToken);\r\n    // #endregion\r\n\r\n    public Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\r\n        db.Projects\r\n            .AsNoTracking()\r\n            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);\r\n\r\n    // הפרויקט והחברות נכנסים באותו SaveChanges — טרנזקציה אחת.\r\n    // אין רגע שבו קיים פרויקט בלי Owner.\r\n    public async Task<Project> AddAsync(Project project, int ownerUserId, CancellationToken cancellationToken = default)\r\n    {\r\n        db.Projects.Add(project);\r\n        db.ProjectMembers.Add(new ProjectMember\r\n        {\r\n            Project = project,\r\n            UserId = ownerUserId,\r\n            Role = ProjectRole.Owner,\r\n        });\r\n        await db.SaveChangesAsync(cancellationToken);\r\n        return project;\r\n    }\r\n    // #endregion\r\n\r\n    // בדיקת קיום רזה: ‏EXISTS ב-SQL, בלי לטעון את הישות\r\n    public Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default) =>\r\n        db.Projects.AnyAsync(p => p.Id == id, cancellationToken);\r\n\r\n    public Task<bool> IsMemberAsync(int projectId, int userId, CancellationToken cancellationToken = default) =>\r\n        db.ProjectMembers.AnyAsync(\r\n            m => m.ProjectId == projectId && m.UserId == userId, cancellationToken);\r\n}\r\n",
           "status": "modified",
           "regions": {
             "step-4.14": {
               "start": 11,
-              "end": 23
+              "end": 55
             },
             "step-5.14": {
-              "start": 30,
-              "end": 43
+              "start": 31,
+              "end": 55
             }
           },
           "changedLines": [
-            30,
             31,
             32,
-            35,
+            33,
             36,
             37,
             38,
             39,
             40,
-            48,
-            49,
+            41,
+            45,
             50,
-            51
+            51,
+            52,
+            53
           ]
         },
         "server/TaskForge.Api/Contracts/IssueContracts.cs": {
-          "content": "using System.ComponentModel.DataAnnotations;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\n// חוזה ה-HTTP של Issues. ‏records: ‏immutable, שוויון לפי ערך, ושורה אחת לכל טיפוס.\n// הישות היא פנים-המערכת; ה-DTOs האלה הם מה שעובר על הקו — בכוונה בנפרד.\n\npublic sealed record CreateIssueRequest(\n    [property: Required, StringLength(200, MinimumLength = 3)] string Title,\n    [property: StringLength(4000)] string? Description,\n    IssuePriority Priority = IssuePriority.Medium);\n\npublic sealed record UpdateIssueRequest(\n    [property: Required, StringLength(200, MinimumLength = 3)] string Title,\n    [property: StringLength(4000)] string? Description,\n    IssueStatus Status,\n    IssuePriority Priority);\n\npublic sealed record LabelResponse(int Id, string Name, string? Color);\n\npublic sealed record IssueResponse(\n    int Id,\n    string Title,\n    string? Description,\n    IssueStatus Status,\n    IssuePriority Priority,\n    int ProjectId,\n    DateTime CreatedAtUtc,\n    IReadOnlyList<LabelResponse> Labels)\n{\n    public static IssueResponse FromEntity(Issue issue) => new(\n        issue.Id,\n        issue.Title,\n        issue.Description,\n        issue.Status,\n        issue.Priority,\n        issue.ProjectId,\n        issue.CreatedAtUtc,\n        issue.Labels.Select(l => new LabelResponse(l.Id, l.Name, l.Color)).ToList());\n}\n\n// [AsParameters]: כל ה-query string נקשר לאובייקט אחד במקום שישה פרמטרים.\n// הוולידציה של .NET 10 רצה גם כאן — pageSize=999 ייפסל לפני ה-handler.\npublic sealed record IssueListParams(\n    IssueStatus? Status,\n    IssuePriority? Priority,\n    [property: StringLength(100)] string? Search,\n    string Sort = \"-created\",\n    [property: Range(1, int.MaxValue)] int Page = 1,\n    [property: Range(1, 100)] int PageSize = 20)\n{\n    public IssueQuery ToQuery(int projectId) =>\n        new(projectId, Status, Priority, Search, Sort, Page, PageSize);\n}\n",
+          "content": "using System.ComponentModel.DataAnnotations;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Api.Contracts;\r\n\r\n// חוזה ה-HTTP של Issues. ‏records: ‏immutable, שוויון לפי ערך, ושורה אחת לכל טיפוס.\r\n// הישות היא פנים-המערכת; ה-DTOs האלה הם מה שעובר על הקו — בכוונה בנפרד.\r\n\r\npublic sealed record CreateIssueRequest(\r\n    [property: Required, StringLength(200, MinimumLength = 3)] string Title,\r\n    [property: StringLength(4000)] string? Description,\r\n    IssuePriority Priority = IssuePriority.Medium);\r\n\r\npublic sealed record UpdateIssueRequest(\r\n    [property: Required, StringLength(200, MinimumLength = 3)] string Title,\r\n    [property: StringLength(4000)] string? Description,\r\n    IssueStatus Status,\r\n    IssuePriority Priority);\r\n\r\npublic sealed record LabelResponse(int Id, string Name, string? Color);\r\n\r\npublic sealed record IssueResponse(\r\n    int Id,\r\n    string Title,\r\n    string? Description,\r\n    IssueStatus Status,\r\n    IssuePriority Priority,\r\n    int ProjectId,\r\n    DateTime CreatedAtUtc,\r\n    IReadOnlyList<LabelResponse> Labels)\r\n{\r\n    public static IssueResponse FromEntity(Issue issue) => new(\r\n        issue.Id,\r\n        issue.Title,\r\n        issue.Description,\r\n        issue.Status,\r\n        issue.Priority,\r\n        issue.ProjectId,\r\n        issue.CreatedAtUtc,\r\n        issue.Labels.Select(l => new LabelResponse(l.Id, l.Name, l.Color)).ToList());\r\n}\r\n\r\n// [AsParameters]: כל ה-query string נקשר לאובייקט אחד במקום שישה פרמטרים.\r\n// הוולידציה של .NET 10 רצה גם כאן — pageSize=999 ייפסל לפני ה-handler.\r\npublic sealed record IssueListParams(\r\n    IssueStatus? Status,\r\n    IssuePriority? Priority,\r\n    [property: StringLength(100)] string? Search,\r\n    string Sort = \"-created\",\r\n    [property: Range(1, int.MaxValue)] int Page = 1,\r\n    [property: Range(1, 100)] int PageSize = 20)\r\n{\r\n    public IssueQuery ToQuery(int projectId) =>\r\n        new(projectId, Status, Priority, Search, Sort, Page, PageSize);\r\n}\r\n// #endregion\r\n",
           "status": "unchanged",
           "regions": {
             "step-4.8": {
               "start": 44,
-              "end": 56
+              "end": 58
             }
           },
           "changedLines": []
         },
         "server/TaskForge.Api/Contracts/ProjectContracts.cs": {
-          "content": "using System.ComponentModel.DataAnnotations;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\npublic sealed record CreateProjectRequest(\n    [property: Required, StringLength(120, MinimumLength = 2)] string Name,\n    [property: StringLength(2000)] string? Description);\n\npublic sealed record ProjectResponse(\n    int Id,\n    string Name,\n    string? Description,\n    DateTime CreatedAtUtc)\n{\n    public static ProjectResponse FromEntity(Project project) =>\n        new(project.Id, project.Name, project.Description, project.CreatedAtUtc);\n}\n",
+          "content": "using System.ComponentModel.DataAnnotations;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Api.Contracts;\r\n\r\npublic sealed record CreateProjectRequest(\r\n    [property: Required, StringLength(120, MinimumLength = 2)] string Name,\r\n    [property: StringLength(2000)] string? Description);\r\n\r\npublic sealed record ProjectResponse(\r\n    int Id,\r\n    string Name,\r\n    string? Description,\r\n    DateTime CreatedAtUtc)\r\n{\r\n    public static ProjectResponse FromEntity(Project project) =>\r\n        new(project.Id, project.Name, project.Description, project.CreatedAtUtc);\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Api/Endpoints/IssueEndpoints.cs": {
-          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Api.Filters;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class IssueEndpoints\n{\n    // קבוצה אחת לכל ה-Issues: prefix משותף, תג OpenAPI משותף, ופילטר משותף.\n    // מפרק 05: כל הקבוצה דורשת משתמש מאומת — שורה אחת מגינה על הכול.\n    public static IEndpointRouteBuilder MapIssueEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api\")\n            .WithTags(\"Issues\")\n            .AddEndpointFilter<HandlerTimingFilter>()\n            .RequireAuthorization();\n\n        group.MapGet(\"/projects/{projectId:int}/issues\", GetIssues);\n        group.MapPost(\"/projects/{projectId:int}/issues\", CreateIssue);\n\n        group.MapGet(\"/issues/{id:int}\", GetIssueById).WithName(\"GetIssueById\");\n        group.MapPut(\"/issues/{id:int}\", UpdateIssue);\n        group.MapDelete(\"/issues/{id:int}\", DeleteIssue);\n\n        return app;\n    }\n\n    // handlers עם שמות + Results<...>: החתימה עצמה היא תיעוד —\n    // המהדר אוכף שכל מסלול יציאה מוצהר, ו-OpenAPI קורא הכול לבד.\n    private static async Task<Results<Ok<PagedResult<IssueResponse>>, NotFound>> GetIssues(\n        int projectId,\n        [AsParameters] IssueListParams query,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        var page = await issues.GetPagedAsync(query.ToQuery(projectId), cancellationToken);\n\n        var mapped = new PagedResult<IssueResponse>(\n            page.Items.Select(IssueResponse.FromEntity).ToList(),\n            page.Total,\n            page.Page,\n            page.PageSize);\n\n        return TypedResults.Ok(mapped);\n    }\n\n    private static async Task<Results<CreatedAtRoute<IssueResponse>, NotFound, ForbidHttpResult>> CreateIssue(\n        int projectId,\n        CreateIssueRequest request,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        // הרשאה מבוססת-משאב: מאומת זה לא מספיק — צריך להיות חבר בפרויקט.\n        // ‏401 = מי אתה בכלל; ‏403 = אני יודע מי אתה, ואסור לך.\n        if (!await projects.IsMemberAsync(projectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var issue = await issues.AddAsync(new Issue\n        {\n            Title = request.Title,\n            Description = request.Description,\n            Priority = request.Priority,\n            ProjectId = projectId,\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        // 201 + כותרת Location שמצביעה על ה-endpoint בעל השם — בלי לשרשר URL ביד\n        return TypedResults.CreatedAtRoute(\n            IssueResponse.FromEntity(issue),\n            \"GetIssueById\",\n            new { id = issue.Id });\n    }\n\n    private static async Task<Results<Ok<IssueResponse>, NotFound>> GetIssueById(\n        int id,\n        IIssueRepository issues,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.GetByIdAsync(id, cancellationToken);\n        return issue is null\n            ? TypedResults.NotFound()\n            : TypedResults.Ok(IssueResponse.FromEntity(issue));\n    }\n\n    private static async Task<Results<Ok<IssueResponse>, NotFound>> UpdateIssue(\n        int id,\n        UpdateIssueRequest request,\n        IIssueRepository issues,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.UpdateAsync(id, i =>\n        {\n            i.Title = request.Title;\n            i.Description = request.Description;\n            i.Status = request.Status;\n            i.Priority = request.Priority;\n        }, cancellationToken);\n\n        return issue is null\n            ? TypedResults.NotFound()\n            : TypedResults.Ok(IssueResponse.FromEntity(issue));\n    }\n\n    private static async Task<Results<NoContent, NotFound>> DeleteIssue(\n        int id,\n        IIssueRepository issues,\n        CancellationToken cancellationToken)\n    {\n        var deleted = await issues.DeleteAsync(id, cancellationToken);\n        return deleted ? TypedResults.NoContent() : TypedResults.NotFound();\n    }\n}\n",
+          "content": "using System.Security.Claims;\r\nusing Microsoft.AspNetCore.Http.HttpResults;\r\nusing TaskForge.Api.Auth;\r\nusing TaskForge.Api.Contracts;\r\nusing TaskForge.Api.Filters;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Api.Endpoints;\r\n\r\npublic static class IssueEndpoints\r\n{\r\n    // קבוצה אחת לכל ה-Issues: prefix משותף, תג OpenAPI משותף, ופילטר משותף.\r\n    // מפרק 05: כל הקבוצה דורשת משתמש מאומת — שורה אחת מגינה על הכול.\r\n    public static IEndpointRouteBuilder MapIssueEndpoints(this IEndpointRouteBuilder app)\r\n    {\r\n        var group = app.MapGroup(\"/api\")\r\n            .WithTags(\"Issues\")\r\n            .AddEndpointFilter<HandlerTimingFilter>()\r\n            .RequireAuthorization();\r\n\r\n        group.MapGet(\"/projects/{projectId:int}/issues\", GetIssues);\r\n        group.MapPost(\"/projects/{projectId:int}/issues\", CreateIssue);\r\n\r\n        group.MapGet(\"/issues/{id:int}\", GetIssueById).WithName(\"GetIssueById\");\r\n        group.MapPut(\"/issues/{id:int}\", UpdateIssue);\r\n        group.MapDelete(\"/issues/{id:int}\", DeleteIssue);\r\n\r\n        return app;\r\n    }\r\n    // #endregion\r\n\r\n    // handlers עם שמות + Results<...>: החתימה עצמה היא תיעוד —\r\n    // המהדר אוכף שכל מסלול יציאה מוצהר, ו-OpenAPI קורא הכול לבד.\r\n    private static async Task<Results<Ok<PagedResult<IssueResponse>>, NotFound>> GetIssues(\r\n        int projectId,\r\n        [AsParameters] IssueListParams query,\r\n        IIssueRepository issues,\r\n        IProjectRepository projects,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\r\n        {\r\n            return TypedResults.NotFound();\r\n        }\r\n\r\n        var page = await issues.GetPagedAsync(query.ToQuery(projectId), cancellationToken);\r\n\r\n        var mapped = new PagedResult<IssueResponse>(\r\n            page.Items.Select(IssueResponse.FromEntity).ToList(),\r\n            page.Total,\r\n            page.Page,\r\n            page.PageSize);\r\n\r\n        return TypedResults.Ok(mapped);\r\n    }\r\n\r\n    private static async Task<Results<CreatedAtRoute<IssueResponse>, NotFound, ForbidHttpResult>> CreateIssue(\r\n        int projectId,\r\n        CreateIssueRequest request,\r\n        ClaimsPrincipal user,\r\n        IIssueRepository issues,\r\n        IProjectRepository projects,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\r\n        {\r\n            return TypedResults.NotFound();\r\n        }\r\n\r\n        // הרשאה מבוססת-משאב: מאומת זה לא מספיק — צריך להיות חבר בפרויקט.\r\n        // ‏401 = מי אתה בכלל; ‏403 = אני יודע מי אתה, ואסור לך.\r\n        if (!await projects.IsMemberAsync(projectId, user.GetUserId(), cancellationToken))\r\n        {\r\n            return TypedResults.Forbid();\r\n        }\r\n        // #endregion\r\n\r\n        var issue = await issues.AddAsync(new Issue\r\n        {\r\n            Title = request.Title,\r\n            Description = request.Description,\r\n            Priority = request.Priority,\r\n            ProjectId = projectId,\r\n            CreatedAtUtc = DateTime.UtcNow,\r\n        }, cancellationToken);\r\n\r\n        // 201 + כותרת Location שמצביעה על ה-endpoint בעל השם — בלי לשרשר URL ביד\r\n        return TypedResults.CreatedAtRoute(\r\n            IssueResponse.FromEntity(issue),\r\n            \"GetIssueById\",\r\n            new { id = issue.Id });\r\n    }\r\n\r\n    private static async Task<Results<Ok<IssueResponse>, NotFound>> GetIssueById(\r\n        int id,\r\n        IIssueRepository issues,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        var issue = await issues.GetByIdAsync(id, cancellationToken);\r\n        return issue is null\r\n            ? TypedResults.NotFound()\r\n            : TypedResults.Ok(IssueResponse.FromEntity(issue));\r\n    }\r\n\r\n    private static async Task<Results<Ok<IssueResponse>, NotFound>> UpdateIssue(\r\n        int id,\r\n        UpdateIssueRequest request,\r\n        IIssueRepository issues,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        var issue = await issues.UpdateAsync(id, i =>\r\n        {\r\n            i.Title = request.Title;\r\n            i.Description = request.Description;\r\n            i.Status = request.Status;\r\n            i.Priority = request.Priority;\r\n        }, cancellationToken);\r\n\r\n        return issue is null\r\n            ? TypedResults.NotFound()\r\n            : TypedResults.Ok(IssueResponse.FromEntity(issue));\r\n    }\r\n\r\n    private static async Task<Results<NoContent, NotFound>> DeleteIssue(\r\n        int id,\r\n        IIssueRepository issues,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        var deleted = await issues.DeleteAsync(id, cancellationToken);\r\n        return deleted ? TypedResults.NoContent() : TypedResults.NotFound();\r\n    }\r\n    // #endregion\r\n}\r\n",
           "status": "modified",
           "regions": {
             "step-4.11": {
               "start": 14,
-              "end": 31
-            },
-            "step-5.15": {
-              "start": 71,
-              "end": 76
+              "end": 136
             },
             "step-4.12": {
-              "start": 33,
-              "end": 131
+              "start": 34,
+              "end": 136
+            },
+            "step-5.15": {
+              "start": 72,
+              "end": 136
             }
           },
           "changedLines": [
@@ -2757,19 +2782,20 @@ export const GUIDE_MANIFEST = {
             15,
             20,
             21,
-            58,
-            61,
-            71,
+            59,
+            62,
             72,
             73,
             74,
             75,
             76,
-            77
+            77,
+            78,
+            79
           ]
         },
         "server/TaskForge.Api/Endpoints/ProjectEndpoints.cs": {
-          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class ProjectEndpoints\n{\n    public static IEndpointRouteBuilder MapProjectEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api/projects\").WithTags(\"Projects\");\n\n        // קריאות פתוחות (יוגבלו לחברות בפרק 12); יצירה — רק למאומתים\n        group.MapGet(\"/\", GetProjects);\n        group.MapGet(\"/{id:int}\", GetProjectById).WithName(\"GetProjectById\");\n        group.MapPost(\"/\", CreateProject).RequireAuthorization();\n\n        return app;\n    }\n\n    private static async Task<Ok<IReadOnlyList<ProjectSummary>>> GetProjects(\n        IProjectRepository projects,\n        CancellationToken cancellationToken) =>\n        TypedResults.Ok(await projects.GetSummariesAsync(cancellationToken));\n\n    private static async Task<Results<Ok<ProjectResponse>, NotFound>> GetProjectById(\n        int id,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        var project = await projects.GetByIdAsync(id, cancellationToken);\n        return project is null\n            ? TypedResults.NotFound()\n            : TypedResults.Ok(ProjectResponse.FromEntity(project));\n    }\n\n    private static async Task<CreatedAtRoute<ProjectResponse>> CreateProject(\n        CreateProjectRequest request,\n        ClaimsPrincipal user,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        // היוצר הופך אוטומטית ל-Owner — בתוך אותה טרנזקציה\n        var project = await projects.AddAsync(new Project\n        {\n            Name = request.Name,\n            Description = request.Description,\n            CreatedAtUtc = DateTime.UtcNow,\n        }, user.GetUserId(), cancellationToken);\n\n        return TypedResults.CreatedAtRoute(\n            ProjectResponse.FromEntity(project),\n            \"GetProjectById\",\n            new { id = project.Id });\n    }\n}\n",
+          "content": "using System.Security.Claims;\r\nusing Microsoft.AspNetCore.Http.HttpResults;\r\nusing TaskForge.Api.Auth;\r\nusing TaskForge.Api.Contracts;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Api.Endpoints;\r\n\r\npublic static class ProjectEndpoints\r\n{\r\n    public static IEndpointRouteBuilder MapProjectEndpoints(this IEndpointRouteBuilder app)\r\n    {\r\n        var group = app.MapGroup(\"/api/projects\").WithTags(\"Projects\");\r\n\r\n        // קריאות פתוחות (יוגבלו לחברות בפרק 12); יצירה — רק למאומתים\r\n        group.MapGet(\"/\", GetProjects);\r\n        group.MapGet(\"/{id:int}\", GetProjectById).WithName(\"GetProjectById\");\r\n        group.MapPost(\"/\", CreateProject).RequireAuthorization();\r\n\r\n        return app;\r\n    }\r\n\r\n    private static async Task<Ok<IReadOnlyList<ProjectSummary>>> GetProjects(\r\n        IProjectRepository projects,\r\n        CancellationToken cancellationToken) =>\r\n        TypedResults.Ok(await projects.GetSummariesAsync(cancellationToken));\r\n\r\n    private static async Task<Results<Ok<ProjectResponse>, NotFound>> GetProjectById(\r\n        int id,\r\n        IProjectRepository projects,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        var project = await projects.GetByIdAsync(id, cancellationToken);\r\n        return project is null\r\n            ? TypedResults.NotFound()\r\n            : TypedResults.Ok(ProjectResponse.FromEntity(project));\r\n    }\r\n\r\n    private static async Task<CreatedAtRoute<ProjectResponse>> CreateProject(\r\n        CreateProjectRequest request,\r\n        ClaimsPrincipal user,\r\n        IProjectRepository projects,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        // היוצר הופך אוטומטית ל-Owner — בתוך אותה טרנזקציה\r\n        var project = await projects.AddAsync(new Project\r\n        {\r\n            Name = request.Name,\r\n            Description = request.Description,\r\n            CreatedAtUtc = DateTime.UtcNow,\r\n        }, user.GetUserId(), cancellationToken);\r\n\r\n        return TypedResults.CreatedAtRoute(\r\n            ProjectResponse.FromEntity(project),\r\n            \"GetProjectById\",\r\n            new { id = project.Id });\r\n    }\r\n}\r\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -2783,46 +2809,46 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Api/Filters/HandlerTimingFilter.cs": {
-          "content": "using System.Diagnostics;\n\nnamespace TaskForge.Api.Filters;\n\n// Endpoint filter: עוטף את ה-handler בלבד — לא את כל הצינור כמו middleware.\n// ההשוואה בין X-Handler-Ms לבין X-Elapsed-Ms (מפרק 01) מספרת\n// כמה זמן נבלע ב-middleware, ב-routing וב-binding מסביב ל-handler עצמו.\npublic sealed class HandlerTimingFilter : IEndpointFilter\n{\n    public async ValueTask<object?> InvokeAsync(\n        EndpointFilterInvocationContext context,\n        EndpointFilterDelegate next)\n    {\n        var stopwatch = Stopwatch.StartNew();\n\n        var result = await next(context); // ה-handler (או הפילטר הבא בשרשרת)\n\n        stopwatch.Stop();\n        context.HttpContext.Response.Headers.Append(\"X-Handler-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n\n        return result;\n    }\n}\n",
+          "content": "using System.Diagnostics;\r\n\r\nnamespace TaskForge.Api.Filters;\r\n\r\n// Endpoint filter: עוטף את ה-handler בלבד — לא את כל הצינור כמו middleware.\r\n// ההשוואה בין X-Handler-Ms לבין X-Elapsed-Ms (מפרק 01) מספרת\r\n// כמה זמן נבלע ב-middleware, ב-routing וב-binding מסביב ל-handler עצמו.\r\npublic sealed class HandlerTimingFilter : IEndpointFilter\r\n{\r\n    public async ValueTask<object?> InvokeAsync(\r\n        EndpointFilterInvocationContext context,\r\n        EndpointFilterDelegate next)\r\n    {\r\n        var stopwatch = Stopwatch.StartNew();\r\n\r\n        var result = await next(context); // ה-handler (או הפילטר הבא בשרשרת)\r\n\r\n        stopwatch.Stop();\r\n        context.HttpContext.Response.Headers.Append(\"X-Handler-Ms\",\r\n            stopwatch.ElapsedMilliseconds.ToString());\r\n\r\n        return result;\r\n    }\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Core/Abstractions/IIssueRepository.cs": {
-          "content": "using TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// שאילתת הלוח כחוזה: כל מה שאפשר לסנן, למיין ולדפדף בו —\n// במקום חמישה פרמטרים בודדים שמתרבים עם כל פיצ׳ר.\npublic sealed record IssueQuery(\n    int ProjectId,\n    IssueStatus? Status = null,\n    IssuePriority? Priority = null,\n    string? Search = null,\n    string Sort = \"-created\",\n    int Page = 1,\n    int PageSize = 20);\n\npublic interface IIssueRepository\n{\n    Task<PagedResult<Issue>> GetPagedAsync(IssueQuery query, CancellationToken cancellationToken = default);\n\n    Task<Issue?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n\n    Task<Issue> AddAsync(Issue issue, CancellationToken cancellationToken = default);\n\n    /// <summary>טוען ישות במעקב, מפעיל עליה את השינוי, ושומר. null אם לא נמצאה.</summary>\n    Task<Issue?> UpdateAsync(int id, Action<Issue> apply, CancellationToken cancellationToken = default);\n\n    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);\n}\n",
+          "content": "using TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Core.Abstractions;\r\n\r\n// שאילתת הלוח כחוזה: כל מה שאפשר לסנן, למיין ולדפדף בו —\r\n// במקום חמישה פרמטרים בודדים שמתרבים עם כל פיצ׳ר.\r\npublic sealed record IssueQuery(\r\n    int ProjectId,\r\n    IssueStatus? Status = null,\r\n    IssuePriority? Priority = null,\r\n    string? Search = null,\r\n    string Sort = \"-created\",\r\n    int Page = 1,\r\n    int PageSize = 20);\r\n\r\npublic interface IIssueRepository\r\n{\r\n    Task<PagedResult<Issue>> GetPagedAsync(IssueQuery query, CancellationToken cancellationToken = default);\r\n\r\n    Task<Issue?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\r\n\r\n    Task<Issue> AddAsync(Issue issue, CancellationToken cancellationToken = default);\r\n\r\n    /// <summary>טוען ישות במעקב, מפעיל עליה את השינוי, ושומר. null אם לא נמצאה.</summary>\r\n    Task<Issue?> UpdateAsync(int id, Action<Issue> apply, CancellationToken cancellationToken = default);\r\n\r\n    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Core/Common/PagedResult.cs": {
-          "content": "namespace TaskForge.Core.Common;\n\n// חוזה הדפדוף של כל רשימה ב-TaskForge: הפריטים של העמוד הנוכחי\n// לצד המספרים שהקליינט צריך כדי לצייר ניווט עמודים.\npublic sealed record PagedResult<T>(\n    IReadOnlyList<T> Items,\n    int Total,\n    int Page,\n    int PageSize)\n{\n    public int TotalPages => (int)Math.Ceiling((double)Total / PageSize);\n}\n",
+          "content": "namespace TaskForge.Core.Common;\r\n\r\n// חוזה הדפדוף של כל רשימה ב-TaskForge: הפריטים של העמוד הנוכחי\r\n// לצד המספרים שהקליינט צריך כדי לצייר ניווט עמודים.\r\npublic sealed record PagedResult<T>(\r\n    IReadOnlyList<T> Items,\r\n    int Total,\r\n    int Page,\r\n    int PageSize)\r\n{\r\n    public int TotalPages => (int)Math.Ceiling((double)Total / PageSize);\r\n}\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Core/Common/ProjectSummary.cs": {
-          "content": "namespace TaskForge.Core.Common;\n\n// הקרנה לקריאה: בדיוק מה שמסך רשימת הפרויקטים צריך, כולל ספירה\n// שמחושבת ב-SQL — בלי לטעון את ה-Issues עצמם לזיכרון.\npublic sealed record ProjectSummary(\n    int Id,\n    string Name,\n    string? Description,\n    int OpenIssues);\n",
+          "content": "namespace TaskForge.Core.Common;\r\n\r\n// הקרנה לקריאה: בדיוק מה שמסך רשימת הפרויקטים צריך, כולל ספירה\r\n// שמחושבת ב-SQL — בלי לטעון את ה-Issues עצמם לזיכרון.\r\npublic sealed record ProjectSummary(\r\n    int Id,\r\n    string Name,\r\n    string? Description,\r\n    int OpenIssues);\r\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
         },
         "server/TaskForge.Infrastructure/Repositories/EfIssueRepository.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfIssueRepository(TaskForgeDbContext db) : IIssueRepository\n{\n    // שאילתה דינמית: בונים IQueryable שלב-שלב, ושום SQL לא רץ\n    // עד CountAsync / ToListAsync. ה-DB מקבל בדיוק שאילתה אחת לכל קריאה.\n    public async Task<PagedResult<Issue>> GetPagedAsync(IssueQuery query, CancellationToken cancellationToken = default)\n    {\n        var issues = db.Issues\n            .AsNoTracking()\n            .Where(i => i.ProjectId == query.ProjectId);\n\n        // כל סינון מצטרף רק אם נתבקש — composition של ביטויים, לא SQL בידיים\n        if (query.Status is { } status)\n        {\n            issues = issues.Where(i => i.Status == status);\n        }\n\n        if (query.Priority is { } priority)\n        {\n            issues = issues.Where(i => i.Priority == priority);\n        }\n\n        if (!string.IsNullOrWhiteSpace(query.Search))\n        {\n            issues = issues.Where(i => EF.Functions.Like(i.Title, $\"%{query.Search}%\"));\n        }\n\n        issues = query.Sort switch\n        {\n            \"created\" => issues.OrderBy(i => i.CreatedAtUtc),\n            \"title\" => issues.OrderBy(i => i.Title),\n            \"priority\" => issues.OrderByDescending(i => i.Priority).ThenBy(i => i.CreatedAtUtc),\n            _ => issues.OrderByDescending(i => i.CreatedAtUtc), // \"-created\", ברירת המחדל\n        };\n\n        // קודם סופרים (שאילתת COUNT רזה), ואז שולפים עמוד אחד בלבד\n        var total = await issues.CountAsync(cancellationToken);\n\n        var items = await issues\n            .Skip((query.Page - 1) * query.PageSize)\n            .Take(query.PageSize)\n            .Include(i => i.Labels)\n            .ToListAsync(cancellationToken);\n\n        return new PagedResult<Issue>(items, total, query.Page, query.PageSize);\n    }\n\n    public Task<Issue?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Issues\n            .AsNoTracking()\n            .Include(i => i.Labels)\n            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);\n\n    public async Task<Issue> AddAsync(Issue issue, CancellationToken cancellationToken = default)\n    {\n        db.Issues.Add(issue);\n        await db.SaveChangesAsync(cancellationToken);\n        return issue; // ה-Id כבר מאוכלס — EF קרא אותו חזרה מה-DB\n    }\n\n    // עדכון בסגנון tracked: טוענים עם מעקב, נותנים לקורא לשנות, ושומרים.\n    // ה-Change Tracker (פרק 03) מזהה בדיוק אילו עמודות השתנו.\n    public async Task<Issue?> UpdateAsync(int id, Action<Issue> apply, CancellationToken cancellationToken = default)\n    {\n        var issue = await db.Issues\n            .Include(i => i.Labels)\n            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);\n\n        if (issue is null)\n        {\n            return null;\n        }\n\n        apply(issue);\n        await db.SaveChangesAsync(cancellationToken);\n        return issue;\n    }\n\n    // מחיקה בלי לטעון: ExecuteDelete שולח DELETE ישיר ומחזיר כמה שורות נמחקו\n    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default) =>\n        await db.Issues\n            .Where(i => i.Id == id)\n            .ExecuteDeleteAsync(cancellationToken) > 0;\n}\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\nusing TaskForge.Infrastructure.Data;\r\n\r\nnamespace TaskForge.Infrastructure.Repositories;\r\n\r\npublic sealed class EfIssueRepository(TaskForgeDbContext db) : IIssueRepository\r\n{\r\n    // שאילתה דינמית: בונים IQueryable שלב-שלב, ושום SQL לא רץ\r\n    // עד CountAsync / ToListAsync. ה-DB מקבל בדיוק שאילתה אחת לכל קריאה.\r\n    public async Task<PagedResult<Issue>> GetPagedAsync(IssueQuery query, CancellationToken cancellationToken = default)\r\n    {\r\n        var issues = db.Issues\r\n            .AsNoTracking()\r\n            .Where(i => i.ProjectId == query.ProjectId);\r\n\r\n        // כל סינון מצטרף רק אם נתבקש — composition של ביטויים, לא SQL בידיים\r\n        if (query.Status is { } status)\r\n        {\r\n            issues = issues.Where(i => i.Status == status);\r\n        }\r\n\r\n        if (query.Priority is { } priority)\r\n        {\r\n            issues = issues.Where(i => i.Priority == priority);\r\n        }\r\n\r\n        if (!string.IsNullOrWhiteSpace(query.Search))\r\n        {\r\n            issues = issues.Where(i => EF.Functions.Like(i.Title, $\"%{query.Search}%\"));\r\n        }\r\n\r\n        issues = query.Sort switch\r\n        {\r\n            \"created\" => issues.OrderBy(i => i.CreatedAtUtc),\r\n            \"title\" => issues.OrderBy(i => i.Title),\r\n            \"priority\" => issues.OrderByDescending(i => i.Priority).ThenBy(i => i.CreatedAtUtc),\r\n            _ => issues.OrderByDescending(i => i.CreatedAtUtc), // \"-created\", ברירת המחדל\r\n        };\r\n\r\n        // קודם סופרים (שאילתת COUNT רזה), ואז שולפים עמוד אחד בלבד\r\n        var total = await issues.CountAsync(cancellationToken);\r\n\r\n        var items = await issues\r\n            .Skip((query.Page - 1) * query.PageSize)\r\n            .Take(query.PageSize)\r\n            .Include(i => i.Labels)\r\n            .ToListAsync(cancellationToken);\r\n\r\n        return new PagedResult<Issue>(items, total, query.Page, query.PageSize);\r\n    }\r\n    // #endregion\r\n\r\n    public Task<Issue?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\r\n        db.Issues\r\n            .AsNoTracking()\r\n            .Include(i => i.Labels)\r\n            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);\r\n\r\n    public async Task<Issue> AddAsync(Issue issue, CancellationToken cancellationToken = default)\r\n    {\r\n        db.Issues.Add(issue);\r\n        await db.SaveChangesAsync(cancellationToken);\r\n        return issue; // ה-Id כבר מאוכלס — EF קרא אותו חזרה מה-DB\r\n    }\r\n\r\n    // עדכון בסגנון tracked: טוענים עם מעקב, נותנים לקורא לשנות, ושומרים.\r\n    // ה-Change Tracker (פרק 03) מזהה בדיוק אילו עמודות השתנו.\r\n    public async Task<Issue?> UpdateAsync(int id, Action<Issue> apply, CancellationToken cancellationToken = default)\r\n    {\r\n        var issue = await db.Issues\r\n            .Include(i => i.Labels)\r\n            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);\r\n\r\n        if (issue is null)\r\n        {\r\n            return null;\r\n        }\r\n\r\n        apply(issue);\r\n        await db.SaveChangesAsync(cancellationToken);\r\n        return issue;\r\n    }\r\n\r\n    // מחיקה בלי לטעון: ExecuteDelete שולח DELETE ישיר ומחזיר כמה שורות נמחקו\r\n    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default) =>\r\n        await db.Issues\r\n            .Where(i => i.Id == id)\r\n            .ExecuteDeleteAsync(cancellationToken) > 0;\r\n    // #endregion\r\n}\r\n",
           "status": "unchanged",
           "regions": {
             "step-4.5": {
               "start": 11,
-              "end": 53
+              "end": 94
             },
             "step-4.6": {
-              "start": 61,
-              "end": 90
+              "start": 62,
+              "end": 94
             }
           },
           "changedLines": []
         },
         "server/TaskForge.Api/Auth/CurrentUserExtensions.cs": {
-          "content": "using System.Security.Claims;\n\nnamespace TaskForge.Api.Auth;\n\npublic static class CurrentUserExtensions\n{\n    // ה-claim ‏sub מהטוקן מגיע לכאן כ-NameIdentifier (מיפוי ברירת המחדל של ה-handler).\n    // אם אין משתמש מאומת — זו שגיאת תכנות (endpoint בלי RequireAuthorization), ולכן זורקים.\n    public static int GetUserId(this ClaimsPrincipal user)\n    {\n        var raw = user.FindFirstValue(ClaimTypes.NameIdentifier)\n            ?? throw new InvalidOperationException(\n                \"No user id claim — is this endpoint missing RequireAuthorization()?\");\n        return int.Parse(raw);\n    }\n}\n",
+          "content": "using System.Security.Claims;\r\n\r\nnamespace TaskForge.Api.Auth;\r\n\r\npublic static class CurrentUserExtensions\r\n{\r\n    // ה-claim ‏sub מהטוקן מגיע לכאן כ-NameIdentifier (מיפוי ברירת המחדל של ה-handler).\r\n    // אם אין משתמש מאומת — זו שגיאת תכנות (endpoint בלי RequireAuthorization), ולכן זורקים.\r\n    public static int GetUserId(this ClaimsPrincipal user)\r\n    {\r\n        var raw = user.FindFirstValue(ClaimTypes.NameIdentifier)\r\n            ?? throw new InvalidOperationException(\r\n                \"No user id claim — is this endpoint missing RequireAuthorization()?\");\r\n        return int.Parse(raw);\r\n    }\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -2846,7 +2872,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Api/Contracts/AuthContracts.cs": {
-          "content": "using System.ComponentModel.DataAnnotations;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\npublic sealed record RegisterRequest(\n    [property: Required, EmailAddress, StringLength(254)] string Email,\n    [property: Required, StringLength(60, MinimumLength = 2)] string DisplayName,\n    [property: Required, StringLength(100, MinimumLength = 8)] string Password);\n\npublic sealed record LoginRequest(\n    [property: Required, EmailAddress] string Email,\n    [property: Required] string Password);\n\npublic sealed record RefreshRequest(\n    [property: Required] string RefreshToken);\n\npublic sealed record UserResponse(int Id, string Email, string DisplayName, UserRole Role)\n{\n    public static UserResponse FromEntity(User user) =>\n        new(user.Id, user.Email, user.DisplayName, user.Role);\n}\n\n// הזוג המלא: access קצר-חיים לבקשות, refresh ארוך-חיים לחידוש —\n// והקליינט יודע בדיוק מתי ה-access יפוג.\npublic sealed record AuthResponse(\n    string AccessToken,\n    string RefreshToken,\n    DateTime ExpiresAtUtc,\n    UserResponse User);\n",
+          "content": "using System.ComponentModel.DataAnnotations;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Api.Contracts;\r\n\r\npublic sealed record RegisterRequest(\r\n    [property: Required, EmailAddress, StringLength(254)] string Email,\r\n    [property: Required, StringLength(60, MinimumLength = 2)] string DisplayName,\r\n    [property: Required, StringLength(100, MinimumLength = 8)] string Password);\r\n\r\npublic sealed record LoginRequest(\r\n    [property: Required, EmailAddress] string Email,\r\n    [property: Required] string Password);\r\n\r\npublic sealed record RefreshRequest(\r\n    [property: Required] string RefreshToken);\r\n\r\npublic sealed record UserResponse(int Id, string Email, string DisplayName, UserRole Role)\r\n{\r\n    public static UserResponse FromEntity(User user) =>\r\n        new(user.Id, user.Email, user.DisplayName, user.Role);\r\n}\r\n\r\n// הזוג המלא: access קצר-חיים לבקשות, refresh ארוך-חיים לחידוש —\r\n// והקליינט יודע בדיוק מתי ה-access יפוג.\r\npublic sealed record AuthResponse(\r\n    string AccessToken,\r\n    string RefreshToken,\r\n    DateTime ExpiresAtUtc,\r\n    UserResponse User);\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -2884,20 +2910,20 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Api/Endpoints/AuthEndpoints.cs": {
-          "content": "using Microsoft.AspNetCore.Http.HttpResults;\nusing Microsoft.Extensions.Options;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\nusing System.Security.Claims;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class AuthEndpoints\n{\n    public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api/auth\").WithTags(\"Auth\");\n\n        group.MapPost(\"/register\", Register);\n        group.MapPost(\"/login\", Login);\n        group.MapPost(\"/refresh\", Refresh);\n\n        // היחיד בקבוצה שדורש טוקן: \"מי אני\" לפי ה-claims המאומתים\n        group.MapGet(\"/me\", Me).RequireAuthorization();\n\n        return app;\n    }\n\n    private static async Task<Results<Created<AuthResponse>, Conflict<string>>> Register(\n        RegisterRequest request,\n        IUserRepository users,\n        IPasswordHasher hasher,\n        ITokenService tokens,\n        IRefreshTokenRepository refreshTokens,\n        IOptions<JwtOptions> jwt,\n        CancellationToken cancellationToken)\n    {\n        if (await users.EmailExistsAsync(request.Email, cancellationToken))\n        {\n            // 409: הבקשה תקינה, אבל מתנגשת במצב הקיים\n            return TypedResults.Conflict(\"Email is already registered.\");\n        }\n\n        var user = await users.AddAsync(new User\n        {\n            Email = request.Email,\n            DisplayName = request.DisplayName,\n            PasswordHash = hasher.Hash(request.Password),\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        var auth = await IssueTokensAsync(user, tokens, refreshTokens, jwt.Value, cancellationToken);\n        return TypedResults.Created(\"/api/auth/me\", auth);\n    }\n\n    private static async Task<Results<Ok<AuthResponse>, UnauthorizedHttpResult>> Login(\n        LoginRequest request,\n        IUserRepository users,\n        IPasswordHasher hasher,\n        ITokenService tokens,\n        IRefreshTokenRepository refreshTokens,\n        IOptions<JwtOptions> jwt,\n        CancellationToken cancellationToken)\n    {\n        var user = await users.GetByEmailAsync(request.Email, cancellationToken);\n\n        // תשובה אחידה לשני הכישלונות — לא מסגירים אם האימייל קיים\n        if (user is null || !hasher.Verify(request.Password, user.PasswordHash))\n        {\n            return TypedResults.Unauthorized();\n        }\n\n        var auth = await IssueTokensAsync(user, tokens, refreshTokens, jwt.Value, cancellationToken);\n        return TypedResults.Ok(auth);\n    }\n\n    // Rotation: כל refresh שורף את הטוקן הישן ומנפיק זוג חדש.\n    // טוקן גנוב שמנוסה שוב — כבר מבוטל, והגניבה נחשפת.\n    private static async Task<Results<Ok<AuthResponse>, UnauthorizedHttpResult>> Refresh(\n        RefreshRequest request,\n        IRefreshTokenRepository refreshTokens,\n        ITokenService tokens,\n        IOptions<JwtOptions> jwt,\n        CancellationToken cancellationToken)\n    {\n        var existing = await refreshTokens.GetActiveAsync(request.RefreshToken, cancellationToken);\n        if (existing?.User is null)\n        {\n            return TypedResults.Unauthorized();\n        }\n\n        await refreshTokens.RevokeAsync(existing, cancellationToken);\n\n        var auth = await IssueTokensAsync(existing.User, tokens, refreshTokens, jwt.Value, cancellationToken);\n        return TypedResults.Ok(auth);\n    }\n\n    private static async Task<Results<Ok<UserResponse>, NotFound>> Me(\n        ClaimsPrincipal principal,\n        IUserRepository users,\n        CancellationToken cancellationToken)\n    {\n        var user = await users.GetByIdAsync(principal.GetUserId(), cancellationToken);\n        return user is null\n            ? TypedResults.NotFound()\n            : TypedResults.Ok(UserResponse.FromEntity(user));\n    }\n\n    // מסלול אחד להנפקה — register, login ו-refresh חולקים אותו\n    private static async Task<AuthResponse> IssueTokensAsync(\n        User user,\n        ITokenService tokens,\n        IRefreshTokenRepository refreshTokens,\n        JwtOptions jwt,\n        CancellationToken cancellationToken)\n    {\n        var refresh = new RefreshToken\n        {\n            Token = tokens.CreateRefreshToken(),\n            UserId = user.Id,\n            CreatedAtUtc = DateTime.UtcNow,\n            ExpiresAtUtc = DateTime.UtcNow.AddDays(jwt.RefreshTokenDays),\n        };\n        await refreshTokens.AddAsync(refresh, cancellationToken);\n\n        return new AuthResponse(\n            tokens.CreateAccessToken(user),\n            refresh.Token,\n            DateTime.UtcNow.AddMinutes(jwt.AccessTokenMinutes),\n            UserResponse.FromEntity(user));\n    }\n}\n",
+          "content": "using Microsoft.AspNetCore.Http.HttpResults;\r\nusing Microsoft.Extensions.Options;\r\nusing TaskForge.Api.Auth;\r\nusing TaskForge.Api.Contracts;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\nusing System.Security.Claims;\r\n\r\nnamespace TaskForge.Api.Endpoints;\r\n\r\npublic static class AuthEndpoints\r\n{\r\n    public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)\r\n    {\r\n        var group = app.MapGroup(\"/api/auth\").WithTags(\"Auth\");\r\n\r\n        group.MapPost(\"/register\", Register);\r\n        group.MapPost(\"/login\", Login);\r\n        group.MapPost(\"/refresh\", Refresh);\r\n\r\n        // היחיד בקבוצה שדורש טוקן: \"מי אני\" לפי ה-claims המאומתים\r\n        group.MapGet(\"/me\", Me).RequireAuthorization();\r\n\r\n        return app;\r\n    }\r\n    // #endregion\r\n\r\n    private static async Task<Results<Created<AuthResponse>, Conflict<string>>> Register(\r\n        RegisterRequest request,\r\n        IUserRepository users,\r\n        IPasswordHasher hasher,\r\n        ITokenService tokens,\r\n        IRefreshTokenRepository refreshTokens,\r\n        IOptions<JwtOptions> jwt,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        if (await users.EmailExistsAsync(request.Email, cancellationToken))\r\n        {\r\n            // 409: הבקשה תקינה, אבל מתנגשת במצב הקיים\r\n            return TypedResults.Conflict(\"Email is already registered.\");\r\n        }\r\n\r\n        var user = await users.AddAsync(new User\r\n        {\r\n            Email = request.Email,\r\n            DisplayName = request.DisplayName,\r\n            PasswordHash = hasher.Hash(request.Password),\r\n            CreatedAtUtc = DateTime.UtcNow,\r\n        }, cancellationToken);\r\n\r\n        var auth = await IssueTokensAsync(user, tokens, refreshTokens, jwt.Value, cancellationToken);\r\n        return TypedResults.Created(\"/api/auth/me\", auth);\r\n    }\r\n\r\n    private static async Task<Results<Ok<AuthResponse>, UnauthorizedHttpResult>> Login(\r\n        LoginRequest request,\r\n        IUserRepository users,\r\n        IPasswordHasher hasher,\r\n        ITokenService tokens,\r\n        IRefreshTokenRepository refreshTokens,\r\n        IOptions<JwtOptions> jwt,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        var user = await users.GetByEmailAsync(request.Email, cancellationToken);\r\n\r\n        // תשובה אחידה לשני הכישלונות — לא מסגירים אם האימייל קיים\r\n        if (user is null || !hasher.Verify(request.Password, user.PasswordHash))\r\n        {\r\n            return TypedResults.Unauthorized();\r\n        }\r\n\r\n        var auth = await IssueTokensAsync(user, tokens, refreshTokens, jwt.Value, cancellationToken);\r\n        return TypedResults.Ok(auth);\r\n    }\r\n    // #endregion\r\n\r\n    // Rotation: כל refresh שורף את הטוקן הישן ומנפיק זוג חדש.\r\n    // טוקן גנוב שמנוסה שוב — כבר מבוטל, והגניבה נחשפת.\r\n    private static async Task<Results<Ok<AuthResponse>, UnauthorizedHttpResult>> Refresh(\r\n        RefreshRequest request,\r\n        IRefreshTokenRepository refreshTokens,\r\n        ITokenService tokens,\r\n        IOptions<JwtOptions> jwt,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        var existing = await refreshTokens.GetActiveAsync(request.RefreshToken, cancellationToken);\r\n        if (existing?.User is null)\r\n        {\r\n            return TypedResults.Unauthorized();\r\n        }\r\n\r\n        await refreshTokens.RevokeAsync(existing, cancellationToken);\r\n\r\n        var auth = await IssueTokensAsync(existing.User, tokens, refreshTokens, jwt.Value, cancellationToken);\r\n        return TypedResults.Ok(auth);\r\n    }\r\n    // #endregion\r\n\r\n    private static async Task<Results<Ok<UserResponse>, NotFound>> Me(\r\n        ClaimsPrincipal principal,\r\n        IUserRepository users,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        var user = await users.GetByIdAsync(principal.GetUserId(), cancellationToken);\r\n        return user is null\r\n            ? TypedResults.NotFound()\r\n            : TypedResults.Ok(UserResponse.FromEntity(user));\r\n    }\r\n\r\n    // מסלול אחד להנפקה — register, login ו-refresh חולקים אותו\r\n    private static async Task<AuthResponse> IssueTokensAsync(\r\n        User user,\r\n        ITokenService tokens,\r\n        IRefreshTokenRepository refreshTokens,\r\n        JwtOptions jwt,\r\n        CancellationToken cancellationToken)\r\n    {\r\n        var refresh = new RefreshToken\r\n        {\r\n            Token = tokens.CreateRefreshToken(),\r\n            UserId = user.Id,\r\n            CreatedAtUtc = DateTime.UtcNow,\r\n            ExpiresAtUtc = DateTime.UtcNow.AddDays(jwt.RefreshTokenDays),\r\n        };\r\n        await refreshTokens.AddAsync(refresh, cancellationToken);\r\n\r\n        return new AuthResponse(\r\n            tokens.CreateAccessToken(user),\r\n            refresh.Token,\r\n            DateTime.UtcNow.AddMinutes(jwt.AccessTokenMinutes),\r\n            UserResponse.FromEntity(user));\r\n    }\r\n}\r\n",
           "status": "added",
           "regions": {
             "step-5.11": {
               "start": 14,
-              "end": 26
+              "end": 135
             },
             "step-5.12": {
-              "start": 28,
-              "end": 74
+              "start": 29,
+              "end": 135
             },
             "step-5.13": {
-              "start": 76,
-              "end": 95
+              "start": 78,
+              "end": 135
             }
           },
           "changedLines": [
@@ -3032,11 +3058,14 @@ export const GUIDE_MANIFEST = {
             129,
             130,
             131,
-            132
+            132,
+            133,
+            134,
+            135
           ]
         },
         "server/TaskForge.Core/Abstractions/IPasswordHasher.cs": {
-          "content": "namespace TaskForge.Core.Abstractions;\n\n// הדומיין מגדיר את הצורך (\"לגבב ולאמת סיסמאות\"); הקריפטוגרפיה\n// עצמה היא פרט מימוש של ה-Infrastructure. אותו חוק תלות, שוב.\npublic interface IPasswordHasher\n{\n    string Hash(string password);\n\n    bool Verify(string password, string passwordHash);\n}\n",
+          "content": "namespace TaskForge.Core.Abstractions;\r\n\r\n// הדומיין מגדיר את הצורך (\"לגבב ולאמת סיסמאות\"); הקריפטוגרפיה\r\n// עצמה היא פרט מימוש של ה-Infrastructure. אותו חוק תלות, שוב.\r\npublic interface IPasswordHasher\r\n{\r\n    string Hash(string password);\r\n\r\n    bool Verify(string password, string passwordHash);\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -3054,7 +3083,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Abstractions/IRefreshTokenRepository.cs": {
-          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\npublic interface IRefreshTokenRepository\n{\n    Task AddAsync(RefreshToken token, CancellationToken cancellationToken = default);\n\n    /// <summary>מחזיר את הטוקן (כולל המשתמש) רק אם הוא קיים, בתוקף ולא בוטל.</summary>\n    Task<RefreshToken?> GetActiveAsync(string token, CancellationToken cancellationToken = default);\n\n    /// <summary>מסמן טוקן כמבוטל — הצעד הראשון בכל rotation.</summary>\n    Task RevokeAsync(RefreshToken token, CancellationToken cancellationToken = default);\n}\n",
+          "content": "using TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Core.Abstractions;\r\n\r\npublic interface IRefreshTokenRepository\r\n{\r\n    Task AddAsync(RefreshToken token, CancellationToken cancellationToken = default);\r\n\r\n    /// <summary>מחזיר את הטוקן (כולל המשתמש) רק אם הוא קיים, בתוקף ולא בוטל.</summary>\r\n    Task<RefreshToken?> GetActiveAsync(string token, CancellationToken cancellationToken = default);\r\n\r\n    /// <summary>מסמן טוקן כמבוטל — הצעד הראשון בכל rotation.</summary>\r\n    Task RevokeAsync(RefreshToken token, CancellationToken cancellationToken = default);\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -3076,7 +3105,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Abstractions/ITokenService.cs": {
-          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\npublic interface ITokenService\n{\n    /// <summary>JWT חתום עם זהות המשתמש והתפקיד — תקף לדקות ספורות.</summary>\n    string CreateAccessToken(User user);\n\n    /// <summary>מחרוזת אקראית קריפטוגרפית — נשמרת ב-DB דרך IRefreshTokenRepository.</summary>\n    string CreateRefreshToken();\n}\n",
+          "content": "using TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Core.Abstractions;\r\n\r\npublic interface ITokenService\r\n{\r\n    /// <summary>JWT חתום עם זהות המשתמש והתפקיד — תקף לדקות ספורות.</summary>\r\n    string CreateAccessToken(User user);\r\n\r\n    /// <summary>מחרוזת אקראית קריפטוגרפית — נשמרת ב-DB דרך IRefreshTokenRepository.</summary>\r\n    string CreateRefreshToken();\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -3096,7 +3125,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Abstractions/IUserRepository.cs": {
-          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\npublic interface IUserRepository\n{\n    Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);\n\n    Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n\n    Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default);\n\n    Task<User> AddAsync(User user, CancellationToken cancellationToken = default);\n}\n",
+          "content": "using TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Core.Abstractions;\r\n\r\npublic interface IUserRepository\r\n{\r\n    Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);\r\n\r\n    Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\r\n\r\n    Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default);\r\n\r\n    Task<User> AddAsync(User user, CancellationToken cancellationToken = default);\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -3118,7 +3147,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Common/JwtOptions.cs": {
-          "content": "namespace TaskForge.Core.Common;\n\n// אופציות ה-JWT כ-POCO נקי: גם מנפיק הטוקנים (Infrastructure) וגם\n// מאמת הטוקנים (Api) קוראים מאותה הגדרה אחת — שמגיעה מהקונפיגורציה.\npublic sealed class JwtOptions\n{\n    public const string SectionName = \"Jwt\";\n\n    public string Issuer { get; set; } = \"\";\n\n    public string Audience { get; set; } = \"\";\n\n    // המפתח הסימטרי לחתימה. בפיתוח: appsettings; בפרודקשן: משתנה סביבה בלבד.\n    public string Key { get; set; } = \"\";\n\n    public int AccessTokenMinutes { get; set; } = 15;\n\n    public int RefreshTokenDays { get; set; } = 7;\n}\n",
+          "content": "namespace TaskForge.Core.Common;\r\n\r\n// אופציות ה-JWT כ-POCO נקי: גם מנפיק הטוקנים (Infrastructure) וגם\r\n// מאמת הטוקנים (Api) קוראים מאותה הגדרה אחת — שמגיעה מהקונפיגורציה.\r\npublic sealed class JwtOptions\r\n{\r\n    public const string SectionName = \"Jwt\";\r\n\r\n    public string Issuer { get; set; } = \"\";\r\n\r\n    public string Audience { get; set; } = \"\";\r\n\r\n    // המפתח הסימטרי לחתימה. בפיתוח: appsettings; בפרודקשן: משתנה סביבה בלבד.\r\n    public string Key { get; set; } = \"\";\r\n\r\n    public int AccessTokenMinutes { get; set; } = 15;\r\n\r\n    public int RefreshTokenDays { get; set; } = 7;\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -3145,7 +3174,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Entities/ProjectMember.cs": {
-          "content": "namespace TaskForge.Core.Entities;\n\npublic enum ProjectRole\n{\n    Member,\n    Owner,\n}\n\n// טבלת חיבור עם נתונים משלה (תפקיד) — ולכן ישות מפורשת,\n// בניגוד ל-IssueLabel שנשאר skip navigation. המפתח: (ProjectId, UserId).\npublic sealed class ProjectMember\n{\n    public int ProjectId { get; set; }\n    public Project? Project { get; set; }\n\n    public int UserId { get; set; }\n    public User? User { get; set; }\n\n    public ProjectRole Role { get; set; } = ProjectRole.Member;\n}\n",
+          "content": "namespace TaskForge.Core.Entities;\r\n\r\npublic enum ProjectRole\r\n{\r\n    Member,\r\n    Owner,\r\n}\r\n\r\n// טבלת חיבור עם נתונים משלה (תפקיד) — ולכן ישות מפורשת,\r\n// בניגוד ל-IssueLabel שנשאר skip navigation. המפתח: (ProjectId, UserId).\r\npublic sealed class ProjectMember\r\n{\r\n    public int ProjectId { get; set; }\r\n    public Project? Project { get; set; }\r\n\r\n    public int UserId { get; set; }\r\n    public User? User { get; set; }\r\n\r\n    public ProjectRole Role { get; set; } = ProjectRole.Member;\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -3173,7 +3202,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Entities/RefreshToken.cs": {
-          "content": "namespace TaskForge.Core.Entities;\n\n// access token חי דקות; ההתחברות נשמרת בזכות ה-refresh token —\n// מחרוזת אקראית חד-פעמית שנשמרת ב-DB וניתנת לביטול.\npublic sealed class RefreshToken\n{\n    public int Id { get; set; }\n\n    public required string Token { get; set; }\n\n    public int UserId { get; set; }\n    public User? User { get; set; }\n\n    public DateTime ExpiresAtUtc { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    // null = הטוקן עדיין בתוקף; rotation מציב כאן חותמת זמן\n    public DateTime? RevokedAtUtc { get; set; }\n\n    public bool IsActive => RevokedAtUtc is null && ExpiresAtUtc > DateTime.UtcNow;\n}\n",
+          "content": "namespace TaskForge.Core.Entities;\r\n\r\n// access token חי דקות; ההתחברות נשמרת בזכות ה-refresh token —\r\n// מחרוזת אקראית חד-פעמית שנשמרת ב-DB וניתנת לביטול.\r\npublic sealed class RefreshToken\r\n{\r\n    public int Id { get; set; }\r\n\r\n    public required string Token { get; set; }\r\n\r\n    public int UserId { get; set; }\r\n    public User? User { get; set; }\r\n\r\n    public DateTime ExpiresAtUtc { get; set; }\r\n\r\n    public DateTime CreatedAtUtc { get; set; }\r\n\r\n    // null = הטוקן עדיין בתוקף; rotation מציב כאן חותמת זמן\r\n    public DateTime? RevokedAtUtc { get; set; }\r\n\r\n    public bool IsActive => RevokedAtUtc is null && ExpiresAtUtc > DateTime.UtcNow;\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -3203,7 +3232,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Core/Entities/User.cs": {
-          "content": "namespace TaskForge.Core.Entities;\n\npublic enum UserRole\n{\n    Member,\n    Admin,\n}\n\npublic sealed class User\n{\n    public int Id { get; set; }\n\n    public required string Email { get; set; }\n\n    public required string DisplayName { get; set; }\n\n    // לעולם לא הסיסמה עצמה — רק התוצר של PBKDF2 (צעד 5.4)\n    public required string PasswordHash { get; set; }\n\n    public UserRole Role { get; set; } = UserRole.Member;\n\n    public DateTime CreatedAtUtc { get; set; }\n}\n",
+          "content": "namespace TaskForge.Core.Entities;\r\n\r\npublic enum UserRole\r\n{\r\n    Member,\r\n    Admin,\r\n}\r\n\r\npublic sealed class User\r\n{\r\n    public int Id { get; set; }\r\n\r\n    public required string Email { get; set; }\r\n\r\n    public required string DisplayName { get; set; }\r\n\r\n    // לעולם לא הסיסמה עצמה — רק התוצר של PBKDF2 (צעד 5.4)\r\n    public required string PasswordHash { get; set; }\r\n\r\n    public UserRole Role { get; set; } = UserRole.Member;\r\n\r\n    public DateTime CreatedAtUtc { get; set; }\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -3234,7 +3263,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Infrastructure/Auth/PasswordHasher.cs": {
-          "content": "using System.Security.Cryptography;\nusing TaskForge.Core.Abstractions;\n\nnamespace TaskForge.Infrastructure.Auth;\n\n// PBKDF2 טהור מה-BCL — בלי חבילות, בלי קסם.\n// פורמט האחסון: iterations.saltBase64.hashBase64 — הכול נחוץ לאימות עתידי.\npublic sealed class PasswordHasher : IPasswordHasher\n{\n    private const int Iterations = 100_000;\n    private const int SaltSize = 16; // bytes\n    private const int KeySize = 32;  // bytes\n\n    public string Hash(string password)\n    {\n        var salt = RandomNumberGenerator.GetBytes(SaltSize);\n\n        var key = Rfc2898DeriveBytes.Pbkdf2(\n            password, salt, Iterations, HashAlgorithmName.SHA256, KeySize);\n\n        return $\"{Iterations}.{Convert.ToBase64String(salt)}.{Convert.ToBase64String(key)}\";\n    }\n\n    public bool Verify(string password, string passwordHash)\n    {\n        var parts = passwordHash.Split('.');\n        if (parts.Length != 3)\n        {\n            return false;\n        }\n\n        var iterations = int.Parse(parts[0]);\n        var salt = Convert.FromBase64String(parts[1]);\n        var expected = Convert.FromBase64String(parts[2]);\n\n        var actual = Rfc2898DeriveBytes.Pbkdf2(\n            password, salt, iterations, HashAlgorithmName.SHA256, expected.Length);\n\n        // השוואה בזמן קבוע — חוסמת timing attacks על אורך ההתאמה\n        return CryptographicOperations.FixedTimeEquals(actual, expected);\n    }\n}\n",
+          "content": "using System.Security.Cryptography;\r\nusing TaskForge.Core.Abstractions;\r\n\r\nnamespace TaskForge.Infrastructure.Auth;\r\n\r\n// PBKDF2 טהור מה-BCL — בלי חבילות, בלי קסם.\r\n// פורמט האחסון: iterations.saltBase64.hashBase64 — הכול נחוץ לאימות עתידי.\r\npublic sealed class PasswordHasher : IPasswordHasher\r\n{\r\n    private const int Iterations = 100_000;\r\n    private const int SaltSize = 16; // bytes\r\n    private const int KeySize = 32;  // bytes\r\n\r\n    public string Hash(string password)\r\n    {\r\n        var salt = RandomNumberGenerator.GetBytes(SaltSize);\r\n\r\n        var key = Rfc2898DeriveBytes.Pbkdf2(\r\n            password, salt, Iterations, HashAlgorithmName.SHA256, KeySize);\r\n\r\n        return $\"{Iterations}.{Convert.ToBase64String(salt)}.{Convert.ToBase64String(key)}\";\r\n    }\r\n\r\n    public bool Verify(string password, string passwordHash)\r\n    {\r\n        var parts = passwordHash.Split('.');\r\n        if (parts.Length != 3)\r\n        {\r\n            return false;\r\n        }\r\n\r\n        var iterations = int.Parse(parts[0]);\r\n        var salt = Convert.FromBase64String(parts[1]);\r\n        var expected = Convert.FromBase64String(parts[2]);\r\n\r\n        var actual = Rfc2898DeriveBytes.Pbkdf2(\r\n            password, salt, iterations, HashAlgorithmName.SHA256, expected.Length);\r\n\r\n        // השוואה בזמן קבוע — חוסמת timing attacks על אורך ההתאמה\r\n        return CryptographicOperations.FixedTimeEquals(actual, expected);\r\n    }\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -3284,7 +3313,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Infrastructure/Auth/TokenService.cs": {
-          "content": "using System.IdentityModel.Tokens.Jwt;\nusing System.Security.Claims;\nusing System.Security.Cryptography;\nusing System.Text;\nusing Microsoft.Extensions.Options;\nusing Microsoft.IdentityModel.Tokens;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Infrastructure.Auth;\n\npublic sealed class TokenService(IOptions<JwtOptions> options) : ITokenService\n{\n    private readonly JwtOptions _jwt = options.Value;\n\n    public string CreateAccessToken(User user)\n    {\n        // claims: העובדות שהשרת חותם עליהן. הקליינט קורא אותן, אבל לא יכול לזייף —\n        // כל שינוי שובר את החתימה.\n        var claims = new[]\n        {\n            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),\n            new Claim(JwtRegisteredClaimNames.Email, user.Email),\n            new Claim(\"name\", user.DisplayName),\n            new Claim(ClaimTypes.Role, user.Role.ToString()),\n        };\n\n        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Key));\n        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);\n\n        var token = new JwtSecurityToken(\n            issuer: _jwt.Issuer,\n            audience: _jwt.Audience,\n            claims: claims,\n            notBefore: DateTime.UtcNow,\n            expires: DateTime.UtcNow.AddMinutes(_jwt.AccessTokenMinutes),\n            signingCredentials: credentials);\n\n        return new JwtSecurityTokenHandler().WriteToken(token);\n    }\n\n    // refresh token הוא לא JWT — סתם אקראיות חזקה. הערך שלו נובע\n    // מהשורה ב-DB שמצביעה עליו, ולכן אפשר לבטל אותו בכל רגע.\n    public string CreateRefreshToken() =>\n        Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));\n}\n",
+          "content": "using System.IdentityModel.Tokens.Jwt;\r\nusing System.Security.Claims;\r\nusing System.Security.Cryptography;\r\nusing System.Text;\r\nusing Microsoft.Extensions.Options;\r\nusing Microsoft.IdentityModel.Tokens;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Common;\r\nusing TaskForge.Core.Entities;\r\n\r\nnamespace TaskForge.Infrastructure.Auth;\r\n\r\npublic sealed class TokenService(IOptions<JwtOptions> options) : ITokenService\r\n{\r\n    private readonly JwtOptions _jwt = options.Value;\r\n\r\n    public string CreateAccessToken(User user)\r\n    {\r\n        // claims: העובדות שהשרת חותם עליהן. הקליינט קורא אותן, אבל לא יכול לזייף —\r\n        // כל שינוי שובר את החתימה.\r\n        var claims = new[]\r\n        {\r\n            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),\r\n            new Claim(JwtRegisteredClaimNames.Email, user.Email),\r\n            new Claim(\"name\", user.DisplayName),\r\n            new Claim(ClaimTypes.Role, user.Role.ToString()),\r\n        };\r\n\r\n        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Key));\r\n        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);\r\n\r\n        var token = new JwtSecurityToken(\r\n            issuer: _jwt.Issuer,\r\n            audience: _jwt.Audience,\r\n            claims: claims,\r\n            notBefore: DateTime.UtcNow,\r\n            expires: DateTime.UtcNow.AddMinutes(_jwt.AccessTokenMinutes),\r\n            signingCredentials: credentials);\r\n\r\n        return new JwtSecurityTokenHandler().WriteToken(token);\r\n    }\r\n\r\n    // refresh token הוא לא JWT — סתם אקראיות חזקה. הערך שלו נובע\r\n    // מהשורה ב-DB שמצביעה עליו, ולכן אפשר לבטל אותו בכל רגע.\r\n    public string CreateRefreshToken() =>\r\n        Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -3742,7 +3771,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Infrastructure/Repositories/EfRefreshTokenRepository.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfRefreshTokenRepository(TaskForgeDbContext db) : IRefreshTokenRepository\n{\n    public async Task AddAsync(RefreshToken token, CancellationToken cancellationToken = default)\n    {\n        db.RefreshTokens.Add(token);\n        await db.SaveChangesAsync(cancellationToken);\n    }\n\n    public Task<RefreshToken?> GetActiveAsync(string token, CancellationToken cancellationToken = default) =>\n        db.RefreshTokens\n            .Include(t => t.User)\n            .FirstOrDefaultAsync(\n                t => t.Token == token && t.RevokedAtUtc == null && t.ExpiresAtUtc > DateTime.UtcNow,\n                cancellationToken);\n\n    public async Task RevokeAsync(RefreshToken token, CancellationToken cancellationToken = default)\n    {\n        token.RevokedAtUtc = DateTime.UtcNow;\n        await db.SaveChangesAsync(cancellationToken);\n    }\n}\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Entities;\r\nusing TaskForge.Infrastructure.Data;\r\n\r\nnamespace TaskForge.Infrastructure.Repositories;\r\n\r\npublic sealed class EfRefreshTokenRepository(TaskForgeDbContext db) : IRefreshTokenRepository\r\n{\r\n    public async Task AddAsync(RefreshToken token, CancellationToken cancellationToken = default)\r\n    {\r\n        db.RefreshTokens.Add(token);\r\n        await db.SaveChangesAsync(cancellationToken);\r\n    }\r\n\r\n    public Task<RefreshToken?> GetActiveAsync(string token, CancellationToken cancellationToken = default) =>\r\n        db.RefreshTokens\r\n            .Include(t => t.User)\r\n            .FirstOrDefaultAsync(\r\n                t => t.Token == token && t.RevokedAtUtc == null && t.ExpiresAtUtc > DateTime.UtcNow,\r\n                cancellationToken);\r\n\r\n    public async Task RevokeAsync(RefreshToken token, CancellationToken cancellationToken = default)\r\n    {\r\n        token.RevokedAtUtc = DateTime.UtcNow;\r\n        await db.SaveChangesAsync(cancellationToken);\r\n    }\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -3778,7 +3807,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "server/TaskForge.Infrastructure/Repositories/EfUserRepository.cs": {
-          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfUserRepository(TaskForgeDbContext db) : IUserRepository\n{\n    public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default) =>\n        db.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);\n\n    public Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id, cancellationToken);\n\n    public Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default) =>\n        db.Users.AnyAsync(u => u.Email == email, cancellationToken);\n\n    public async Task<User> AddAsync(User user, CancellationToken cancellationToken = default)\n    {\n        db.Users.Add(user);\n        await db.SaveChangesAsync(cancellationToken);\n        return user;\n    }\n}\n",
+          "content": "using Microsoft.EntityFrameworkCore;\r\nusing TaskForge.Core.Abstractions;\r\nusing TaskForge.Core.Entities;\r\nusing TaskForge.Infrastructure.Data;\r\n\r\nnamespace TaskForge.Infrastructure.Repositories;\r\n\r\npublic sealed class EfUserRepository(TaskForgeDbContext db) : IUserRepository\r\n{\r\n    public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default) =>\r\n        db.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);\r\n\r\n    public Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\r\n        db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id, cancellationToken);\r\n\r\n    public Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default) =>\r\n        db.Users.AnyAsync(u => u.Email == email, cancellationToken);\r\n\r\n    public async Task<User> AddAsync(User user, CancellationToken cancellationToken = default)\r\n    {\r\n        db.Users.Add(user);\r\n        await db.SaveChangesAsync(cancellationToken);\r\n        return user;\r\n    }\r\n}\r\n",
           "status": "added",
           "regions": {},
           "changedLines": [
