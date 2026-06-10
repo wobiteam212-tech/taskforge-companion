@@ -1,0 +1,68 @@
+.sd {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sd-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.sd-card {
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  background: var(--sur2);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .k {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--txt3);
+  }
+
+  .v {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--txt1);
+  }
+
+  &--signal {
+    border-color: color-mix(in srgb, var(--ember) 45%, var(--bdr));
+
+    .v {
+      color: var(--ember);
+    }
+  }
+}
+
+.sd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sd-hint {
+  margin: 0;
+  color: var(--txt2);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+.sd-log {
+  list-style: none;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--code-bdr);
+  border-radius: var(--rad-sm);
+  background: var(--code-bg);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.9;
+  color: var(--code-txt);
+}

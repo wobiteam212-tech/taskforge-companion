@@ -1,0 +1,37 @@
+<div class="sd">
+  <div class="sd-cards ltr">
+    <div class="sd-card">
+      <span class="k">plain</span>
+      <span class="v">{{ plain }}</span>
+    </div>
+    <div class="sd-card sd-card--signal">
+      <span class="k">count()</span>
+      <span class="v">{{ count() }}</span>
+    </div>
+    <div class="sd-card sd-card--signal">
+      <span class="k">double()</span>
+      <span class="v">{{ double() }}</span>
+    </div>
+  </div>
+
+  <div class="sd-actions">
+    <button type="button" class="btn btn--primary ltr" (click)="incSignal()">count.update(c =&gt; c + 1)</button>
+    <button type="button" class="btn" (click)="incPlainClick()">plain++ בלחיצה</button>
+    <button type="button" class="btn" (click)="incPlainTimeout()">plain++ בתוך setTimeout</button>
+    <button type="button" class="btn btn--ghost" (click)="revealTruth()">מה הערך באמת?</button>
+  </div>
+
+  <p class="sd-hint">
+    ב-zoneless יש רשימה סגורה של טריגרים שמתזמנים רינדור: כתיבה ל-signal, אירוע תבנית,
+    ‏markForCheck וכמה חברים. ‏setTimeout שמשנה שדה רגיל אינו אחד מהם — לחצו עליו
+    כמה פעמים, ואז שאלו "מה הערך באמת?" וצפו בכרטיס מתיישר.
+  </p>
+
+  @if (log().length) {
+    <ul class="sd-log ltr">
+      @for (line of log(); track $index) {
+        <li>{{ line }}</li>
+      }
+    </ul>
+  }
+</div>
