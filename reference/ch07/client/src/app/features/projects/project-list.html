@@ -1,0 +1,9 @@
+<section class="projects">
+  <h2>Projects <span class="total">{{ store.totalOpenIssues() }} open issues</span></h2>
+
+  @for (p of store.projects(); track p.id) {
+    <tf-project-card [project]="p" (open)="onOpen($event)" />
+  } @empty {
+    <p class="empty">No projects yet.</p>
+  }
+</section>

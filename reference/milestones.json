@@ -4,5 +4,6 @@
   { "chapter": "ch03", "kind": "dotnet", "dir": "server" },
   { "chapter": "ch04", "kind": "dotnet", "dir": "server" },
   { "chapter": "ch05", "kind": "dotnet", "dir": "server" },
-  { "chapter": "ch06", "kind": "ng", "dir": "client" }
+  { "chapter": "ch06", "kind": "ng", "dir": "client" },
+  { "chapter": "ch07", "kind": "ng", "dir": "client" }
 ]

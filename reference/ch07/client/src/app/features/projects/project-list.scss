@@ -1,0 +1,21 @@
+// עיצוב מינימלי בכוונה — פרק 08 (מערכת העיצוב) ישדרג את הכול.
+.projects {
+  display: grid;
+  gap: 14px;
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+
+    .total {
+      margin-inline-start: 10px;
+      color: #8a93a5;
+      font-size: 13px;
+      font-weight: 400;
+    }
+  }
+
+  .empty {
+    color: #8a93a5;
+  }
+}

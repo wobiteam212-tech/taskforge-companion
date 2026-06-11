@@ -1,0 +1,10 @@
+<article class="card">
+  <header>
+    <h3>{{ project().name }}</h3>
+    <span class="count">{{ project().openIssues }} open</span>
+  </header>
+
+  <p class="desc">{{ project().description ?? 'No description yet' }}</p>
+
+  <button type="button" (click)="open.emit(project().id)">Open board</button>
+</article>

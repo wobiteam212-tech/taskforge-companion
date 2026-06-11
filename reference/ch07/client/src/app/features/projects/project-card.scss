@@ -1,0 +1,35 @@
+// עיצוב מינימלי בכוונה — פרק 08 ייתן לכרטיס את הזהות שלו.
+.card {
+  border: 1px solid #2a2f3a;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: grid;
+  gap: 8px;
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+
+    h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .count {
+      color: #8a93a5;
+      font-size: 13px;
+    }
+  }
+
+  .desc {
+    margin: 0;
+    color: #8a93a5;
+    font-size: 14px;
+  }
+
+  button {
+    justify-self: start;
+    cursor: pointer;
+  }
+}

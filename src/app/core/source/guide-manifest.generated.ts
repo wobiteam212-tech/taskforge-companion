@@ -8530,6 +8530,1221 @@ export const GUIDE_MANIFEST = {
           ]
         }
       }
+    },
+    "ch07": {
+      "files": {
+        "client/angular.json": {
+          "content": "{\n  \"$schema\": \"./node_modules/@angular/cli/lib/config/schema.json\",\n  \"version\": 1,\n  \"cli\": {\n    \"packageManager\": \"pnpm\"\n  },\n  \"newProjectRoot\": \"projects\",\n  \"projects\": {\n    \"taskforge-client\": {\n      \"projectType\": \"application\",\n      \"schematics\": {\n        \"@schematics/angular:component\": {\n          \"style\": \"scss\"\n        }\n      },\n      \"root\": \"\",\n      \"sourceRoot\": \"src\",\n      \"prefix\": \"tf\",\n      \"architect\": {\n        \"build\": {\n          \"builder\": \"@angular/build:application\",\n          \"options\": {\n            \"browser\": \"src/main.ts\",\n            \"tsConfig\": \"tsconfig.app.json\",\n            \"inlineStyleLanguage\": \"scss\",\n            \"assets\": [],\n            \"styles\": [\n              \"src/styles.scss\"\n            ]\n          },\n          \"configurations\": {\n            \"production\": {\n              \"budgets\": [\n                {\n                  \"type\": \"initial\",\n                  \"maximumWarning\": \"500kB\",\n                  \"maximumError\": \"1MB\"\n                },\n                {\n                  \"type\": \"anyComponentStyle\",\n                  \"maximumWarning\": \"4kB\",\n                  \"maximumError\": \"8kB\"\n                }\n              ],\n              \"outputHashing\": \"all\"\n            },\n            \"development\": {\n              \"optimization\": false,\n              \"extractLicenses\": false,\n              \"sourceMap\": true\n            }\n          },\n          \"defaultConfiguration\": \"production\"\n        },\n        \"serve\": {\n          \"builder\": \"@angular/build:dev-server\",\n          \"configurations\": {\n            \"production\": {\n              \"buildTarget\": \"taskforge-client:build:production\"\n            },\n            \"development\": {\n              \"buildTarget\": \"taskforge-client:build:development\"\n            }\n          },\n          \"defaultConfiguration\": \"development\",\n          \"options\": {\n            \"port\": 4500\n          }\n        },\n        \"test\": {\n          \"builder\": \"@angular/build:unit-test\"\n        }\n      }\n    }\n  }\n}\n",
+          "status": "modified",
+          "regions": {},
+          "changedLines": [
+            18
+          ]
+        },
+        "client/package.json": {
+          "content": "{\n  \"name\": \"taskforge-client\",\n  \"version\": \"0.0.0\",\n  \"scripts\": {\n    \"ng\": \"ng\",\n    \"start\": \"ng serve\",\n    \"build\": \"ng build\",\n    \"watch\": \"ng build --watch --configuration development\",\n    \"test\": \"ng test\"\n  },\n  \"private\": true,\n  \"packageManager\": \"pnpm@10.28.0\",\n  \"dependencies\": {\n    \"@angular/common\": \"^22.0.0\",\n    \"@angular/compiler\": \"^22.0.0\",\n    \"@angular/core\": \"^22.0.0\",\n    \"@angular/forms\": \"^22.0.0\",\n    \"@angular/platform-browser\": \"^22.0.0\",\n    \"@angular/router\": \"^22.0.0\",\n    \"rxjs\": \"~7.8.0\",\n    \"tslib\": \"^2.3.0\"\n  },\n  \"devDependencies\": {\n    \"@angular/build\": \"^22.0.0\",\n    \"@angular/cli\": \"^22.0.0\",\n    \"@angular/compiler-cli\": \"^22.0.0\",\n    \"jsdom\": \"^28.0.0\",\n    \"prettier\": \"^3.8.1\",\n    \"typescript\": \"~6.0.2\",\n    \"vitest\": \"^4.0.8\"\n  }\n}",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/app.config.ts": {
+          "content": "import {\n  ApplicationConfig,\n  provideBrowserGlobalErrorListeners,\n  provideZonelessChangeDetection,\n} from '@angular/core';\nimport { provideRouter } from '@angular/router';\n\nimport { routes } from './app.routes';\n\nexport const appConfig: ApplicationConfig = {\n  providers: [\n    // zoneless הוא ברירת המחדל ב-v22 (אין zone.js ב-package.json) —\n    // אנחנו מצהירים עליו במפורש כדי שהבחירה תהיה גלויה, לא מובלעת.\n    provideZonelessChangeDetection(),\n    provideBrowserGlobalErrorListeners(),\n    provideRouter(routes),\n  ],\n};\n",
+          "status": "unchanged",
+          "regions": {
+            "step-6.8": {
+              "start": 10,
+              "end": 18
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/app.html": {
+          "content": "<header class=\"app-header\">\n  <h1>{{ title() }}</h1>\n  <p class=\"tagline\">{{ tagline() }}</p>\n</header>\n\n<main class=\"app-main\">\n  <tf-project-list />\n  <router-outlet />\n</main>\n",
+          "status": "modified",
+          "regions": {},
+          "changedLines": [
+            7
+          ]
+        },
+        "client/src/app/app.routes.ts": {
+          "content": "import { Routes } from '@angular/router';\n\nexport const routes: Routes = [];\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/app.scss": {
+          "content": ".app-header {\n  padding: 24px 32px;\n  border-bottom: 1px solid #2a2f3a;\n\n  h1 {\n    margin: 0;\n    font-size: 22px;\n  }\n\n  .tagline {\n    margin: 4px 0 0;\n    color: #8a93a5;\n    font-size: 14px;\n  }\n}\n\n.app-main {\n  padding: 32px;\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/app.spec.ts": {
+          "content": "import { TestBed } from '@angular/core/testing';\nimport { App } from './app';\n\ndescribe('App', () => {\n  beforeEach(async () => {\n    await TestBed.configureTestingModule({\n      imports: [App],\n    }).compileComponents();\n  });\n\n  it('should create the app', () => {\n    const fixture = TestBed.createComponent(App);\n    const app = fixture.componentInstance;\n    expect(app).toBeTruthy();\n  });\n\n  it('should render the title and tagline from signals', async () => {\n    const fixture = TestBed.createComponent(App);\n    await fixture.whenStable();\n    const compiled = fixture.nativeElement as HTMLElement;\n    expect(compiled.querySelector('h1')?.textContent).toContain('TaskForge');\n    expect(compiled.querySelector('.tagline')?.textContent).toContain('forged by hand');\n  });\n\n  it('should render a card per seeded project', async () => {\n    const fixture = TestBed.createComponent(App);\n    await fixture.whenStable();\n    const cards = (fixture.nativeElement as HTMLElement).querySelectorAll('tf-project-card');\n    expect(cards.length).toBe(3);\n  });\n});\n",
+          "status": "modified",
+          "regions": {},
+          "changedLines": [
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30
+          ]
+        },
+        "client/src/app/app.ts": {
+          "content": "import { Component, computed, signal } from '@angular/core';\nimport { RouterOutlet } from '@angular/router';\nimport { ProjectList } from './features/projects/project-list';\n\n@Component({\n  selector: 'app-root',\n  // הפיצ'ר נכנס לשלד ישירות — הראוטר עדיין ריק. פרק 10 יחליף\n  // את החיבור הידני הזה בניווט אמיתי דרך routes.\n  imports: [RouterOutlet, ProjectList],\n  templateUrl: './app.html',\n  styleUrl: './app.scss',\n})\nexport class App {\n  // signal = ערך + הודעה לכל מי שתלוי בו כשהוא משתנה.\n  // ב-zoneless זו הדרך היחידה שהתבנית יודעת להתעדכן.\n  protected readonly title = signal('TaskForge');\n\n  protected readonly tagline = computed(() => `${this.title()} — issues, forged by hand`);\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-7.11": {
+              "start": 7,
+              "end": 9
+            },
+            "step-6.10": {
+              "start": 5,
+              "end": 19
+            }
+          },
+          "changedLines": [
+            3,
+            7,
+            8,
+            9
+          ]
+        },
+        "client/src/app/core/models/api.model.ts": {
+          "content": "// המראה של server/TaskForge.Core/Common/PagedResult.cs על הקו.\n// שימו לב: TotalPages הוא get-only property ב-C# — אבל System.Text.Json\n// מסריאלייז גם properties כאלה, ולכן הוא חלק מהחוזה שהקליינט רואה.\nexport interface PagedResult<T> {\n  items: T[];\n  total: number;\n  page: number;\n  pageSize: number;\n  totalPages: number;\n}\n",
+          "status": "added",
+          "regions": {
+            "step-7.4": {
+              "start": 1,
+              "end": 10
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ]
+        },
+        "client/src/app/core/models/auth.model.ts": {
+          "content": "// המראה של server/TaskForge.Api/Contracts/AuthContracts.cs על הקו.\n// השימוש המלא מגיע עם מסך ההתחברות (גל 3) — אבל החוזה מוגדר כבר עכשיו,\n// כי הוא חלק מהשפה המשותפת של שני הצדדים.\nexport type UserRole = 'Member' | 'Admin';\n\n/** המראה של UserResponse */\nexport interface AuthUser {\n  id: number;\n  email: string;\n  displayName: string;\n  role: UserRole;\n}\n\n/** המראה של AuthResponse — הזוג המלא + מתי ה-access פג */\nexport interface AuthSession {\n  accessToken: string;\n  refreshToken: string;\n  expiresAtUtc: string;\n  user: AuthUser;\n}\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21
+          ]
+        },
+        "client/src/app/core/models/issue.model.ts": {
+          "content": "// המראה של server/TaskForge.Api/Contracts/IssueContracts.cs על הקו.\n\n// enums של C# עוברים על הקו כמחרוזות (JsonStringEnumConverter, פרק 04),\n// בשמות החברים המקוריים. לכן כאן הם string unions ולא TS enum:\n// הם מתעדים בדיוק את מה שה-JSON מכיל, בלי שום קוד בזמן ריצה.\nexport type IssueStatus = 'Open' | 'InProgress' | 'Done';\n\nexport type IssuePriority = 'Low' | 'Medium' | 'High' | 'Critical';\n\n/** המראה של LabelResponse */\nexport interface LabelRef {\n  id: number;\n  name: string;\n  color: string | null;\n}\n\n/** המראה של IssueResponse — תאריכים מגיעים כמחרוזות ISO, לא כ-Date */\nexport interface Issue {\n  id: number;\n  title: string;\n  description: string | null;\n  status: IssueStatus;\n  priority: IssuePriority;\n  projectId: number;\n  createdAtUtc: string;\n  labels: LabelRef[];\n}\n",
+          "status": "added",
+          "regions": {
+            "step-7.5": {
+              "start": 3,
+              "end": 8
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        },
+        "client/src/app/core/models/project.model.ts": {
+          "content": "// המראה של server/TaskForge.Core/Common/ProjectSummary.cs על הקו:\n// בדיוק מה ש-GET /api/projects מחזיר לכל פרויקט — לא הישות, ההקרנה.\nexport interface ProjectSummary {\n  id: number;\n  name: string;\n  description: string | null;\n  openIssues: number;\n}\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        "client/src/app/core/state/projects.store.ts": {
+          "content": "import { Injectable, computed, signal } from '@angular/core';\nimport { ProjectSummary } from '../models/project.model';\n\n// אותם שלושה פרויקטים ש-DbSeeder זורע בשרת — כולל ספירות ה-open\n// שה-API מחזיר באמת (2/1/0). מוק שמשקר על הצורה או על הנתונים\n// ייתן לכם ביטחון מזויף; הזהות לשרת היא הנכס שלו.\nconst SEED: ProjectSummary[] = [\n  { id: 1, name: 'Website Redesign', description: 'Refresh the marketing site end to end', openIssues: 2 },\n  { id: 2, name: 'Mobile App', description: 'iOS + Android companion app', openIssues: 1 },\n  { id: 3, name: 'Internal Tools', description: null, openIssues: 0 },\n];\n\n// גבול ה-state: קומפוננטות קוראות signals לקריאה-בלבד ומבקשות שינויים\n// דרך מתודות. בפרק 11 ה-SEED מתחלף ב-httpResource מול ה-API האמיתי —\n// והציבור של ה-store לא משתנה. (אותו סים כמו IProjectRepository בשרת.)\n@Injectable({ providedIn: 'root' })\nexport class ProjectsStore {\n  private readonly _projects = signal<ProjectSummary[]>(SEED);\n\n  /** הציבור: לקריאה בלבד — אין דרך לכתוב מבחוץ. */\n  readonly projects = this._projects.asReadonly();\n\n  readonly totalOpenIssues = computed(() =>\n    this.projects().reduce((sum, p) => sum + p.openIssues, 0),\n  );\n\n  rename(id: number, name: string): void {\n    this._projects.update((list) =>\n      list.map((p) => (p.id === id ? { ...p, name } : p)),\n    );\n  }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-7.8": {
+              "start": 4,
+              "end": 11
+            },
+            "step-7.7": {
+              "start": 18,
+              "end": 25
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33
+          ]
+        },
+        "client/src/app/features/projects/project-card.html": {
+          "content": "<article class=\"card\">\n  <header>\n    <h3>{{ project().name }}</h3>\n    <span class=\"count\">{{ project().openIssues }} open</span>\n  </header>\n\n  <p class=\"desc\">{{ project().description ?? 'No description yet' }}</p>\n\n  <button type=\"button\" (click)=\"open.emit(project().id)\">Open board</button>\n</article>\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ]
+        },
+        "client/src/app/features/projects/project-card.scss": {
+          "content": "// עיצוב מינימלי בכוונה — פרק 08 ייתן לכרטיס את הזהות שלו.\n.card {\n  border: 1px solid #2a2f3a;\n  border-radius: 10px;\n  padding: 14px 16px;\n  display: grid;\n  gap: 8px;\n\n  header {\n    display: flex;\n    justify-content: space-between;\n    align-items: baseline;\n\n    h3 {\n      margin: 0;\n      font-size: 16px;\n    }\n\n    .count {\n      color: #8a93a5;\n      font-size: 13px;\n    }\n  }\n\n  .desc {\n    margin: 0;\n    color: #8a93a5;\n    font-size: 14px;\n  }\n\n  button {\n    justify-self: start;\n    cursor: pointer;\n  }\n}\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "client/src/app/features/projects/project-card.ts": {
+          "content": "import { Component, input, output } from '@angular/core';\nimport { ProjectSummary } from '../../core/models/project.model';\n\n// קומפוננטה \"טיפשה\": כל מה שהיא יודעת נכנס דרך input,\n// כל מה שיש לה לומר יוצא דרך output. אפס הזרקות, אפס ידע על העולם.\n@Component({\n  selector: 'tf-project-card',\n  templateUrl: './project-card.html',\n  styleUrl: './project-card.scss',\n})\nexport class ProjectCard {\n  /** required: בלי project אין כרטיס — המהדר אוכף את זה על כל שימוש */\n  readonly project = input.required<ProjectSummary>();\n\n  /** הכרטיס לא מנווט בעצמו — הוא מודיע, וההורה מחליט */\n  readonly open = output<number>();\n}\n",
+          "status": "added",
+          "regions": {
+            "step-7.10": {
+              "start": 4,
+              "end": 17
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18
+          ]
+        },
+        "client/src/app/features/projects/project-list.html": {
+          "content": "<section class=\"projects\">\n  <h2>Projects <span class=\"total\">{{ store.totalOpenIssues() }} open issues</span></h2>\n\n  @for (p of store.projects(); track p.id) {\n    <tf-project-card [project]=\"p\" (open)=\"onOpen($event)\" />\n  } @empty {\n    <p class=\"empty\">No projects yet.</p>\n  }\n</section>\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        "client/src/app/features/projects/project-list.scss": {
+          "content": "// עיצוב מינימלי בכוונה — פרק 08 (מערכת העיצוב) ישדרג את הכול.\n.projects {\n  display: grid;\n  gap: 14px;\n\n  h2 {\n    margin: 0;\n    font-size: 18px;\n\n    .total {\n      margin-inline-start: 10px;\n      color: #8a93a5;\n      font-size: 13px;\n      font-weight: 400;\n    }\n  }\n\n  .empty {\n    color: #8a93a5;\n  }\n}\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22
+          ]
+        },
+        "client/src/app/features/projects/project-list.ts": {
+          "content": "import { Component, inject } from '@angular/core';\nimport { ProjectsStore } from '../../core/state/projects.store';\nimport { ProjectCard } from './project-card';\n\n// קומפוננטה \"חכמה\": יודעת מאיפה הנתונים מגיעים (ה-store),\n// ולא יודעת כלום על איך כרטיס נראה. החיבור לעולם קורה רק כאן.\n@Component({\n  selector: 'tf-project-list',\n  imports: [ProjectCard],\n  templateUrl: './project-list.html',\n  styleUrl: './project-list.scss',\n})\nexport class ProjectList {\n  protected readonly store = inject(ProjectsStore);\n\n  protected onOpen(projectId: number): void {\n    // ניווט אמיתי מגיע בפרק 10 — בינתיים מתעדים את הכוונה\n    console.log(`open project ${projectId}`);\n  }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-7.9": {
+              "start": 5,
+              "end": 20
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21
+          ]
+        },
+        "client/src/index.html": {
+          "content": "<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>TaskForge</title>\n  <base href=\"/\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n</head>\n<body>\n  <app-root></app-root>\n</body>\n</html>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/main.ts": {
+          "content": "import { bootstrapApplication } from '@angular/platform-browser';\nimport { appConfig } from './app/app.config';\nimport { App } from './app/app';\n\nbootstrapApplication(App, appConfig)\n  .catch((err) => console.error(err));\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/styles.scss": {
+          "content": "/* You can add global styles to this file, and also import other style files */\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/tsconfig.app.json": {
+          "content": "/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */\n/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */\n{\n  \"extends\": \"./tsconfig.json\",\n  \"compilerOptions\": {\n    \"outDir\": \"./out-tsc/app\",\n    \"types\": []\n  },\n  \"include\": [\n    \"src/**/*.ts\"\n  ],\n  \"exclude\": [\n    \"src/**/*.spec.ts\"\n  ]\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/tsconfig.json": {
+          "content": "/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */\n/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */\n{\n  \"compileOnSave\": false,\n  \"compilerOptions\": {\n    \"noImplicitOverride\": true,\n    \"noPropertyAccessFromIndexSignature\": true,\n    \"noImplicitReturns\": true,\n    \"noFallthroughCasesInSwitch\": true,\n    \"skipLibCheck\": true,\n    \"isolatedModules\": true,\n    \"experimentalDecorators\": true,\n    \"importHelpers\": true,\n    \"target\": \"ES2022\",\n    \"module\": \"preserve\"\n  },\n  \"angularCompilerOptions\": {\n    \"enableI18nLegacyMessageIdFormat\": false,\n    \"strictInjectionParameters\": true,\n    \"strictInputAccessModifiers\": true\n  },\n  \"files\": [],\n  \"references\": [\n    {\n      \"path\": \"./tsconfig.app.json\"\n    },\n    {\n      \"path\": \"./tsconfig.spec.json\"\n    }\n  ]\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/tsconfig.spec.json": {
+          "content": "/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */\n/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */\n{\n  \"extends\": \"./tsconfig.json\",\n  \"compilerOptions\": {\n    \"outDir\": \"./out-tsc/spec\",\n    \"types\": [\n      \"vitest/globals\"\n    ]\n  },\n  \"include\": [\n    \"src/**/*.d.ts\",\n    \"src/**/*.spec.ts\"\n  ]\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/.config/dotnet-tools.json": {
+          "content": "{\n  \"version\": 1,\n  \"isRoot\": true,\n  \"tools\": {\n    \"dotnet-ef\": {\n      \"version\": \"10.0.9\",\n      \"commands\": [\"dotnet-ef\"]\n    }\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/appsettings.Development.json": {
+          "content": "{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Information\"\n    }\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/appsettings.json": {
+          "content": "{\n  \"ConnectionStrings\": {\n    \"Default\": \"Data Source=taskforge.db\"\n  },\n  \"Jwt\": {\n    \"Issuer\": \"TaskForge\",\n    \"Audience\": \"TaskForge.Client\",\n    \"Key\": \"dev-only-signing-key-CHANGE-IN-PRODUCTION-7f3a9c1e5b8d2046\",\n    \"AccessTokenMinutes\": 15,\n    \"RefreshTokenDays\": 7\n  },\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Warning\"\n    }\n  },\n  \"AllowedHosts\": \"*\"\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Auth/CurrentUserExtensions.cs": {
+          "content": "using System.Security.Claims;\n\nnamespace TaskForge.Api.Auth;\n\npublic static class CurrentUserExtensions\n{\n    // ה-claim ‏sub מהטוקן מגיע לכאן כ-NameIdentifier (מיפוי ברירת המחדל של ה-handler).\n    // אם אין משתמש מאומת — זו שגיאת תכנות (endpoint בלי RequireAuthorization), ולכן זורקים.\n    public static int GetUserId(this ClaimsPrincipal user)\n    {\n        var raw = user.FindFirstValue(ClaimTypes.NameIdentifier)\n            ?? throw new InvalidOperationException(\n                \"No user id claim — is this endpoint missing RequireAuthorization()?\");\n        return int.Parse(raw);\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Contracts/AuthContracts.cs": {
+          "content": "using System.ComponentModel.DataAnnotations;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\npublic sealed record RegisterRequest(\n    [property: Required, EmailAddress, StringLength(254)] string Email,\n    [property: Required, StringLength(60, MinimumLength = 2)] string DisplayName,\n    [property: Required, StringLength(100, MinimumLength = 8)] string Password);\n\npublic sealed record LoginRequest(\n    [property: Required, EmailAddress] string Email,\n    [property: Required] string Password);\n\npublic sealed record RefreshRequest(\n    [property: Required] string RefreshToken);\n\npublic sealed record UserResponse(int Id, string Email, string DisplayName, UserRole Role)\n{\n    public static UserResponse FromEntity(User user) =>\n        new(user.Id, user.Email, user.DisplayName, user.Role);\n}\n\n// הזוג המלא: access קצר-חיים לבקשות, refresh ארוך-חיים לחידוש —\n// והקליינט יודע בדיוק מתי ה-access יפוג.\npublic sealed record AuthResponse(\n    string AccessToken,\n    string RefreshToken,\n    DateTime ExpiresAtUtc,\n    UserResponse User);\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Contracts/IssueContracts.cs": {
+          "content": "using System.ComponentModel.DataAnnotations;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\n// חוזה ה-HTTP של Issues. ‏records: ‏immutable, שוויון לפי ערך, ושורה אחת לכל טיפוס.\n// הישות היא פנים-המערכת; ה-DTOs האלה הם מה שעובר על הקו — בכוונה בנפרד.\n\npublic sealed record CreateIssueRequest(\n    [property: Required, StringLength(200, MinimumLength = 3)] string Title,\n    [property: StringLength(4000)] string? Description,\n    IssuePriority Priority = IssuePriority.Medium);\n\npublic sealed record UpdateIssueRequest(\n    [property: Required, StringLength(200, MinimumLength = 3)] string Title,\n    [property: StringLength(4000)] string? Description,\n    IssueStatus Status,\n    IssuePriority Priority);\n\npublic sealed record LabelResponse(int Id, string Name, string? Color);\n\npublic sealed record IssueResponse(\n    int Id,\n    string Title,\n    string? Description,\n    IssueStatus Status,\n    IssuePriority Priority,\n    int ProjectId,\n    DateTime CreatedAtUtc,\n    IReadOnlyList<LabelResponse> Labels)\n{\n    public static IssueResponse FromEntity(Issue issue) => new(\n        issue.Id,\n        issue.Title,\n        issue.Description,\n        issue.Status,\n        issue.Priority,\n        issue.ProjectId,\n        issue.CreatedAtUtc,\n        issue.Labels.Select(l => new LabelResponse(l.Id, l.Name, l.Color)).ToList());\n}\n\n// [AsParameters]: כל ה-query string נקשר לאובייקט אחד במקום שישה פרמטרים.\n// הוולידציה של .NET 10 רצה גם כאן — pageSize=999 ייפסל לפני ה-handler.\npublic sealed record IssueListParams(\n    IssueStatus? Status,\n    IssuePriority? Priority,\n    [property: StringLength(100)] string? Search,\n    string Sort = \"-created\",\n    [property: Range(1, int.MaxValue)] int Page = 1,\n    [property: Range(1, 100)] int PageSize = 20)\n{\n    public IssueQuery ToQuery(int projectId) =>\n        new(projectId, Status, Priority, Search, Sort, Page, PageSize);\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-4.8": {
+              "start": 44,
+              "end": 56
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Contracts/ProjectContracts.cs": {
+          "content": "using System.ComponentModel.DataAnnotations;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\npublic sealed record CreateProjectRequest(\n    [property: Required, StringLength(120, MinimumLength = 2)] string Name,\n    [property: StringLength(2000)] string? Description);\n\npublic sealed record ProjectResponse(\n    int Id,\n    string Name,\n    string? Description,\n    DateTime CreatedAtUtc)\n{\n    public static ProjectResponse FromEntity(Project project) =>\n        new(project.Id, project.Name, project.Description, project.CreatedAtUtc);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Endpoints/AuthEndpoints.cs": {
+          "content": "using Microsoft.AspNetCore.Http.HttpResults;\nusing Microsoft.Extensions.Options;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\nusing System.Security.Claims;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class AuthEndpoints\n{\n    public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api/auth\").WithTags(\"Auth\");\n\n        group.MapPost(\"/register\", Register);\n        group.MapPost(\"/login\", Login);\n        group.MapPost(\"/refresh\", Refresh);\n\n        // היחיד בקבוצה שדורש טוקן: \"מי אני\" לפי ה-claims המאומתים\n        group.MapGet(\"/me\", Me).RequireAuthorization();\n\n        return app;\n    }\n\n    private static async Task<Results<Created<AuthResponse>, Conflict<string>>> Register(\n        RegisterRequest request,\n        IUserRepository users,\n        IPasswordHasher hasher,\n        ITokenService tokens,\n        IRefreshTokenRepository refreshTokens,\n        IOptions<JwtOptions> jwt,\n        CancellationToken cancellationToken)\n    {\n        if (await users.EmailExistsAsync(request.Email, cancellationToken))\n        {\n            // 409: הבקשה תקינה, אבל מתנגשת במצב הקיים\n            return TypedResults.Conflict(\"Email is already registered.\");\n        }\n\n        var user = await users.AddAsync(new User\n        {\n            Email = request.Email,\n            DisplayName = request.DisplayName,\n            PasswordHash = hasher.Hash(request.Password),\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        var auth = await IssueTokensAsync(user, tokens, refreshTokens, jwt.Value, cancellationToken);\n        return TypedResults.Created(\"/api/auth/me\", auth);\n    }\n\n    private static async Task<Results<Ok<AuthResponse>, UnauthorizedHttpResult>> Login(\n        LoginRequest request,\n        IUserRepository users,\n        IPasswordHasher hasher,\n        ITokenService tokens,\n        IRefreshTokenRepository refreshTokens,\n        IOptions<JwtOptions> jwt,\n        CancellationToken cancellationToken)\n    {\n        var user = await users.GetByEmailAsync(request.Email, cancellationToken);\n\n        // תשובה אחידה לשני הכישלונות — לא מסגירים אם האימייל קיים\n        if (user is null || !hasher.Verify(request.Password, user.PasswordHash))\n        {\n            return TypedResults.Unauthorized();\n        }\n\n        var auth = await IssueTokensAsync(user, tokens, refreshTokens, jwt.Value, cancellationToken);\n        return TypedResults.Ok(auth);\n    }\n\n    // Rotation: כל refresh שורף את הטוקן הישן ומנפיק זוג חדש.\n    // טוקן גנוב שמנוסה שוב — כבר מבוטל, והגניבה נחשפת.\n    private static async Task<Results<Ok<AuthResponse>, UnauthorizedHttpResult>> Refresh(\n        RefreshRequest request,\n        IRefreshTokenRepository refreshTokens,\n        ITokenService tokens,\n        IOptions<JwtOptions> jwt,\n        CancellationToken cancellationToken)\n    {\n        var existing = await refreshTokens.GetActiveAsync(request.RefreshToken, cancellationToken);\n        if (existing?.User is null)\n        {\n            return TypedResults.Unauthorized();\n        }\n\n        await refreshTokens.RevokeAsync(existing, cancellationToken);\n\n        var auth = await IssueTokensAsync(existing.User, tokens, refreshTokens, jwt.Value, cancellationToken);\n        return TypedResults.Ok(auth);\n    }\n\n    private static async Task<Results<Ok<UserResponse>, NotFound>> Me(\n        ClaimsPrincipal principal,\n        IUserRepository users,\n        CancellationToken cancellationToken)\n    {\n        var user = await users.GetByIdAsync(principal.GetUserId(), cancellationToken);\n        return user is null\n            ? TypedResults.NotFound()\n            : TypedResults.Ok(UserResponse.FromEntity(user));\n    }\n\n    // מסלול אחד להנפקה — register, login ו-refresh חולקים אותו\n    private static async Task<AuthResponse> IssueTokensAsync(\n        User user,\n        ITokenService tokens,\n        IRefreshTokenRepository refreshTokens,\n        JwtOptions jwt,\n        CancellationToken cancellationToken)\n    {\n        var refresh = new RefreshToken\n        {\n            Token = tokens.CreateRefreshToken(),\n            UserId = user.Id,\n            CreatedAtUtc = DateTime.UtcNow,\n            ExpiresAtUtc = DateTime.UtcNow.AddDays(jwt.RefreshTokenDays),\n        };\n        await refreshTokens.AddAsync(refresh, cancellationToken);\n\n        return new AuthResponse(\n            tokens.CreateAccessToken(user),\n            refresh.Token,\n            DateTime.UtcNow.AddMinutes(jwt.AccessTokenMinutes),\n            UserResponse.FromEntity(user));\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-5.11": {
+              "start": 14,
+              "end": 26
+            },
+            "step-5.12": {
+              "start": 28,
+              "end": 74
+            },
+            "step-5.13": {
+              "start": 76,
+              "end": 95
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Endpoints/IssueEndpoints.cs": {
+          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Api.Filters;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class IssueEndpoints\n{\n    // קבוצה אחת לכל ה-Issues: prefix משותף, תג OpenAPI משותף, ופילטר משותף.\n    // מפרק 05: כל הקבוצה דורשת משתמש מאומת — שורה אחת מגינה על הכול.\n    public static IEndpointRouteBuilder MapIssueEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api\")\n            .WithTags(\"Issues\")\n            .AddEndpointFilter<HandlerTimingFilter>()\n            .RequireAuthorization();\n\n        group.MapGet(\"/projects/{projectId:int}/issues\", GetIssues);\n        group.MapPost(\"/projects/{projectId:int}/issues\", CreateIssue);\n\n        group.MapGet(\"/issues/{id:int}\", GetIssueById).WithName(\"GetIssueById\");\n        group.MapPut(\"/issues/{id:int}\", UpdateIssue);\n        group.MapDelete(\"/issues/{id:int}\", DeleteIssue);\n\n        return app;\n    }\n\n    // handlers עם שמות + Results<...>: החתימה עצמה היא תיעוד —\n    // המהדר אוכף שכל מסלול יציאה מוצהר, ו-OpenAPI קורא הכול לבד.\n    private static async Task<Results<Ok<PagedResult<IssueResponse>>, NotFound>> GetIssues(\n        int projectId,\n        [AsParameters] IssueListParams query,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        var page = await issues.GetPagedAsync(query.ToQuery(projectId), cancellationToken);\n\n        var mapped = new PagedResult<IssueResponse>(\n            page.Items.Select(IssueResponse.FromEntity).ToList(),\n            page.Total,\n            page.Page,\n            page.PageSize);\n\n        return TypedResults.Ok(mapped);\n    }\n\n    private static async Task<Results<CreatedAtRoute<IssueResponse>, NotFound, ForbidHttpResult>> CreateIssue(\n        int projectId,\n        CreateIssueRequest request,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        // הרשאה מבוססת-משאב: מאומת זה לא מספיק — צריך להיות חבר בפרויקט.\n        // ‏401 = מי אתה בכלל; ‏403 = אני יודע מי אתה, ואסור לך.\n        if (!await projects.IsMemberAsync(projectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var issue = await issues.AddAsync(new Issue\n        {\n            Title = request.Title,\n            Description = request.Description,\n            Priority = request.Priority,\n            ProjectId = projectId,\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        // 201 + כותרת Location שמצביעה על ה-endpoint בעל השם — בלי לשרשר URL ביד\n        return TypedResults.CreatedAtRoute(\n            IssueResponse.FromEntity(issue),\n            \"GetIssueById\",\n            new { id = issue.Id });\n    }\n\n    private static async Task<Results<Ok<IssueResponse>, NotFound>> GetIssueById(\n        int id,\n        IIssueRepository issues,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.GetByIdAsync(id, cancellationToken);\n        return issue is null\n            ? TypedResults.NotFound()\n            : TypedResults.Ok(IssueResponse.FromEntity(issue));\n    }\n\n    private static async Task<Results<Ok<IssueResponse>, NotFound>> UpdateIssue(\n        int id,\n        UpdateIssueRequest request,\n        IIssueRepository issues,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.UpdateAsync(id, i =>\n        {\n            i.Title = request.Title;\n            i.Description = request.Description;\n            i.Status = request.Status;\n            i.Priority = request.Priority;\n        }, cancellationToken);\n\n        return issue is null\n            ? TypedResults.NotFound()\n            : TypedResults.Ok(IssueResponse.FromEntity(issue));\n    }\n\n    private static async Task<Results<NoContent, NotFound>> DeleteIssue(\n        int id,\n        IIssueRepository issues,\n        CancellationToken cancellationToken)\n    {\n        var deleted = await issues.DeleteAsync(id, cancellationToken);\n        return deleted ? TypedResults.NoContent() : TypedResults.NotFound();\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-4.11": {
+              "start": 14,
+              "end": 31
+            },
+            "step-5.15": {
+              "start": 71,
+              "end": 76
+            },
+            "step-4.12": {
+              "start": 33,
+              "end": 131
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Endpoints/ProjectEndpoints.cs": {
+          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class ProjectEndpoints\n{\n    public static IEndpointRouteBuilder MapProjectEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api/projects\").WithTags(\"Projects\");\n\n        // קריאות פתוחות (יוגבלו לחברות בפרק 12); יצירה — רק למאומתים\n        group.MapGet(\"/\", GetProjects);\n        group.MapGet(\"/{id:int}\", GetProjectById).WithName(\"GetProjectById\");\n        group.MapPost(\"/\", CreateProject).RequireAuthorization();\n\n        return app;\n    }\n\n    private static async Task<Ok<IReadOnlyList<ProjectSummary>>> GetProjects(\n        IProjectRepository projects,\n        CancellationToken cancellationToken) =>\n        TypedResults.Ok(await projects.GetSummariesAsync(cancellationToken));\n\n    private static async Task<Results<Ok<ProjectResponse>, NotFound>> GetProjectById(\n        int id,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        var project = await projects.GetByIdAsync(id, cancellationToken);\n        return project is null\n            ? TypedResults.NotFound()\n            : TypedResults.Ok(ProjectResponse.FromEntity(project));\n    }\n\n    private static async Task<CreatedAtRoute<ProjectResponse>> CreateProject(\n        CreateProjectRequest request,\n        ClaimsPrincipal user,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        // היוצר הופך אוטומטית ל-Owner — בתוך אותה טרנזקציה\n        var project = await projects.AddAsync(new Project\n        {\n            Name = request.Name,\n            Description = request.Description,\n            CreatedAtUtc = DateTime.UtcNow,\n        }, user.GetUserId(), cancellationToken);\n\n        return TypedResults.CreatedAtRoute(\n            ProjectResponse.FromEntity(project),\n            \"GetProjectById\",\n            new { id = project.Id });\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Filters/HandlerTimingFilter.cs": {
+          "content": "using System.Diagnostics;\n\nnamespace TaskForge.Api.Filters;\n\n// Endpoint filter: עוטף את ה-handler בלבד — לא את כל הצינור כמו middleware.\n// ההשוואה בין X-Handler-Ms לבין X-Elapsed-Ms (מפרק 01) מספרת\n// כמה זמן נבלע ב-middleware, ב-routing וב-binding מסביב ל-handler עצמו.\npublic sealed class HandlerTimingFilter : IEndpointFilter\n{\n    public async ValueTask<object?> InvokeAsync(\n        EndpointFilterInvocationContext context,\n        EndpointFilterDelegate next)\n    {\n        var stopwatch = Stopwatch.StartNew();\n\n        var result = await next(context); // ה-handler (או הפילטר הבא בשרשרת)\n\n        stopwatch.Stop();\n        context.HttpContext.Response.Headers.Append(\"X-Handler-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n\n        return result;\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Program.cs": {
+          "content": "using System.Text;\nusing System.Text.Json.Serialization;\nusing Microsoft.AspNetCore.Authentication.JwtBearer;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.IdentityModel.Tokens;\nusing TaskForge.Api.Endpoints;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Infrastructure.Auth;\nusing TaskForge.Infrastructure.Data;\nusing TaskForge.Infrastructure.Repositories;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// enums נכנסים ויוצאים כטקסט (\"Open\") בכל ה-API — הגדרה אחת, לכולם\nbuilder.Services.ConfigureHttpJsonOptions(options =>\n    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));\n\n// ה-DbContext נרשם Scoped מעצם הגדרתו: יחידת עבודה אחת לכל בקשה.\n// מחרוזת החיבור מגיעה מהקונפיגורציה — לא מקובעת בקוד.\nbuilder.Services.AddDbContext<TaskForgeDbContext>(options =>\n    options.UseSqlite(builder.Configuration.GetConnectionString(\"Default\")));\n\n// ה-seams של הדומיין: חוזה מה-Core, מימוש מה-Infrastructure\nbuilder.Services.AddScoped<IProjectRepository, EfProjectRepository>();\nbuilder.Services.AddScoped<IIssueRepository, EfIssueRepository>();\nbuilder.Services.AddScoped<IUserRepository, EfUserRepository>();\nbuilder.Services.AddScoped<IRefreshTokenRepository, EfRefreshTokenRepository>();\n\n// שירותי auth חסרי-state — ‏Singleton בלב שלם\nbuilder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();\nbuilder.Services.AddSingleton<ITokenService, TokenService>();\n\n// קושרים את סקציית \"Jwt\" מהקונפיגורציה אל ה-options — מקור אמת אחד\nbuilder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));\nvar jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()\n    ?? throw new InvalidOperationException(\"Missing Jwt configuration section\");\n\n// צד האימות: ה-handler של Bearer מצרף לכל בקשה את ה-ClaimsPrincipal\n// אם הטוקן חתום נכון, בתוקף, ומגיע מהמנפיק ולקהל הנכונים.\nbuilder.Services\n    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)\n    .AddJwtBearer(options =>\n    {\n        options.TokenValidationParameters = new TokenValidationParameters\n        {\n            ValidateIssuer = true,\n            ValidIssuer = jwt.Issuer,\n            ValidateAudience = true,\n            ValidAudience = jwt.Audience,\n            ValidateIssuerSigningKey = true,\n            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),\n            ValidateLifetime = true,\n            // ברירת המחדל היא 5 דקות חסד — נצמיד לשעון אמיתי\n            ClockSkew = TimeSpan.FromSeconds(30),\n        };\n    });\n\nbuilder.Services.AddAuthorization();\n\n// הוולידציה המובנית של .NET 10: כל DTO מסומן ב-DataAnnotations נבדק\n// אוטומטית לפני ה-handler; כישלון מחזיר 400 ValidationProblem אחיד.\nbuilder.Services.AddValidation();\n\n// ProblemDetails (RFC 7807) כברירת מחדל לכל שגיאה וסטטוס ללא גוף\nbuilder.Services.AddProblemDetails();\n\nbuilder.Services.AddOpenApi();\n\nvar app = builder.Build();\n\n// בעליית האפליקציה: מיישמים מיגרציות שחסרות ומזריעים DB ריק.\n// CreateScope חובה — DbContext הוא Scoped, ומחוץ לבקשה אין scope.\nusing (var scope = app.Services.CreateScope())\n{\n    var db = scope.ServiceProvider.GetRequiredService<TaskForgeDbContext>();\n    await db.Database.MigrateAsync();\n    await DbSeeder.SeedAsync(db);\n}\n\n// העוטפים החיצוניים: חריגה לא מטופלת הופכת ל-500 ProblemDetails,\n// וכל תשובת סטטוס בלי גוף (כמו 404 של routing) מקבלת גוף אחיד.\napp.UseExceptionHandler();\napp.UseStatusCodePages();\n\n// ── ה-pipeline המוכר מפרק 01: לוגים ומדידת זמן ──\n\napp.Use(async (context, next) =>\n{\n    app.Logger.LogInformation(\"{Method} {Path} started\",\n        context.Request.Method, context.Request.Path);\n\n    await next(context);\n\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\n});\n\napp.Use(async (context, next) =>\n{\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\n\n    context.Response.OnStarting(() =>\n    {\n        stopwatch.Stop();\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n        return Task.CompletedTask;\n    });\n\n    await next(context);\n});\n\n// קודם מזהים (מי אתה?), אחר כך מחליטים (מותר לך?) — הסדר קשיח\napp.UseAuthentication();\napp.UseAuthorization();\n\n// תיאור ה-API נוצר מהקוד עצמו — בסביבת פיתוח בלבד\nif (app.Environment.IsDevelopment())\n{\n    app.MapOpenApi(); // GET /openapi/v1.json\n}\n\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\n\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\n\n// כל ה-API העסקי — מאורגן בקבצים לפי פיצ׳ר\napp.MapAuthEndpoints();\napp.MapProjectEndpoints();\napp.MapIssueEndpoints();\n\napp.Run();\n",
+          "status": "unchanged",
+          "regions": {
+            "step-4.2": {
+              "start": 15,
+              "end": 17
+            },
+            "step-3.7": {
+              "start": 19,
+              "end": 22
+            },
+            "step-4.4": {
+              "start": 24,
+              "end": 28
+            },
+            "step-5.8": {
+              "start": 30,
+              "end": 37
+            },
+            "step-5.9": {
+              "start": 39,
+              "end": 59
+            },
+            "step-4.9": {
+              "start": 61,
+              "end": 63
+            },
+            "step-3.11": {
+              "start": 72,
+              "end": 79
+            },
+            "step-4.10": {
+              "start": 81,
+              "end": 84
+            },
+            "step-1.10": {
+              "start": 86,
+              "end": 112
+            },
+            "step-5.10": {
+              "start": 114,
+              "end": 116
+            },
+            "step-4.17": {
+              "start": 118,
+              "end": 122
+            },
+            "step-4.16": {
+              "start": 124,
+              "end": 131
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Properties/launchSettings.json": {
+          "content": "{\n  \"$schema\": \"https://json.schemastore.org/launchsettings.json\",\n  \"profiles\": {\n    \"http\": {\n      \"commandName\": \"Project\",\n      \"dotnetRunMessages\": true,\n      \"launchBrowser\": false,\n      \"applicationUrl\": \"http://localhost:5080\",\n      \"environmentVariables\": {\n        \"ASPNETCORE_ENVIRONMENT\": \"Development\"\n      }\n    }\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/requests.http": {
+          "content": "@host = http://localhost:5080\n\n### Hello — האם השרת חי?\nGET {{host}}/\n\n### Health check\nGET {{host}}/healthz\n\n### ─────────── Auth ───────────\n\n### התחברות עם משתמש הדמו — העתיקו accessToken ו-refreshToken מהתשובה\n# @name login\nPOST {{host}}/api/auth/login\nContent-Type: application/json\n\n{\n  \"email\": \"demo@taskforge.dev\",\n  \"password\": \"Passw0rd!\"\n}\n\n### משתני עזר — REST Client שולף אותם מתשובת ה-login האחרונה\n@accessToken = {{login.response.body.accessToken}}\n@refreshToken = {{login.response.body.refreshToken}}\n\n### מי אני? — דורש Bearer token\nGET {{host}}/api/auth/me\nAuthorization: Bearer {{accessToken}}\n\n### בלי טוקן — 401 עוד לפני שה-handler רץ\nGET {{host}}/api/auth/me\n\n### הרשמה — 201 + זוג טוקנים (התחברות אוטומטית)\nPOST {{host}}/api/auth/register\nContent-Type: application/json\n\n{\n  \"email\": \"oleg@taskforge.dev\",\n  \"displayName\": \"Oleg\",\n  \"password\": \"S3curePass!\"\n}\n\n### הרשמה עם אימייל תפוס — 409 Conflict\nPOST {{host}}/api/auth/register\nContent-Type: application/json\n\n{\n  \"email\": \"demo@taskforge.dev\",\n  \"displayName\": \"Imposter\",\n  \"password\": \"S3curePass!\"\n}\n\n### סיסמה שגויה — 401, אותה תשובה כמו אימייל לא קיים (לא מסגירים כלום)\nPOST {{host}}/api/auth/login\nContent-Type: application/json\n\n{\n  \"email\": \"demo@taskforge.dev\",\n  \"password\": \"wrong-password\"\n}\n\n### Refresh — מנפיק זוג חדש ושורף את הישן (rotation)\nPOST {{host}}/api/auth/refresh\nContent-Type: application/json\n\n{\n  \"refreshToken\": \"{{refreshToken}}\"\n}\n\n### אותו refresh פעם שנייה — 401: הטוקן כבר בוטל. ככה נחשפת גניבה.\nPOST {{host}}/api/auth/refresh\nContent-Type: application/json\n\n{\n  \"refreshToken\": \"{{refreshToken}}\"\n}\n\n### ─────────── Projects (קריאה פתוחה, יצירה למאומתים) ───────────\n\n### רשימת פרויקטים — עדיין פתוח לכולם\nGET {{host}}/api/projects\n\n### יצירת פרויקט — היוצר הופך ל-Owner אוטומטית\nPOST {{host}}/api/projects\nAuthorization: Bearer {{accessToken}}\nContent-Type: application/json\n\n{\n  \"name\": \"API Hardening\",\n  \"description\": \"Rate limits, caching, observability\"\n}\n\n### ─────────── Issues (הכול דורש אימות) ───────────\n\n### הלוח — עכשיו עם Bearer\nGET {{host}}/api/projects/1/issues?status=Open\nAuthorization: Bearer {{accessToken}}\n\n### בלי טוקן — 401\nGET {{host}}/api/projects/1/issues\n\n### יצירת Issue — דורש גם חברות בפרויקט (אחרת 403)\nPOST {{host}}/api/projects/1/issues\nAuthorization: Bearer {{accessToken}}\nContent-Type: application/json\n\n{\n  \"title\": \"Add dark mode toggle\",\n  \"priority\": \"High\"\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/TaskForge.Api.csproj": {
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n  <ItemGroup>\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\n    <ProjectReference Include=\"..\\TaskForge.Infrastructure\\TaskForge.Infrastructure.csproj\" />\n  </ItemGroup>\n\n  <ItemGroup>\n    <!-- design-time בלבד: מאפשר ל-dotnet ef להריץ מיגרציות דרך הפרויקט הזה -->\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Design\" Version=\"10.0.9\">\n      <PrivateAssets>all</PrivateAssets>\n      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>\n    </PackageReference>\n    <PackageReference Include=\"Microsoft.AspNetCore.OpenApi\" Version=\"10.0.9\" />\n    <!-- אימות Bearer tokens בצד השרת -->\n    <PackageReference Include=\"Microsoft.AspNetCore.Authentication.JwtBearer\" Version=\"10.0.9\" />\n  </ItemGroup>\n\n</Project>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/IIssueRepository.cs": {
+          "content": "using TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// שאילתת הלוח כחוזה: כל מה שאפשר לסנן, למיין ולדפדף בו —\n// במקום חמישה פרמטרים בודדים שמתרבים עם כל פיצ׳ר.\npublic sealed record IssueQuery(\n    int ProjectId,\n    IssueStatus? Status = null,\n    IssuePriority? Priority = null,\n    string? Search = null,\n    string Sort = \"-created\",\n    int Page = 1,\n    int PageSize = 20);\n\npublic interface IIssueRepository\n{\n    Task<PagedResult<Issue>> GetPagedAsync(IssueQuery query, CancellationToken cancellationToken = default);\n\n    Task<Issue?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n\n    Task<Issue> AddAsync(Issue issue, CancellationToken cancellationToken = default);\n\n    /// <summary>טוען ישות במעקב, מפעיל עליה את השינוי, ושומר. null אם לא נמצאה.</summary>\n    Task<Issue?> UpdateAsync(int id, Action<Issue> apply, CancellationToken cancellationToken = default);\n\n    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/IPasswordHasher.cs": {
+          "content": "namespace TaskForge.Core.Abstractions;\n\n// הדומיין מגדיר את הצורך (\"לגבב ולאמת סיסמאות\"); הקריפטוגרפיה\n// עצמה היא פרט מימוש של ה-Infrastructure. אותו חוק תלות, שוב.\npublic interface IPasswordHasher\n{\n    string Hash(string password);\n\n    bool Verify(string password, string passwordHash);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/IProjectRepository.cs": {
+          "content": "using TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// החוזה מוגדר בדומיין: \"ככה ניגשים לפרויקטים\".\n// מי שמממש אותו ואיך — לא עניינו של ה-Core. זה חוק התלות בפעולה.\npublic interface IProjectRepository\n{\n    Task<IReadOnlyList<ProjectSummary>> GetSummariesAsync(CancellationToken cancellationToken = default);\n\n    Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n\n    /// <summary>יוצר פרויקט ומצרף את היוצר כ-Owner — פעולה אטומית אחת.</summary>\n    Task<Project> AddAsync(Project project, int ownerUserId, CancellationToken cancellationToken = default);\n\n    Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);\n\n    /// <summary>הרשאה מבוססת-משאב: האם המשתמש חבר בפרויקט הזה?</summary>\n    Task<bool> IsMemberAsync(int projectId, int userId, CancellationToken cancellationToken = default);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/IRefreshTokenRepository.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\npublic interface IRefreshTokenRepository\n{\n    Task AddAsync(RefreshToken token, CancellationToken cancellationToken = default);\n\n    /// <summary>מחזיר את הטוקן (כולל המשתמש) רק אם הוא קיים, בתוקף ולא בוטל.</summary>\n    Task<RefreshToken?> GetActiveAsync(string token, CancellationToken cancellationToken = default);\n\n    /// <summary>מסמן טוקן כמבוטל — הצעד הראשון בכל rotation.</summary>\n    Task RevokeAsync(RefreshToken token, CancellationToken cancellationToken = default);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/ITokenService.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\npublic interface ITokenService\n{\n    /// <summary>JWT חתום עם זהות המשתמש והתפקיד — תקף לדקות ספורות.</summary>\n    string CreateAccessToken(User user);\n\n    /// <summary>מחרוזת אקראית קריפטוגרפית — נשמרת ב-DB דרך IRefreshTokenRepository.</summary>\n    string CreateRefreshToken();\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/IUserRepository.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\npublic interface IUserRepository\n{\n    Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);\n\n    Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n\n    Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default);\n\n    Task<User> AddAsync(User user, CancellationToken cancellationToken = default);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Common/JwtOptions.cs": {
+          "content": "namespace TaskForge.Core.Common;\n\n// אופציות ה-JWT כ-POCO נקי: גם מנפיק הטוקנים (Infrastructure) וגם\n// מאמת הטוקנים (Api) קוראים מאותה הגדרה אחת — שמגיעה מהקונפיגורציה.\npublic sealed class JwtOptions\n{\n    public const string SectionName = \"Jwt\";\n\n    public string Issuer { get; set; } = \"\";\n\n    public string Audience { get; set; } = \"\";\n\n    // המפתח הסימטרי לחתימה. בפיתוח: appsettings; בפרודקשן: משתנה סביבה בלבד.\n    public string Key { get; set; } = \"\";\n\n    public int AccessTokenMinutes { get; set; } = 15;\n\n    public int RefreshTokenDays { get; set; } = 7;\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Common/PagedResult.cs": {
+          "content": "namespace TaskForge.Core.Common;\n\n// חוזה הדפדוף של כל רשימה ב-TaskForge: הפריטים של העמוד הנוכחי\n// לצד המספרים שהקליינט צריך כדי לצייר ניווט עמודים.\npublic sealed record PagedResult<T>(\n    IReadOnlyList<T> Items,\n    int Total,\n    int Page,\n    int PageSize)\n{\n    public int TotalPages => (int)Math.Ceiling((double)Total / PageSize);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Common/ProjectSummary.cs": {
+          "content": "namespace TaskForge.Core.Common;\n\n// הקרנה לקריאה: בדיוק מה שמסך רשימת הפרויקטים צריך, כולל ספירה\n// שמחושבת ב-SQL — בלי לטעון את ה-Issues עצמם לזיכרון.\npublic sealed record ProjectSummary(\n    int Id,\n    string Name,\n    string? Description,\n    int OpenIssues);\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Entities/Issue.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\n// enum = שפת הדומיין: סט ערכים סגור שהמהדר אוכף.\n// \"Open\" שגוי-איות פשוט לא יתקמפל — לעומת string חופשי.\n\npublic enum IssueStatus\n{\n    Open,\n    InProgress,\n    Done,\n}\n\npublic enum IssuePriority\n{\n    Low,\n    Medium,\n    High,\n    Critical,\n}\n\npublic sealed class Issue\n{\n    public int Id { get; set; }\n\n    public required string Title { get; set; }\n\n    public string? Description { get; set; }\n\n    public IssueStatus Status { get; set; } = IssueStatus.Open;\n\n    public IssuePriority Priority { get; set; } = IssuePriority.Medium;\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    // הזוג הקלאסי: מפתח זר + navigation property.\n    // ה-FK הוא העמודה בטבלה; ה-nav הוא הדרך של הקוד \"ללכת\" לפרויקט.\n    public int ProjectId { get; set; }\n    public Project? Project { get; set; }\n\n    // many-to-many: ‏EF יבנה טבלת חיבור לבד (skip navigation)\n    public List<Label> Labels { get; set; } = [];\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Entities/Label.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\npublic sealed class Label\n{\n    public int Id { get; set; }\n\n    public required string Name { get; set; }\n\n    // צבע תצוגה הקסדצימלי, למשל \"#f87171\" — אופציונלי\n    public string? Color { get; set; }\n\n    // הצד השני של ה-many-to-many עם Issue\n    public List<Issue> Issues { get; set; } = [];\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Entities/Project.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\n// הישות הראשונה של הדומיין. שימו לב מה אין כאן:\n// אין JSON, אין HTTP, אין SQL — רק העסק עצמו.\npublic sealed class Project\n{\n    public int Id { get; set; }\n\n    // required: אי אפשר לייצר Project בלי שם — המהדר אוכף את זה\n    public required string Name { get; set; }\n\n    // string? — תיאור הוא אופציונלי במפורש\n    public string? Description { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    // צד ה\"אחד\" של אחד-לרבים: לפרויקט יש אוסף Issues\n    public List<Issue> Issues { get; set; } = [];\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Entities/ProjectMember.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\npublic enum ProjectRole\n{\n    Member,\n    Owner,\n}\n\n// טבלת חיבור עם נתונים משלה (תפקיד) — ולכן ישות מפורשת,\n// בניגוד ל-IssueLabel שנשאר skip navigation. המפתח: (ProjectId, UserId).\npublic sealed class ProjectMember\n{\n    public int ProjectId { get; set; }\n    public Project? Project { get; set; }\n\n    public int UserId { get; set; }\n    public User? User { get; set; }\n\n    public ProjectRole Role { get; set; } = ProjectRole.Member;\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Entities/RefreshToken.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\n// access token חי דקות; ההתחברות נשמרת בזכות ה-refresh token —\n// מחרוזת אקראית חד-פעמית שנשמרת ב-DB וניתנת לביטול.\npublic sealed class RefreshToken\n{\n    public int Id { get; set; }\n\n    public required string Token { get; set; }\n\n    public int UserId { get; set; }\n    public User? User { get; set; }\n\n    public DateTime ExpiresAtUtc { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    // null = הטוקן עדיין בתוקף; rotation מציב כאן חותמת זמן\n    public DateTime? RevokedAtUtc { get; set; }\n\n    public bool IsActive => RevokedAtUtc is null && ExpiresAtUtc > DateTime.UtcNow;\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Entities/User.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\npublic enum UserRole\n{\n    Member,\n    Admin,\n}\n\npublic sealed class User\n{\n    public int Id { get; set; }\n\n    public required string Email { get; set; }\n\n    public required string DisplayName { get; set; }\n\n    // לעולם לא הסיסמה עצמה — רק התוצר של PBKDF2 (צעד 5.4)\n    public required string PasswordHash { get; set; }\n\n    public UserRole Role { get; set; } = UserRole.Member;\n\n    public DateTime CreatedAtUtc { get; set; }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/TaskForge.Core.csproj": {
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n</Project>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Auth/PasswordHasher.cs": {
+          "content": "using System.Security.Cryptography;\nusing TaskForge.Core.Abstractions;\n\nnamespace TaskForge.Infrastructure.Auth;\n\n// PBKDF2 טהור מה-BCL — בלי חבילות, בלי קסם.\n// פורמט האחסון: iterations.saltBase64.hashBase64 — הכול נחוץ לאימות עתידי.\npublic sealed class PasswordHasher : IPasswordHasher\n{\n    private const int Iterations = 100_000;\n    private const int SaltSize = 16; // bytes\n    private const int KeySize = 32;  // bytes\n\n    public string Hash(string password)\n    {\n        var salt = RandomNumberGenerator.GetBytes(SaltSize);\n\n        var key = Rfc2898DeriveBytes.Pbkdf2(\n            password, salt, Iterations, HashAlgorithmName.SHA256, KeySize);\n\n        return $\"{Iterations}.{Convert.ToBase64String(salt)}.{Convert.ToBase64String(key)}\";\n    }\n\n    public bool Verify(string password, string passwordHash)\n    {\n        var parts = passwordHash.Split('.');\n        if (parts.Length != 3)\n        {\n            return false;\n        }\n\n        var iterations = int.Parse(parts[0]);\n        var salt = Convert.FromBase64String(parts[1]);\n        var expected = Convert.FromBase64String(parts[2]);\n\n        var actual = Rfc2898DeriveBytes.Pbkdf2(\n            password, salt, iterations, HashAlgorithmName.SHA256, expected.Length);\n\n        // השוואה בזמן קבוע — חוסמת timing attacks על אורך ההתאמה\n        return CryptographicOperations.FixedTimeEquals(actual, expected);\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Auth/TokenService.cs": {
+          "content": "using System.IdentityModel.Tokens.Jwt;\nusing System.Security.Claims;\nusing System.Security.Cryptography;\nusing System.Text;\nusing Microsoft.Extensions.Options;\nusing Microsoft.IdentityModel.Tokens;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Infrastructure.Auth;\n\npublic sealed class TokenService(IOptions<JwtOptions> options) : ITokenService\n{\n    private readonly JwtOptions _jwt = options.Value;\n\n    public string CreateAccessToken(User user)\n    {\n        // claims: העובדות שהשרת חותם עליהן. הקליינט קורא אותן, אבל לא יכול לזייף —\n        // כל שינוי שובר את החתימה.\n        var claims = new[]\n        {\n            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),\n            new Claim(JwtRegisteredClaimNames.Email, user.Email),\n            new Claim(\"name\", user.DisplayName),\n            new Claim(ClaimTypes.Role, user.Role.ToString()),\n        };\n\n        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Key));\n        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);\n\n        var token = new JwtSecurityToken(\n            issuer: _jwt.Issuer,\n            audience: _jwt.Audience,\n            claims: claims,\n            notBefore: DateTime.UtcNow,\n            expires: DateTime.UtcNow.AddMinutes(_jwt.AccessTokenMinutes),\n            signingCredentials: credentials);\n\n        return new JwtSecurityTokenHandler().WriteToken(token);\n    }\n\n    // refresh token הוא לא JWT — סתם אקראיות חזקה. הערך שלו נובע\n    // מהשורה ב-DB שמצביעה עליו, ולכן אפשר לבטל אותו בכל רגע.\n    public string CreateRefreshToken() =>\n        Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Data/DbSeeder.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Auth;\n\nnamespace TaskForge.Infrastructure.Data;\n\n// נתוני פיתוח: רצים פעם אחת, רק על DB ריק.\n// מפרק 05 — כולל משתמש דמו שהוא ה-Owner של כל הפרויקטים.\npublic static class DbSeeder\n{\n    public static async Task SeedAsync(TaskForgeDbContext db)\n    {\n        if (await db.Projects.AnyAsync())\n        {\n            return; // יש כבר נתונים — לא נוגעים\n        }\n\n        // משתמש פיתוח: demo@taskforge.dev / Passw0rd!\n        // הסיסמה עוברת את אותו PBKDF2 כמו בהרשמה אמיתית — אין דלת אחורית.\n        var demo = new User\n        {\n            Email = \"demo@taskforge.dev\",\n            DisplayName = \"Demo User\",\n            PasswordHash = new PasswordHasher().Hash(\"Passw0rd!\"),\n            Role = UserRole.Admin,\n            CreatedAtUtc = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),\n        };\n        db.Users.Add(demo);\n\n        var bug = new Label { Name = \"bug\", Color = \"#f87171\" };\n        var feature = new Label { Name = \"feature\", Color = \"#4ade80\" };\n        var design = new Label { Name = \"design\", Color = \"#c084fc\" };\n\n        var website = new Project\n        {\n            Name = \"Website Redesign\",\n            Description = \"Refresh the marketing site end to end\",\n            CreatedAtUtc = new DateTime(2026, 1, 12, 0, 0, 0, DateTimeKind.Utc),\n            Issues =\n            [\n                new Issue\n                {\n                    Title = \"Fix login redirect loop\",\n                    Description = \"Users bounce between /login and /home\",\n                    Status = IssueStatus.InProgress,\n                    Priority = IssuePriority.Critical,\n                    CreatedAtUtc = new DateTime(2026, 1, 14, 9, 0, 0, DateTimeKind.Utc),\n                    Labels = [bug],\n                },\n                new Issue\n                {\n                    Title = \"New hero section\",\n                    Status = IssueStatus.Open,\n                    Priority = IssuePriority.Medium,\n                    CreatedAtUtc = new DateTime(2026, 1, 20, 11, 30, 0, DateTimeKind.Utc),\n                    Labels = [feature, design],\n                },\n            ],\n        };\n\n        var mobile = new Project\n        {\n            Name = \"Mobile App\",\n            Description = \"iOS + Android companion app\",\n            CreatedAtUtc = new DateTime(2026, 2, 3, 0, 0, 0, DateTimeKind.Utc),\n            Issues =\n            [\n                new Issue\n                {\n                    Title = \"Push notifications opt-in\",\n                    Status = IssueStatus.Open,\n                    Priority = IssuePriority.High,\n                    CreatedAtUtc = new DateTime(2026, 2, 10, 8, 15, 0, DateTimeKind.Utc),\n                    Labels = [feature],\n                },\n                new Issue\n                {\n                    Title = \"Crash on cold start (Android 15)\",\n                    Status = IssueStatus.Done,\n                    Priority = IssuePriority.Critical,\n                    CreatedAtUtc = new DateTime(2026, 2, 12, 16, 45, 0, DateTimeKind.Utc),\n                    Labels = [bug],\n                },\n            ],\n        };\n\n        var tools = new Project\n        {\n            Name = \"Internal Tools\",\n            Description = null,\n            CreatedAtUtc = new DateTime(2026, 3, 21, 0, 0, 0, DateTimeKind.Utc),\n        };\n\n        // מוסיפים רק את השורשים — ה-Change Tracker מגלה את כל הגרף\n        // (Issues, ‏Labels וטבלת החיבור) ושומר הכול ב-SaveChanges אחד.\n        db.Projects.AddRange(website, mobile, tools);\n        await db.SaveChangesAsync();\n\n        // חברות: עכשיו יש Ids אמיתיים, אפשר לקשור את המשתמש לפרויקטים\n        db.ProjectMembers.AddRange(\n            new ProjectMember { ProjectId = website.Id, UserId = demo.Id, Role = ProjectRole.Owner },\n            new ProjectMember { ProjectId = mobile.Id, UserId = demo.Id, Role = ProjectRole.Owner },\n            new ProjectMember { ProjectId = tools.Id, UserId = demo.Id, Role = ProjectRole.Owner });\n        await db.SaveChangesAsync();\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-5.7": {
+              "start": 18,
+              "end": 28
+            },
+            "step-5.7b": {
+              "start": 99,
+              "end": 104
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Data/TaskForgeDbContext.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Infrastructure.Data;\n\n// ה-DbContext הוא יחידת העבודה: צוהר אחד ל-DB לכל בקשה,\n// שעוקב אחרי כל ישות שהוא הגיש ויודע לתרגם שינויים ל-SQL.\npublic sealed class TaskForgeDbContext(DbContextOptions<TaskForgeDbContext> options)\n    : DbContext(options)\n{\n    // כל DbSet = טבלה. Set<T>() במקום setter — אין מצב ביניים null.\n    public DbSet<Project> Projects => Set<Project>();\n    public DbSet<Issue> Issues => Set<Issue>();\n    public DbSet<Label> Labels => Set<Label>();\n    public DbSet<User> Users => Set<User>();\n    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();\n    public DbSet<ProjectMember> ProjectMembers => Set<ProjectMember>();\n\n    // Fluent API: כל חוקי המיפוי כאן, והישויות ב-Core נשארות נקיות —\n    // בלי attributes של EF. זה חוק התלות מפרק 02, מיושם על שכבת הנתונים.\n    protected override void OnModelCreating(ModelBuilder modelBuilder)\n    {\n        modelBuilder.Entity<Project>(project =>\n        {\n            project.Property(p => p.Name)\n                   .HasMaxLength(120)\n                   .IsRequired();\n\n            // אחד-לרבים: מחיקת פרויקט גוררת את ה-Issues שלו\n            project.HasMany(p => p.Issues)\n                   .WithOne(i => i.Project!)\n                   .HasForeignKey(i => i.ProjectId)\n                   .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<Issue>(issue =>\n        {\n            issue.Property(i => i.Title)\n                 .HasMaxLength(200)\n                 .IsRequired();\n\n            // enum נשמר כטקסט קריא ב-DB (\"Open\"), לא כמספר קסם (0)\n            issue.Property(i => i.Status)\n                 .HasConversion<string>()\n                 .HasMaxLength(20);\n\n            issue.Property(i => i.Priority)\n                 .HasConversion<string>()\n                 .HasMaxLength(20);\n\n            // האינדקס של שאילתת הלוח: \"כל ה-Issues הפתוחים בפרויקט X\"\n            issue.HasIndex(i => new { i.ProjectId, i.Status });\n\n            // many-to-many: ‏EF מסיק טבלת חיבור IssueLabel לבד\n            issue.HasMany(i => i.Labels)\n                 .WithMany(l => l.Issues);\n        });\n\n        modelBuilder.Entity<Label>(label =>\n        {\n            label.Property(l => l.Name)\n                 .HasMaxLength(40)\n                 .IsRequired();\n\n            // אין שתי תוויות באותו שם\n            label.HasIndex(l => l.Name).IsUnique();\n        });\n\n        modelBuilder.Entity<User>(user =>\n        {\n            user.Property(u => u.Email).HasMaxLength(254).IsRequired();\n            user.Property(u => u.DisplayName).HasMaxLength(60).IsRequired();\n            user.Property(u => u.PasswordHash).HasMaxLength(300).IsRequired();\n            user.Property(u => u.Role).HasConversion<string>().HasMaxLength(20);\n\n            // אימייל הוא הזהות — אין שניים\n            user.HasIndex(u => u.Email).IsUnique();\n        });\n\n        modelBuilder.Entity<RefreshToken>(token =>\n        {\n            token.Property(t => t.Token).HasMaxLength(120).IsRequired();\n\n            // חיפוש הטוקן הוא הנתיב החם של /auth/refresh — אינדקס ייחודי\n            token.HasIndex(t => t.Token).IsUnique();\n\n            // מחיקת משתמש גוררת את הטוקנים שלו\n            token.HasOne(t => t.User)\n                 .WithMany()\n                 .HasForeignKey(t => t.UserId)\n                 .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<ProjectMember>(member =>\n        {\n            // מפתח מורכב: זוג (פרויקט, משתמש) הוא החברות עצמה — בלי Id מלאכותי\n            member.HasKey(m => new { m.ProjectId, m.UserId });\n\n            member.Property(m => m.Role).HasConversion<string>().HasMaxLength(20);\n\n            member.HasOne(m => m.Project)\n                  .WithMany()\n                  .HasForeignKey(m => m.ProjectId)\n                  .OnDelete(DeleteBehavior.Cascade);\n\n            member.HasOne(m => m.User)\n                  .WithMany()\n                  .HasForeignKey(m => m.UserId)\n                  .OnDelete(DeleteBehavior.Cascade);\n        });\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-5.6": {
+              "start": 69,
+              "end": 110
+            },
+            "step-3.6": {
+              "start": 19,
+              "end": 111
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260610091413_InitialCreate.cs": {
+          "content": "﻿using System;\nusing Microsoft.EntityFrameworkCore.Migrations;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    /// <inheritdoc />\n    public partial class InitialCreate : Migration\n    {\n        /// <inheritdoc />\n        protected override void Up(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.CreateTable(\n                name: \"Labels\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    Name = table.Column<string>(type: \"TEXT\", maxLength: 40, nullable: false),\n                    Color = table.Column<string>(type: \"TEXT\", nullable: true)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_Labels\", x => x.Id);\n                });\n\n            migrationBuilder.CreateTable(\n                name: \"Projects\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    Name = table.Column<string>(type: \"TEXT\", maxLength: 120, nullable: false),\n                    Description = table.Column<string>(type: \"TEXT\", nullable: true),\n                    CreatedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_Projects\", x => x.Id);\n                });\n\n            migrationBuilder.CreateTable(\n                name: \"Issues\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    Title = table.Column<string>(type: \"TEXT\", maxLength: 200, nullable: false),\n                    Description = table.Column<string>(type: \"TEXT\", nullable: true),\n                    Status = table.Column<string>(type: \"TEXT\", maxLength: 20, nullable: false),\n                    Priority = table.Column<string>(type: \"TEXT\", maxLength: 20, nullable: false),\n                    CreatedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false),\n                    ProjectId = table.Column<int>(type: \"INTEGER\", nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_Issues\", x => x.Id);\n                    table.ForeignKey(\n                        name: \"FK_Issues_Projects_ProjectId\",\n                        column: x => x.ProjectId,\n                        principalTable: \"Projects\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                });\n\n            migrationBuilder.CreateTable(\n                name: \"IssueLabel\",\n                columns: table => new\n                {\n                    IssuesId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    LabelsId = table.Column<int>(type: \"INTEGER\", nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_IssueLabel\", x => new { x.IssuesId, x.LabelsId });\n                    table.ForeignKey(\n                        name: \"FK_IssueLabel_Issues_IssuesId\",\n                        column: x => x.IssuesId,\n                        principalTable: \"Issues\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                    table.ForeignKey(\n                        name: \"FK_IssueLabel_Labels_LabelsId\",\n                        column: x => x.LabelsId,\n                        principalTable: \"Labels\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                });\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_IssueLabel_LabelsId\",\n                table: \"IssueLabel\",\n                column: \"LabelsId\");\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_Issues_ProjectId_Status\",\n                table: \"Issues\",\n                columns: new[] { \"ProjectId\", \"Status\" });\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_Labels_Name\",\n                table: \"Labels\",\n                column: \"Name\",\n                unique: true);\n        }\n\n        /// <inheritdoc />\n        protected override void Down(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.DropTable(\n                name: \"IssueLabel\");\n\n            migrationBuilder.DropTable(\n                name: \"Issues\");\n\n            migrationBuilder.DropTable(\n                name: \"Labels\");\n\n            migrationBuilder.DropTable(\n                name: \"Projects\");\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260610091413_InitialCreate.Designer.cs": {
+          "content": "﻿// <auto-generated />\nusing System;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.EntityFrameworkCore.Infrastructure;\nusing Microsoft.EntityFrameworkCore.Migrations;\nusing Microsoft.EntityFrameworkCore.Storage.ValueConversion;\nusing TaskForge.Infrastructure.Data;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    [DbContext(typeof(TaskForgeDbContext))]\n    [Migration(\"20260610091413_InitialCreate\")]\n    partial class InitialCreate\n    {\n        /// <inheritdoc />\n        protected override void BuildTargetModel(ModelBuilder modelBuilder)\n        {\n#pragma warning disable 612, 618\n            modelBuilder.HasAnnotation(\"ProductVersion\", \"10.0.9\");\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.Property<int>(\"IssuesId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"LabelsId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"IssuesId\", \"LabelsId\");\n\n                    b.HasIndex(\"LabelsId\");\n\n                    b.ToTable(\"IssueLabel\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Priority\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Status\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Title\")\n                        .IsRequired()\n                        .HasMaxLength(200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ProjectId\", \"Status\");\n\n                    b.ToTable(\"Issues\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Label\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Color\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(40)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Name\")\n                        .IsUnique();\n\n                    b.ToTable(\"Labels\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.ToTable(\"Projects\");\n                });\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", null)\n                        .WithMany()\n                        .HasForeignKey(\"IssuesId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Label\", null)\n                        .WithMany()\n                        .HasForeignKey(\"LabelsId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany(\"Issues\")\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Navigation(\"Issues\");\n                });\n#pragma warning restore 612, 618\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260610153208_AddAuth.cs": {
+          "content": "﻿using System;\nusing Microsoft.EntityFrameworkCore.Migrations;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    /// <inheritdoc />\n    public partial class AddAuth : Migration\n    {\n        /// <inheritdoc />\n        protected override void Up(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.CreateTable(\n                name: \"Users\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    Email = table.Column<string>(type: \"TEXT\", maxLength: 254, nullable: false),\n                    DisplayName = table.Column<string>(type: \"TEXT\", maxLength: 60, nullable: false),\n                    PasswordHash = table.Column<string>(type: \"TEXT\", maxLength: 300, nullable: false),\n                    Role = table.Column<string>(type: \"TEXT\", maxLength: 20, nullable: false),\n                    CreatedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_Users\", x => x.Id);\n                });\n\n            migrationBuilder.CreateTable(\n                name: \"ProjectMembers\",\n                columns: table => new\n                {\n                    ProjectId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    UserId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    Role = table.Column<string>(type: \"TEXT\", maxLength: 20, nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_ProjectMembers\", x => new { x.ProjectId, x.UserId });\n                    table.ForeignKey(\n                        name: \"FK_ProjectMembers_Projects_ProjectId\",\n                        column: x => x.ProjectId,\n                        principalTable: \"Projects\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                    table.ForeignKey(\n                        name: \"FK_ProjectMembers_Users_UserId\",\n                        column: x => x.UserId,\n                        principalTable: \"Users\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                });\n\n            migrationBuilder.CreateTable(\n                name: \"RefreshTokens\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    Token = table.Column<string>(type: \"TEXT\", maxLength: 120, nullable: false),\n                    UserId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    ExpiresAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false),\n                    CreatedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false),\n                    RevokedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: true)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_RefreshTokens\", x => x.Id);\n                    table.ForeignKey(\n                        name: \"FK_RefreshTokens_Users_UserId\",\n                        column: x => x.UserId,\n                        principalTable: \"Users\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                });\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_ProjectMembers_UserId\",\n                table: \"ProjectMembers\",\n                column: \"UserId\");\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_RefreshTokens_Token\",\n                table: \"RefreshTokens\",\n                column: \"Token\",\n                unique: true);\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_RefreshTokens_UserId\",\n                table: \"RefreshTokens\",\n                column: \"UserId\");\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_Users_Email\",\n                table: \"Users\",\n                column: \"Email\",\n                unique: true);\n        }\n\n        /// <inheritdoc />\n        protected override void Down(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.DropTable(\n                name: \"ProjectMembers\");\n\n            migrationBuilder.DropTable(\n                name: \"RefreshTokens\");\n\n            migrationBuilder.DropTable(\n                name: \"Users\");\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260610153208_AddAuth.Designer.cs": {
+          "content": "﻿// <auto-generated />\nusing System;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.EntityFrameworkCore.Infrastructure;\nusing Microsoft.EntityFrameworkCore.Migrations;\nusing Microsoft.EntityFrameworkCore.Storage.ValueConversion;\nusing TaskForge.Infrastructure.Data;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    [DbContext(typeof(TaskForgeDbContext))]\n    [Migration(\"20260610153208_AddAuth\")]\n    partial class AddAuth\n    {\n        /// <inheritdoc />\n        protected override void BuildTargetModel(ModelBuilder modelBuilder)\n        {\n#pragma warning disable 612, 618\n            modelBuilder.HasAnnotation(\"ProductVersion\", \"10.0.9\");\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.Property<int>(\"IssuesId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"LabelsId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"IssuesId\", \"LabelsId\");\n\n                    b.HasIndex(\"LabelsId\");\n\n                    b.ToTable(\"IssueLabel\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Priority\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Status\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Title\")\n                        .IsRequired()\n                        .HasMaxLength(200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ProjectId\", \"Status\");\n\n                    b.ToTable(\"Issues\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Label\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Color\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(40)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Name\")\n                        .IsUnique();\n\n                    b.ToTable(\"Labels\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.ToTable(\"Projects\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"ProjectId\", \"UserId\");\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"ProjectMembers\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"ExpiresAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime?>(\"RevokedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Token\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Token\")\n                        .IsUnique();\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"RefreshTokens\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.User\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"DisplayName\")\n                        .IsRequired()\n                        .HasMaxLength(60)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Email\")\n                        .IsRequired()\n                        .HasMaxLength(254)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"PasswordHash\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Email\")\n                        .IsUnique();\n\n                    b.ToTable(\"Users\");\n                });\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", null)\n                        .WithMany()\n                        .HasForeignKey(\"IssuesId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Label\", null)\n                        .WithMany()\n                        .HasForeignKey(\"LabelsId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany(\"Issues\")\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Navigation(\"Issues\");\n                });\n#pragma warning restore 612, 618\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/TaskForgeDbContextModelSnapshot.cs": {
+          "content": "﻿// <auto-generated />\nusing System;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.EntityFrameworkCore.Infrastructure;\nusing Microsoft.EntityFrameworkCore.Storage.ValueConversion;\nusing TaskForge.Infrastructure.Data;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    [DbContext(typeof(TaskForgeDbContext))]\n    partial class TaskForgeDbContextModelSnapshot : ModelSnapshot\n    {\n        protected override void BuildModel(ModelBuilder modelBuilder)\n        {\n#pragma warning disable 612, 618\n            modelBuilder.HasAnnotation(\"ProductVersion\", \"10.0.9\");\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.Property<int>(\"IssuesId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"LabelsId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"IssuesId\", \"LabelsId\");\n\n                    b.HasIndex(\"LabelsId\");\n\n                    b.ToTable(\"IssueLabel\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Priority\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Status\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Title\")\n                        .IsRequired()\n                        .HasMaxLength(200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ProjectId\", \"Status\");\n\n                    b.ToTable(\"Issues\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Label\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Color\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(40)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Name\")\n                        .IsUnique();\n\n                    b.ToTable(\"Labels\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.ToTable(\"Projects\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"ProjectId\", \"UserId\");\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"ProjectMembers\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"ExpiresAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime?>(\"RevokedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Token\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Token\")\n                        .IsUnique();\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"RefreshTokens\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.User\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"DisplayName\")\n                        .IsRequired()\n                        .HasMaxLength(60)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Email\")\n                        .IsRequired()\n                        .HasMaxLength(254)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"PasswordHash\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Email\")\n                        .IsUnique();\n\n                    b.ToTable(\"Users\");\n                });\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", null)\n                        .WithMany()\n                        .HasForeignKey(\"IssuesId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Label\", null)\n                        .WithMany()\n                        .HasForeignKey(\"LabelsId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany(\"Issues\")\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Navigation(\"Issues\");\n                });\n#pragma warning restore 612, 618\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfIssueRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfIssueRepository(TaskForgeDbContext db) : IIssueRepository\n{\n    // שאילתה דינמית: בונים IQueryable שלב-שלב, ושום SQL לא רץ\n    // עד CountAsync / ToListAsync. ה-DB מקבל בדיוק שאילתה אחת לכל קריאה.\n    public async Task<PagedResult<Issue>> GetPagedAsync(IssueQuery query, CancellationToken cancellationToken = default)\n    {\n        var issues = db.Issues\n            .AsNoTracking()\n            .Where(i => i.ProjectId == query.ProjectId);\n\n        // כל סינון מצטרף רק אם נתבקש — composition של ביטויים, לא SQL בידיים\n        if (query.Status is { } status)\n        {\n            issues = issues.Where(i => i.Status == status);\n        }\n\n        if (query.Priority is { } priority)\n        {\n            issues = issues.Where(i => i.Priority == priority);\n        }\n\n        if (!string.IsNullOrWhiteSpace(query.Search))\n        {\n            issues = issues.Where(i => EF.Functions.Like(i.Title, $\"%{query.Search}%\"));\n        }\n\n        issues = query.Sort switch\n        {\n            \"created\" => issues.OrderBy(i => i.CreatedAtUtc),\n            \"title\" => issues.OrderBy(i => i.Title),\n            \"priority\" => issues.OrderByDescending(i => i.Priority).ThenBy(i => i.CreatedAtUtc),\n            _ => issues.OrderByDescending(i => i.CreatedAtUtc), // \"-created\", ברירת המחדל\n        };\n\n        // קודם סופרים (שאילתת COUNT רזה), ואז שולפים עמוד אחד בלבד\n        var total = await issues.CountAsync(cancellationToken);\n\n        var items = await issues\n            .Skip((query.Page - 1) * query.PageSize)\n            .Take(query.PageSize)\n            .Include(i => i.Labels)\n            .ToListAsync(cancellationToken);\n\n        return new PagedResult<Issue>(items, total, query.Page, query.PageSize);\n    }\n\n    public Task<Issue?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Issues\n            .AsNoTracking()\n            .Include(i => i.Labels)\n            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);\n\n    public async Task<Issue> AddAsync(Issue issue, CancellationToken cancellationToken = default)\n    {\n        db.Issues.Add(issue);\n        await db.SaveChangesAsync(cancellationToken);\n        return issue; // ה-Id כבר מאוכלס — EF קרא אותו חזרה מה-DB\n    }\n\n    // עדכון בסגנון tracked: טוענים עם מעקב, נותנים לקורא לשנות, ושומרים.\n    // ה-Change Tracker (פרק 03) מזהה בדיוק אילו עמודות השתנו.\n    public async Task<Issue?> UpdateAsync(int id, Action<Issue> apply, CancellationToken cancellationToken = default)\n    {\n        var issue = await db.Issues\n            .Include(i => i.Labels)\n            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);\n\n        if (issue is null)\n        {\n            return null;\n        }\n\n        apply(issue);\n        await db.SaveChangesAsync(cancellationToken);\n        return issue;\n    }\n\n    // מחיקה בלי לטעון: ExecuteDelete שולח DELETE ישיר ומחזיר כמה שורות נמחקו\n    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default) =>\n        await db.Issues\n            .Where(i => i.Id == id)\n            .ExecuteDeleteAsync(cancellationToken) > 0;\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-4.5": {
+              "start": 11,
+              "end": 53
+            },
+            "step-4.6": {
+              "start": 61,
+              "end": 90
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfProjectRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfProjectRepository(TaskForgeDbContext db) : IProjectRepository\n{\n    // הקרנה (projection): ‏Select לתוך record. ‏EF מתרגם את הכול —\n    // כולל ספירת ה-Issues הפתוחים — לשאילתת SQL אחת עם COUNT מקונן.\n    // ה-Issues עצמם לא נטענים לזיכרון לעולם.\n    public async Task<IReadOnlyList<ProjectSummary>> GetSummariesAsync(CancellationToken cancellationToken = default) =>\n        await db.Projects\n            .AsNoTracking()\n            .OrderBy(p => p.Id)\n            .Select(p => new ProjectSummary(\n                p.Id,\n                p.Name,\n                p.Description,\n                p.Issues.Count(i => i.Status != IssueStatus.Done)))\n            .ToListAsync(cancellationToken);\n\n    public Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Projects\n            .AsNoTracking()\n            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);\n\n    // הפרויקט והחברות נכנסים באותו SaveChanges — טרנזקציה אחת.\n    // אין רגע שבו קיים פרויקט בלי Owner.\n    public async Task<Project> AddAsync(Project project, int ownerUserId, CancellationToken cancellationToken = default)\n    {\n        db.Projects.Add(project);\n        db.ProjectMembers.Add(new ProjectMember\n        {\n            Project = project,\n            UserId = ownerUserId,\n            Role = ProjectRole.Owner,\n        });\n        await db.SaveChangesAsync(cancellationToken);\n        return project;\n    }\n\n    // בדיקת קיום רזה: ‏EXISTS ב-SQL, בלי לטעון את הישות\n    public Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Projects.AnyAsync(p => p.Id == id, cancellationToken);\n\n    public Task<bool> IsMemberAsync(int projectId, int userId, CancellationToken cancellationToken = default) =>\n        db.ProjectMembers.AnyAsync(\n            m => m.ProjectId == projectId && m.UserId == userId, cancellationToken);\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-4.14": {
+              "start": 11,
+              "end": 23
+            },
+            "step-5.14": {
+              "start": 30,
+              "end": 43
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfRefreshTokenRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfRefreshTokenRepository(TaskForgeDbContext db) : IRefreshTokenRepository\n{\n    public async Task AddAsync(RefreshToken token, CancellationToken cancellationToken = default)\n    {\n        db.RefreshTokens.Add(token);\n        await db.SaveChangesAsync(cancellationToken);\n    }\n\n    public Task<RefreshToken?> GetActiveAsync(string token, CancellationToken cancellationToken = default) =>\n        db.RefreshTokens\n            .Include(t => t.User)\n            .FirstOrDefaultAsync(\n                t => t.Token == token && t.RevokedAtUtc == null && t.ExpiresAtUtc > DateTime.UtcNow,\n                cancellationToken);\n\n    public async Task RevokeAsync(RefreshToken token, CancellationToken cancellationToken = default)\n    {\n        token.RevokedAtUtc = DateTime.UtcNow;\n        await db.SaveChangesAsync(cancellationToken);\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfUserRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfUserRepository(TaskForgeDbContext db) : IUserRepository\n{\n    public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default) =>\n        db.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);\n\n    public Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id, cancellationToken);\n\n    public Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default) =>\n        db.Users.AnyAsync(u => u.Email == email, cancellationToken);\n\n    public async Task<User> AddAsync(User user, CancellationToken cancellationToken = default)\n    {\n        db.Users.Add(user);\n        await db.SaveChangesAsync(cancellationToken);\n        return user;\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/TaskForge.Infrastructure.csproj": {
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n  <ItemGroup>\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\n  </ItemGroup>\n\n  <ItemGroup>\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Sqlite\" Version=\"10.0.9\" />\n    <!-- יצירת JWT (חתימה) — האימות בצד ה-Api משתמש בחבילת ה-Bearer -->\n    <PackageReference Include=\"System.IdentityModel.Tokens.Jwt\" Version=\"8.19.1\" />\n  </ItemGroup>\n\n</Project>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.slnx": {
+          "content": "<Solution>\n  <Project Path=\"TaskForge.Api/TaskForge.Api.csproj\" />\n  <Project Path=\"TaskForge.Core/TaskForge.Core.csproj\" />\n  <Project Path=\"TaskForge.Infrastructure/TaskForge.Infrastructure.csproj\" />\n</Solution>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        }
+      },
+      "changes": {
+        "client/angular.json": {
+          "content": "{\n  \"$schema\": \"./node_modules/@angular/cli/lib/config/schema.json\",\n  \"version\": 1,\n  \"cli\": {\n    \"packageManager\": \"pnpm\"\n  },\n  \"newProjectRoot\": \"projects\",\n  \"projects\": {\n    \"taskforge-client\": {\n      \"projectType\": \"application\",\n      \"schematics\": {\n        \"@schematics/angular:component\": {\n          \"style\": \"scss\"\n        }\n      },\n      \"root\": \"\",\n      \"sourceRoot\": \"src\",\n      \"prefix\": \"tf\",\n      \"architect\": {\n        \"build\": {\n          \"builder\": \"@angular/build:application\",\n          \"options\": {\n            \"browser\": \"src/main.ts\",\n            \"tsConfig\": \"tsconfig.app.json\",\n            \"inlineStyleLanguage\": \"scss\",\n            \"assets\": [],\n            \"styles\": [\n              \"src/styles.scss\"\n            ]\n          },\n          \"configurations\": {\n            \"production\": {\n              \"budgets\": [\n                {\n                  \"type\": \"initial\",\n                  \"maximumWarning\": \"500kB\",\n                  \"maximumError\": \"1MB\"\n                },\n                {\n                  \"type\": \"anyComponentStyle\",\n                  \"maximumWarning\": \"4kB\",\n                  \"maximumError\": \"8kB\"\n                }\n              ],\n              \"outputHashing\": \"all\"\n            },\n            \"development\": {\n              \"optimization\": false,\n              \"extractLicenses\": false,\n              \"sourceMap\": true\n            }\n          },\n          \"defaultConfiguration\": \"production\"\n        },\n        \"serve\": {\n          \"builder\": \"@angular/build:dev-server\",\n          \"configurations\": {\n            \"production\": {\n              \"buildTarget\": \"taskforge-client:build:production\"\n            },\n            \"development\": {\n              \"buildTarget\": \"taskforge-client:build:development\"\n            }\n          },\n          \"defaultConfiguration\": \"development\",\n          \"options\": {\n            \"port\": 4500\n          }\n        },\n        \"test\": {\n          \"builder\": \"@angular/build:unit-test\"\n        }\n      }\n    }\n  }\n}\n",
+          "status": "modified",
+          "regions": {},
+          "changedLines": [
+            18
+          ]
+        },
+        "client/src/app/app.html": {
+          "content": "<header class=\"app-header\">\n  <h1>{{ title() }}</h1>\n  <p class=\"tagline\">{{ tagline() }}</p>\n</header>\n\n<main class=\"app-main\">\n  <tf-project-list />\n  <router-outlet />\n</main>\n",
+          "status": "modified",
+          "regions": {},
+          "changedLines": [
+            7
+          ]
+        },
+        "client/src/app/app.spec.ts": {
+          "content": "import { TestBed } from '@angular/core/testing';\nimport { App } from './app';\n\ndescribe('App', () => {\n  beforeEach(async () => {\n    await TestBed.configureTestingModule({\n      imports: [App],\n    }).compileComponents();\n  });\n\n  it('should create the app', () => {\n    const fixture = TestBed.createComponent(App);\n    const app = fixture.componentInstance;\n    expect(app).toBeTruthy();\n  });\n\n  it('should render the title and tagline from signals', async () => {\n    const fixture = TestBed.createComponent(App);\n    await fixture.whenStable();\n    const compiled = fixture.nativeElement as HTMLElement;\n    expect(compiled.querySelector('h1')?.textContent).toContain('TaskForge');\n    expect(compiled.querySelector('.tagline')?.textContent).toContain('forged by hand');\n  });\n\n  it('should render a card per seeded project', async () => {\n    const fixture = TestBed.createComponent(App);\n    await fixture.whenStable();\n    const cards = (fixture.nativeElement as HTMLElement).querySelectorAll('tf-project-card');\n    expect(cards.length).toBe(3);\n  });\n});\n",
+          "status": "modified",
+          "regions": {},
+          "changedLines": [
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30
+          ]
+        },
+        "client/src/app/app.ts": {
+          "content": "import { Component, computed, signal } from '@angular/core';\nimport { RouterOutlet } from '@angular/router';\nimport { ProjectList } from './features/projects/project-list';\n\n@Component({\n  selector: 'app-root',\n  // הפיצ'ר נכנס לשלד ישירות — הראוטר עדיין ריק. פרק 10 יחליף\n  // את החיבור הידני הזה בניווט אמיתי דרך routes.\n  imports: [RouterOutlet, ProjectList],\n  templateUrl: './app.html',\n  styleUrl: './app.scss',\n})\nexport class App {\n  // signal = ערך + הודעה לכל מי שתלוי בו כשהוא משתנה.\n  // ב-zoneless זו הדרך היחידה שהתבנית יודעת להתעדכן.\n  protected readonly title = signal('TaskForge');\n\n  protected readonly tagline = computed(() => `${this.title()} — issues, forged by hand`);\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-7.11": {
+              "start": 7,
+              "end": 9
+            },
+            "step-6.10": {
+              "start": 5,
+              "end": 19
+            }
+          },
+          "changedLines": [
+            3,
+            7,
+            8,
+            9
+          ]
+        },
+        "client/src/app/core/models/api.model.ts": {
+          "content": "// המראה של server/TaskForge.Core/Common/PagedResult.cs על הקו.\n// שימו לב: TotalPages הוא get-only property ב-C# — אבל System.Text.Json\n// מסריאלייז גם properties כאלה, ולכן הוא חלק מהחוזה שהקליינט רואה.\nexport interface PagedResult<T> {\n  items: T[];\n  total: number;\n  page: number;\n  pageSize: number;\n  totalPages: number;\n}\n",
+          "status": "added",
+          "regions": {
+            "step-7.4": {
+              "start": 1,
+              "end": 10
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ]
+        },
+        "client/src/app/core/models/auth.model.ts": {
+          "content": "// המראה של server/TaskForge.Api/Contracts/AuthContracts.cs על הקו.\n// השימוש המלא מגיע עם מסך ההתחברות (גל 3) — אבל החוזה מוגדר כבר עכשיו,\n// כי הוא חלק מהשפה המשותפת של שני הצדדים.\nexport type UserRole = 'Member' | 'Admin';\n\n/** המראה של UserResponse */\nexport interface AuthUser {\n  id: number;\n  email: string;\n  displayName: string;\n  role: UserRole;\n}\n\n/** המראה של AuthResponse — הזוג המלא + מתי ה-access פג */\nexport interface AuthSession {\n  accessToken: string;\n  refreshToken: string;\n  expiresAtUtc: string;\n  user: AuthUser;\n}\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21
+          ]
+        },
+        "client/src/app/core/models/issue.model.ts": {
+          "content": "// המראה של server/TaskForge.Api/Contracts/IssueContracts.cs על הקו.\n\n// enums של C# עוברים על הקו כמחרוזות (JsonStringEnumConverter, פרק 04),\n// בשמות החברים המקוריים. לכן כאן הם string unions ולא TS enum:\n// הם מתעדים בדיוק את מה שה-JSON מכיל, בלי שום קוד בזמן ריצה.\nexport type IssueStatus = 'Open' | 'InProgress' | 'Done';\n\nexport type IssuePriority = 'Low' | 'Medium' | 'High' | 'Critical';\n\n/** המראה של LabelResponse */\nexport interface LabelRef {\n  id: number;\n  name: string;\n  color: string | null;\n}\n\n/** המראה של IssueResponse — תאריכים מגיעים כמחרוזות ISO, לא כ-Date */\nexport interface Issue {\n  id: number;\n  title: string;\n  description: string | null;\n  status: IssueStatus;\n  priority: IssuePriority;\n  projectId: number;\n  createdAtUtc: string;\n  labels: LabelRef[];\n}\n",
+          "status": "added",
+          "regions": {
+            "step-7.5": {
+              "start": 3,
+              "end": 8
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        },
+        "client/src/app/core/models/project.model.ts": {
+          "content": "// המראה של server/TaskForge.Core/Common/ProjectSummary.cs על הקו:\n// בדיוק מה ש-GET /api/projects מחזיר לכל פרויקט — לא הישות, ההקרנה.\nexport interface ProjectSummary {\n  id: number;\n  name: string;\n  description: string | null;\n  openIssues: number;\n}\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        "client/src/app/core/state/projects.store.ts": {
+          "content": "import { Injectable, computed, signal } from '@angular/core';\nimport { ProjectSummary } from '../models/project.model';\n\n// אותם שלושה פרויקטים ש-DbSeeder זורע בשרת — כולל ספירות ה-open\n// שה-API מחזיר באמת (2/1/0). מוק שמשקר על הצורה או על הנתונים\n// ייתן לכם ביטחון מזויף; הזהות לשרת היא הנכס שלו.\nconst SEED: ProjectSummary[] = [\n  { id: 1, name: 'Website Redesign', description: 'Refresh the marketing site end to end', openIssues: 2 },\n  { id: 2, name: 'Mobile App', description: 'iOS + Android companion app', openIssues: 1 },\n  { id: 3, name: 'Internal Tools', description: null, openIssues: 0 },\n];\n\n// גבול ה-state: קומפוננטות קוראות signals לקריאה-בלבד ומבקשות שינויים\n// דרך מתודות. בפרק 11 ה-SEED מתחלף ב-httpResource מול ה-API האמיתי —\n// והציבור של ה-store לא משתנה. (אותו סים כמו IProjectRepository בשרת.)\n@Injectable({ providedIn: 'root' })\nexport class ProjectsStore {\n  private readonly _projects = signal<ProjectSummary[]>(SEED);\n\n  /** הציבור: לקריאה בלבד — אין דרך לכתוב מבחוץ. */\n  readonly projects = this._projects.asReadonly();\n\n  readonly totalOpenIssues = computed(() =>\n    this.projects().reduce((sum, p) => sum + p.openIssues, 0),\n  );\n\n  rename(id: number, name: string): void {\n    this._projects.update((list) =>\n      list.map((p) => (p.id === id ? { ...p, name } : p)),\n    );\n  }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-7.8": {
+              "start": 4,
+              "end": 11
+            },
+            "step-7.7": {
+              "start": 18,
+              "end": 25
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33
+          ]
+        },
+        "client/src/app/features/projects/project-card.html": {
+          "content": "<article class=\"card\">\n  <header>\n    <h3>{{ project().name }}</h3>\n    <span class=\"count\">{{ project().openIssues }} open</span>\n  </header>\n\n  <p class=\"desc\">{{ project().description ?? 'No description yet' }}</p>\n\n  <button type=\"button\" (click)=\"open.emit(project().id)\">Open board</button>\n</article>\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ]
+        },
+        "client/src/app/features/projects/project-card.scss": {
+          "content": "// עיצוב מינימלי בכוונה — פרק 08 ייתן לכרטיס את הזהות שלו.\n.card {\n  border: 1px solid #2a2f3a;\n  border-radius: 10px;\n  padding: 14px 16px;\n  display: grid;\n  gap: 8px;\n\n  header {\n    display: flex;\n    justify-content: space-between;\n    align-items: baseline;\n\n    h3 {\n      margin: 0;\n      font-size: 16px;\n    }\n\n    .count {\n      color: #8a93a5;\n      font-size: 13px;\n    }\n  }\n\n  .desc {\n    margin: 0;\n    color: #8a93a5;\n    font-size: 14px;\n  }\n\n  button {\n    justify-self: start;\n    cursor: pointer;\n  }\n}\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "client/src/app/features/projects/project-card.ts": {
+          "content": "import { Component, input, output } from '@angular/core';\nimport { ProjectSummary } from '../../core/models/project.model';\n\n// קומפוננטה \"טיפשה\": כל מה שהיא יודעת נכנס דרך input,\n// כל מה שיש לה לומר יוצא דרך output. אפס הזרקות, אפס ידע על העולם.\n@Component({\n  selector: 'tf-project-card',\n  templateUrl: './project-card.html',\n  styleUrl: './project-card.scss',\n})\nexport class ProjectCard {\n  /** required: בלי project אין כרטיס — המהדר אוכף את זה על כל שימוש */\n  readonly project = input.required<ProjectSummary>();\n\n  /** הכרטיס לא מנווט בעצמו — הוא מודיע, וההורה מחליט */\n  readonly open = output<number>();\n}\n",
+          "status": "added",
+          "regions": {
+            "step-7.10": {
+              "start": 4,
+              "end": 17
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18
+          ]
+        },
+        "client/src/app/features/projects/project-list.html": {
+          "content": "<section class=\"projects\">\n  <h2>Projects <span class=\"total\">{{ store.totalOpenIssues() }} open issues</span></h2>\n\n  @for (p of store.projects(); track p.id) {\n    <tf-project-card [project]=\"p\" (open)=\"onOpen($event)\" />\n  } @empty {\n    <p class=\"empty\">No projects yet.</p>\n  }\n</section>\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        "client/src/app/features/projects/project-list.scss": {
+          "content": "// עיצוב מינימלי בכוונה — פרק 08 (מערכת העיצוב) ישדרג את הכול.\n.projects {\n  display: grid;\n  gap: 14px;\n\n  h2 {\n    margin: 0;\n    font-size: 18px;\n\n    .total {\n      margin-inline-start: 10px;\n      color: #8a93a5;\n      font-size: 13px;\n      font-weight: 400;\n    }\n  }\n\n  .empty {\n    color: #8a93a5;\n  }\n}\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22
+          ]
+        },
+        "client/src/app/features/projects/project-list.ts": {
+          "content": "import { Component, inject } from '@angular/core';\nimport { ProjectsStore } from '../../core/state/projects.store';\nimport { ProjectCard } from './project-card';\n\n// קומפוננטה \"חכמה\": יודעת מאיפה הנתונים מגיעים (ה-store),\n// ולא יודעת כלום על איך כרטיס נראה. החיבור לעולם קורה רק כאן.\n@Component({\n  selector: 'tf-project-list',\n  imports: [ProjectCard],\n  templateUrl: './project-list.html',\n  styleUrl: './project-list.scss',\n})\nexport class ProjectList {\n  protected readonly store = inject(ProjectsStore);\n\n  protected onOpen(projectId: number): void {\n    // ניווט אמיתי מגיע בפרק 10 — בינתיים מתעדים את הכוונה\n    console.log(`open project ${projectId}`);\n  }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-7.9": {
+              "start": 5,
+              "end": 20
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21
+          ]
+        }
+      }
     }
   }
 };

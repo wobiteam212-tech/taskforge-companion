@@ -1,0 +1,27 @@
+<div class="io">
+  <div class="io-parent">
+    <div class="io-parent-head">
+      <span class="role">ההורה החכם — מחזיק את ה-state</span>
+      <button type="button" class="btn btn--ghost" (click)="reset()">איפוס</button>
+    </div>
+
+    <div class="io-cards">
+      @for (p of projects(); track p.id) {
+        <demo-io-card [item]="p" (boost)="onBoost($event)" />
+      }
+    </div>
+  </div>
+
+  <p class="io-hint">
+    הנתונים יורדים דרך input, הכוונות עולות דרך output. הילד לא מכיר את ה-store,
+    לא יודע כמה אחים יש לו, ולא מחליט מה קורה אחרי לחיצה — ולכן אפשר לשים אותו בכל מקום.
+  </p>
+
+  @if (log().length) {
+    <ul class="io-log">
+      @for (line of log(); track $index) {
+        <li>{{ line }}</li>
+      }
+    </ul>
+  }
+</div>
