@@ -1,0 +1,30 @@
+<div class="pj">
+  <div class="pj-actions">
+    <button type="button" class="btn" [class.btn--primary]="withIcon()" (click)="toggle('icon')">
+      icon slot
+    </button>
+    <button type="button" class="btn" [class.btn--primary]="withBody()" (click)="toggle('body')">
+      default content
+    </button>
+    <button type="button" class="btn" [class.btn--primary]="withActions()" (click)="toggle('actions')">
+      actions slot
+    </button>
+  </div>
+
+  <p class="pj-hint">
+    הרכיב מגדיר חורים; ההורה מחליט מה נכנס לכל חור. כבו והדליקו תוכן —
+    החור שמתמלא נצבע. מה שלא סומן ב-attribute נופל ל-ng-content הכללי.
+  </p>
+
+  <demo-frame [hasIcon]="withIcon()" [hasBody]="withBody()" [hasActions]="withActions()">
+    @if (withIcon()) {
+      <span icon class="chip">🔧</span>
+    }
+    @if (withBody()) {
+      <p class="body-text">Fix login redirect loop — users bounce between two pages.</p>
+    }
+    @if (withActions()) {
+      <span actions class="chip chip--act">Open board</span>
+    }
+  </demo-frame>
+</div>

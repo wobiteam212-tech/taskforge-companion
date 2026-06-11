@@ -1,0 +1,23 @@
+<section class="projects">
+  <h2>
+    Projects <span class="total">{{ store.totalOpenIssues() }} open issues</span>
+    <button tf-button class="new-btn" (click)="newProjectOpen.set(true)">New project</button>
+  </h2>
+
+  @for (p of store.projects(); track p.id) {
+    <tf-project-card [project]="p" (open)="onOpen($event)" />
+  } @empty {
+    <p class="empty">No projects yet.</p>
+  }
+</section>
+
+<tf-dialog heading="New project" [(open)]="newProjectOpen">
+  <tf-field label="Project name" hint="Visible to the whole team">
+    <input #nameInput type="text" placeholder="e.g. Mobile App v2" />
+  </tf-field>
+
+  <footer class="dlg-actions">
+    <button tf-button variant="ghost" (click)="newProjectOpen.set(false)">Cancel</button>
+    <button tf-button (click)="create(nameInput.value); nameInput.value = ''">Create</button>
+  </footer>
+</tf-dialog>

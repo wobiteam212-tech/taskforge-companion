@@ -1,0 +1,54 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  border-radius: var(--rad-sm);
+  padding-block: var(--sp-1);
+  padding-inline: var(--sp-3);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  border: 1px solid var(--bdr);
+  background: var(--sur2);
+  color: var(--txt1);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+:host(.tf-btn--primary) {
+  background: var(--ember);
+  border-color: var(--ember);
+  color: #1a1208;
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--ember) 85%, white);
+  }
+}
+
+:host(.tf-btn--ghost) {
+  background: transparent;
+
+  &:hover:not(:disabled) {
+    border-color: var(--ember);
+    color: var(--ember);
+  }
+}
+
+:host(.tf-btn--danger) {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));
+  color: var(--danger);
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--danger) 12%, transparent);
+  }
+}

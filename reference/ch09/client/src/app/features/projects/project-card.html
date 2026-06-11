@@ -1,0 +1,10 @@
+<article class="card">
+  <header>
+    <h3>{{ project().name }}</h3>
+    <tf-badge tone="count">{{ project().openIssues }} open</tf-badge>
+  </header>
+
+  <p class="desc">{{ project().description ?? 'No description yet' }}</p>
+
+  <button tf-button variant="ghost" (click)="open.emit(project().id)">Open board</button>
+</article>

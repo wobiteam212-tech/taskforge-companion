@@ -1,0 +1,35 @@
+.projects {
+  display: grid;
+  gap: var(--sp-3);
+  // רשת שנושמת: כמה עמודות שנכנסות, אף אחת לא צרה מ-280px —
+  // וכשאין מקום גם ל-280, min(100%, ...) מונע overflow אופקי.
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+
+  h2 {
+    grid-column: 1 / -1;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+
+    .total {
+      color: var(--txt3);
+      font-size: var(--fs-small);
+      font-weight: 400;
+    }
+
+    .new-btn {
+      margin-inline-start: auto;
+    }
+  }
+
+  .empty {
+    color: var(--txt3);
+  }
+}
+
+.dlg-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+}

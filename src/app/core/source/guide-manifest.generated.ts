@@ -11096,10 +11096,15 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/app.html": {
-          "content": "<header class=\"app-header\">\n  <div class=\"brand\">\n    <h1>{{ title() }}</h1>\n    <p class=\"tagline\">{{ tagline() }}</p>\n  </div>\n\n  <button\n    type=\"button\"\n    class=\"theme-toggle\"\n    (click)=\"themeSvc.toggle()\"\n    [attr.aria-pressed]=\"themeSvc.theme() === 'light'\"\n  >\n    {{ themeSvc.theme() === 'dark' ? 'Light' : 'Dark' }} mode\n  </button>\n</header>\n\n<main class=\"app-main\">\n  <tf-project-list />\n  <router-outlet />\n</main>\n",
-          "status": "unchanged",
+          "content": "<header class=\"app-header\">\n  <div class=\"brand\">\n    <h1>{{ title() }}</h1>\n    <p class=\"tagline\">{{ tagline() }}</p>\n  </div>\n\n  <button\n    tf-button\n    variant=\"ghost\"\n    type=\"button\"\n    (click)=\"themeSvc.toggle()\"\n    [attr.aria-pressed]=\"themeSvc.theme() === 'light'\"\n  >\n    {{ themeSvc.theme() === 'dark' ? 'Light' : 'Dark' }} mode\n  </button>\n</header>\n\n<main class=\"app-main\">\n  <tf-project-list />\n  <router-outlet />\n</main>\n\n<tf-toast-container />\n",
+          "status": "modified",
           "regions": {},
-          "changedLines": []
+          "changedLines": [
+            8,
+            9,
+            23,
+            24
+          ]
         },
         "client/src/app/app.routes.ts": {
           "content": "import { Routes } from '@angular/router';\n\nexport const routes: Routes = [];\n",
@@ -11120,19 +11125,23 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/app.ts": {
-          "content": "import { Component, computed, inject, signal } from '@angular/core';\nimport { RouterOutlet } from '@angular/router';\nimport { ProjectList } from './features/projects/project-list';\nimport { ThemeService } from './core/state/theme';\n\n@Component({\n  selector: 'app-root',\n  // הפיצ'ר נכנס לשלד ישירות — הראוטר עדיין ריק. פרק 10 יחליף\n  // את החיבור הידני הזה בניווט אמיתי דרך routes.\n  imports: [RouterOutlet, ProjectList],\n  templateUrl: './app.html',\n  styleUrl: './app.scss',\n})\nexport class App {\n  protected readonly themeSvc = inject(ThemeService);\n\n  // signal = ערך + הודעה לכל מי שתלוי בו כשהוא משתנה.\n  // ב-zoneless זו הדרך היחידה שהתבנית יודעת להתעדכן.\n  protected readonly title = signal('TaskForge');\n\n  protected readonly tagline = computed(() => `${this.title()} — issues, forged by hand`);\n}\n",
-          "status": "unchanged",
+          "content": "import { Component, computed, inject, signal } from '@angular/core';\nimport { RouterOutlet } from '@angular/router';\nimport { ProjectList } from './features/projects/project-list';\nimport { ThemeService } from './core/state/theme';\nimport { TfButton } from './shared/ui/button/button';\nimport { ToastContainer } from './shared/ui/toast/toast-container';\n\n@Component({\n  selector: 'app-root',\n  // הפיצ'ר נכנס לשלד ישירות — הראוטר עדיין ריק. פרק 10 יחליף\n  // את החיבור הידני הזה בניווט אמיתי דרך routes.\n  imports: [RouterOutlet, ProjectList, TfButton, ToastContainer],\n  templateUrl: './app.html',\n  styleUrl: './app.scss',\n})\nexport class App {\n  protected readonly themeSvc = inject(ThemeService);\n\n  // signal = ערך + הודעה לכל מי שתלוי בו כשהוא משתנה.\n  // ב-zoneless זו הדרך היחידה שהתבנית יודעת להתעדכן.\n  protected readonly title = signal('TaskForge');\n\n  protected readonly tagline = computed(() => `${this.title()} — issues, forged by hand`);\n}\n",
+          "status": "modified",
           "regions": {
             "step-7.11": {
-              "start": 8,
-              "end": 10
+              "start": 10,
+              "end": 12
             },
             "step-6.10": {
-              "start": 6,
-              "end": 22
+              "start": 8,
+              "end": 24
             }
           },
-          "changedLines": []
+          "changedLines": [
+            5,
+            6,
+            12
+          ]
         },
         "client/src/app/core/models/api.model.ts": {
           "content": "// המראה של server/TaskForge.Core/Common/PagedResult.cs על הקו.\n// שימו לב: TotalPages הוא get-only property ב-C# — אבל System.Text.Json\n// מסריאלייז גם properties כאלה, ולכן הוא חלק מהחוזה שהקליינט רואה.\nexport interface PagedResult<T> {\n  items: T[];\n  total: number;\n  page: number;\n  pageSize: number;\n  totalPages: number;\n}\n",
@@ -11214,32 +11223,43 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/features/projects/project-card.html": {
-          "content": "<article class=\"card\">\n  <header>\n    <h3>{{ project().name }}</h3>\n    <span class=\"count\">{{ project().openIssues }} open</span>\n  </header>\n\n  <p class=\"desc\">{{ project().description ?? 'No description yet' }}</p>\n\n  <button type=\"button\" (click)=\"open.emit(project().id)\">Open board</button>\n</article>\n",
-          "status": "unchanged",
+          "content": "<article class=\"card\">\n  <header>\n    <h3>{{ project().name }}</h3>\n    <tf-badge tone=\"count\">{{ project().openIssues }} open</tf-badge>\n  </header>\n\n  <p class=\"desc\">{{ project().description ?? 'No description yet' }}</p>\n\n  <button tf-button variant=\"ghost\" (click)=\"open.emit(project().id)\">Open board</button>\n</article>\n",
+          "status": "modified",
           "regions": {},
-          "changedLines": []
+          "changedLines": [
+            4,
+            9
+          ]
         },
         "client/src/app/features/projects/project-card.scss": {
-          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  transition: border-color 0.2s ease;\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n\n  .count {\n    // צבע נגזר, לא מומצא: 16% ember על שקוף לרקע, ember מלא לטקסט\n    background: color-mix(in srgb, var(--ember) 16%, transparent);\n    color: var(--ember);\n    border-radius: 999px;\n    padding-block: 2px;\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-small);\n    white-space: nowrap;\n  }\n}\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
-          "status": "unchanged",
+          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  transition: border-color 0.2s ease;\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
+          "status": "modified",
           "regions": {
             "step-8.10": {
               "start": 1,
               "end": 37
             }
           },
-          "changedLines": []
+          "changedLines": [
+            51,
+            52
+          ]
         },
         "client/src/app/features/projects/project-card.ts": {
-          "content": "import { Component, input, output } from '@angular/core';\nimport { ProjectSummary } from '../../core/models/project.model';\n\n// קומפוננטה \"טיפשה\": כל מה שהיא יודעת נכנס דרך input,\n// כל מה שיש לה לומר יוצא דרך output. אפס הזרקות, אפס ידע על העולם.\n@Component({\n  selector: 'tf-project-card',\n  templateUrl: './project-card.html',\n  styleUrl: './project-card.scss',\n})\nexport class ProjectCard {\n  /** required: בלי project אין כרטיס — המהדר אוכף את זה על כל שימוש */\n  readonly project = input.required<ProjectSummary>();\n\n  /** הכרטיס לא מנווט בעצמו — הוא מודיע, וההורה מחליט */\n  readonly open = output<number>();\n}\n",
-          "status": "unchanged",
+          "content": "import { Component, input, output } from '@angular/core';\nimport { ProjectSummary } from '../../core/models/project.model';\nimport { TfBadge } from '../../shared/ui/badge/badge';\nimport { TfButton } from '../../shared/ui/button/button';\n\n// קומפוננטה \"טיפשה\": כל מה שהיא יודעת נכנס דרך input,\n// כל מה שיש לה לומר יוצא דרך output. אפס הזרקות, אפס ידע על העולם.\n// מפרק 09 היא צורכת את הערכה המשותפת — אבל החוזה שלה לא השתנה.\n@Component({\n  selector: 'tf-project-card',\n  imports: [TfBadge, TfButton],\n  templateUrl: './project-card.html',\n  styleUrl: './project-card.scss',\n})\nexport class ProjectCard {\n  /** required: בלי project אין כרטיס — המהדר אוכף את זה על כל שימוש */\n  readonly project = input.required<ProjectSummary>();\n\n  /** הכרטיס לא מנווט בעצמו — הוא מודיע, וההורה מחליט */\n  readonly open = output<number>();\n}\n",
+          "status": "modified",
           "regions": {
             "step-7.10": {
-              "start": 4,
-              "end": 17
+              "start": 6,
+              "end": 21
             }
           },
-          "changedLines": []
+          "changedLines": [
+            3,
+            4,
+            8,
+            11
+          ]
         },
         "client/src/app/features/projects/project-list.html": {
           "content": "<section class=\"projects\">\n  <h2>\n    Projects <span class=\"total\">{{ store.totalOpenIssues() }} open issues</span>\n    <button tf-button class=\"new-btn\" (click)=\"newProjectOpen.set(true)\">New project</button>\n  </h2>\n\n  @for (p of store.projects(); track p.id) {\n    <tf-project-card [project]=\"p\" (open)=\"onOpen($event)\" />\n  } @empty {\n    <p class=\"empty\">No projects yet.</p>\n  }\n</section>\n\n<tf-dialog heading=\"New project\" [(open)]=\"newProjectOpen\">\n  <tf-field label=\"Project name\" hint=\"Visible to the whole team\">\n    <input #nameInput type=\"text\" placeholder=\"e.g. Mobile App v2\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" (click)=\"newProjectOpen.set(false)\">Cancel</button>\n    <button tf-button (click)=\"create(nameInput.value); nameInput.value = ''\">Create</button>\n  </footer>\n</tf-dialog>\n",
@@ -11550,12 +11570,12 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/dialog/dialog.ts": {
-          "content": "import { Component, ElementRef, effect, input, model, viewChild } from '@angular/core';\n\n// עטיפה דקה ל-<dialog> המקורי של הפלטפורמה: showModal נותן בחינם\n// פוקוס כלוא, Escape, ו-backdrop. אנחנו רק מגשרים בין עולם ה-signals\n// לעולם ה-DOM הציווי — לכל כיוון.\n@Component({\n  selector: 'tf-dialog',\n  templateUrl: './dialog.html',\n  styleUrl: './dialog.scss',\n})\nexport class TfDialog {\n  /** two-way: ההורה כותב true כדי לפתוח; הדיאלוג כותב false כשנסגר */\n  readonly open = model(false);\n\n  readonly heading = input.required<string>();\n\n  private readonly dlg = viewChild.required<ElementRef<HTMLDialogElement>>('dlg');\n\n  constructor() {\n    // signal משתנה ואז DOM מצווה — effect הוא בדיוק הגשר הזה\n    effect(() => {\n      const el = this.dlg().nativeElement;\n      if (this.open() && !el.open) el.showModal();\n      if (!this.open() && el.open) el.close();\n    });\n  }\n\n  // המשתמש סגר עם Escape או שהדפדפן סגר — מסנכרנים חזרה את ה-model\n  protected onNativeClose(): void {\n    this.open.set(false);\n  }\n}\n",
+          "content": "import { Component, ElementRef, effect, input, model, viewChild } from '@angular/core';\n\n// עטיפה דקה ל-<dialog> המקורי של הפלטפורמה: showModal נותן בחינם\n// פוקוס כלוא, Escape, ו-backdrop. אנחנו רק מגשרים בין עולם ה-signals\n// לעולם ה-DOM הציווי — לכל כיוון.\n@Component({\n  selector: 'tf-dialog',\n  templateUrl: './dialog.html',\n  styleUrl: './dialog.scss',\n})\nexport class TfDialog {\n  /** two-way: ההורה כותב true כדי לפתוח; הדיאלוג כותב false כשנסגר */\n  readonly open = model(false);\n\n  readonly heading = input.required<string>();\n\n  // לא required: ההרצה הראשונה של effect עלולה לקרות לפני שה-query התיישב,\n  // והגנה שקטה עדיפה על NG0951 בזמן ריצה.\n  private readonly dlg = viewChild<ElementRef<HTMLDialogElement>>('dlg');\n\n  constructor() {\n    // signal משתנה ואז DOM מצווה — effect הוא בדיוק הגשר הזה\n    effect(() => {\n      const el = this.dlg()?.nativeElement;\n      if (!el) return;\n      if (this.open() && !el.open) el.showModal();\n      if (!this.open() && el.open) el.close();\n    });\n  }\n\n  // המשתמש סגר עם Escape או שהדפדפן סגר — מסנכרנים חזרה את ה-model\n  protected onNativeClose(): void {\n    this.open.set(false);\n  }\n}\n",
           "status": "added",
           "regions": {
             "step-9.8": {
               "start": 3,
-              "end": 32
+              "end": 35
             }
           },
           "changedLines": [
@@ -11591,7 +11611,10 @@ export const GUIDE_MANIFEST = {
             30,
             31,
             32,
-            33
+            33,
+            34,
+            35,
+            36
           ]
         },
         "client/src/app/shared/ui/field/field.html": {
@@ -12275,6 +12298,36 @@ export const GUIDE_MANIFEST = {
         }
       },
       "changes": {
+        "client/src/app/app.html": {
+          "content": "<header class=\"app-header\">\n  <div class=\"brand\">\n    <h1>{{ title() }}</h1>\n    <p class=\"tagline\">{{ tagline() }}</p>\n  </div>\n\n  <button\n    tf-button\n    variant=\"ghost\"\n    type=\"button\"\n    (click)=\"themeSvc.toggle()\"\n    [attr.aria-pressed]=\"themeSvc.theme() === 'light'\"\n  >\n    {{ themeSvc.theme() === 'dark' ? 'Light' : 'Dark' }} mode\n  </button>\n</header>\n\n<main class=\"app-main\">\n  <tf-project-list />\n  <router-outlet />\n</main>\n\n<tf-toast-container />\n",
+          "status": "modified",
+          "regions": {},
+          "changedLines": [
+            8,
+            9,
+            23,
+            24
+          ]
+        },
+        "client/src/app/app.ts": {
+          "content": "import { Component, computed, inject, signal } from '@angular/core';\nimport { RouterOutlet } from '@angular/router';\nimport { ProjectList } from './features/projects/project-list';\nimport { ThemeService } from './core/state/theme';\nimport { TfButton } from './shared/ui/button/button';\nimport { ToastContainer } from './shared/ui/toast/toast-container';\n\n@Component({\n  selector: 'app-root',\n  // הפיצ'ר נכנס לשלד ישירות — הראוטר עדיין ריק. פרק 10 יחליף\n  // את החיבור הידני הזה בניווט אמיתי דרך routes.\n  imports: [RouterOutlet, ProjectList, TfButton, ToastContainer],\n  templateUrl: './app.html',\n  styleUrl: './app.scss',\n})\nexport class App {\n  protected readonly themeSvc = inject(ThemeService);\n\n  // signal = ערך + הודעה לכל מי שתלוי בו כשהוא משתנה.\n  // ב-zoneless זו הדרך היחידה שהתבנית יודעת להתעדכן.\n  protected readonly title = signal('TaskForge');\n\n  protected readonly tagline = computed(() => `${this.title()} — issues, forged by hand`);\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-7.11": {
+              "start": 10,
+              "end": 12
+            },
+            "step-6.10": {
+              "start": 8,
+              "end": 24
+            }
+          },
+          "changedLines": [
+            5,
+            6,
+            12
+          ]
+        },
         "client/src/app/core/state/projects.store.ts": {
           "content": "import { Injectable, computed, signal } from '@angular/core';\nimport { ProjectSummary } from '../models/project.model';\n\n// אותם שלושה פרויקטים ש-DbSeeder זורע בשרת — כולל ספירות ה-open\n// שה-API מחזיר באמת (2/1/0). מוק שמשקר על הצורה או על הנתונים\n// ייתן לכם ביטחון מזויף; הזהות לשרת היא הנכס שלו.\nconst SEED: ProjectSummary[] = [\n  { id: 1, name: 'Website Redesign', description: 'Refresh the marketing site end to end', openIssues: 2 },\n  { id: 2, name: 'Mobile App', description: 'iOS + Android companion app', openIssues: 1 },\n  { id: 3, name: 'Internal Tools', description: null, openIssues: 0 },\n];\n\n// גבול ה-state: קומפוננטות קוראות signals לקריאה-בלבד ומבקשות שינויים\n// דרך מתודות. בפרק 11 ה-SEED מתחלף ב-httpResource מול ה-API האמיתי —\n// והציבור של ה-store לא משתנה. (אותו סים כמו IProjectRepository בשרת.)\n@Injectable({ providedIn: 'root' })\nexport class ProjectsStore {\n  private readonly _projects = signal<ProjectSummary[]>(SEED);\n\n  /** הציבור: לקריאה בלבד — אין דרך לכתוב מבחוץ. */\n  readonly projects = this._projects.asReadonly();\n\n  readonly totalOpenIssues = computed(() =>\n    this.projects().reduce((sum, p) => sum + p.openIssues, 0),\n  );\n\n  rename(id: number, name: string): void {\n    this._projects.update((list) =>\n      list.map((p) => (p.id === id ? { ...p, name } : p)),\n    );\n  }\n\n  // עוד מתודה על אותו גבול: ה-id נגזר מהמקסימום הקיים — בדיוק כמו\n  // ש-SQLite ייתן autoincrement. בפרק 11 זה יהפוך ל-POST /api/projects.\n  addProject(name: string): void {\n    this._projects.update((list) => [\n      ...list,\n      {\n        id: Math.max(0, ...list.map((p) => p.id)) + 1,\n        name,\n        description: null,\n        openIssues: 0,\n      },\n    ]);\n  }\n}\n",
           "status": "modified",
@@ -12307,6 +12360,45 @@ export const GUIDE_MANIFEST = {
             43,
             44,
             45
+          ]
+        },
+        "client/src/app/features/projects/project-card.html": {
+          "content": "<article class=\"card\">\n  <header>\n    <h3>{{ project().name }}</h3>\n    <tf-badge tone=\"count\">{{ project().openIssues }} open</tf-badge>\n  </header>\n\n  <p class=\"desc\">{{ project().description ?? 'No description yet' }}</p>\n\n  <button tf-button variant=\"ghost\" (click)=\"open.emit(project().id)\">Open board</button>\n</article>\n",
+          "status": "modified",
+          "regions": {},
+          "changedLines": [
+            4,
+            9
+          ]
+        },
+        "client/src/app/features/projects/project-card.scss": {
+          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  transition: border-color 0.2s ease;\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-8.10": {
+              "start": 1,
+              "end": 37
+            }
+          },
+          "changedLines": [
+            51,
+            52
+          ]
+        },
+        "client/src/app/features/projects/project-card.ts": {
+          "content": "import { Component, input, output } from '@angular/core';\nimport { ProjectSummary } from '../../core/models/project.model';\nimport { TfBadge } from '../../shared/ui/badge/badge';\nimport { TfButton } from '../../shared/ui/button/button';\n\n// קומפוננטה \"טיפשה\": כל מה שהיא יודעת נכנס דרך input,\n// כל מה שיש לה לומר יוצא דרך output. אפס הזרקות, אפס ידע על העולם.\n// מפרק 09 היא צורכת את הערכה המשותפת — אבל החוזה שלה לא השתנה.\n@Component({\n  selector: 'tf-project-card',\n  imports: [TfBadge, TfButton],\n  templateUrl: './project-card.html',\n  styleUrl: './project-card.scss',\n})\nexport class ProjectCard {\n  /** required: בלי project אין כרטיס — המהדר אוכף את זה על כל שימוש */\n  readonly project = input.required<ProjectSummary>();\n\n  /** הכרטיס לא מנווט בעצמו — הוא מודיע, וההורה מחליט */\n  readonly open = output<number>();\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-7.10": {
+              "start": 6,
+              "end": 21
+            }
+          },
+          "changedLines": [
+            3,
+            4,
+            8,
+            11
           ]
         },
         "client/src/app/features/projects/project-list.html": {
@@ -12618,12 +12710,12 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/dialog/dialog.ts": {
-          "content": "import { Component, ElementRef, effect, input, model, viewChild } from '@angular/core';\n\n// עטיפה דקה ל-<dialog> המקורי של הפלטפורמה: showModal נותן בחינם\n// פוקוס כלוא, Escape, ו-backdrop. אנחנו רק מגשרים בין עולם ה-signals\n// לעולם ה-DOM הציווי — לכל כיוון.\n@Component({\n  selector: 'tf-dialog',\n  templateUrl: './dialog.html',\n  styleUrl: './dialog.scss',\n})\nexport class TfDialog {\n  /** two-way: ההורה כותב true כדי לפתוח; הדיאלוג כותב false כשנסגר */\n  readonly open = model(false);\n\n  readonly heading = input.required<string>();\n\n  private readonly dlg = viewChild.required<ElementRef<HTMLDialogElement>>('dlg');\n\n  constructor() {\n    // signal משתנה ואז DOM מצווה — effect הוא בדיוק הגשר הזה\n    effect(() => {\n      const el = this.dlg().nativeElement;\n      if (this.open() && !el.open) el.showModal();\n      if (!this.open() && el.open) el.close();\n    });\n  }\n\n  // המשתמש סגר עם Escape או שהדפדפן סגר — מסנכרנים חזרה את ה-model\n  protected onNativeClose(): void {\n    this.open.set(false);\n  }\n}\n",
+          "content": "import { Component, ElementRef, effect, input, model, viewChild } from '@angular/core';\n\n// עטיפה דקה ל-<dialog> המקורי של הפלטפורמה: showModal נותן בחינם\n// פוקוס כלוא, Escape, ו-backdrop. אנחנו רק מגשרים בין עולם ה-signals\n// לעולם ה-DOM הציווי — לכל כיוון.\n@Component({\n  selector: 'tf-dialog',\n  templateUrl: './dialog.html',\n  styleUrl: './dialog.scss',\n})\nexport class TfDialog {\n  /** two-way: ההורה כותב true כדי לפתוח; הדיאלוג כותב false כשנסגר */\n  readonly open = model(false);\n\n  readonly heading = input.required<string>();\n\n  // לא required: ההרצה הראשונה של effect עלולה לקרות לפני שה-query התיישב,\n  // והגנה שקטה עדיפה על NG0951 בזמן ריצה.\n  private readonly dlg = viewChild<ElementRef<HTMLDialogElement>>('dlg');\n\n  constructor() {\n    // signal משתנה ואז DOM מצווה — effect הוא בדיוק הגשר הזה\n    effect(() => {\n      const el = this.dlg()?.nativeElement;\n      if (!el) return;\n      if (this.open() && !el.open) el.showModal();\n      if (!this.open() && el.open) el.close();\n    });\n  }\n\n  // המשתמש סגר עם Escape או שהדפדפן סגר — מסנכרנים חזרה את ה-model\n  protected onNativeClose(): void {\n    this.open.set(false);\n  }\n}\n",
           "status": "added",
           "regions": {
             "step-9.8": {
               "start": 3,
-              "end": 32
+              "end": 35
             }
           },
           "changedLines": [
@@ -12659,7 +12751,10 @@ export const GUIDE_MANIFEST = {
             30,
             31,
             32,
-            33
+            33,
+            34,
+            35,
+            36
           ]
         },
         "client/src/app/shared/ui/field/field.html": {

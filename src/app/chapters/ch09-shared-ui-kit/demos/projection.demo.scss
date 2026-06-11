@@ -1,0 +1,38 @@
+.pj {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pj-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pj-hint {
+  margin: 0;
+  color: var(--txt2);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+.chip {
+  display: inline-block;
+  font-size: 16px;
+
+  &--act {
+    font-size: 12.5px;
+    font-family: var(--mono);
+    border: 1px solid var(--ember);
+    color: var(--ember);
+    border-radius: 999px;
+    padding: 3px 10px;
+  }
+}
+
+.body-text {
+  margin: 0;
+  color: var(--txt1);
+  font-size: 13.5px;
+}

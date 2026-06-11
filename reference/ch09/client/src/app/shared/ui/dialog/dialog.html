@@ -1,0 +1,12 @@
+<dialog #dlg class="tf-dialog" (close)="onNativeClose()">
+  <header class="tf-dialog-head">
+    <h2>{{ heading() }}</h2>
+    <button type="button" class="tf-dialog-x" (click)="open.set(false)" aria-label="Close">
+      ✕
+    </button>
+  </header>
+
+  <div class="tf-dialog-body">
+    <ng-content />
+  </div>
+</dialog>

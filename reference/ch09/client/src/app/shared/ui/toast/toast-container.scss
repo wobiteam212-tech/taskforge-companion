@@ -1,0 +1,31 @@
+.tf-toasts {
+  position: fixed;
+  inset-block-end: var(--sp-4);
+  inset-inline-end: var(--sp-4);
+  display: grid;
+  gap: var(--sp-2);
+  z-index: 50;
+}
+
+.tf-toast {
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  background: var(--sur2);
+  color: var(--txt1);
+  padding-block: var(--sp-2);
+  padding-inline: var(--sp-3);
+  font-size: var(--fs-small);
+  text-align: start;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.3);
+
+  &--success {
+    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));
+    color: var(--teal);
+  }
+
+  &--danger {
+    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));
+    color: var(--danger);
+  }
+}

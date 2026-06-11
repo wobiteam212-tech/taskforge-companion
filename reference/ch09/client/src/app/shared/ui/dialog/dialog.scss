@@ -1,0 +1,48 @@
+.tf-dialog {
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  background: var(--sur);
+  color: var(--txt1);
+  padding: 0;
+  min-inline-size: min(92vw, 420px);
+  box-shadow: 0 18px 60px rgb(0 0 0 / 0.45);
+
+  &::backdrop {
+    background: rgb(0 0 0 / 0.55);
+  }
+}
+
+.tf-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding-block: var(--sp-3);
+  padding-inline: var(--sp-4);
+  border-block-end: 1px solid var(--bdr);
+
+  h2 {
+    margin: 0;
+    font-size: var(--fs-h2);
+  }
+}
+
+.tf-dialog-x {
+  border: none;
+  background: transparent;
+  color: var(--txt3);
+  font-size: 15px;
+  padding: var(--sp-1);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--danger);
+  }
+}
+
+.tf-dialog-body {
+  padding-block: var(--sp-4);
+  padding-inline: var(--sp-4);
+  display: grid;
+  gap: var(--sp-3);
+}

@@ -1,0 +1,29 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding-block: 2px;
+  padding-inline: var(--sp-2);
+  font-size: var(--fs-small);
+  white-space: nowrap;
+}
+
+:host(.tf-badge--count) {
+  background: color-mix(in srgb, var(--ember) 16%, transparent);
+  color: var(--ember);
+}
+
+:host(.tf-badge--open) {
+  background: color-mix(in srgb, var(--teal) 16%, transparent);
+  color: var(--teal);
+}
+
+:host(.tf-badge--progress) {
+  background: color-mix(in srgb, var(--ember) 16%, transparent);
+  color: var(--ember);
+}
+
+:host(.tf-badge--done) {
+  background: color-mix(in srgb, var(--txt3) 18%, transparent);
+  color: var(--txt3);
+}

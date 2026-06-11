@@ -1,0 +1,9 @@
+<label class="tf-field">
+  <span class="tf-field-label">{{ label() }}</span>
+  <ng-content />
+  @if (error(); as e) {
+    <span class="tf-field-error" role="alert">{{ e }}</span>
+  } @else if (hint(); as h) {
+    <span class="tf-field-hint">{{ h }}</span>
+  }
+</label>

@@ -1,0 +1,14 @@
+<div class="tf-toasts" aria-live="polite">
+  @for (t of toastSvc.toasts(); track t.id) {
+    <button
+      type="button"
+      class="tf-toast"
+      [class.tf-toast--success]="t.tone === 'success'"
+      [class.tf-toast--danger]="t.tone === 'danger'"
+      (click)="toastSvc.dismiss(t.id)"
+      title="Dismiss"
+    >
+      {{ t.text }}
+    </button>
+  }
+</div>

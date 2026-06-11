@@ -157,6 +157,14 @@ DbSeeder seeds 3 projects ("Website Redesign"-style — read `reference/ch03/...
   excluded from ch06; angular.json has `assets: []`).
 - `.build/` rmSync can hit dotnet file locks → run `dotnet build-server shutdown` before
   verify:snapshots.
+- `.build/` rmSync ALSO fails if any shell's cwd is parked inside `.build` (Windows dir-handle
+  lock) or if a manual `ng build` run inside `.build/...` left an esbuild service alive.
+  Never `cd` into `.build` in a persistent shell; if verify fails on `syscall: 'rm'`, cd out,
+  check `Get-Process esbuild`, then `rm -rf reference/.build` and rerun.
+- Sass: `@use` must precede ALL other rules — the `@layer reset, tokens, base, components;`
+  order statement therefore lives in its own `_layers.scss` partial that is `@use`d FIRST
+  (modules emit at first-use position). Putting `@layer` at the top of styles.scss breaks
+  the build.
 - Generated manifest is pinned `eol=lf` via `taskforge-companion/.gitattributes` — if you see
   phantom modified status on other generated files, extend that file.
 - pnpm `-C` paths: beware shell cwd drift in long sessions; prefer absolute `-C` paths.
