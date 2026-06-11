@@ -14,7 +14,15 @@ let seq = 0;
   template: `
     <figure class="diagram-card">
       @if (svg(); as s) {
-        <div class="mmd ltr" [innerHTML]="s"></div>
+        <div
+          class="mmd ltr"
+          [innerHTML]="s"
+          role="button"
+          tabindex="0"
+          title="לחיצה מגדילה את הדיאגרמה"
+          (click)="zoomed.set(true)"
+          (keydown.enter)="zoomed.set(true)"
+        ></div>
       } @else if (error(); as e) {
         <div class="mmd-error" role="alert">
           <strong>שגיאת דיאגרמה:</strong>
@@ -27,7 +35,14 @@ let seq = 0;
         <figcaption class="cap">{{ caption() }}</figcaption>
       }
     </figure>
+
+    @if (zoomed() && svg(); as s) {
+      <div class="mmd-lightbox" (click)="zoomed.set(false)" role="dialog" aria-label="דיאגרמה מוגדלת">
+        <div class="mmd-lightbox-inner ltr" [innerHTML]="s"></div>
+      </div>
+    }
   `,
+  host: { '(document:keydown.escape)': 'zoomed.set(false)' },
   styles: `
     :host {
       display: block;
@@ -45,10 +60,16 @@ let seq = 0;
     .mmd {
       display: flex;
       justify-content: center;
+      cursor: zoom-in;
 
+      /* mermaid caps the svg at its natural size via an inline max-width,
+         which leaves small diagrams tiny inside a wide panel. The viewBox
+         is set, so scaling to the panel width scales the text with it. */
       ::ng-deep svg {
-        max-width: 100%;
+        width: 100%;
+        max-width: none !important;
         height: auto;
+        max-height: 66vh;
       }
     }
 
@@ -79,6 +100,34 @@ let seq = 0;
       color: var(--txt3);
       font-size: 13px;
     }
+
+    .mmd-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      background: rgb(0 0 0 / 0.78);
+      display: grid;
+      place-items: center;
+      padding: 3vh 3vw;
+      cursor: zoom-out;
+    }
+
+    .mmd-lightbox-inner {
+      width: min(94vw, 1500px);
+      max-height: 92vh;
+      overflow: auto;
+      background: var(--sur);
+      border: 1px solid var(--bdr);
+      border-radius: var(--rad);
+      padding: 26px;
+      box-shadow: var(--shadow-1);
+
+      ::ng-deep svg {
+        width: 100%;
+        max-width: none !important;
+        height: auto;
+      }
+    }
   `,
 })
 export class DiagramPanel {
@@ -90,6 +139,7 @@ export class DiagramPanel {
 
   protected readonly svg = signal<SafeHtml | null>(null);
   protected readonly error = signal<string | null>(null);
+  protected readonly zoomed = signal(false);
 
   private renderToken = 0;
 
@@ -110,6 +160,10 @@ export class DiagramPanel {
         theme: theme === 'dark' ? 'dark' : 'neutral',
         securityLevel: 'loose',
         fontFamily: 'Heebo, Inter, sans-serif',
+        // denser layout = better text-to-whitespace ratio once the svg is
+        // scaled to the panel width (text reads bigger for the same panel)
+        themeVariables: { fontSize: '18px' },
+        flowchart: { nodeSpacing: 35, rankSpacing: 40, padding: 10 },
       });
       const { svg } = await mermaid.render(`mmd-${++seq}`, code);
       if (token !== this.renderToken) return; // a newer render superseded this one
