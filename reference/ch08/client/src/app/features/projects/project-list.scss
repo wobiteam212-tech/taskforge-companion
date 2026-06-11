@@ -1,0 +1,23 @@
+.projects {
+  display: grid;
+  gap: var(--sp-3);
+  // רשת שנושמת: כמה עמודות שנכנסות, אף אחת לא צרה מ-280px —
+  // וכשאין מקום גם ל-280, min(100%, ...) מונע overflow אופקי.
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+
+  h2 {
+    grid-column: 1 / -1;
+    margin: 0;
+
+    .total {
+      margin-inline-start: var(--sp-2);
+      color: var(--txt3);
+      font-size: var(--fs-small);
+      font-weight: 400;
+    }
+  }
+
+  .empty {
+    color: var(--txt3);
+  }
+}

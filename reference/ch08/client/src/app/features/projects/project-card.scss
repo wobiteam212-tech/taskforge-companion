@@ -1,0 +1,72 @@
+// #region step-8.10
+// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.
+// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.
+:host {
+  display: block;
+  container-type: inline-size;
+}
+
+.card {
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  background: var(--sur);
+  padding: var(--sp-3) var(--sp-4);
+  display: grid;
+  gap: var(--sp-2);
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));
+  }
+}
+
+@container (min-width: 340px) {
+  .card {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+
+    header,
+    .desc {
+      grid-column: 1;
+    }
+
+    button {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+  }
+}
+// #endregion
+
+.card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--sp-2);
+
+  h3 {
+    margin: 0;
+    font-size: var(--fs-h2);
+  }
+
+  .count {
+    // צבע נגזר, לא מומצא: 16% ember על שקוף לרקע, ember מלא לטקסט
+    background: color-mix(in srgb, var(--ember) 16%, transparent);
+    color: var(--ember);
+    border-radius: 999px;
+    padding-block: 2px;
+    padding-inline: var(--sp-2);
+    font-size: var(--fs-small);
+    white-space: nowrap;
+  }
+}
+
+.card .desc {
+  margin: 0;
+  color: var(--txt3);
+  font-size: var(--fs-small);
+}
+
+.card button {
+  justify-self: start;
+}

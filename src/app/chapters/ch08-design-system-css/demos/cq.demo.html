@@ -1,0 +1,38 @@
+<div class="cq">
+  <div class="cq-controls">
+    <label class="cq-label">
+      רוחב הקונטיינר
+      <input
+        type="range"
+        min="240"
+        max="680"
+        step="4"
+        [value]="width()"
+        (input)="onInput($event)"
+        aria-label="רוחב הקונטיינר בפיקסלים"
+      />
+    </label>
+    <span class="cq-readout ltr">{{ width() }}px</span>
+    <span class="cq-state" [class.on]="wide()">
+      {{ wide() ? '@container פעיל: פריסה רחבה' : 'מתחת לסף: פריסה צרה' }}
+    </span>
+  </div>
+
+  <div class="cq-stage">
+    <div class="cq-box" [style.width.px]="width()">
+      <div class="mini-card">
+        <div class="mini-head">
+          <strong>Website Redesign</strong>
+          <span class="mini-count ltr">2 open</span>
+        </div>
+        <p class="mini-desc">Refresh the marketing site end to end</p>
+        <button type="button" class="btn">Open board</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="cq-hint">
+    שימו לב: החלון לא השתנה. הכרטיס מגיב לרוחב של ההורה שלו בלבד — ולכן אותו רכיב
+    בדיוק יכול לחיות ב-sidebar צר וברשת רחבה, בלי אף media query ובלי props של פריסה.
+  </p>
+</div>

@@ -1,0 +1,56 @@
+// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.
+// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.
+
+@layer tokens {
+  // #region step-8.3
+  :root {
+    // forge dark — ברירת המחדל
+    --bg: #0f1217;
+    --sur: #161a21;
+    --sur2: #1c212b;
+    --bdr: #2a2f3a;
+    --txt1: #e8ebf2;
+    --txt2: #aeb6c8;
+    --txt3: #8a93a5;
+
+    --ember: #ff8a3d;
+    --teal: #2dd4bf;
+    --danger: #f87171;
+
+    --rad: 12px;
+    --rad-sm: 8px;
+
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 14px;
+    --sp-4: 22px;
+    --sp-5: 34px;
+  }
+
+  // "נייר חם" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים
+  [data-theme='light'] {
+    --bg: #f5f1ea;
+    --sur: #fffdf9;
+    --sur2: #f1ece2;
+    --bdr: #ddd5c7;
+    --txt1: #252a33;
+    --txt2: #4a5263;
+    --txt3: #6f7787;
+
+    --ember: #e06616;
+    --teal: #0f9e87;
+    --danger: #d23f3f;
+  }
+  // #endregion
+
+  // #region step-8.5
+  :root {
+    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.
+    // אין media queries — clamp עושה את האינטרפולציה לבד.
+    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);
+    --fs-h1: clamp(20px, 17px + 1vw, 28px);
+    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);
+    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);
+  }
+  // #endregion
+}

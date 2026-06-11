@@ -1,0 +1,41 @@
+// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —
+// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.
+
+@layer base {
+  body {
+    background: var(--bg);
+    color: var(--txt1);
+    font-family: Inter, 'Segoe UI', sans-serif;
+    font-size: var(--fs-body);
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  h1 {
+    font-size: var(--fs-h1);
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-size: var(--fs-h2);
+    line-height: 1.25;
+  }
+
+  p {
+    margin-block-end: var(--sp-2);
+  }
+
+  button {
+    cursor: pointer;
+    border: 1px solid var(--bdr);
+    border-radius: var(--rad-sm);
+    background: var(--sur2);
+    color: var(--txt1);
+    padding-block: var(--sp-1);
+    padding-inline: var(--sp-3);
+
+    &:hover {
+      border-color: var(--ember);
+      color: var(--ember);
+    }
+  }
+}
