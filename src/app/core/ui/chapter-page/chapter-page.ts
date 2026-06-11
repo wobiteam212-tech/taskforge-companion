@@ -70,7 +70,7 @@ export class ChapterPage {
   protected readonly showRail = signal(false);
 
   private readonly fragment = toSignal(this.route.fragment);
-  private fragmentConsumed = false;
+  private scrolledFragment: string | null = null;
 
   protected readonly pct = computed(() => {
     const total = this.steps().length;
@@ -116,10 +116,12 @@ export class ChapterPage {
     afterRenderEffect(() => {
       const frag = this.fragment();
       const els = this.stepEls();
-      if (this.fragmentConsumed || !frag || !els.length) return;
+      if (!frag || !els.length) return;
+      const key = `${this.chapterId()}:${frag}`;
+      if (this.scrolledFragment === key) return;
       const el = document.getElementById(frag);
       if (el) {
-        this.fragmentConsumed = true;
+        this.scrolledFragment = key;
         el.scrollIntoView({ block: 'center' });
       }
     });

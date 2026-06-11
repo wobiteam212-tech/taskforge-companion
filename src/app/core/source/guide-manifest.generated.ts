@@ -11262,7 +11262,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/features/projects/project-list.html": {
-          "content": "<section class=\"projects\">\n  <h2>\n    Projects <span class=\"total\">{{ store.totalOpenIssues() }} open issues</span>\n    <button tf-button class=\"new-btn\" (click)=\"newProjectOpen.set(true)\">New project</button>\n  </h2>\n\n  @for (p of store.projects(); track p.id) {\n    <tf-project-card [project]=\"p\" (open)=\"onOpen($event)\" />\n  } @empty {\n    <p class=\"empty\">No projects yet.</p>\n  }\n</section>\n\n<tf-dialog heading=\"New project\" [(open)]=\"newProjectOpen\">\n  <tf-field label=\"Project name\" hint=\"Visible to the whole team\">\n    <input #nameInput type=\"text\" placeholder=\"e.g. Mobile App v2\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" (click)=\"newProjectOpen.set(false)\">Cancel</button>\n    <button tf-button (click)=\"create(nameInput.value); nameInput.value = ''\">Create</button>\n  </footer>\n</tf-dialog>\n",
+          "content": "<section class=\"projects\">\n  <h2>\n    Projects <span class=\"total\">{{ store.totalOpenIssues() }} open issues</span>\n    <button tf-button class=\"new-btn\" (click)=\"newProjectOpen.set(true)\">New project</button>\n  </h2>\n\n  @for (p of store.projects(); track p.id) {\n    <tf-project-card [project]=\"p\" (open)=\"onOpen($event)\" />\n  } @empty {\n    <p class=\"empty\">No projects yet.</p>\n  }\n</section>\n\n<tf-dialog heading=\"New project\" [(open)]=\"newProjectOpen\">\n  <tf-field label=\"Project name\" hint=\"Visible to the whole team\">\n    <input #nameInput id=\"project-name\" name=\"project-name\" type=\"text\" placeholder=\"e.g. Mobile App v2\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" (click)=\"newProjectOpen.set(false)\">Cancel</button>\n    <button tf-button (click)=\"create(nameInput.value); nameInput.value = ''\">Create</button>\n  </footer>\n</tf-dialog>\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -11680,12 +11680,12 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/field/field.ts": {
-          "content": "import { Component, input } from '@angular/core';\n\n// העטיפה מספקת label, שגיאה ורמז — והשליטה עצמה (input, select, textarea)\n// מוקרנת פנימה עם ng-content. הכול בתוך <label> אחד, כך שלחיצה על הטקסט\n// ממקדת את השדה — אסוציאציה מובנית, בלי לנהל ידנית id ו-for.\n@Component({\n  selector: 'tf-field',\n  templateUrl: './field.html',\n  styleUrl: './field.scss',\n})\nexport class TfField {\n  readonly label = input.required<string>();\n  readonly error = input<string | null>(null);\n  readonly hint = input<string | null>(null);\n}\n",
+          "content": "import { AfterContentInit, Component, ElementRef, inject, input } from '@angular/core';\n\n// העטיפה מספקת label, שגיאה ורמז — והשליטה עצמה (input, select, textarea)\n// מוקרנת פנימה עם ng-content. הכול בתוך <label> אחד, כך שלחיצה על הטקסט\n// ממקדת את השדה — אסוציאציה מובנית, בלי לנהל ידנית id ו-for.\n@Component({\n  selector: 'tf-field',\n  templateUrl: './field.html',\n  styleUrl: './field.scss',\n})\nexport class TfField {\n  private static nextId = 0;\n  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);\n\n  readonly label = input.required<string>();\n  readonly error = input<string | null>(null);\n  readonly hint = input<string | null>(null);\n\n  ngAfterContentInit(): void {\n    const control = this.host.nativeElement.querySelector<\n      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement\n    >('input, select, textarea');\n    if (!control) return;\n\n    const base = this.label()\n      .toLowerCase()\n      .replace(/[^a-z0-9]+/g, '-')\n      .replace(/^-|-$/g, '');\n    const generated = `tf-${base || 'field'}-${++TfField.nextId}`;\n\n    if (!control.id) control.id = generated;\n    if (!control.name) control.name = control.id;\n  }\n}\n",
           "status": "added",
           "regions": {
             "step-9.6": {
               "start": 3,
-              "end": 15
+              "end": 34
             }
           },
           "changedLines": [
@@ -11704,7 +11704,26 @@ export const GUIDE_MANIFEST = {
             13,
             14,
             15,
-            16
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35
           ]
         },
         "client/src/app/shared/ui/toast/toast-container.html": {
@@ -12402,7 +12421,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/features/projects/project-list.html": {
-          "content": "<section class=\"projects\">\n  <h2>\n    Projects <span class=\"total\">{{ store.totalOpenIssues() }} open issues</span>\n    <button tf-button class=\"new-btn\" (click)=\"newProjectOpen.set(true)\">New project</button>\n  </h2>\n\n  @for (p of store.projects(); track p.id) {\n    <tf-project-card [project]=\"p\" (open)=\"onOpen($event)\" />\n  } @empty {\n    <p class=\"empty\">No projects yet.</p>\n  }\n</section>\n\n<tf-dialog heading=\"New project\" [(open)]=\"newProjectOpen\">\n  <tf-field label=\"Project name\" hint=\"Visible to the whole team\">\n    <input #nameInput type=\"text\" placeholder=\"e.g. Mobile App v2\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" (click)=\"newProjectOpen.set(false)\">Cancel</button>\n    <button tf-button (click)=\"create(nameInput.value); nameInput.value = ''\">Create</button>\n  </footer>\n</tf-dialog>\n",
+          "content": "<section class=\"projects\">\n  <h2>\n    Projects <span class=\"total\">{{ store.totalOpenIssues() }} open issues</span>\n    <button tf-button class=\"new-btn\" (click)=\"newProjectOpen.set(true)\">New project</button>\n  </h2>\n\n  @for (p of store.projects(); track p.id) {\n    <tf-project-card [project]=\"p\" (open)=\"onOpen($event)\" />\n  } @empty {\n    <p class=\"empty\">No projects yet.</p>\n  }\n</section>\n\n<tf-dialog heading=\"New project\" [(open)]=\"newProjectOpen\">\n  <tf-field label=\"Project name\" hint=\"Visible to the whole team\">\n    <input #nameInput id=\"project-name\" name=\"project-name\" type=\"text\" placeholder=\"e.g. Mobile App v2\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" (click)=\"newProjectOpen.set(false)\">Cancel</button>\n    <button tf-button (click)=\"create(nameInput.value); nameInput.value = ''\">Create</button>\n  </footer>\n</tf-dialog>\n",
           "status": "modified",
           "regions": {},
           "changedLines": [
@@ -12820,12 +12839,12 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/field/field.ts": {
-          "content": "import { Component, input } from '@angular/core';\n\n// העטיפה מספקת label, שגיאה ורמז — והשליטה עצמה (input, select, textarea)\n// מוקרנת פנימה עם ng-content. הכול בתוך <label> אחד, כך שלחיצה על הטקסט\n// ממקדת את השדה — אסוציאציה מובנית, בלי לנהל ידנית id ו-for.\n@Component({\n  selector: 'tf-field',\n  templateUrl: './field.html',\n  styleUrl: './field.scss',\n})\nexport class TfField {\n  readonly label = input.required<string>();\n  readonly error = input<string | null>(null);\n  readonly hint = input<string | null>(null);\n}\n",
+          "content": "import { AfterContentInit, Component, ElementRef, inject, input } from '@angular/core';\n\n// העטיפה מספקת label, שגיאה ורמז — והשליטה עצמה (input, select, textarea)\n// מוקרנת פנימה עם ng-content. הכול בתוך <label> אחד, כך שלחיצה על הטקסט\n// ממקדת את השדה — אסוציאציה מובנית, בלי לנהל ידנית id ו-for.\n@Component({\n  selector: 'tf-field',\n  templateUrl: './field.html',\n  styleUrl: './field.scss',\n})\nexport class TfField {\n  private static nextId = 0;\n  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);\n\n  readonly label = input.required<string>();\n  readonly error = input<string | null>(null);\n  readonly hint = input<string | null>(null);\n\n  ngAfterContentInit(): void {\n    const control = this.host.nativeElement.querySelector<\n      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement\n    >('input, select, textarea');\n    if (!control) return;\n\n    const base = this.label()\n      .toLowerCase()\n      .replace(/[^a-z0-9]+/g, '-')\n      .replace(/^-|-$/g, '');\n    const generated = `tf-${base || 'field'}-${++TfField.nextId}`;\n\n    if (!control.id) control.id = generated;\n    if (!control.name) control.name = control.id;\n  }\n}\n",
           "status": "added",
           "regions": {
             "step-9.6": {
               "start": 3,
-              "end": 15
+              "end": 34
             }
           },
           "changedLines": [
@@ -12844,7 +12863,26 @@ export const GUIDE_MANIFEST = {
             13,
             14,
             15,
-            16
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35
           ]
         },
         "client/src/app/shared/ui/toast/toast-container.html": {
@@ -13345,7 +13383,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/features/projects/project-list.html": {
-          "content": "<section class=\"projects\">\n  <h2>\n    Projects <span class=\"total\">{{ store.totalOpenIssues() }} open issues</span>\n    <button tf-button class=\"new-btn\" (click)=\"newProjectOpen.set(true)\">New project</button>\n  </h2>\n\n  @for (p of store.projects(); track p.id) {\n    <tf-project-card [project]=\"p\" (open)=\"onOpen($event)\" />\n  } @empty {\n    <p class=\"empty\">No projects yet.</p>\n  }\n</section>\n\n<tf-dialog heading=\"New project\" [(open)]=\"newProjectOpen\">\n  <tf-field label=\"Project name\" hint=\"Visible to the whole team\">\n    <input #nameInput type=\"text\" placeholder=\"e.g. Mobile App v2\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" (click)=\"newProjectOpen.set(false)\">Cancel</button>\n    <button tf-button (click)=\"create(nameInput.value); nameInput.value = ''\">Create</button>\n  </footer>\n</tf-dialog>\n",
+          "content": "<section class=\"projects\">\n  <h2>\n    Projects <span class=\"total\">{{ store.totalOpenIssues() }} open issues</span>\n    <button tf-button class=\"new-btn\" (click)=\"newProjectOpen.set(true)\">New project</button>\n  </h2>\n\n  @for (p of store.projects(); track p.id) {\n    <tf-project-card [project]=\"p\" (open)=\"onOpen($event)\" />\n  } @empty {\n    <p class=\"empty\">No projects yet.</p>\n  }\n</section>\n\n<tf-dialog heading=\"New project\" [(open)]=\"newProjectOpen\">\n  <tf-field label=\"Project name\" hint=\"Visible to the whole team\">\n    <input #nameInput id=\"project-name\" name=\"project-name\" type=\"text\" placeholder=\"e.g. Mobile App v2\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" (click)=\"newProjectOpen.set(false)\">Cancel</button>\n    <button tf-button (click)=\"create(nameInput.value); nameInput.value = ''\">Create</button>\n  </footer>\n</tf-dialog>\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -13499,12 +13537,12 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/field/field.ts": {
-          "content": "import { Component, input } from '@angular/core';\n\n// העטיפה מספקת label, שגיאה ורמז — והשליטה עצמה (input, select, textarea)\n// מוקרנת פנימה עם ng-content. הכול בתוך <label> אחד, כך שלחיצה על הטקסט\n// ממקדת את השדה — אסוציאציה מובנית, בלי לנהל ידנית id ו-for.\n@Component({\n  selector: 'tf-field',\n  templateUrl: './field.html',\n  styleUrl: './field.scss',\n})\nexport class TfField {\n  readonly label = input.required<string>();\n  readonly error = input<string | null>(null);\n  readonly hint = input<string | null>(null);\n}\n",
+          "content": "import { AfterContentInit, Component, ElementRef, inject, input } from '@angular/core';\n\n// העטיפה מספקת label, שגיאה ורמז — והשליטה עצמה (input, select, textarea)\n// מוקרנת פנימה עם ng-content. הכול בתוך <label> אחד, כך שלחיצה על הטקסט\n// ממקדת את השדה — אסוציאציה מובנית, בלי לנהל ידנית id ו-for.\n@Component({\n  selector: 'tf-field',\n  templateUrl: './field.html',\n  styleUrl: './field.scss',\n})\nexport class TfField {\n  private static nextId = 0;\n  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);\n\n  readonly label = input.required<string>();\n  readonly error = input<string | null>(null);\n  readonly hint = input<string | null>(null);\n\n  ngAfterContentInit(): void {\n    const control = this.host.nativeElement.querySelector<\n      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement\n    >('input, select, textarea');\n    if (!control) return;\n\n    const base = this.label()\n      .toLowerCase()\n      .replace(/[^a-z0-9]+/g, '-')\n      .replace(/^-|-$/g, '');\n    const generated = `tf-${base || 'field'}-${++TfField.nextId}`;\n\n    if (!control.id) control.id = generated;\n    if (!control.name) control.name = control.id;\n  }\n}\n",
           "status": "unchanged",
           "regions": {
             "step-9.6": {
               "start": 3,
-              "end": 15
+              "end": 34
             }
           },
           "changedLines": []
@@ -14507,12 +14545,12 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/core/api/error.interceptor.ts": {
-          "content": "import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';\nimport { inject } from '@angular/core';\nimport { catchError, throwError } from 'rxjs';\nimport { ToastService } from '../../shared/ui/toast/toast.service';\n\ninterface ProblemDetails {\n  title?: string;\n  detail?: string;\n  errors?: Record<string, string[]>;\n}\n\n// קצה אחד לכל השגיאות: השרת מדבר ProblemDetails (RFC 7807) מאז פרק 04,\n// והקליינט מתרגם אותו להודעה אנושית אחת — במקום try/catch בכל רכיב.\nexport const errorInterceptor: HttpInterceptorFn = (req, next) => {\n  const toastSvc = inject(ToastService);\n\n  return next(req).pipe(\n    catchError((err: HttpErrorResponse) => {\n      toastSvc.show(problemText(err), 'danger');\n      // מתרגמים, לא בולעים: הקורא עדיין יודע שהבקשה נכשלה\n      return throwError(() => err);\n    }),\n  );\n};\n\nfunction problemText(err: HttpErrorResponse): string {\n  const problem = err.error as ProblemDetails | null;\n\n  // 400 של AddValidation: מילון שגיאות לפי שדה — מציגים את הראשונה\n  const firstFieldError = problem?.errors && Object.values(problem.errors)[0]?.[0];\n  if (firstFieldError) return firstFieldError;\n\n  if (problem?.detail) return problem.detail;\n  if (problem?.title) return problem.title;\n\n  if (err.status === 0) return 'Cannot reach the server — is the API running?';\n  if (err.status === 401) return 'You need to sign in for that';\n  if (err.status === 403) return 'You are not a member of this project';\n\n  return `Request failed (${err.status})`;\n}\n",
+          "content": "import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';\nimport { inject } from '@angular/core';\nimport { catchError, throwError } from 'rxjs';\nimport { ToastService } from '../../shared/ui/toast/toast.service';\n\ninterface ProblemDetails {\n  title?: string;\n  detail?: string;\n  errors?: Record<string, string[]>;\n}\n\n// קצה אחד לכל השגיאות: השרת מדבר ProblemDetails (RFC 7807) מאז פרק 04,\n// והקליינט מתרגם אותו להודעה אנושית אחת — במקום try/catch בכל רכיב.\nexport const errorInterceptor: HttpInterceptorFn = (req, next) => {\n  const toastSvc = inject(ToastService);\n\n  return next(req).pipe(\n    catchError((err: HttpErrorResponse) => {\n      toastSvc.show(problemText(err), 'danger');\n      // מתרגמים, לא בולעים: הקורא עדיין יודע שהבקשה נכשלה\n      return throwError(() => err);\n    }),\n  );\n};\n\nfunction problemText(err: HttpErrorResponse): string {\n  const problem = err.error as ProblemDetails | null;\n\n  // 400 של AddValidation: מילון שגיאות לפי שדה — מציגים את הראשונה\n  const firstFieldError = problem?.errors && Object.values(problem.errors)[0]?.[0];\n  if (firstFieldError) return firstFieldError;\n\n  if (problem?.detail) return problem.detail;\n\n  if (err.status === 0) return 'Cannot reach the server — is the API running?';\n  if (err.status === 401) return 'You need to sign in for that';\n  if (err.status === 403) return 'You are not a member of this project';\n\n  if (problem?.title) return problem.title;\n\n  return `Request failed (${err.status})`;\n}\n",
           "status": "added",
           "regions": {
             "step-11.9": {
               "start": 12,
-              "end": 41
+              "end": 42
             }
           },
           "changedLines": [
@@ -14557,7 +14595,8 @@ export const GUIDE_MANIFEST = {
             39,
             40,
             41,
-            42
+            42,
+            43
           ]
         },
         "client/src/app/core/auth/auth.interceptor.ts": {
@@ -14715,7 +14754,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/core/state/projects.store.ts": {
-          "content": "import { Injectable, computed, inject } from '@angular/core';\nimport { HttpClient, httpResource } from '@angular/common/http';\nimport { firstValueFrom } from 'rxjs';\nimport { API_BASE } from '../api/api';\nimport { ProjectSummary } from '../models/project.model';\n\n// הסים משלם: ה-SEED מפרק 07 נמחק, הנתונים מגיעים מ-SQLite דרך ה-API —\n// והציבור של ה-store נשאר זהה. אף קומפוננטה לא השתנתה בגלל ההחלפה הזו.\n@Injectable({ providedIn: 'root' })\nexport class ProjectsStore {\n  private readonly http = inject(HttpClient);\n\n  // httpResource: בקשת GET שהיא signal. היא יוצאת מעצמה, יודעת לרענן,\n  // וחושפת value / isLoading / error — בלי subscribe ובלי ניהול ידני.\n  private readonly projectsResource = httpResource<ProjectSummary[]>(\n    () => `${API_BASE}/projects`,\n    { defaultValue: [] },\n  );\n\n  /** אותו ציבור בדיוק כמו בעידן המוק — הקוראים לא יודעים שמשהו השתנה */\n  readonly projects = computed(() => this.projectsResource.value());\n\n  readonly loading = computed(() => this.projectsResource.isLoading());\n\n  readonly loadError = computed(() => this.projectsResource.error());\n\n  readonly totalOpenIssues = computed(() =>\n    this.projects().reduce((sum, p) => sum + p.openIssues, 0),\n  );\n\n  // כתיבה היא פקודה: POST אמיתי (דורש Bearer — ה-interceptor מצרף),\n  // ואז reload כדי שה-id והספירות יגיעו מהשרת — לא מנוחשים בקליינט.\n  async addProject(name: string): Promise<void> {\n    await firstValueFrom(\n      this.http.post(`${API_BASE}/projects`, { name, description: null }),\n    );\n    this.projectsResource.reload();\n  }\n}\n",
+          "content": "import { Injectable, computed, inject } from '@angular/core';\nimport { HttpClient, httpResource } from '@angular/common/http';\nimport { firstValueFrom } from 'rxjs';\nimport { API_BASE } from '../api/api';\nimport { ProjectSummary } from '../models/project.model';\n\n// הסים משלם: ה-SEED מפרק 07 נמחק, הנתונים מגיעים מ-SQLite דרך ה-API —\n// והציבור של ה-store נשאר זהה. אף קומפוננטה לא השתנתה בגלל ההחלפה הזו.\n@Injectable({ providedIn: 'root' })\nexport class ProjectsStore {\n  private readonly http = inject(HttpClient);\n\n  // httpResource: בקשת GET שהיא signal. היא יוצאת מעצמה, יודעת לרענן,\n  // וחושפת hasValue / value / isLoading / error — בלי subscribe ובלי ניהול ידני.\n  private readonly projectsResource = httpResource<ProjectSummary[]>(\n    () => `${API_BASE}/projects`,\n    { defaultValue: [] },\n  );\n\n  /** אותו ציבור בדיוק כמו בעידן המוק — הקוראים לא יודעים שמשהו השתנה */\n  readonly projects = computed(() =>\n    this.projectsResource.hasValue() ? this.projectsResource.value() : [],\n  );\n\n  readonly loading = computed(() => this.projectsResource.isLoading());\n\n  readonly loadError = computed(() => this.projectsResource.error());\n\n  readonly totalOpenIssues = computed(() =>\n    this.projects().reduce((sum, p) => sum + p.openIssues, 0),\n  );\n\n  private readonly projectCache = new Map<number, ProjectSummary>();\n\n  async findProject(id: number): Promise<ProjectSummary | undefined> {\n    const fromCurrentList = this.projects().find((p) => p.id === id);\n    if (fromCurrentList) {\n      this.projectCache.set(id, fromCurrentList);\n      return fromCurrentList;\n    }\n\n    const fromCache = this.projectCache.get(id);\n    if (fromCache) return fromCache;\n\n    const projects = await firstValueFrom(this.http.get<ProjectSummary[]>(`${API_BASE}/projects`));\n    for (const project of projects) this.projectCache.set(project.id, project);\n    return this.projectCache.get(id);\n  }\n\n  // כתיבה היא פקודה: POST אמיתי (דורש Bearer — ה-interceptor מצרף),\n  // ואז reload כדי שה-id והספירות יגיעו מהשרת — לא מנוחשים בקליינט.\n  async addProject(name: string): Promise<void> {\n    await firstValueFrom(\n      this.http.post(`${API_BASE}/projects`, { name, description: null }),\n    );\n    this.projectsResource.reload();\n  }\n}\n",
           "status": "modified",
           "regions": {
             "step-11.5": {
@@ -14724,11 +14763,15 @@ export const GUIDE_MANIFEST = {
             },
             "step-11.6": {
               "start": 20,
-              "end": 29
+              "end": 31
+            },
+            "step-11.7": {
+              "start": 33,
+              "end": 48
             },
             "step-11.12": {
-              "start": 31,
-              "end": 38
+              "start": 50,
+              "end": 57
             }
           },
           "changedLines": [
@@ -14752,12 +14795,30 @@ export const GUIDE_MANIFEST = {
             24,
             25,
             26,
-            31,
-            32,
+            27,
+            28,
             33,
             34,
             35,
-            37
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56
           ]
         },
         "client/src/app/core/state/theme.ts": {
@@ -14778,7 +14839,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/features/auth/login-dialog.html": {
-          "content": "<tf-dialog heading=\"Sign in\" [(open)]=\"open\">\n  <tf-field label=\"Email\" hint=\"Try demo@taskforge.dev\">\n    <input #email type=\"email\" autocomplete=\"email\" placeholder=\"you@example.com\" />\n  </tf-field>\n\n  <tf-field label=\"Password\" hint=\"Seeded demo password: Passw0rd!\">\n    <input #password type=\"password\" autocomplete=\"current-password\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" type=\"button\" (click)=\"open.set(false)\">Cancel</button>\n    <button\n      tf-button\n      type=\"button\"\n      [disabled]=\"pending()\"\n      (click)=\"submit(email.value, password.value)\"\n    >\n      {{ pending() ? 'Signing in...' : 'Sign in' }}\n    </button>\n  </footer>\n</tf-dialog>\n",
+          "content": "<tf-dialog heading=\"Sign in\" [(open)]=\"open\">\n  <tf-field label=\"Email\" hint=\"Try demo@taskforge.dev\">\n    <input #email id=\"login-email\" name=\"email\" type=\"email\" autocomplete=\"email\" placeholder=\"you@example.com\" />\n  </tf-field>\n\n  <tf-field label=\"Password\" hint=\"Seeded demo password: Passw0rd!\">\n    <input #password id=\"login-password\" name=\"password\" type=\"password\" autocomplete=\"current-password\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" type=\"button\" (click)=\"open.set(false)\">Cancel</button>\n    <button\n      tf-button\n      type=\"button\"\n      [disabled]=\"pending()\"\n      (click)=\"submit(email.value, password.value)\"\n    >\n      {{ pending() ? 'Signing in...' : 'Sign in' }}\n    </button>\n  </footer>\n</tf-dialog>\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -14922,7 +14983,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/features/projects/project-list.html": {
-          "content": "<section class=\"projects\">\n  <h2>\n    Projects <span class=\"total\">{{ store.totalOpenIssues() }} open issues</span>\n    <button tf-button class=\"new-btn\" (click)=\"newProjectOpen.set(true)\">New project</button>\n  </h2>\n\n  @for (p of store.projects(); track p.id) {\n    <tf-project-card [project]=\"p\" (open)=\"onOpen($event)\" />\n  } @empty {\n    <p class=\"empty\">No projects yet.</p>\n  }\n</section>\n\n<tf-dialog heading=\"New project\" [(open)]=\"newProjectOpen\">\n  <tf-field label=\"Project name\" hint=\"Visible to the whole team\">\n    <input #nameInput type=\"text\" placeholder=\"e.g. Mobile App v2\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" (click)=\"newProjectOpen.set(false)\">Cancel</button>\n    <button tf-button (click)=\"create(nameInput.value); nameInput.value = ''\">Create</button>\n  </footer>\n</tf-dialog>\n",
+          "content": "<section class=\"projects\">\n  <h2>\n    Projects <span class=\"total\">{{ store.totalOpenIssues() }} open issues</span>\n    <button tf-button class=\"new-btn\" (click)=\"newProjectOpen.set(true)\">New project</button>\n  </h2>\n\n  @for (p of store.projects(); track p.id) {\n    <tf-project-card [project]=\"p\" (open)=\"onOpen($event)\" />\n  } @empty {\n    <p class=\"empty\">No projects yet.</p>\n  }\n</section>\n\n<tf-dialog heading=\"New project\" [(open)]=\"newProjectOpen\">\n  <tf-field label=\"Project name\" hint=\"Visible to the whole team\">\n    <input #nameInput id=\"project-name\" name=\"project-name\" type=\"text\" placeholder=\"e.g. Mobile App v2\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" (click)=\"newProjectOpen.set(false)\">Cancel</button>\n    <button tf-button (click)=\"create(nameInput.value); nameInput.value = ''\">Create</button>\n  </footer>\n</tf-dialog>\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -14966,26 +15027,39 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/features/projects/project.guard.ts": {
-          "content": "import { inject } from '@angular/core';\nimport { CanActivateFn, Router } from '@angular/router';\nimport { ProjectsStore } from '../../core/state/projects.store';\n\n// guard פונקציונלי: רץ לפני שהנתיב נטען בכלל. מחזירים UrlTree במקום\n// לנווט בעצמנו — הראוטר מבטל את הניווט הנוכחי ועובר ליעד החדש,\n// בלי מרוץ בין שני ניווטים מקבילים.\nexport const projectExistsGuard: CanActivateFn = (route) => {\n  const store = inject(ProjectsStore);\n  const router = inject(Router);\n\n  const id = Number(route.paramMap.get('projectId'));\n  const exists = store.projects().some((p) => p.id === id);\n\n  return exists ? true : router.createUrlTree(['/']);\n};\n",
-          "status": "unchanged",
+          "content": "import { inject } from '@angular/core';\nimport { CanActivateFn, Router } from '@angular/router';\nimport { ProjectsStore } from '../../core/state/projects.store';\n\n// בפרק 10 ה-guard בדק מערך בזיכרון. עכשיו הרשימה מגיעה מהרשת,\n// לכן ה-guard מחכה ל-API לפני שהוא מחליט אם לטעון את הלוח.\nexport const projectExistsGuard: CanActivateFn = async (route) => {\n  const store = inject(ProjectsStore);\n  const router = inject(Router);\n\n  const id = Number(route.paramMap.get('projectId'));\n  const project = await store.findProject(id);\n\n  return project ? true : router.createUrlTree(['/']);\n};\n",
+          "status": "modified",
           "regions": {
-            "step-10.5": {
+            "step-11.7": {
               "start": 5,
-              "end": 16
+              "end": 15
             }
           },
-          "changedLines": []
+          "changedLines": [
+            5,
+            6,
+            7,
+            12,
+            14
+          ]
         },
         "client/src/app/features/projects/project.resolver.ts": {
-          "content": "import { inject } from '@angular/core';\nimport { ResolveFn } from '@angular/router';\nimport { ProjectSummary } from '../../core/models/project.model';\nimport { ProjectsStore } from '../../core/state/projects.store';\n\n// resolver: מכין את הנתונים לפני שהקומפוננטה נוצרת. כאן הוא סינכרוני\n// (ה-store בזיכרון), אבל החתימה זהה גם כשהוא יחזיר Promise בפרק 11 —\n// הקומפוננטה לא תרגיש בהבדל.\nexport const projectResolver: ResolveFn<ProjectSummary> = (route) => {\n  const store = inject(ProjectsStore);\n  const id = Number(route.paramMap.get('projectId'));\n\n  // ה-guard כבר אימת קיום — הסימן ! מתועד, לא מנחש\n  return store.projects().find((p) => p.id === id)!;\n};\n",
-          "status": "unchanged",
+          "content": "import { inject } from '@angular/core';\nimport { ResolveFn } from '@angular/router';\nimport { ProjectSummary } from '../../core/models/project.model';\nimport { ProjectsStore } from '../../core/state/projects.store';\n\n// ה-resolver נשאר באותה חתימה ציבורית, אבל עכשיו הוא אסינכרוני.\n// ProjectBoard ממשיך לקבל input בשם project, בלי לדעת אם הנתון בא ממוק או HTTP.\nexport const projectResolver: ResolveFn<ProjectSummary> = async (route) => {\n  const store = inject(ProjectsStore);\n  const id = Number(route.paramMap.get('projectId'));\n\n  const project = await store.findProject(id);\n  if (!project) throw new Error(`Project ${id} was not found after guard passed`);\n  return project;\n};\n",
+          "status": "modified",
           "regions": {
-            "step-10.6": {
+            "step-11.8": {
               "start": 6,
               "end": 15
             }
           },
-          "changedLines": []
+          "changedLines": [
+            6,
+            7,
+            8,
+            12,
+            13,
+            14
+          ]
         },
         "client/src/app/shared/ui/badge/badge.scss": {
           "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  border-radius: 999px;\n  padding-block: 2px;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
@@ -15052,12 +15126,12 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/field/field.ts": {
-          "content": "import { Component, input } from '@angular/core';\n\n// העטיפה מספקת label, שגיאה ורמז — והשליטה עצמה (input, select, textarea)\n// מוקרנת פנימה עם ng-content. הכול בתוך <label> אחד, כך שלחיצה על הטקסט\n// ממקדת את השדה — אסוציאציה מובנית, בלי לנהל ידנית id ו-for.\n@Component({\n  selector: 'tf-field',\n  templateUrl: './field.html',\n  styleUrl: './field.scss',\n})\nexport class TfField {\n  readonly label = input.required<string>();\n  readonly error = input<string | null>(null);\n  readonly hint = input<string | null>(null);\n}\n",
+          "content": "import { AfterContentInit, Component, ElementRef, inject, input } from '@angular/core';\n\n// העטיפה מספקת label, שגיאה ורמז — והשליטה עצמה (input, select, textarea)\n// מוקרנת פנימה עם ng-content. הכול בתוך <label> אחד, כך שלחיצה על הטקסט\n// ממקדת את השדה — אסוציאציה מובנית, בלי לנהל ידנית id ו-for.\n@Component({\n  selector: 'tf-field',\n  templateUrl: './field.html',\n  styleUrl: './field.scss',\n})\nexport class TfField {\n  private static nextId = 0;\n  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);\n\n  readonly label = input.required<string>();\n  readonly error = input<string | null>(null);\n  readonly hint = input<string | null>(null);\n\n  ngAfterContentInit(): void {\n    const control = this.host.nativeElement.querySelector<\n      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement\n    >('input, select, textarea');\n    if (!control) return;\n\n    const base = this.label()\n      .toLowerCase()\n      .replace(/[^a-z0-9]+/g, '-')\n      .replace(/^-|-$/g, '');\n    const generated = `tf-${base || 'field'}-${++TfField.nextId}`;\n\n    if (!control.id) control.id = generated;\n    if (!control.name) control.name = control.id;\n  }\n}\n",
           "status": "unchanged",
           "regions": {
             "step-9.6": {
               "start": 3,
-              "end": 15
+              "end": 34
             }
           },
           "changedLines": []
@@ -15713,12 +15787,12 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/core/api/error.interceptor.ts": {
-          "content": "import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';\nimport { inject } from '@angular/core';\nimport { catchError, throwError } from 'rxjs';\nimport { ToastService } from '../../shared/ui/toast/toast.service';\n\ninterface ProblemDetails {\n  title?: string;\n  detail?: string;\n  errors?: Record<string, string[]>;\n}\n\n// קצה אחד לכל השגיאות: השרת מדבר ProblemDetails (RFC 7807) מאז פרק 04,\n// והקליינט מתרגם אותו להודעה אנושית אחת — במקום try/catch בכל רכיב.\nexport const errorInterceptor: HttpInterceptorFn = (req, next) => {\n  const toastSvc = inject(ToastService);\n\n  return next(req).pipe(\n    catchError((err: HttpErrorResponse) => {\n      toastSvc.show(problemText(err), 'danger');\n      // מתרגמים, לא בולעים: הקורא עדיין יודע שהבקשה נכשלה\n      return throwError(() => err);\n    }),\n  );\n};\n\nfunction problemText(err: HttpErrorResponse): string {\n  const problem = err.error as ProblemDetails | null;\n\n  // 400 של AddValidation: מילון שגיאות לפי שדה — מציגים את הראשונה\n  const firstFieldError = problem?.errors && Object.values(problem.errors)[0]?.[0];\n  if (firstFieldError) return firstFieldError;\n\n  if (problem?.detail) return problem.detail;\n  if (problem?.title) return problem.title;\n\n  if (err.status === 0) return 'Cannot reach the server — is the API running?';\n  if (err.status === 401) return 'You need to sign in for that';\n  if (err.status === 403) return 'You are not a member of this project';\n\n  return `Request failed (${err.status})`;\n}\n",
+          "content": "import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';\nimport { inject } from '@angular/core';\nimport { catchError, throwError } from 'rxjs';\nimport { ToastService } from '../../shared/ui/toast/toast.service';\n\ninterface ProblemDetails {\n  title?: string;\n  detail?: string;\n  errors?: Record<string, string[]>;\n}\n\n// קצה אחד לכל השגיאות: השרת מדבר ProblemDetails (RFC 7807) מאז פרק 04,\n// והקליינט מתרגם אותו להודעה אנושית אחת — במקום try/catch בכל רכיב.\nexport const errorInterceptor: HttpInterceptorFn = (req, next) => {\n  const toastSvc = inject(ToastService);\n\n  return next(req).pipe(\n    catchError((err: HttpErrorResponse) => {\n      toastSvc.show(problemText(err), 'danger');\n      // מתרגמים, לא בולעים: הקורא עדיין יודע שהבקשה נכשלה\n      return throwError(() => err);\n    }),\n  );\n};\n\nfunction problemText(err: HttpErrorResponse): string {\n  const problem = err.error as ProblemDetails | null;\n\n  // 400 של AddValidation: מילון שגיאות לפי שדה — מציגים את הראשונה\n  const firstFieldError = problem?.errors && Object.values(problem.errors)[0]?.[0];\n  if (firstFieldError) return firstFieldError;\n\n  if (problem?.detail) return problem.detail;\n\n  if (err.status === 0) return 'Cannot reach the server — is the API running?';\n  if (err.status === 401) return 'You need to sign in for that';\n  if (err.status === 403) return 'You are not a member of this project';\n\n  if (problem?.title) return problem.title;\n\n  return `Request failed (${err.status})`;\n}\n",
           "status": "added",
           "regions": {
             "step-11.9": {
               "start": 12,
-              "end": 41
+              "end": 42
             }
           },
           "changedLines": [
@@ -15763,7 +15837,8 @@ export const GUIDE_MANIFEST = {
             39,
             40,
             41,
-            42
+            42,
+            43
           ]
         },
         "client/src/app/core/auth/auth.interceptor.ts": {
@@ -15887,7 +15962,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/core/state/projects.store.ts": {
-          "content": "import { Injectable, computed, inject } from '@angular/core';\nimport { HttpClient, httpResource } from '@angular/common/http';\nimport { firstValueFrom } from 'rxjs';\nimport { API_BASE } from '../api/api';\nimport { ProjectSummary } from '../models/project.model';\n\n// הסים משלם: ה-SEED מפרק 07 נמחק, הנתונים מגיעים מ-SQLite דרך ה-API —\n// והציבור של ה-store נשאר זהה. אף קומפוננטה לא השתנתה בגלל ההחלפה הזו.\n@Injectable({ providedIn: 'root' })\nexport class ProjectsStore {\n  private readonly http = inject(HttpClient);\n\n  // httpResource: בקשת GET שהיא signal. היא יוצאת מעצמה, יודעת לרענן,\n  // וחושפת value / isLoading / error — בלי subscribe ובלי ניהול ידני.\n  private readonly projectsResource = httpResource<ProjectSummary[]>(\n    () => `${API_BASE}/projects`,\n    { defaultValue: [] },\n  );\n\n  /** אותו ציבור בדיוק כמו בעידן המוק — הקוראים לא יודעים שמשהו השתנה */\n  readonly projects = computed(() => this.projectsResource.value());\n\n  readonly loading = computed(() => this.projectsResource.isLoading());\n\n  readonly loadError = computed(() => this.projectsResource.error());\n\n  readonly totalOpenIssues = computed(() =>\n    this.projects().reduce((sum, p) => sum + p.openIssues, 0),\n  );\n\n  // כתיבה היא פקודה: POST אמיתי (דורש Bearer — ה-interceptor מצרף),\n  // ואז reload כדי שה-id והספירות יגיעו מהשרת — לא מנוחשים בקליינט.\n  async addProject(name: string): Promise<void> {\n    await firstValueFrom(\n      this.http.post(`${API_BASE}/projects`, { name, description: null }),\n    );\n    this.projectsResource.reload();\n  }\n}\n",
+          "content": "import { Injectable, computed, inject } from '@angular/core';\nimport { HttpClient, httpResource } from '@angular/common/http';\nimport { firstValueFrom } from 'rxjs';\nimport { API_BASE } from '../api/api';\nimport { ProjectSummary } from '../models/project.model';\n\n// הסים משלם: ה-SEED מפרק 07 נמחק, הנתונים מגיעים מ-SQLite דרך ה-API —\n// והציבור של ה-store נשאר זהה. אף קומפוננטה לא השתנתה בגלל ההחלפה הזו.\n@Injectable({ providedIn: 'root' })\nexport class ProjectsStore {\n  private readonly http = inject(HttpClient);\n\n  // httpResource: בקשת GET שהיא signal. היא יוצאת מעצמה, יודעת לרענן,\n  // וחושפת hasValue / value / isLoading / error — בלי subscribe ובלי ניהול ידני.\n  private readonly projectsResource = httpResource<ProjectSummary[]>(\n    () => `${API_BASE}/projects`,\n    { defaultValue: [] },\n  );\n\n  /** אותו ציבור בדיוק כמו בעידן המוק — הקוראים לא יודעים שמשהו השתנה */\n  readonly projects = computed(() =>\n    this.projectsResource.hasValue() ? this.projectsResource.value() : [],\n  );\n\n  readonly loading = computed(() => this.projectsResource.isLoading());\n\n  readonly loadError = computed(() => this.projectsResource.error());\n\n  readonly totalOpenIssues = computed(() =>\n    this.projects().reduce((sum, p) => sum + p.openIssues, 0),\n  );\n\n  private readonly projectCache = new Map<number, ProjectSummary>();\n\n  async findProject(id: number): Promise<ProjectSummary | undefined> {\n    const fromCurrentList = this.projects().find((p) => p.id === id);\n    if (fromCurrentList) {\n      this.projectCache.set(id, fromCurrentList);\n      return fromCurrentList;\n    }\n\n    const fromCache = this.projectCache.get(id);\n    if (fromCache) return fromCache;\n\n    const projects = await firstValueFrom(this.http.get<ProjectSummary[]>(`${API_BASE}/projects`));\n    for (const project of projects) this.projectCache.set(project.id, project);\n    return this.projectCache.get(id);\n  }\n\n  // כתיבה היא פקודה: POST אמיתי (דורש Bearer — ה-interceptor מצרף),\n  // ואז reload כדי שה-id והספירות יגיעו מהשרת — לא מנוחשים בקליינט.\n  async addProject(name: string): Promise<void> {\n    await firstValueFrom(\n      this.http.post(`${API_BASE}/projects`, { name, description: null }),\n    );\n    this.projectsResource.reload();\n  }\n}\n",
           "status": "modified",
           "regions": {
             "step-11.5": {
@@ -15896,11 +15971,15 @@ export const GUIDE_MANIFEST = {
             },
             "step-11.6": {
               "start": 20,
-              "end": 29
+              "end": 31
+            },
+            "step-11.7": {
+              "start": 33,
+              "end": 48
             },
             "step-11.12": {
-              "start": 31,
-              "end": 38
+              "start": 50,
+              "end": 57
             }
           },
           "changedLines": [
@@ -15924,16 +16003,34 @@ export const GUIDE_MANIFEST = {
             24,
             25,
             26,
-            31,
-            32,
+            27,
+            28,
             33,
             34,
             35,
-            37
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56
           ]
         },
         "client/src/app/features/auth/login-dialog.html": {
-          "content": "<tf-dialog heading=\"Sign in\" [(open)]=\"open\">\n  <tf-field label=\"Email\" hint=\"Try demo@taskforge.dev\">\n    <input #email type=\"email\" autocomplete=\"email\" placeholder=\"you@example.com\" />\n  </tf-field>\n\n  <tf-field label=\"Password\" hint=\"Seeded demo password: Passw0rd!\">\n    <input #password type=\"password\" autocomplete=\"current-password\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" type=\"button\" (click)=\"open.set(false)\">Cancel</button>\n    <button\n      tf-button\n      type=\"button\"\n      [disabled]=\"pending()\"\n      (click)=\"submit(email.value, password.value)\"\n    >\n      {{ pending() ? 'Signing in...' : 'Sign in' }}\n    </button>\n  </footer>\n</tf-dialog>\n",
+          "content": "<tf-dialog heading=\"Sign in\" [(open)]=\"open\">\n  <tf-field label=\"Email\" hint=\"Try demo@taskforge.dev\">\n    <input #email id=\"login-email\" name=\"email\" type=\"email\" autocomplete=\"email\" placeholder=\"you@example.com\" />\n  </tf-field>\n\n  <tf-field label=\"Password\" hint=\"Seeded demo password: Passw0rd!\">\n    <input #password id=\"login-password\" name=\"password\" type=\"password\" autocomplete=\"current-password\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" type=\"button\" (click)=\"open.set(false)\">Cancel</button>\n    <button\n      tf-button\n      type=\"button\"\n      [disabled]=\"pending()\"\n      (click)=\"submit(email.value, password.value)\"\n    >\n      {{ pending() ? 'Signing in...' : 'Sign in' }}\n    </button>\n  </footer>\n</tf-dialog>\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -16055,6 +16152,41 @@ export const GUIDE_MANIFEST = {
             45,
             46,
             47
+          ]
+        },
+        "client/src/app/features/projects/project.guard.ts": {
+          "content": "import { inject } from '@angular/core';\nimport { CanActivateFn, Router } from '@angular/router';\nimport { ProjectsStore } from '../../core/state/projects.store';\n\n// בפרק 10 ה-guard בדק מערך בזיכרון. עכשיו הרשימה מגיעה מהרשת,\n// לכן ה-guard מחכה ל-API לפני שהוא מחליט אם לטעון את הלוח.\nexport const projectExistsGuard: CanActivateFn = async (route) => {\n  const store = inject(ProjectsStore);\n  const router = inject(Router);\n\n  const id = Number(route.paramMap.get('projectId'));\n  const project = await store.findProject(id);\n\n  return project ? true : router.createUrlTree(['/']);\n};\n",
+          "status": "modified",
+          "regions": {
+            "step-11.7": {
+              "start": 5,
+              "end": 15
+            }
+          },
+          "changedLines": [
+            5,
+            6,
+            7,
+            12,
+            14
+          ]
+        },
+        "client/src/app/features/projects/project.resolver.ts": {
+          "content": "import { inject } from '@angular/core';\nimport { ResolveFn } from '@angular/router';\nimport { ProjectSummary } from '../../core/models/project.model';\nimport { ProjectsStore } from '../../core/state/projects.store';\n\n// ה-resolver נשאר באותה חתימה ציבורית, אבל עכשיו הוא אסינכרוני.\n// ProjectBoard ממשיך לקבל input בשם project, בלי לדעת אם הנתון בא ממוק או HTTP.\nexport const projectResolver: ResolveFn<ProjectSummary> = async (route) => {\n  const store = inject(ProjectsStore);\n  const id = Number(route.paramMap.get('projectId'));\n\n  const project = await store.findProject(id);\n  if (!project) throw new Error(`Project ${id} was not found after guard passed`);\n  return project;\n};\n",
+          "status": "modified",
+          "regions": {
+            "step-11.8": {
+              "start": 6,
+              "end": 15
+            }
+          },
+          "changedLines": [
+            6,
+            7,
+            8,
+            12,
+            13,
+            14
           ]
         },
         "server/TaskForge.Api/Program.cs": {

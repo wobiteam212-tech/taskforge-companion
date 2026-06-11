@@ -9,13 +9,14 @@
   <div class="rs-states ltr">
     <span class="pill" [class.on]="state() === 'idle'">idle</span>
     <span class="pill pill--loading" [class.on]="state() === 'loading'">isLoading()</span>
+    <span class="pill pill--ok" [class.on]="hasValue()">hasValue()</span>
     <span class="pill pill--ok" [class.on]="state() === 'resolved'">value()</span>
     <span class="pill pill--err" [class.on]="state() === 'error'">error()</span>
   </div>
 
-  @if (value(); as projects) {
+  @if (hasValue()) {
     <ul class="rs-data ltr" [class.stale]="state() === 'error' || isLoading()">
-      @for (p of projects; track p.id) {
+      @for (p of value() ?? []; track p.id) {
         <li>{{ p.name }} — {{ p.openIssues }} open</li>
       }
     </ul>
@@ -28,8 +29,8 @@
   }
 
   <p class="rs-hint">
-    שימו לב: גם כשבקשה נכשלת, ‏value() שומר את הנתונים הטובים האחרונים —
-    המסך לא מתרוקן. ולחיצה כפולה מהירה? התשובה הישנה מזוהה ונזרקת.
+    שימו לב: בזמן reload מוצלח הנתונים הישנים נשארים על המסך עד שהתשובה החדשה מגיעה.
+    במצב error לא קוראים ל-value() בלי hasValue(), ולחיצה כפולה מהירה? התשובה הישנה מזוהה ונזרקת.
   </p>
 
   @if (log().length) {

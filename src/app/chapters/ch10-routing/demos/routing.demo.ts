@@ -29,8 +29,7 @@ export class RoutingDemo {
   protected readonly presets = ['/', '/projects/2', '/projects/99', '/projects/3?status=Done', '/nowhere'];
 
   protected readonly result = computed<MatchResult>(() => {
-    const raw = this.url().trim() || '/';
-    const [pathPart, queryPart] = raw.split('?');
+    const { pathPart, queryPart } = this.parseInput(this.url());
     const segments = pathPart.split('/').filter(Boolean);
     const query = (queryPart ?? '')
       .split('&')
@@ -63,5 +62,20 @@ export class RoutingDemo {
 
   protected setUrl(value: string): void {
     this.url.set(value);
+  }
+
+  private parseInput(input: string): { pathPart: string; queryPart: string } {
+    let raw = input.trim() || '/';
+    if (/^[\w.-]+:\d+(?:\/|$)/.test(raw)) raw = `http://${raw}`;
+
+    try {
+      const parsed = new URL(raw, 'http://localhost:4500');
+      const routed = parsed.hash.startsWith('#/') ? parsed.hash.slice(1) : `${parsed.pathname}${parsed.search}`;
+      const [pathPart, queryPart = ''] = routed.split('?');
+      return { pathPart, queryPart };
+    } catch {
+      const [pathPart, queryPart = ''] = raw.split('?');
+      return { pathPart, queryPart };
+    }
   }
 }

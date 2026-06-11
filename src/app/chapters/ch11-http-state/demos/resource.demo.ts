@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 
 interface FakeProject {
   id: number;
@@ -23,6 +23,8 @@ const FAKE_DATA: FakeProject[] = [
   styleUrl: './resource.demo.scss',
 })
 export class ResourceDemo {
+  private readonly destroyRef = inject(DestroyRef);
+
   protected readonly shouldFail = signal(false);
   protected readonly latencyMs = signal(1200);
 
@@ -30,6 +32,7 @@ export class ResourceDemo {
   protected readonly value = signal<FakeProject[] | null>(null);
   protected readonly error = signal<string | null>(null);
   protected readonly log = signal<string[]>([]);
+  protected readonly hasValue = computed(() => this.value() !== null && !this.error());
 
   protected readonly state = computed(() => {
     if (this.isLoading()) return 'loading';
@@ -39,6 +42,14 @@ export class ResourceDemo {
   });
 
   private requestSeq = 0;
+  private readonly timers = new Set<ReturnType<typeof setTimeout>>();
+
+  constructor() {
+    this.destroyRef.onDestroy(() => {
+      for (const timer of this.timers) clearTimeout(timer);
+      this.timers.clear();
+    });
+  }
 
   protected reload(): void {
     const seq = ++this.requestSeq;
@@ -46,7 +57,8 @@ export class ResourceDemo {
     this.error.set(null);
     this.push(`GET /api/projects (#${seq}) sent`);
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
+      this.timers.delete(timer);
       // תשובה מאוחרת של בקשה ישנה לא דורסת חדשה — בדיוק כמו ב-httpResource
       if (seq !== this.requestSeq) {
         this.push(`response #${seq} ignored (stale)`);
@@ -54,13 +66,15 @@ export class ResourceDemo {
       }
       this.isLoading.set(false);
       if (this.shouldFail()) {
+        this.value.set(null);
         this.error.set('503 Service Unavailable');
-        this.push(`response #${seq}: 503 — error() is set, value() keeps the last good data`);
+        this.push(`response #${seq}: 503 — error() is set, value() is guarded`);
       } else {
         this.value.set(FAKE_DATA);
         this.push(`response #${seq}: 200 — value() updated`);
       }
     }, this.latencyMs());
+    this.timers.add(timer);
   }
 
   protected toggleFail(): void {

@@ -2,6 +2,8 @@
   <div class="rt-input ltr">
     <span class="origin">localhost:4500</span>
     <input
+      id="routing-url-input"
+      name="routing-url"
       type="text"
       [value]="url()"
       (input)="setUrl($any($event.target).value)"

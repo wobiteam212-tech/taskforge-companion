@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { WAVES, findChapter } from './core/registry/registry';
 import { ThemeService } from './core/state/theme';
@@ -11,8 +11,12 @@ import { SearchHit, SearchService } from './core/state/search';
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.html',
   styleUrl: './app.scss',
+  host: {
+    '(document:keydown.escape)': 'closeNav()',
+  },
 })
 export class App {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly search = inject(SearchService);
   protected readonly theme = inject(ThemeService);
@@ -21,6 +25,27 @@ export class App {
   protected readonly waves = WAVES;
 
   protected readonly sidebarOpen = signal(false);
+  protected readonly mobileNav = signal(false);
+  protected readonly navHidden = computed(() => this.mobileNav() && !this.sidebarOpen());
+  protected readonly mainHidden = computed(() => this.mobileNav() && this.sidebarOpen());
+
+  constructor() {
+    if (typeof window === 'undefined' || !('matchMedia' in window)) return;
+
+    const query = window.matchMedia('(max-width: 900px)');
+    const update = () => {
+      this.mobileNav.set(query.matches);
+      if (!query.matches) this.sidebarOpen.set(false);
+    };
+
+    update();
+    query.addEventListener('change', update);
+    this.destroyRef.onDestroy(() => query.removeEventListener('change', update));
+  }
+
+  protected toggleNav(): void {
+    this.sidebarOpen.update((open) => !open);
+  }
 
   /* ---------- search ---------- */
   protected readonly q = signal('');

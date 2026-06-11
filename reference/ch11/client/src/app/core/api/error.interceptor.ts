@@ -32,11 +32,12 @@ function problemText(err: HttpErrorResponse): string {
   if (firstFieldError) return firstFieldError;
 
   if (problem?.detail) return problem.detail;
-  if (problem?.title) return problem.title;
 
   if (err.status === 0) return 'Cannot reach the server — is the API running?';
   if (err.status === 401) return 'You need to sign in for that';
   if (err.status === 403) return 'You are not a member of this project';
+
+  if (problem?.title) return problem.title;
 
   return `Request failed (${err.status})`;
 }

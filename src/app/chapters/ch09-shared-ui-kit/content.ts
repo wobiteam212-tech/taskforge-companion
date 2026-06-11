@@ -286,7 +286,7 @@ export const CH09_CONTENT: ChapterContent = {
             'חייבים לנהל `id` ו-`for` ידנית בכל מקום. ' +
             '‏`TfField` פותר את זה בצורה אלגנטית: הפקד (input, select, textarea) מוקרן ' +
             'פנימה בתוך ה-`<label>` עצמו. לחיצה על טקסט ה-label מעבירה את הפוקוס לפקד — ' +
-            'ברירת מחדל של הדפדפן, אפס קוד.',
+            'ברירת מחדל של הדפדפן, בלי `for` בכל שימוש.',
         },
         {
           kind: 'code',
@@ -308,6 +308,13 @@ export const CH09_CONTENT: ChapterContent = {
             'הסגנון ב-`client/src/app/shared/ui/field/field.scss` משתמש ב-`::ng-deep` ' +
             'לסגנן `input`, `select` ו-`textarea` שמוקרנים פנימה — ' +
             'כי הם נמצאים ב-light DOM של ההורה, לא בתוך ה-encapsulation של ה-field.',
+        },
+        {
+          kind: 'p',
+          text:
+            'עוד שכבת נגישות קטנה חיה ב-`field.ts`: אם הפקד המוקרן הגיע בלי `id` או `name`, ' +
+            'הרכיב מייצר אותם מה-label. ה-label העוטף עדיין נותן פוקוס בלחיצה, ' +
+            'ו-Chrome/autofill/בדיקות טפסים מקבלים שם יציב לשדה.',
         },
         {
           kind: 'term',

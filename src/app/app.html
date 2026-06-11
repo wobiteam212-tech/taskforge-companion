@@ -6,8 +6,9 @@
     <button
       type="button"
       class="burger"
-      (click)="sidebarOpen.set(!sidebarOpen())"
+      (click)="toggleNav()"
       [attr.aria-expanded]="sidebarOpen()"
+      aria-controls="site-nav"
       aria-label="תפריט"
     >
       ☰
@@ -22,7 +23,13 @@
     <div class="backdrop" (click)="closeNav()" aria-hidden="true"></div>
   }
 
-  <aside class="sidebar" [class.open]="sidebarOpen()">
+  <aside
+    id="site-nav"
+    class="sidebar"
+    [class.open]="sidebarOpen()"
+    [attr.inert]="navHidden() ? '' : null"
+    [attr.aria-hidden]="navHidden() ? 'true' : null"
+  >
     <div class="brand">
       <a class="brand-link" routerLink="/" (click)="closeNav()">
         <span class="logo" aria-hidden="true">⚒</span>
@@ -38,6 +45,8 @@
 
     <div class="search">
       <input
+        id="guide-search"
+        name="guide-search"
         type="search"
         placeholder="חיפוש בכל הפרקים…"
         [value]="q()"
@@ -109,7 +118,7 @@
     </div>
   </aside>
 
-  <main id="main" class="main">
+  <main id="main" class="main" [attr.inert]="mainHidden() ? '' : null" [attr.aria-hidden]="mainHidden() ? 'true' : null">
     <router-outlet />
   </main>
 </div>

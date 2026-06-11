@@ -32,11 +32,11 @@ export const CH11_CONTENT: ChapterContent = {
         {
           kind: 'ul',
           items: [
-            'השרת: הוספת CORS policy (step-11.2) ו-UseCors מוקדם ב-pipeline (step-11.2b).',
-            'הקליינט: ‏provideHttpClient עם authInterceptor ו-errorInterceptor (step-11.3).',
-            '‏ProjectsStore: ‏httpResource מחליף את ה-seed, ‏addProject שולח POST אמיתי (steps 11.5–11.6, 11.12).',
-            '‏TokenStore + AuthService + LoginDialog: זהות כ-state, login/logout כפקודות (steps 11.10–11.13).',
-            '‏App shell: header מציג שם משתמש או כפתור Sign in (steps 11.14).',
+            'השרת: CORS policy ו-UseCors מוקדם ב-pipeline.',
+            'הקליינט: ‏provideHttpClient עם authInterceptor ו-errorInterceptor.',
+            '‏ProjectsStore: ‏httpResource מחליף את ה-seed, קריאת route לפי id מחכה ל-HTTP, ו-addProject שולח POST אמיתי.',
+            '‏TokenStore + AuthService + LoginDialog: זהות כ-state, login/logout כפקודות.',
+            '‏App shell: header מציג שם משתמש או כפתור Sign in.',
           ],
         },
         {
@@ -88,7 +88,7 @@ export const CH11_CONTENT: ChapterContent = {
           text:
             'חשוב להבין: ‏CORS אינו מנגנון אבטחה שהשרת אוכף — ' +
             'אפשר לקרוא לאותו API ישירות עם `curl` ולקבל תשובה ללא בעיה. ' +
-            'זהו מנגנון שה-**דפדפן** אוכף, כדי להגן על המשתמש מפני אתרי צד שלישי ' +
+            'זהו מנגנון שהדפדפן אוכף, כדי להגן על המשתמש מפני אתרי צד שלישי ' +
             'שמנסים לשלוח בקשות מאומתות ברקע. ' +
             'ה-policy ב-`AddCors` היא הצהרת אמון של השרת: ' +
             '"origin זה מוכר לי, הדפדפן רשאי לחשוף את התשובה לקוד שרץ שם".',
@@ -142,9 +142,9 @@ export const CH11_CONTENT: ChapterContent = {
           text:
             '‏Angular מספק `HttpClient` דרך `provideHttpClient()`. ' +
             'ה-`withInterceptors()` מאפשר להזריק interceptors פונקציונליים לפי סדר. ' +
-            'הסדר חשוב: **בקשה** עוברת את ה-interceptors משמאל לימין — ' +
+            'הסדר חשוב: בקשה עוברת את ה-interceptors משמאל לימין — ' +
             'קודם `authInterceptor` (שמצרף Bearer), ואז `errorInterceptor`. ' +
-            '**תשובה** עוברת בכיוון ההפוך — קודם `errorInterceptor` (שמתרגם שגיאות) ' +
+            'תשובה עוברת בכיוון ההפוך — קודם `errorInterceptor` (שמתרגם שגיאות) ' +
             'ואז `authInterceptor` (שפשוט מעביר הלאה).',
         },
         {
@@ -193,7 +193,7 @@ export const API_BASE = 'http://localhost:5080/api';`,
             'עכשיו מחליפים: מערך ה-`SEED` של המוק נמחק, ' +
             'ו-`httpResource` נכנס במקומו. ' +
             '‏`httpResource` הוא בקשת GET שהיא signal: היא יוצאת מעצמה ברגע שהרכיב נוצר, ' +
-            'יודעת לרענן ב-`reload()`, וחושפת `value()` / `isLoading()` / `error()` — ' +
+            'יודעת לרענן ב-`reload()`, וחושפת `hasValue()` / `value()` / `isLoading()` / `error()` — ' +
             'בלי subscribe ובלי ניהול מחזור חיים ידני.',
         },
         {
@@ -211,7 +211,7 @@ export const API_BASE = 'http://localhost:5080/api';`,
           definition:
             'API מ-Angular v22 (‏`@angular/common/http`) שמגדיר בקשת GET declarative כ-signal. ' +
             'נוצר בשדה-מחלקה (field initializer) עם פונקציית URL. ' +
-            'חושף `value()`, `isLoading()`, `error()`, `reload()` ו-`status()`. ' +
+            'חושף `hasValue()`, `value()`, `isLoading()`, `error()`, `reload()` ו-`status()`. ' +
             'אוטומטית: מבטל תשובות stale (כשנשלחת בקשה חדשה לפני שהישנה חזרה), ' +
             'ומאפשר reload ידני. מתאים לקריאות declarative — לא לפקודות כמו POST.',
         },
@@ -241,20 +241,23 @@ export const API_BASE = 'http://localhost:5080/api';`,
           kind: 'p',
           text:
             'שימו לב ל-wrapper של `computed`: ' +
-            '`readonly projects = computed(() => this.projectsResource.value())`. ' +
+            '`projectsResource.hasValue() ? projectsResource.value() : []`. ' +
             'למה לא לחשוף את `projectsResource.value` ישירות? ' +
-            'הסיבה היא encapsulation: ה-`projectsResource` הוא פרטי. ' +
+            'קודם כול, `value()` לא נקרא במצב error בלי guard. ' +
+            'מעבר לזה, ה-`projectsResource` הוא פרטי. ' +
             'אם מחר תחליפו את `httpResource` ב-WebSocket subscription, ' +
             'הציבור `projects()` לא ישתנה — שוב אותו עיקרון.',
         },
         {
           kind: 'ul',
           items: [
-            '`projects()` — computed מעל `value()`. ציבורי, זהה ל-ch07.',
+            '`projects()` — computed בטוח מעל `hasValue()` ו-`value()`. ציבורי, זהה ל-ch07.',
             '`loading()` — computed מעל `isLoading()`. חדש — לא שינוי.',
             '`loadError()` — computed מעל `error()`. חדש — לא שינוי.',
             '`totalOpenIssues()` — computed מעל `projects()`. לא נגע בו.',
-            'תבניות `project-list.html` ו-`project-card.html` — **אפס דיפים** לצד הקריאות.',
+            '`findProject(id)` — seam חדש עבור route guard/resolver; קודם בודק את הרשימה, אחר כך מבקש מה-API.',
+            '`client/src/app/features/projects/project.guard.ts` ו-`client/src/app/features/projects/project.resolver.ts` — עברו ל-async בלי לשנות את `ProjectBoard`.',
+            'תבניות `project-list.html` ו-`project-card.html` — אפס דיפים לצד הקריאות.',
           ],
         },
         {
@@ -285,16 +288,16 @@ export const API_BASE = 'http://localhost:5080/api';`,
         {
           kind: 'p',
           text:
-            'הדמו מדמה את מחזור החיים של `httpResource` בצורה אינטראקטיבית. ' +
+            'הדמו מדמה את מחזור החיים של `httpResource` בצורה אינטראקטיבית, עם guard נכון סביב `value()`. ' +
             'לחצו `resource.reload()` ובחנו:',
         },
         {
           kind: 'ul',
           items: [
-            'idle: המצב ההתחלתי — לא נשלחה בקשה.',
-            'isLoading(): הבקשה בדרך — תג ה-isLoading נדלק; הרשימה עדיין מציגה את הנתונים האחרונים (אין ריקון).',
-            'value(): תשובה 200 הגיעה; הרשימה מתעדכנת.',
-            'error(): ה-"שברו את השרת" Toggle מפעיל 503 — `error()` מוגדר, אבל `value()` שומר את הנתונים הטובים האחרונים. הרשימה מתעממת אבל לא מתרוקנת.',
+            'idle: מצב אפשרי כשאין request תקף. ב-`ProjectsStore` שלנו תמיד יש URL, ולכן המסך בפועל עובר מהר ל-loading.',
+            'isLoading(): הבקשה בדרך — תג ה-isLoading נדלק; בזמן reload הרשימה יכולה להישאר עם הערך הקודם.',
+            'hasValue() ואז value(): תשובה 200 הגיעה; הרשימה מתעדכנת.',
+            'error(): ה-"שברו את השרת" Toggle מפעיל 503 — `error()` מוגדר. לא קוראים `value()` בלי `hasValue()`, כי resource במצב error יכול לזרוק בזמן ריצה.',
             'Stale rejection: לחצו כפול מהיר — הלוג מדפיס "response #1 ignored (stale)" כי בקשה #2 כבר יצאה. ‏httpResource עושה את זה אוטומטית.',
           ],
         },
@@ -313,7 +316,7 @@ export const API_BASE = 'http://localhost:5080/api';`,
         kind: 'live-demo',
         load: () => import('./demos/resource.demo').then((m) => m.ResourceDemo),
         caption:
-          'דמו חי: מחזור החיים של httpResource — idle, isLoading(), value(), error(). שברו את השרת ובדקו ש-value() שומר נתונים ישנים.',
+          'דמו חי: מחזור החיים של httpResource — idle, isLoading(), hasValue(), value(), error(). שברו את השרת ובדקו ש-value() נקרא רק אחרי hasValue().',
       },
     },
 
@@ -377,10 +380,10 @@ export const API_BASE = 'http://localhost:5080/api';`,
         {
           kind: 'p',
           text:
-            'שתי נקודות מפתח: ראשית, בקשות HTTP הן **immutable** ב-Angular — ' +
+            'שתי נקודות מפתח: ראשית, בקשות HTTP הן immutable ב-Angular — ' +
             'אי-אפשר לשנות כותרת קיימת, חייבים לקרוא `clone()` עם הכותרות החדשות ' +
             'ולהעביר את ה-clone ל-`next`. ' +
-            'שנית, ה-Bearer נשלח **רק לבקשות שמיועדות ל-`API_BASE`** — ' +
+            'שנית, ה-Bearer נשלח רק לבקשות שמיועדות ל-`API_BASE` — ' +
             'אם הקליינט יפנה ל-CDN חיצוני או לשירות אחר, ' +
             'הטוקן לא ידלוף לשם.',
         },
@@ -444,7 +447,7 @@ export const API_BASE = 'http://localhost:5080/api';`,
           kind: 'p',
           text:
             'שורה אחת קריטית: `return throwError(() => err)`. ' +
-            'ה-interceptor **מתרגם ולא בולע**: ' +
+            'ה-interceptor מתרגם ולא בולע: ' +
             'הוא מציג את ה-toast ולאחר מכן זורק מחדש את השגיאה. ' +
             'הקורא (store.addProject, auth.login) עדיין מקבל exception ויכול להגיב — ' +
             'למשל, להשאיר דיאלוג פתוח.',
@@ -527,7 +530,7 @@ export const API_BASE = 'http://localhost:5080/api';`,
           kind: 'p',
           text:
             'ה-`pending` signal מנהל את מצב הכפתור בזמן המתנה לתשובת הרשת. ' +
-            'ה-`catch {}` ריק **בכוונה** — ‏`errorInterceptor` כבר הציג toast. ' +
+            'ה-`catch {}` ריק בכוונה — ‏`errorInterceptor` כבר הציג toast. ' +
             'הדיאלוג פשוט נשאר פתוח כדי שהמשתמש יוכל לתקן ולנסות שוב.',
         },
         {

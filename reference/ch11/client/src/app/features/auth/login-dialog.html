@@ -1,10 +1,10 @@
 <tf-dialog heading="Sign in" [(open)]="open">
   <tf-field label="Email" hint="Try demo@taskforge.dev">
-    <input #email type="email" autocomplete="email" placeholder="you@example.com" />
+    <input #email id="login-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" />
   </tf-field>
 
   <tf-field label="Password" hint="Seeded demo password: Passw0rd!">
-    <input #password type="password" autocomplete="current-password" />
+    <input #password id="login-password" name="password" type="password" autocomplete="current-password" />
   </tf-field>
 
   <footer class="dlg-actions">

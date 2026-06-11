@@ -280,7 +280,7 @@ chunk-XXXXXXXX.js     | not-found    | 630 bytes`,
           kind: 'p',
           text:
             'כיום הוא סינכרוני — ה-store גר בזיכרון. ' +
-            'בפרק 11 הוא ייהפך לאסינכרוני ויחזיר `Promise<ProjectSummary>` עם HTTP. ' +
+            'בפרק 11 ה-guard וה-resolver ייהפכו לאסינכרוניים ויחכו ל-HTTP לפני טעינת הלוח. ' +
             'הרכיב לא ירגיש בהבדל: החתימה `ResolveFn<ProjectSummary>` תישאר, ' +
             'ה-input `project` ימשיך לקבל `ProjectSummary` — ' +
             'הסים נשאר שלם בדיוק כמו `IProjectRepository` מפרק 02.',
@@ -649,7 +649,7 @@ chunk-XXXXXXXX.js     | not-found    | 630 bytes`,
           body:
             'פרק 11 "HTTP ו-State" יחבר את הקליינט לשרת שבנינו בפרקים 01–05. ' +
             'ה-mock store יוחלף ב-`httpResource`, interceptors פונקציונליים יטפלו ב-JWT, ' +
-            'ו-`projectResolver` יהפוך לאסינכרוני — בלי שהרכיב ירגיש בשינוי.',
+            'וה-guard וה-resolver יהפכו לאסינכרוניים — בלי שהרכיב ירגיש בשינוי.',
         },
       ],
       panel: {
