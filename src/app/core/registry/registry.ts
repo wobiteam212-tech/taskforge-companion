@@ -113,7 +113,9 @@ export const WAVES: WaveDef[] = [
         title: 'ארכיטקטורת הקליינט',
         blurb: 'core / shared / features, רכיבים חכמים מול טיפשים, גבולות state, וחוזי API מול ה-DTOs של השרת.',
         wave: 2,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch07-frontend-architecture/content').then((m) => m.CH07_CONTENT),
       },
       {
         id: 'ch08',
