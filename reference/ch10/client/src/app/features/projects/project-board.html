@@ -1,0 +1,24 @@
+<section class="board">
+  <header class="board-head">
+    <a routerLink="/" class="back">Back to projects</a>
+    <h2>
+      {{ project().name }}
+      <tf-badge tone="count">{{ project().openIssues }} open</tf-badge>
+    </h2>
+    @if (project().description; as desc) {
+      <p class="desc">{{ desc }}</p>
+    }
+  </header>
+
+  <nav class="filters" aria-label="Issue status filter">
+    <a routerLink="." [class.on]="!status()">All</a>
+    <a routerLink="." [queryParams]="{ status: 'Open' }" [class.on]="status() === 'Open'">Open</a>
+    <a routerLink="." [queryParams]="{ status: 'InProgress' }" [class.on]="status() === 'InProgress'">In progress</a>
+    <a routerLink="." [queryParams]="{ status: 'Done' }" [class.on]="status() === 'Done'">Done</a>
+  </nav>
+
+  <p class="placeholder">
+    Showing <strong>{{ status() ?? 'all' }}</strong> issues of project #{{ projectId() }} —
+    the real board lands in chapter 12.
+  </p>
+</section>

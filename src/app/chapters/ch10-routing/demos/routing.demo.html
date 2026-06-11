@@ -1,0 +1,68 @@
+<div class="rt">
+  <div class="rt-input ltr">
+    <span class="origin">localhost:4500</span>
+    <input
+      type="text"
+      [value]="url()"
+      (input)="setUrl($any($event.target).value)"
+      aria-label="URL to match"
+      spellcheck="false"
+    />
+  </div>
+
+  <div class="rt-presets">
+    @for (p of presets; track p) {
+      <button type="button" class="btn btn--ghost ltr" (click)="setUrl(p)">{{ p }}</button>
+    }
+  </div>
+
+  @if (result(); as r) {
+    <div class="rt-flow">
+      <div class="stage">
+        <span class="stage-name">Route record</span>
+        <code class="ltr">{{ r.record }}</code>
+        @if (r.lazy) {
+          <span class="pill pill--lazy">lazy</span>
+        }
+      </div>
+
+      @if (r.params.length || r.query.length) {
+        <div class="stage">
+          <span class="stage-name">Inputs</span>
+          <div class="kv ltr">
+            @for (p of r.params; track p.name) {
+              <span class="pill">{{ p.name }} = {{ p.value }}</span>
+            }
+            @for (q of r.query; track q.name) {
+              <span class="pill pill--query">?{{ q.name }} = {{ q.value }}</span>
+            }
+          </div>
+        </div>
+      }
+
+      @if (r.guard !== 'none') {
+        <div class="stage" [class.stage--fail]="r.guard === 'redirect'">
+          <span class="stage-name">canActivate</span>
+          <span>{{ r.guard === 'pass' ? 'הפרויקט קיים — ממשיכים' : 'לא קיים — UrlTree מחזיר הביתה' }}</span>
+        </div>
+      }
+
+      @if (r.resolver) {
+        <div class="stage">
+          <span class="stage-name">resolve</span>
+          <span>project נטען מה-store ונקשר כ-input</span>
+        </div>
+      }
+
+      <div class="stage stage--final">
+        <span class="stage-name">Component</span>
+        <code class="ltr">{{ r.component }}</code>
+      </div>
+    </div>
+  }
+
+  <p class="rt-hint">
+    נסו מזהה שלא קיים (99) וראו את ה-guard עוצר את הניווט, או הוסיפו
+    ‎?status=Done וראו את ה-query string הופך ל-input.
+  </p>
+</div>

@@ -1,0 +1,34 @@
+// השלד עובר לטוקנים — ורק logical properties.
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding-block: var(--sp-4);
+  padding-inline: var(--sp-5);
+  border-block-end: 1px solid var(--bdr);
+  background: var(--sur);
+
+  // המותג הפך לקישור הביתה — בלי להיראות כמו קישור
+  .brand {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  h1 {
+    margin: 0;
+  }
+
+  .tagline {
+    margin: var(--sp-1) 0 0;
+    color: var(--txt3);
+    font-size: var(--fs-small);
+  }
+}
+
+.app-main {
+  padding-block: var(--sp-5);
+  padding-inline: var(--sp-5);
+  max-inline-size: 980px;
+  margin-inline: auto;
+}

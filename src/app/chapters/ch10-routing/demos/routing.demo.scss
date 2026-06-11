@@ -1,0 +1,112 @@
+.rt {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rt-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  background: var(--code-bg);
+  overflow: hidden;
+
+  .origin {
+    padding: 9px 12px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--txt3);
+    background: var(--sur2);
+    border-inline-end: 1px solid var(--bdr);
+    white-space: nowrap;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: var(--code-txt);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 9px 12px;
+    outline: none;
+  }
+}
+
+.rt-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  .btn {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+}
+
+.rt-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stage {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  background: var(--sur2);
+  padding: 9px 13px;
+  font-size: 13px;
+  color: var(--txt2);
+
+  &--fail {
+    border-color: #f87171;
+  }
+
+  &--final {
+    border-color: var(--teal);
+  }
+
+  .stage-name {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--txt3);
+    min-inline-size: 92px;
+  }
+
+  code {
+    color: var(--txt1);
+  }
+}
+
+.pill {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  border: 1px solid var(--ember);
+  color: var(--ember);
+  border-radius: 999px;
+  padding: 2px 9px;
+
+  &--query {
+    border-color: var(--teal);
+    color: var(--teal);
+  }
+
+  &--lazy {
+    border-color: var(--txt3);
+    color: var(--txt3);
+  }
+}
+
+.rt-hint {
+  margin: 0;
+  color: var(--txt2);
+  font-size: 13.5px;
+  line-height: 1.7;
+}

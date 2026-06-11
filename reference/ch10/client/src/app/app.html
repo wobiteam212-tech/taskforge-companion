@@ -1,0 +1,22 @@
+<header class="app-header">
+  <a routerLink="/" class="brand">
+    <h1>{{ title() }}</h1>
+    <p class="tagline">{{ tagline() }}</p>
+  </a>
+
+  <button
+    tf-button
+    variant="ghost"
+    type="button"
+    (click)="themeSvc.toggle()"
+    [attr.aria-pressed]="themeSvc.theme() === 'light'"
+  >
+    {{ themeSvc.theme() === 'dark' ? 'Light' : 'Dark' }} mode
+  </button>
+</header>
+
+<main class="app-main">
+  <router-outlet />
+</main>
+
+<tf-toast-container />
