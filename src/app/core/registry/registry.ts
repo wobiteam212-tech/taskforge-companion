@@ -135,7 +135,9 @@ export const WAVES: WaveDef[] = [
         title: 'ערכת UI משותפת',
         blurb: 'button / field / badge / dialog / toast כרכיבים טיפשים מבוססי signals, עם projection ונגישות מובנית.',
         wave: 2,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch09-shared-ui-kit/content').then((m) => m.CH09_CONTENT),
       },
       {
         id: 'ch10',
