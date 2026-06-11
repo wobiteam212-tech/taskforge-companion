@@ -1,0 +1,21 @@
+<tf-dialog heading="Sign in" [(open)]="open">
+  <tf-field label="Email" hint="Try demo@taskforge.dev">
+    <input #email type="email" autocomplete="email" placeholder="you@example.com" />
+  </tf-field>
+
+  <tf-field label="Password" hint="Seeded demo password: Passw0rd!">
+    <input #password type="password" autocomplete="current-password" />
+  </tf-field>
+
+  <footer class="dlg-actions">
+    <button tf-button variant="ghost" type="button" (click)="open.set(false)">Cancel</button>
+    <button
+      tf-button
+      type="button"
+      [disabled]="pending()"
+      (click)="submit(email.value, password.value)"
+    >
+      {{ pending() ? 'Signing in...' : 'Sign in' }}
+    </button>
+  </footer>
+</tf-dialog>

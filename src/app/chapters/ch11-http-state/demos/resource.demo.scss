@@ -1,0 +1,98 @@
+.rs {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.rs-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .btn--danger {
+    border-color: #f87171;
+    color: #f87171;
+  }
+}
+
+.rs-states {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.pill {
+  font-family: var(--mono);
+  font-size: 12px;
+  border: 1.5px solid var(--bdr);
+  color: var(--txt3);
+  border-radius: 999px;
+  padding: 3px 11px;
+  transition: all 0.2s ease;
+
+  &.on {
+    border-color: var(--txt2);
+    color: var(--txt1);
+  }
+
+  &--loading.on {
+    border-color: var(--ember);
+    color: var(--ember);
+  }
+
+  &--ok.on {
+    border-color: var(--teal);
+    color: var(--teal);
+  }
+
+  &--err.on {
+    border-color: #f87171;
+    color: #f87171;
+  }
+}
+
+.rs-data {
+  list-style: none;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  background: var(--sur2);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.9;
+  color: var(--txt1);
+  transition: opacity 0.2s ease;
+
+  &.stale {
+    opacity: 0.55;
+  }
+}
+
+.rs-empty,
+.rs-hint {
+  margin: 0;
+  color: var(--txt2);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+.rs-error {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: #f87171;
+}
+
+.rs-log {
+  list-style: none;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--code-bdr);
+  border-radius: var(--rad-sm);
+  background: var(--code-bg);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--code-txt);
+}

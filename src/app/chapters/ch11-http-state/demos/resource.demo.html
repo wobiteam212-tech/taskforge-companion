@@ -1,0 +1,42 @@
+<div class="rs">
+  <div class="rs-actions">
+    <button type="button" class="btn btn--primary ltr" (click)="reload()">resource.reload()</button>
+    <button type="button" class="btn" [class.btn--danger]="shouldFail()" (click)="toggleFail()">
+      {{ shouldFail() ? 'השרת "מקולקל" — לחצו לתיקון' : 'שברו את השרת' }}
+    </button>
+  </div>
+
+  <div class="rs-states ltr">
+    <span class="pill" [class.on]="state() === 'idle'">idle</span>
+    <span class="pill pill--loading" [class.on]="state() === 'loading'">isLoading()</span>
+    <span class="pill pill--ok" [class.on]="state() === 'resolved'">value()</span>
+    <span class="pill pill--err" [class.on]="state() === 'error'">error()</span>
+  </div>
+
+  @if (value(); as projects) {
+    <ul class="rs-data ltr" [class.stale]="state() === 'error' || isLoading()">
+      @for (p of projects; track p.id) {
+        <li>{{ p.name }} — {{ p.openIssues }} open</li>
+      }
+    </ul>
+  } @else {
+    <p class="rs-empty">עוד אין נתונים — שלחו את הבקשה הראשונה.</p>
+  }
+
+  @if (error(); as e) {
+    <p class="rs-error ltr">{{ e }}</p>
+  }
+
+  <p class="rs-hint">
+    שימו לב: גם כשבקשה נכשלת, ‏value() שומר את הנתונים הטובים האחרונים —
+    המסך לא מתרוקן. ולחיצה כפולה מהירה? התשובה הישנה מזוהה ונזרקת.
+  </p>
+
+  @if (log().length) {
+    <ul class="rs-log ltr">
+      @for (line of log(); track $index) {
+        <li>{{ line }}</li>
+      }
+    </ul>
+  }
+</div>
