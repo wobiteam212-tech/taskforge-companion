@@ -157,7 +157,9 @@ export const WAVES: WaveDef[] = [
         title: 'HTTP ו-State',
         blurb: 'httpResource / resource, interceptors פונקציונליים, signal stores, וטיפול בשגיאות מקצה לקצה עם ProblemDetails.',
         wave: 2,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch11-http-state/content').then((m) => m.CH11_CONTENT),
       },
     ],
   },
