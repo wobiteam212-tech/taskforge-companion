@@ -124,7 +124,9 @@ export const WAVES: WaveDef[] = [
         title: 'מערכת עיצוב ו-CSS מודרני',
         blurb: 'design tokens, ‎@layer, logical properties ו-RTL, container queries, color-mix, clamp, וארכיטקטורת dark mode.',
         wave: 2,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch08-design-system-css/content').then((m) => m.CH08_CONTENT),
       },
       {
         id: 'ch09',
