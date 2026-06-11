@@ -146,7 +146,9 @@ export const WAVES: WaveDef[] = [
         title: 'ניתוב',
         blurb: 'lazy loading, guards ו-resolvers, ה-URL כ-state, ו-route input binding.',
         wave: 2,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch10-routing/content').then((m) => m.CH10_CONTENT),
       },
       {
         id: 'ch11',
