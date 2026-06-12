@@ -1,0 +1,26 @@
+<section class="board">
+  <header class="board-head">
+    <a routerLink="/" class="back">Back to projects</a>
+    <h2>
+      {{ project().name }}
+      <tf-badge tone="count">{{ project().openIssues }} open</tf-badge>
+    </h2>
+    @if (project().description; as desc) {
+      <p class="desc">{{ desc }}</p>
+    }
+  </header>
+
+  <!-- #region step-13.11b -->
+  <!-- הלוח האמיתי הגיע: מסנני הסטטוס מפרק 10 עברו לתוך ה-toolbar שלו,
+       וה-placeholder נמחק. אותם inputs, אותו חוזה URL — יותר מסך. -->
+  <tf-issue-board
+    [projectId]="projectId()"
+    [status]="status()"
+    [search]="q()"
+    [sort]="sort()"
+    [page]="page() ?? 1"
+  />
+  <!-- #endregion -->
+
+  <tf-project-members [projectId]="projectId()" />
+</section>

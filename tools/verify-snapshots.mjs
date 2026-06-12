@@ -45,8 +45,10 @@ for (const m of milestones) {
   }
   try {
     if (m.kind === 'dotnet') {
-      run('dotnet build --nologo -v q', dir);
-      if (existsSync(join(dir, 'tests'))) run('dotnet test --nologo -v q', dir);
+      // nodeReuse:false — lingering MSBuild daemons keep handles under .build,
+      // which makes the next materialize rm fail with EPERM on Windows.
+      run('dotnet build --nologo -v q /nodeReuse:false', dir);
+      if (existsSync(join(dir, 'tests'))) run('dotnet test --nologo -v q /nodeReuse:false', dir);
     } else if (m.kind === 'ng') {
       run('pnpm install --silent', dir);
       run('pnpm exec ng build', dir);

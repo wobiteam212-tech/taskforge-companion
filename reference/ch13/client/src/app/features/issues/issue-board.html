@@ -1,0 +1,87 @@
+<section class="issue-board">
+  <!-- #region step-13.7b -->
+  <!-- ה-toolbar לא מחזיק state: כל פקד קורא מה-inputs (שבאו מה-URL)
+       וכל שינוי מנווט. רענון, שיתוף קישור וכפתור אחורה עובדים בחינם. -->
+  <div class="toolbar">
+    <nav class="filters" aria-label="Issue status filter">
+      <a routerLink="." [queryParams]="{ status: null, page: null }" queryParamsHandling="merge" [class.on]="!status()">All</a>
+      @for (s of statuses; track s) {
+        <a
+          routerLink="."
+          [queryParams]="{ status: s, page: null }"
+          queryParamsHandling="merge"
+          [class.on]="status() === s"
+        >{{ s }}</a>
+      }
+    </nav>
+
+    <input
+      id="issue-search"
+      name="issue-search"
+      class="search"
+      type="search"
+      placeholder="Search title..."
+      [value]="search() ?? ''"
+      (input)="onSearch($any($event.target).value)"
+    />
+
+    <label class="sort">
+      <span>Sort</span>
+      <select name="issue-sort" [value]="sort() ?? '-created'" (change)="onSort($any($event.target).value)">
+        <option value="-created">Newest first</option>
+        <option value="created">Oldest first</option>
+        <option value="title">Title</option>
+        <option value="priority">Priority</option>
+      </select>
+    </label>
+  </div>
+  <!-- #endregion -->
+
+  <!-- #region step-13.9 -->
+  <!-- אותה מכונת מצבים נגזרת כמו בפרק 12 — והרשימה עצמה נדחית עם defer
+       עד שהיא נכנסת ל-viewport, עם שלד באותו גודל כדי שהדף לא יקפוץ. -->
+  @if (!tokenStore.isLoggedIn()) {
+    <p class="hint">Sign in to see the issue board.</p>
+  } @else if (store.loadError() && !store.issues().length) {
+    <div class="load-error" role="alert">
+      <p>Could not load issues.</p>
+      <button type="button" (click)="store.reload()">Try again</button>
+    </div>
+  } @else if (store.loading() && !store.issues().length) {
+    <div class="skeleton-list" aria-hidden="true">
+      @for (s of [1, 2, 3, 4, 5]; track s) {
+        <div class="skel-row"></div>
+      }
+    </div>
+  } @else if (!store.issues().length) {
+    <p class="empty">
+      No issues match.
+      @if (search() || status()) {
+        <a routerLink="." [queryParams]="{ q: null, status: null, page: null }" queryParamsHandling="merge">Clear filters</a>
+      }
+    </p>
+  } @else {
+    @defer (on viewport) {
+      <cdk-virtual-scroll-viewport class="vs ltr-scroll" [itemSize]="56" [class.stale]="store.loading()">
+        <tf-issue-row
+          *cdkVirtualFor="let issue of store.issues(); trackBy: trackId"
+          [issue]="issue"
+          (statusChange)="changeStatus(issue, $event)"
+        />
+      </cdk-virtual-scroll-viewport>
+    } @placeholder {
+      <div class="skeleton-list" aria-hidden="true">
+        @for (s of [1, 2, 3, 4, 5]; track s) {
+          <div class="skel-row"></div>
+        }
+      </div>
+    }
+
+    <footer class="pager">
+      <button type="button" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">Previous</button>
+      <span class="pager-info">Page {{ page() }} of {{ store.totalPages() }} — {{ store.total() }} issues</span>
+      <button type="button" [disabled]="page() >= store.totalPages()" (click)="goToPage(page() + 1)">Next</button>
+    </footer>
+  }
+  <!-- #endregion -->
+</section>
