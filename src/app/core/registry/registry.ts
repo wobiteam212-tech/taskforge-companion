@@ -175,7 +175,9 @@ export const WAVES: WaveDef[] = [
         title: 'פיצ׳ר הפרויקטים',
         blurb: 'רשימה, יצירה, ניהול חברים ותפקידים ב-UI.',
         wave: 3,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch12-projects-feature/content').then((m) => m.CH12_CONTENT),
       },
       {
         id: 'ch13',

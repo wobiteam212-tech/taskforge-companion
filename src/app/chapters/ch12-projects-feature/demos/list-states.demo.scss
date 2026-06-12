@@ -1,0 +1,189 @@
+:host {
+  display: block;
+}
+
+.ls {
+  display: grid;
+  gap: 12px;
+}
+
+.ls-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  button {
+    border: 1px solid var(--bdr2);
+    background: var(--sur2);
+    color: var(--txt2);
+    border-radius: 7px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      border-color: var(--ember);
+      color: var(--ember);
+    }
+  }
+}
+
+.ls-branches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+
+  .pill {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    border: 1px solid var(--bdr);
+    border-radius: 999px;
+    padding: 2px 11px;
+    color: var(--txt4);
+    opacity: 0.6;
+    transition: opacity 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+    &.on {
+      opacity: 1;
+      border-color: var(--bdr3);
+      color: var(--txt);
+    }
+  }
+
+  .pill.on {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+
+  .pill--ok.on {
+    border-color: var(--grn);
+    color: var(--grn);
+  }
+
+  .pill--err.on {
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  .pill--mut.on {
+    border-color: var(--ylw);
+    color: var(--ylw);
+  }
+}
+
+.ls-screen {
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  background: var(--sur);
+  padding: 14px;
+  min-height: 120px;
+}
+
+.ls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
+  gap: 10px;
+  direction: ltr;
+}
+
+.ls-skel {
+  border: 1px solid var(--bdr);
+  border-radius: 8px;
+  padding: 10px;
+  display: grid;
+  gap: 7px;
+  animation: ls-pulse 1.2s ease-in-out infinite;
+
+  .ln {
+    height: 0.7em;
+    border-radius: 3px;
+    background: var(--sur3);
+  }
+
+  .ln-t {
+    width: 60%;
+    height: 0.95em;
+  }
+
+  .ln-s {
+    width: 35%;
+  }
+}
+
+@keyframes ls-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.ls-card {
+  border: 1px solid var(--bdr);
+  border-radius: 8px;
+  padding: 10px;
+  display: grid;
+  gap: 4px;
+
+  strong {
+    font-size: 13px;
+    color: var(--txt);
+  }
+
+  span {
+    font-size: 12px;
+    color: var(--txt3);
+  }
+}
+
+.ls-error {
+  border: 1px solid var(--red);
+  border-radius: 8px;
+  background: var(--rdim);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  direction: ltr;
+  font-size: 13px;
+
+  button {
+    border: 1px solid var(--red);
+    background: transparent;
+    color: var(--red);
+    border-radius: 7px;
+    font-size: 12.5px;
+    padding: 4px 12px;
+
+    &:hover {
+      background: var(--rdim);
+    }
+  }
+}
+
+.ls-empty {
+  border: 1px dashed var(--bdr2);
+  border-radius: 8px;
+  padding: 18px;
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  text-align: center;
+  direction: ltr;
+
+  strong {
+    color: var(--txt);
+  }
+
+  span {
+    color: var(--txt3);
+    font-size: 12.5px;
+  }
+}
+
+.ls-hint {
+  margin: 0;
+  color: var(--txt3);
+  font-size: 13px;
+}

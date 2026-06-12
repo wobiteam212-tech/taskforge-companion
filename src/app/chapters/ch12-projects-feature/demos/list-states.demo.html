@@ -1,0 +1,57 @@
+<div class="ls">
+  <div class="ls-controls ltr">
+    <button type="button" (click)="start('data')">load → 200 + data</button>
+    <button type="button" (click)="start('empty')">load → 200 + []</button>
+    <button type="button" (click)="start('error')">load → 503</button>
+  </div>
+
+  <div class="ls-branches ltr">
+    <span class="pill" [class.on]="branch() === 'skeleton'">loading && !items.length</span>
+    <span class="pill pill--err" [class.on]="branch() === 'error'">error && !items.length</span>
+    <span class="pill pill--mut" [class.on]="branch() === 'empty'">&#64;empty</span>
+    <span class="pill pill--ok" [class.on]="branch() === 'data'">&#64;for items</span>
+  </div>
+
+  <div class="ls-screen">
+    @switch (branch()) {
+      @case ('skeleton') {
+        <div class="ls-grid" aria-hidden="true">
+          @for (s of [1, 2, 3]; track s) {
+            <div class="ls-skel">
+              <div class="ln ln-t"></div>
+              <div class="ln"></div>
+              <div class="ln ln-s"></div>
+            </div>
+          }
+        </div>
+      }
+      @case ('error') {
+        <div class="ls-error" role="alert">
+          <span>Couldn't load your projects — the server may be down.</span>
+          <button type="button" (click)="retry()">Try again</button>
+        </div>
+      }
+      @case ('empty') {
+        <div class="ls-empty">
+          <strong>No projects yet</strong>
+          <span>Create your first project — you'll become its owner.</span>
+        </div>
+      }
+      @case ('data') {
+        <div class="ls-grid">
+          @for (p of items(); track p.id) {
+            <div class="ls-card">
+              <strong>{{ p.name }}</strong>
+              <span>{{ p.openIssues }} open</span>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+
+  <p class="ls-hint">
+    שימו לב: הענף לא נשמר בשום מקום — הוא נגזר בכל רגע מ-loading, error ו-items.
+    אין דרך "לשכוח" לעדכן אותו, ואין מצב בלתי-אפשרי כמו שלד ושגיאה ביחד.
+  </p>
+</div>
