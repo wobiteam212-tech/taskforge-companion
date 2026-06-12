@@ -23,13 +23,13 @@
           <span class="kind" [class.kind--quiz]="c.kind === 'quiz'">
             {{ c.kind === 'interview' ? 'ראיון' : 'חידון' }}
           </span>
-          <span class="q-text">{{ c.q }}</span>
+          <span class="q-text"><inline-parts [parts]="c.q" /></span>
           <span class="chev" aria-hidden="true">{{ revealed().has(i) ? '−' : '+' }}</span>
         </button>
         @if (revealed().has(i)) {
           <div class="a">
             @for (line of c.a; track $index) {
-              <p>{{ line }}</p>
+              <p><inline-parts [parts]="line" /></p>
             }
             <a class="src" [routerLink]="['/chapters', c.slug]" [fragment]="c.stepId ? 'step-' + c.stepId : undefined">
               מתוך: {{ c.chapterTitle }}

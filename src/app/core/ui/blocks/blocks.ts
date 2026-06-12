@@ -3,9 +3,24 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ContentBlock } from '../../registry/chapter.types';
 import { highlight } from '../../source/highlight';
 
-interface InlinePart {
+export interface InlinePart {
   code: boolean;
   text: string;
+}
+
+/** Split a string into plain + inline-`code` segments. */
+export function splitInline(text: string): InlinePart[] {
+  const parts: InlinePart[] = [];
+  const re = /`([^`]+)`/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text))) {
+    if (m.index > last) parts.push({ code: false, text: text.slice(last, m.index) });
+    parts.push({ code: true, text: m[1] });
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push({ code: false, text: text.slice(last) });
+  return parts.length ? parts : [{ code: false, text }];
 }
 
 /** Renders a run of Hebrew text + inline `code` segments (code stays LTR). */
@@ -97,18 +112,7 @@ export class Blocks {
     return Array.isArray(body) ? body : [body];
   }
 
-  /** Split a string into plain + inline-`code` segments. */
   private inline(text: string): InlinePart[] {
-    const parts: InlinePart[] = [];
-    const re = /`([^`]+)`/g;
-    let last = 0;
-    let m: RegExpExecArray | null;
-    while ((m = re.exec(text))) {
-      if (m.index > last) parts.push({ code: false, text: text.slice(last, m.index) });
-      parts.push({ code: true, text: m[1] });
-      last = m.index + m[0].length;
-    }
-    if (last < text.length) parts.push({ code: false, text: text.slice(last) });
-    return parts.length ? parts : [{ code: false, text }];
+    return splitInline(text);
   }
 }

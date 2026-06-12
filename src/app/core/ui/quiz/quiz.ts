@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { QuizQuestion } from '../../registry/chapter.types';
 import { ProgressService } from '../../state/progress';
+import { InlinePart, InlineParts, splitInline } from '../blocks/blocks';
 
 /**
  * End-of-chapter checkpoint quiz. Immediate feedback per question,
@@ -8,6 +9,7 @@ import { ProgressService } from '../../state/progress';
  */
 @Component({
   selector: 'chapter-quiz',
+  imports: [InlineParts],
   templateUrl: './quiz.html',
   styleUrl: './quiz.scss',
 })
@@ -16,6 +18,17 @@ export class Quiz {
 
   readonly questions = input.required<readonly QuizQuestion[]>();
   readonly chapterId = input.required<string>();
+
+  /** Inline-code aware view of each question (backticks become <code>). */
+  protected readonly qParts = computed<
+    { q: InlinePart[]; options: InlinePart[][]; explain: InlinePart[] }[]
+  >(() =>
+    this.questions().map((q) => ({
+      q: splitInline(q.q),
+      options: q.options.map((o) => splitInline(o)),
+      explain: splitInline(q.explain),
+    })),
+  );
 
   /** answers[i] = selected option index, or null if unanswered */
   protected readonly answers = signal<readonly (number | null)[]>([]);

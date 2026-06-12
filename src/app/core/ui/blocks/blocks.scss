@@ -132,6 +132,7 @@
 /* ---------- glossary term ---------- */
 .term {
   display: flex;
+  flex-wrap: wrap; /* long term names push the definition to its own row instead of crushing it */
   align-items: baseline;
   gap: 10px;
   background: var(--sur2);
@@ -150,6 +151,8 @@
 
   .term-def {
     color: var(--txt2);
+    flex: 1 1 220px; /* take the rest of the row, or wrap to a full row when squeezed */
+    min-width: 0;
   }
 }
 

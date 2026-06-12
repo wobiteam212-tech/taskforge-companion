@@ -3,7 +3,7 @@
     <div class="q">
       <div class="q-head">
         <span class="q-no">{{ qi + 1 }}</span>
-        <span class="q-text">{{ q.q }}</span>
+        <span class="q-text"><inline-parts [parts]="qParts()[qi].q" /></span>
       </div>
       <div class="q-options" role="group" [attr.aria-label]="'שאלה ' + (qi + 1)">
         @for (opt of q.options; track $index; let oi = $index) {
@@ -16,13 +16,13 @@
             [disabled]="answers()[qi] !== null"
             (click)="pick(qi, oi)"
           >
-            {{ opt }}
+            <inline-parts [parts]="qParts()[qi].options[oi]" />
           </button>
         }
       </div>
       @if (answers()[qi] !== null) {
         <p class="q-explain" [class.ok]="answers()[qi] === q.answer">
-          {{ answers()[qi] === q.answer ? 'נכון! ' : 'לא מדויק. ' }}{{ q.explain }}
+          {{ answers()[qi] === q.answer ? 'נכון! ' : 'לא מדויק. ' }}<inline-parts [parts]="qParts()[qi].explain" />
         </p>
       }
     </div>

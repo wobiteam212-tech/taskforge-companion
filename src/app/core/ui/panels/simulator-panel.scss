@@ -42,6 +42,10 @@
   grid-template-columns: minmax(150px, 0.9fr) 1.4fr;
   gap: 12px;
 
+  > * {
+    min-width: 0; /* grid items may shrink below content width; inner blocks scroll/ellipse */
+  }
+
   @media (max-width: 560px) {
     grid-template-columns: 1fr;
   }
@@ -102,6 +106,7 @@
   .path {
     font-size: 12px;
     color: var(--txt2);
+    min-width: 0; /* let the ellipsis kick in instead of widening the row */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

@@ -29,6 +29,7 @@
   .q-text {
     font-weight: 600;
     color: var(--txt);
+    min-width: 0; /* allow inline code to wrap instead of widening the flex row */
   }
 }
 

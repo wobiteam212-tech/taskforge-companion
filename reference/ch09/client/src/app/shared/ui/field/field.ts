@@ -9,7 +9,7 @@ import { AfterContentInit, Component, ElementRef, inject, input } from '@angular
   templateUrl: './field.html',
   styleUrl: './field.scss',
 })
-export class TfField {
+export class TfField implements AfterContentInit {
   private static nextId = 0;
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 

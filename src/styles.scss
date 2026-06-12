@@ -201,7 +201,11 @@ code.ic {
   border-radius: 5px;
   padding: 0.08em 0.42em;
   color: var(--ember2);
-  white-space: nowrap;
+  /* LTR island inside RTL prose; wrap instead of overflowing the container */
+  direction: ltr;
+  unicode-bidi: isolate;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 /* ---------- shared chips & badges ---------- */

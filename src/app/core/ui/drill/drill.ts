@@ -1,14 +1,15 @@
 import { Component, inject, resource, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ContentIndex } from '../../state/content-index';
+import { InlinePart, InlineParts, splitInline } from '../blocks/blocks';
 
 interface DrillCard {
   chapterTitle: string;
   slug: string;
   stepId?: string;
   kind: 'interview' | 'quiz';
-  q: string;
-  a: string[];
+  q: InlinePart[];
+  a: InlinePart[][];
 }
 
 /**
@@ -17,7 +18,7 @@ interface DrillCard {
  */
 @Component({
   selector: 'app-drill',
-  imports: [RouterLink],
+  imports: [RouterLink, InlineParts],
   templateUrl: './drill.html',
   styleUrl: './drill.scss',
 })
@@ -37,8 +38,8 @@ export class Drill {
                 slug: meta.slug,
                 stepId: step.id,
                 kind: 'interview',
-                q: b.title ?? 'שאלת ראיון',
-                a: Array.isArray(b.body) ? [...b.body] : [b.body],
+                q: splitInline(b.title ?? 'שאלת ראיון'),
+                a: (Array.isArray(b.body) ? b.body : [b.body]).map((l) => splitInline(l)),
               });
             }
           }
@@ -48,8 +49,8 @@ export class Drill {
             chapterTitle: meta.title,
             slug: meta.slug,
             kind: 'quiz',
-            q: q.q,
-            a: [q.options[q.answer], q.explain],
+            q: splitInline(q.q),
+            a: [splitInline(q.options[q.answer]), splitInline(q.explain)],
           });
         }
       }
