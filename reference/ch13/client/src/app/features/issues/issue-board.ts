@@ -54,7 +54,10 @@ export class IssueBoard {
 
   constructor() {
     effect(() => this.store.setQuery(this.query()));
-    this.destroyRef.onDestroy(() => clearTimeout(this.searchTimer));
+    this.destroyRef.onDestroy(() => {
+      clearTimeout(this.searchTimer);
+      this.store.clearQuery();
+    });
   }
   // #endregion
 

@@ -45,7 +45,7 @@
 
   <footer class="dlg-actions">
     <button tf-button variant="ghost" (click)="addOpen.set(false)">Cancel</button>
-    <button tf-button [disabled]="pending()" (click)="add(email.value, role.value); email.value = ''">
+    <button tf-button [disabled]="pending()" (click)="addFromInput(email, role.value)">
       {{ pending() ? 'Adding…' : 'Add member' }}
     </button>
   </footer>

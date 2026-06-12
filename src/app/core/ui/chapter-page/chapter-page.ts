@@ -14,8 +14,8 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { findChapter, nextChapter, prevChapter } from '../../registry/registry';
 import { ProgressService } from '../../state/progress';
-import { chapterFiles } from '../../source/manifest';
-import { Blocks } from '../blocks/blocks';
+import { chapterChangedFiles, chapterFiles } from '../../source/manifest';
+import { Blocks, InlinePart, InlineParts, splitInline } from '../blocks/blocks';
 import { PanelHost } from '../panels/panel-host';
 import { Quiz } from '../quiz/quiz';
 import { SourceBrowser } from '../source-browser/source-browser';
@@ -34,7 +34,7 @@ type EndTab = 'quiz' | 'prove' | 'exercise' | 'source';
  */
 @Component({
   selector: 'chapter-page',
-  imports: [RouterLink, Blocks, PanelHost, Quiz, SourceBrowser],
+  imports: [RouterLink, Blocks, InlineParts, PanelHost, Quiz, SourceBrowser],
   templateUrl: './chapter-page.html',
   styleUrl: './chapter-page.scss',
 })
@@ -148,6 +148,16 @@ export class ChapterPage {
   protected readonly endTab = signal<EndTab>('quiz');
 
   protected readonly sourceFiles = computed(() => chapterFiles(this.chapterId()));
+  protected readonly changedSourceFiles = computed(() => chapterChangedFiles(this.chapterId()));
+  private readonly inlineCache = new Map<string, InlinePart[]>();
+
+  protected inline(text: string): InlinePart[] {
+    const cached = this.inlineCache.get(text);
+    if (cached) return cached;
+    const parts = splitInline(text);
+    this.inlineCache.set(text, parts);
+    return parts;
+  }
 
   protected toggleDone(): void {
     this.progress.toggleDone(this.chapterId());

@@ -46,6 +46,7 @@ interface BlockVM {
   tone?: string;
   toneLabel?: string;
   title?: string;
+  titleParts?: InlinePart[];
   codeHtml?: SafeHtml;
   lang?: string;
   termName?: string;
@@ -90,6 +91,7 @@ export class Blocks {
           tone: b.tone,
           toneLabel: TONE_LABEL[b.tone] ?? '',
           title: b.title,
+          titleParts: b.title ? this.inline(b.title) : undefined,
           items: this.asLines(b.body).map((l) => this.inline(l)),
         };
       case 'term':

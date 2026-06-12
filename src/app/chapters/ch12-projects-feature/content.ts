@@ -851,7 +851,8 @@ if (typeof err.error === 'string' && err.error) return err.error;`,
         'הריצו `node tools/materialize-snapshots.mjs` מתוך `taskforge-companion/`. ' +
         'פתחו שני טרמינלים: ' +
         'בראשון הריצו `dotnet run` בתוך `reference/.build/ch12/server/TaskForge.Api`. ' +
-        'בשני הריצו `pnpm exec ng serve --port 4500` בתוך `reference/.build/ch12/client`. ' +
+        'בשני הריצו `pnpm install --silent`, ואז `pnpm exec ng serve --port 4500`, ' +
+        'בתוך `reference/.build/ch12/client`. ' +
         'פתחו `http://localhost:4500`.',
       command: 'node tools/materialize-snapshots.mjs',
       expect:

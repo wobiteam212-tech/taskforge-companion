@@ -14,8 +14,8 @@
         <span class="badge badge--teal ltr">Quiz {{ qs.score }}/{{ qs.total }}</span>
       }
     </nav>
-    <h1 class="ch-title">{{ m.title }}</h1>
-    <p class="ch-blurb">{{ m.blurb }}</p>
+    <h1 class="ch-title"><inline-parts [parts]="inline(m.title)" /></h1>
+    <p class="ch-blurb"><inline-parts [parts]="inline(m.blurb)" /></p>
     <div class="ch-actions">
       <button type="button" class="btn" [class.btn--primary]="progress.isDone(m.id)" (click)="toggleDone()">
         {{ progress.isDone(m.id) ? 'הפרק הושלם ✓' : 'סיימתי את הפרק' }}
@@ -37,7 +37,7 @@
             [class.is-active]="i === activeIndex()"
           >
             <span class="step-no ltr">// {{ s.id }}</span>
-            <h2 class="step-title">{{ s.title }}</h2>
+            <h2 class="step-title"><inline-parts [parts]="inline(s.title)" /></h2>
             <guide-blocks [blocks]="s.blocks" />
             @if (isNarrow()) {
               <div class="inline-panel">
@@ -74,7 +74,7 @@
               (click)="goTo(i)"
             >
               <i class="dot" aria-hidden="true"></i>
-              <span class="rail-label">{{ s.title }}</span>
+              <span class="rail-label"><inline-parts [parts]="inline(s.title)" /></span>
             </button>
           }
         </nav>
@@ -97,7 +97,7 @@
           </button>
         }
         <button type="button" role="tab" [attr.aria-selected]="endTab() === 'source'" class="etab" [class.on]="endTab() === 'source'" (click)="endTab.set('source')">
-          כל הקוד <span class="count ltr">{{ sourceFiles().length }}</span>
+          קוד הפרק <span class="count ltr">{{ changedSourceFiles().length }}</span>
         </button>
       </div>
 
@@ -110,13 +110,13 @@
             <div class="prove">
               @for (t of content.proveIt; track $index) {
                 <div class="prove-item">
-                  <h3 class="prove-title">{{ t.title }}</h3>
-                  <p class="prove-body">{{ t.body }}</p>
+                  <h3 class="prove-title"><inline-parts [parts]="inline(t.title)" /></h3>
+                  <p class="prove-body"><inline-parts [parts]="inline(t.body)" /></p>
                   @if (t.command) {
                     <pre class="prove-cmd ltr"><code>{{ t.command }}</code></pre>
                   }
                   @if (t.expect) {
-                    <p class="prove-expect">מה אמורים לראות: {{ t.expect }}</p>
+                    <p class="prove-expect">מה אמורים לראות: <inline-parts [parts]="inline(t.expect)" /></p>
                   }
                 </div>
               }
@@ -125,17 +125,17 @@
           @case ('exercise') {
             @if (content.exercise; as ex) {
               <div class="exercise">
-                <p class="ex-prompt">{{ ex.prompt }}</p>
+                <p class="ex-prompt"><inline-parts [parts]="inline(ex.prompt)" /></p>
                 <h3>משימות</h3>
                 <ol>
                   @for (t of ex.tasks; track $index) {
-                    <li>{{ t }}</li>
+                    <li><inline-parts [parts]="inline(t)" /></li>
                   }
                 </ol>
                 <h3>תנאי קבלה</h3>
                 <ul>
                   @for (a of ex.acceptance; track $index) {
-                    <li>{{ a }}</li>
+                    <li><inline-parts [parts]="inline(a)" /></li>
                   }
                 </ul>
               </div>
@@ -158,12 +158,12 @@
         @if (p.status === 'ready') {
           <a class="nav-card" [routerLink]="['/chapters', p.slug]">
             <span class="dir">הפרק הקודם</span>
-            <span class="ttl">{{ p.title }}</span>
+            <span class="ttl"><inline-parts [parts]="inline(p.title)" /></span>
           </a>
         } @else {
           <span class="nav-card nav-card--soon">
             <span class="dir">הפרק הקודם</span>
-            <span class="ttl">{{ p.title }} (בקרוב)</span>
+            <span class="ttl"><inline-parts [parts]="inline(p.title + ' (בקרוב)')" /></span>
           </span>
         }
       } @else {
@@ -173,12 +173,12 @@
         @if (n.status === 'ready') {
           <a class="nav-card nav-card--next" [routerLink]="['/chapters', n.slug]">
             <span class="dir">הפרק הבא</span>
-            <span class="ttl">{{ n.title }}</span>
+            <span class="ttl"><inline-parts [parts]="inline(n.title)" /></span>
           </a>
         } @else {
           <span class="nav-card nav-card--soon nav-card--next">
             <span class="dir">הפרק הבא</span>
-            <span class="ttl">{{ n.title }} (בקרוב)</span>
+            <span class="ttl"><inline-parts [parts]="inline(n.title + ' (בקרוב)')" /></span>
           </span>
         }
       }

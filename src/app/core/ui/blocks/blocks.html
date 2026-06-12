@@ -24,8 +24,8 @@
       <div class="callout" [class]="'callout--' + b.tone">
         <div class="callout-head">
           <span class="callout-tone">{{ b.toneLabel }}</span>
-          @if (b.title) {
-            <span class="callout-title">{{ b.title }}</span>
+          @if (b.titleParts) {
+            <span class="callout-title"><inline-parts [parts]="b.titleParts" /></span>
           }
         </div>
         @for (line of b.items!; track $index) {

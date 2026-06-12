@@ -22,9 +22,13 @@ export class IssuesStore {
     this.query.set(query);
   }
 
+  clearQuery(): void {
+    this.query.set(null);
+  }
+
   // URL ריאקטיבי כמו ב-ProjectMembers (פרק 12), הפעם עם query string אמיתי.
   // ‏GET issues דורש Bearer מאז פרק 05 — בלי login אין בקשה, אין 401 מיותר.
-  // ברירות מחדל מושמטות — ה-URL היוצא נקי בדיוק כמו ה-URL שבשורת הכתובת.
+  // ברירות מחדל מושמטות — ה-URL היוצא ל-API נשאר נקי ויציב.
   private readonly pageResource = httpResource<PagedResult<Issue>>(() => {
     const q = this.query();
     if (!q || !this.tokenStore.isLoggedIn()) return undefined;

@@ -82,6 +82,17 @@ export const CH13_CONTENT: ChapterContent = {
             'ה-store ממיר אותו ל-`URLSearchParams` תוך השמטת ברירות מחדל, ' +
             'כך שה-URL היוצא נקי בדיוק כמו שאנשים מצפים לראות בשורת הכתובת.',
         },
+        {
+          kind: 'callout',
+          tone: 'warn',
+          title: 'לא לשכוח הרשאה בצד השרת',
+          body:
+            'בפרק הזה גם `server/TaskForge.Api/Endpoints/IssueEndpoints.cs` מוקשח: ' +
+            '`GetIssues`, `GetIssueById`, `UpdateIssue` ו-`DeleteIssue` בודקים קודם 404 ' +
+            'ואחר כך `IsMemberAsync`. ' +
+            'לוח שמסנן ומעדכן issues לא יכול להסתפק ב-`RequireAuthorization`; ' +
+            'המשתמש חייב להיות חבר בפרויקט הספציפי.',
+        },
       ],
       panel: {
         kind: 'code',
@@ -122,7 +133,8 @@ export const CH13_CONTENT: ChapterContent = {
             '`status` מושמט אם null, `search` מושמט אם null, ' +
             '`sort` מושמט אם הוא `-created` (ברירת המחדל של השרת), ' +
             '`page` מושמט אם הוא 1. ' +
-            'התוצאה: ה-URL של ה-`httpResource` זהה לחלוטין ל-URL שבשורת הכתובת.',
+            'התוצאה: שני ה-URLs נקיים, אבל לא זהים מילולית: ' +
+            'הדפדפן משתמש ב-`q`, ה-API משתמש ב-`search`, וה-store מוסיף `pageSize=50`.',
         },
         {
           kind: 'callout',
@@ -205,7 +217,7 @@ export const CH13_CONTENT: ChapterContent = {
             '`setStatus` היא הפקודה האופטימית. השלבים: ' +
             'ראשית — שמירת המצב הנוכחי: `const before = this.issues()`. ' +
             'שנית — עדכון מיידי של ה-`linkedSignal`: ' +
-            '`this.issues.update(list => list.map(i => i.id === issue.id ? ...i, status} : i))`. ' +
+            '`this.issues.update(list => list.map(i => i.id === issue.id ? { ...i, status } : i))`. ' +
             'ה-UI מציג את השינוי מיד, לפני שיצאה בקשה לשרת. ' +
             'שלישית — `PUT /api/issues/{id}` בלוק `try`. ' +
             'הצלחה: `this.pageResource.reload()` — מיישר את הרשימה מול השרת. ' +
@@ -613,7 +625,7 @@ export const CH13_CONTENT: ChapterContent = {
           kind: 'p',
           text:
             'מסנני הסטטוס שהיו ב-ch10 ישירות ב-`project-board.html` עברו פנימה ל-`tf-issue-board`. ' +
-            'ה-URL API זהה: `?status=Open` עדיין עובד — ' +
+            'חוזה ה-URL של הדפדפן נשמר: `?status=Open` עדיין עובד — ' +
             'רק מי שמצייר אותו ומגיב אליו שונה (עכשיו: ה-board).',
         },
       ],
@@ -1064,7 +1076,8 @@ export const CH13_CONTENT: ChapterContent = {
         'הריצו `node tools/materialize-snapshots.mjs` מתוך `taskforge-companion/`. ' +
         'פתחו שני טרמינלים: ' +
         'בראשון הריצו `dotnet run` בתוך `reference/.build/ch13/server/TaskForge.Api`. ' +
-        'בשני הריצו `pnpm exec ng serve --port 4500` בתוך `reference/.build/ch13/client`. ' +
+        'בשני הריצו `pnpm install --silent`, ואז `pnpm exec ng serve --port 4500`, ' +
+        'בתוך `reference/.build/ch13/client`. ' +
         'התחברו כ-`demo@taskforge.dev` / `Passw0rd!`. ' +
         'נווטו ל-"Website Redesign".',
       command: 'node tools/materialize-snapshots.mjs',

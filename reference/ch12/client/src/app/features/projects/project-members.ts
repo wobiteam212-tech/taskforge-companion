@@ -61,11 +61,18 @@ export class ProjectMembers {
   protected readonly addOpen = signal(false);
   protected readonly pending = signal(false);
 
-  protected async add(email: string, role: string): Promise<void> {
+  protected async addFromInput(emailInput: HTMLInputElement, role: string): Promise<void> {
+    const added = await this.add(emailInput.value, role);
+    if (added) {
+      emailInput.value = '';
+    }
+  }
+
+  protected async add(email: string, role: string): Promise<boolean> {
     const trimmed = email.trim();
     if (!trimmed) {
       this.toastSvc.show('Email is required', 'danger');
-      return;
+      return false;
     }
 
     this.pending.set(true);
@@ -79,8 +86,10 @@ export class ProjectMembers {
       this.toastSvc.show(`${trimmed} added to the project`, 'success');
       this.addOpen.set(false);
       this.members.reload();
+      return true;
     } catch {
       // הדיאלוג נשאר פתוח — אפשר לתקן את האימייל ולנסות שוב
+      return false;
     } finally {
       this.pending.set(false);
     }
