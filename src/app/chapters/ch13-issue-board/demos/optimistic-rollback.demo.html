@@ -1,0 +1,58 @@
+<div class="demo">
+  <div class="demo-controls ltr">
+    <label class="break-toggle">
+      <input id="demo-break-server" name="demo-break-server" type="checkbox" [checked]="breakServer()" (change)="breakServer.set($any($event.target).checked)" />
+      Break the server (force rollback)
+    </label>
+    <button type="button" class="clear-btn" (click)="clearLog()">Clear log</button>
+  </div>
+
+  <div class="demo-body ltr">
+    <div class="issue-list">
+      @for (issue of issues(); track issue.id) {
+        <div class="issue-row" [class.issue-row--pending]="pendingId() === issue.id">
+          <div class="issue-info">
+            <span class="issue-title">{{ issue.title }}</span>
+            <span class="issue-prio issue-prio--{{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
+          </div>
+          <span class="badge badge--{{ toneOf(issue.status) }}">{{ issue.status }}</span>
+          <label class="status-pick">
+            <span class="visually-hidden">Change status</span>
+            <select
+              [name]="'demo-issue-status-' + issue.id"
+              [value]="issue.status"
+              [disabled]="pendingId() !== null"
+              (change)="changeStatus(issue, $any($event.target).value)"
+            >
+              @for (s of statuses; track s) {
+                <option [value]="s">{{ s }}</option>
+              }
+            </select>
+          </label>
+          @if (pendingId() === issue.id) {
+            <span class="spinner" aria-label="saving..."></span>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="log-panel">
+      <div class="log-header">
+        <span>Event log</span>
+      </div>
+      <div class="log-entries">
+        @if (!log().length) {
+          <span class="log-empty">Select a status to see the timeline...</span>
+        }
+        @for (entry of log(); track $index) {
+          <div class="log-entry log-entry--{{ entry.kind }}">{{ entry.text }}</div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <p class="demo-hint">
+    בלי "Break the server": הרשימה מתהפכת מיד (optimistic), ואחרי ~900ms השרת מאשר.
+    עם "Break the server": הרשימה מתהפכת, ואחרי ~900ms חוזרת לסטטוס הקודם (rollback).
+  </p>
+</div>

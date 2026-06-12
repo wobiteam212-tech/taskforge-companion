@@ -1,0 +1,236 @@
+:host {
+  display: block;
+  /* בלי container-type ה-@container של demo-body לעולם לא תופס */
+  container-type: inline-size;
+}
+
+.demo {
+  display: grid;
+  gap: 12px;
+}
+
+.demo-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.break-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--txt2);
+  cursor: pointer;
+
+  input[type='checkbox'] {
+    accent-color: var(--danger);
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.clear-btn {
+  border: 1px solid var(--bdr2);
+  background: var(--sur2);
+  color: var(--txt3);
+  border-radius: 7px;
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 4px 10px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--bdr3);
+    color: var(--txt2);
+  }
+}
+
+.demo-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  > * {
+    min-width: 0; /* grid items may shrink below content width */
+  }
+
+  @container (max-width: 520px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- issue list ---- */
+
+.issue-list {
+  display: grid;
+  gap: 8px;
+}
+
+.issue-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  background: var(--sur);
+  transition: opacity 0.2s ease;
+
+  &.issue-row--pending {
+    opacity: 0.6;
+  }
+}
+
+.issue-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.issue-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--txt);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.issue-prio {
+  font-size: 11px;
+  font-weight: 700;
+
+  &.issue-prio--critical { color: var(--danger); }
+  &.issue-prio--high    { color: color-mix(in srgb, var(--danger) 65%, var(--txt2)); }
+  &.issue-prio--medium  { color: var(--ember); }
+  &.issue-prio--low     { color: var(--txt3); }
+}
+
+.badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &.badge--open     { border: 1px solid var(--blue); color: var(--blue); }
+  &.badge--progress { border: 1px solid var(--ember); color: var(--ember); }
+  &.badge--done     { border: 1px solid var(--grn); color: var(--grn); }
+}
+
+.status-pick {
+  flex-shrink: 0;
+
+  select {
+    background: var(--sur2);
+    color: var(--txt1);
+    border: 1px solid var(--bdr);
+    border-radius: var(--rad-sm);
+    padding: 3px 8px;
+    font-size: 12px;
+
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+}
+
+.spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--bdr2);
+  border-top-color: var(--ember);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- log panel ---- */
+
+.log-panel {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  background: var(--sur2);
+  overflow: hidden;
+  min-height: 160px;
+}
+
+.log-header {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--bdr);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--txt3);
+  background: var(--sur);
+}
+
+.log-entries {
+  flex: 1;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.log-empty {
+  color: var(--txt4);
+  font-size: 12px;
+  font-family: var(--mono);
+}
+
+.log-entry {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 3px 6px;
+  border-radius: 4px;
+
+  &.log-entry--optimistic {
+    color: var(--ember);
+    background: color-mix(in srgb, var(--ember) 8%, transparent);
+  }
+
+  &.log-entry--confirm {
+    color: var(--grn);
+    background: color-mix(in srgb, var(--grn) 8%, transparent);
+  }
+
+  &.log-entry--rollback {
+    color: color-mix(in srgb, var(--danger) 65%, var(--txt2));
+    background: color-mix(in srgb, var(--danger) 8%, transparent);
+  }
+
+  &.log-entry--error {
+    color: var(--danger);
+    font-weight: 600;
+  }
+}
+
+.demo-hint {
+  margin: 0;
+  color: var(--txt3);
+  font-size: 12.5px;
+}

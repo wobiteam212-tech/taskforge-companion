@@ -186,7 +186,9 @@ export const WAVES: WaveDef[] = [
         title: 'לוח ה-Issues',
         blurb: 'סינון/חיפוש/מיון/דפדוף מסונכרנים ל-URL, עדכונים אופטימיים עם rollback, ‎@defer ו-virtual scroll.',
         wave: 3,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch13-issue-board/content').then((m) => m.CH13_CONTENT),
       },
       {
         id: 'ch14',
