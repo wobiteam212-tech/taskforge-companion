@@ -1,0 +1,106 @@
+.projects {
+  display: grid;
+  gap: var(--sp-3);
+  // רשת שנושמת: כמה עמודות שנכנסות, אף אחת לא צרה מ-280px —
+  // וכשאין מקום גם ל-280, min(100%, ...) מונע overflow אופקי.
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+
+  h2 {
+    grid-column: 1 / -1;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+
+    .total {
+      color: var(--txt3);
+      font-size: var(--fs-small);
+      font-weight: 400;
+    }
+
+    .new-btn {
+      margin-inline-start: auto;
+    }
+  }
+}
+
+// #region step-12.10c
+// שלד בגודל כרטיס אמיתי: ה-grid לא קופץ כשהנתונים מגיעים.
+// האנימציה על opacity בלבד — זול ל-compositor, ושקט ויזואלית.
+.skeleton {
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  background: var(--sur);
+  padding: var(--sp-3);
+  display: grid;
+  gap: var(--sp-2);
+  animation: sk-pulse 1.2s ease-in-out infinite;
+
+  .sk-line {
+    height: 0.9em;
+    border-radius: 4px;
+    background: var(--sur2);
+  }
+
+  .sk-title {
+    width: 55%;
+    height: 1.2em;
+  }
+
+  .sk-short {
+    width: 35%;
+  }
+}
+
+@keyframes sk-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.load-error {
+  grid-column: 1 / -1;
+  // אין טוקן "אדום שקוף" — וזה בכוונה: color-mix גוזר אותו מ-danger,
+  // כמו שהקיט עושה ב-badge. טוקן חדש נולד רק כשיש לו שלושה צרכנים.
+  border: 1px solid color-mix(in srgb, var(--danger) 55%, var(--bdr));
+  border-radius: var(--rad);
+  background: color-mix(in srgb, var(--danger) 10%, var(--sur));
+  padding: var(--sp-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+
+  p {
+    margin: 0;
+  }
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  border: 1px dashed var(--bdr);
+  border-radius: var(--rad);
+  padding: var(--sp-5) var(--sp-3);
+  text-align: center;
+  display: grid;
+  gap: var(--sp-2);
+  justify-items: center;
+
+  .empty-title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .empty-hint {
+    margin: 0;
+    color: var(--txt3);
+  }
+}
+// #endregion
+
+.dlg-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+}

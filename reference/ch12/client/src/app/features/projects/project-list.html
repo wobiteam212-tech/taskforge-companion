@@ -1,0 +1,52 @@
+<section class="projects">
+  <h2>
+    Projects <span class="total">{{ store.totalOpenIssues() }} open issues</span>
+    <button tf-button class="new-btn" (click)="newProjectOpen.set(true)">New project</button>
+  </h2>
+
+  <!-- #region step-12.10b -->
+  <!-- מכונת מצבים, לא ערימת ifים: טוען-בלי-נתונים → שלד; שגיאה-בלי-נתונים →
+       כרטיס שגיאה עם Retry; אחרת — הנתונים (גם אם רענון ברקע נכשל, הישנים נשארים). -->
+  @if (store.loading() && !store.projects().length) {
+    @for (s of [1, 2, 3]; track s) {
+      <div class="skeleton" aria-hidden="true">
+        <div class="sk-line sk-title"></div>
+        <div class="sk-line"></div>
+        <div class="sk-line sk-short"></div>
+      </div>
+    }
+  } @else if (store.loadError() && !store.projects().length) {
+    <div class="load-error" role="alert">
+      <p>Couldn't load your projects — the server may be down.</p>
+      <button tf-button variant="ghost" (click)="store.reload()">Try again</button>
+    </div>
+  } @else {
+    @for (p of store.projects(); track p.id) {
+      <tf-project-card [project]="p" (open)="onOpen($event)" />
+    } @empty {
+      <div class="empty-state">
+        <p class="empty-title">No projects yet</p>
+        <p class="empty-hint">Create your first project — you'll become its owner.</p>
+        <button tf-button (click)="newProjectOpen.set(true)">Create a project</button>
+      </div>
+    }
+  }
+  <!-- #endregion -->
+</section>
+
+<tf-dialog heading="New project" [(open)]="newProjectOpen">
+  <tf-field label="Project name" hint="Visible to the whole team">
+    <input #nameInput id="project-name" name="project-name" type="text" placeholder="e.g. Mobile App v2" />
+  </tf-field>
+
+  <footer class="dlg-actions">
+    <button tf-button variant="ghost" (click)="newProjectOpen.set(false)">Cancel</button>
+    <button
+      tf-button
+      [disabled]="pending()"
+      (click)="create(nameInput.value); nameInput.value = ''"
+    >
+      {{ pending() ? 'Creating…' : 'Create' }}
+    </button>
+  </footer>
+</tf-dialog>

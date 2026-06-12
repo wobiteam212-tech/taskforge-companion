@@ -1,0 +1,84 @@
+// #region step-12.12d
+:host {
+  display: block;
+  margin-block-start: var(--sp-4);
+}
+
+.members {
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  background: var(--sur);
+  padding: var(--sp-3);
+}
+
+.members-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+
+  h3 {
+    margin: 0;
+    font-size: var(--fs-h2);
+  }
+}
+
+.hint {
+  margin: 0;
+  color: var(--txt3);
+  font-size: var(--fs-small);
+}
+
+.member-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-2);
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  .avatar {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--ember) 20%, var(--sur2));
+    color: var(--ember);
+    font-weight: 700;
+  }
+
+  .who {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    margin-inline-end: auto;
+
+    .name {
+      font-weight: 600;
+    }
+
+    .email {
+      color: var(--txt3);
+      font-size: var(--fs-small);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+// #endregion
+
+.dlg-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+}

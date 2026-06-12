@@ -1,0 +1,53 @@
+<!-- #region step-12.12c -->
+<section class="members">
+  <header class="members-head">
+    <h3>Members</h3>
+    @if (isOwner()) {
+      <button tf-button variant="ghost" (click)="addOpen.set(true)">Add member</button>
+    }
+  </header>
+
+  @if (!tokenStore.isLoggedIn()) {
+    <p class="hint">Sign in to see who's on this project.</p>
+  } @else if (forbidden()) {
+    <p class="hint">Members are visible to project members only.</p>
+  } @else if (members.isLoading() && !list().length) {
+    <p class="hint">Loading members…</p>
+  } @else {
+    <ul class="member-list">
+      @for (m of list(); track m.userId) {
+        <li>
+          <span class="avatar" aria-hidden="true">{{ m.displayName.charAt(0).toUpperCase() }}</span>
+          <span class="who">
+            <span class="name">{{ m.displayName }}</span>
+            <span class="email">{{ m.email }}</span>
+          </span>
+          <tf-badge [tone]="m.role === 'Owner' ? 'open' : 'count'">{{ m.role }}</tf-badge>
+        </li>
+      }
+    </ul>
+  }
+</section>
+<!-- #endregion -->
+
+<!-- #region step-12.13b -->
+<tf-dialog heading="Add member" [(open)]="addOpen">
+  <tf-field label="Email" hint="Must already have a TaskForge account">
+    <input #email id="member-email" name="member-email" type="email" placeholder="teammate@example.com" />
+  </tf-field>
+
+  <tf-field label="Role" hint="Owners can add members and manage the project">
+    <select #role id="member-role" name="member-role">
+      <option value="Member" selected>Member</option>
+      <option value="Owner">Owner</option>
+    </select>
+  </tf-field>
+
+  <footer class="dlg-actions">
+    <button tf-button variant="ghost" (click)="addOpen.set(false)">Cancel</button>
+    <button tf-button [disabled]="pending()" (click)="add(email.value, role.value); email.value = ''">
+      {{ pending() ? 'Adding…' : 'Add member' }}
+    </button>
+  </footer>
+</tf-dialog>
+<!-- #endregion -->
