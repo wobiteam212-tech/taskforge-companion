@@ -1,0 +1,37 @@
+<div class="sf-demo">
+  <form class="sf-form">
+    <label>
+      <span>Issue title</span>
+      <input [formField]="issueForm.title" />
+      @if ((snapshot().title.touched() || snapshot().title.dirty()) && snapshot().title.errors().length) {
+        <small>{{ firstError(snapshot().title.errors()) }}</small>
+      }
+    </label>
+
+    <label>
+      <span>Comment draft</span>
+      <textarea rows="3" [formField]="issueForm.body"></textarea>
+      @if (snapshot().body.errors().length) {
+        <small>{{ firstError(snapshot().body.errors()) }}</small>
+      }
+    </label>
+  </form>
+
+  <div class="sf-state">
+    <div>
+      <span>form valid</span>
+      <strong [class.ok]="snapshot().form.valid()" [class.bad]="snapshot().form.invalid()">
+        {{ snapshot().form.valid() ? 'true' : 'false' }}
+      </strong>
+    </div>
+    <div>
+      <span>title touched</span>
+      <strong>{{ snapshot().title.touched() ? 'true' : 'false' }}</strong>
+    </div>
+    <div>
+      <span>title dirty</span>
+      <strong>{{ snapshot().title.dirty() ? 'true' : 'false' }}</strong>
+    </div>
+    <pre>{{ modelJson() }}</pre>
+  </div>
+</div>

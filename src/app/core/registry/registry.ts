@@ -197,7 +197,9 @@ export const WAVES: WaveDef[] = [
         title: 'Issue ותגובות',
         blurb: 'Signal Forms לעומק — ולידציות, ולידציה אסינכרונית, רכיבי טופס מותאמים, ו-View Transitions.',
         wave: 3,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch14-issue-detail-comments/content').then((m) => m.CH14_CONTENT),
       },
     ],
   },

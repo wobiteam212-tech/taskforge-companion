@@ -1,0 +1,82 @@
+.sf-demo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(240px, 0.9fr);
+  gap: 16px;
+  color: var(--txt);
+}
+
+.sf-form {
+  display: grid;
+  gap: 12px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+
+  span {
+    color: var(--txt2);
+    font-size: 13px;
+  }
+}
+
+input,
+textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  background: var(--sur2);
+  color: var(--txt);
+  padding: 10px 12px;
+  font: inherit;
+}
+
+small {
+  color: var(--red);
+}
+
+.sf-state {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  background: var(--sur2);
+  padding: 12px;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  span {
+    color: var(--txt2);
+  }
+
+  strong {
+    font-family: var(--mono);
+  }
+
+  .ok {
+    color: var(--grn);
+  }
+
+  .bad {
+    color: var(--red);
+  }
+
+  pre {
+    margin: 4px 0 0;
+    overflow: auto;
+    color: var(--code-txt);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 720px) {
+  .sf-demo {
+    grid-template-columns: 1fr;
+  }
+}
