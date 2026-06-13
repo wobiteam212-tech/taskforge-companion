@@ -1,0 +1,166 @@
+.projects {
+  display: grid;
+  gap: clamp(var(--sp-2), 2cqi, var(--sp-4));
+  container: project-list / inline-size;
+  // #region step-15.2
+  // auto-fit יוצר מספר עמודות לפי המקום הפנוי; minmax(min(...)) מונע overflow
+  // גם כשה-container צר יותר מהרוחב האידיאלי של כרטיס.
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  // #endregion
+
+  h2 {
+    grid-column: 1 / -1;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+
+    .total {
+      color: var(--txt3);
+      font-size: var(--fs-small);
+      font-weight: 400;
+    }
+
+    .new-btn {
+      margin-inline-start: auto;
+    }
+  }
+}
+
+// #region step-15.3
+// subgrid מיישר את שורת הכותרת למסילות הכרטיסים בלי להעתיק את נוסחת ה-grid.
+// הדפדפן שלא תומך בזה נשאר על ה-flex fallback שמוגדר למעלה.
+@supports (grid-template-columns: subgrid) {
+  .projects h2 {
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: baseline;
+
+    .total {
+      justify-self: start;
+    }
+
+    .new-btn {
+      grid-column: -2 / -1;
+      justify-self: end;
+      margin-inline-start: 0;
+    }
+  }
+}
+// #endregion
+
+// #region step-15.4
+// ה-breakpoint שייך לרכיב, לא לחלון: אותה רשימה יכולה להופיע באזור צר או רחב.
+@container project-list (max-width: 34rem) {
+  .projects h2 {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+
+    .total,
+    .new-btn {
+      justify-self: stretch;
+    }
+
+    .new-btn {
+      inline-size: 100%;
+    }
+  }
+}
+// #endregion
+
+// #region step-12.10c
+// שלד בגודל כרטיס אמיתי: ה-grid לא קופץ כשהנתונים מגיעים.
+// האנימציה על opacity בלבד — זול ל-compositor, ושקט ויזואלית.
+.skeleton {
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  background: var(--sur);
+  padding: var(--sp-3);
+  display: grid;
+  gap: var(--sp-2);
+  aspect-ratio: 1.8 / 1;
+  animation: sk-pulse var(--dur-4) var(--ease-in-out) infinite;
+
+  .sk-line {
+    height: 0.9em;
+    border-radius: 4px;
+    background: var(--sur2);
+  }
+
+  .sk-title {
+    width: 55%;
+    height: 1.2em;
+  }
+
+  .sk-short {
+    width: 35%;
+  }
+}
+
+@keyframes sk-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.load-error {
+  grid-column: 1 / -1;
+  // אין טוקן "אדום שקוף" — וזה בכוונה: color-mix גוזר אותו מ-danger,
+  // כמו שהקיט עושה ב-badge. טוקן חדש נולד רק כשיש לו שלושה צרכנים.
+  border: 1px solid color-mix(in srgb, var(--danger) 55%, var(--bdr));
+  border-radius: var(--rad);
+  background: color-mix(in srgb, var(--danger) 10%, var(--sur));
+  padding: var(--sp-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+
+  p {
+    margin: 0;
+  }
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  border: 1px dashed var(--bdr);
+  border-radius: var(--rad);
+  padding: var(--sp-5) var(--sp-3);
+  text-align: center;
+  display: grid;
+  gap: var(--sp-2);
+  justify-items: center;
+
+  .empty-title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .empty-hint {
+    margin: 0;
+    color: var(--txt3);
+  }
+}
+// #endregion
+
+// #region step-15.8
+// :has() נותן ל-parent להגיב למצב פנימי בלי signal, class, או HostBinding.
+.load-error:has(button:focus-visible),
+.empty-state:has(button:focus-visible) {
+  border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));
+  box-shadow: var(--ring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+// #endregion
+
+.dlg-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+}
