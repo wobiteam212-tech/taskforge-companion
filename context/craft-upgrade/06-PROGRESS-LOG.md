@@ -1,0 +1,75 @@
+# 06 — Progress Log (LIVING — update after every chunk)
+
+> **Whoever works on this MUST append an entry below after each chunk.** Start your session by reading the latest entry.
+> Newest entries at the TOP. This is how work survives across agents / sessions / tools (Claude ↔ codex).
+
+## Entry template (copy this)
+
+```
+### YYYY-MM-DD — <unit, e.g. "Phase 0a ch08 retrofit"> — <STATUS: done | in-progress | blocked>
+- What I did:
+- Where (files + commit hash):
+- Gate outcomes: gen:manifest [ ] · test [N passed] · verify:coverage [N files] · build [ ] · snapshots/milestones [ ]
+- Runtime smoke / 375px sweep:
+- Decisions made / values locked (e.g. final token names):
+- Surprises / deviations from the spec:
+- WHAT'S NEXT (the very next action for the next person):
+```
+
+## Status board (keep current)
+
+| Unit | Spec | Status |
+|---|---|---|
+| Phase 0a — ch08 design-tokens v2 | `04-chapter-specs/ch08-retrofit.md` | IN PROGRESS — token foundation committed `743ce36`; component adoption + (optional) content upgrade pending |
+| Phase 0b — companion re-skin | `04-chapter-specs/companion-reskin.md` | NOT STARTED |
+| Renumber placeholders ch15–20 → ch21–26 | `03-PROPAGATION-AND-SYNC.md` Procedure C | NOT STARTED |
+| ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | NOT STARTED |
+| ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | NOT STARTED |
+| ch17 — Kanban DnD | `04-chapter-specs/ch17-kanban-dnd.md` | NOT STARTED |
+| ch18 — Dashboard | `04-chapter-specs/ch18-dashboard.md` | NOT STARTED |
+| ch19 — Rich detail | `04-chapter-specs/ch19-rich-detail.md` | NOT STARTED |
+| ch20 — State capstone | `04-chapter-specs/ch20-state-capstone.md` | NOT STARTED |
+| Wave 5 — Testing (ch21) | (planned in `01-MASTER-PLAN.md`) | NOT STARTED |
+| Wave 5 — Perf & a11y (ch22) | (planned) | NOT STARTED |
+| Wave 6 — Production (ch23–26) | (planned) | NOT STARTED |
+
+---
+
+## Log entries (newest first)
+
+### 2026-06-13 — Phase 0a: design-system v2 token foundation — in-progress
+- What I did: Implemented the v2 token VOCABULARY additively (no existing value changed) so all later craft chapters
+  have it with zero visual-regression risk. Audited token usage first (`var(--…)` across `reference/**` scss + companion);
+  confirmed `_tokens.scss`/`_base.scss` are owned only by ch08 (edits reach `.build/ch14`); confirmed ch08 PROSE
+  hardcodes `#ff8a3d/#2dd4bf/#0f1217/#e06616` + the clamp() values → kept those verbatim to avoid silently breaking the
+  teaching. Added accent system, elevation, motion, density, radius, neutral additions, full type/weight scale (regions
+  step-8.3b / step-8.5b); `_base.scss` now uses an accent focus-ring + token theme transition + reduced-motion block.
+- Where: `reference/ch08/client/src/styles/_tokens.scss`, `_base.scss`, regenerated `guide-manifest.generated.ts`.
+  Commit `743ce36` on branch `codex/taskforge-ch14-continuation`.
+- Gate outcomes: gen:manifest clean (14 snapshots, 976 entries) · test 90 passed · verify:coverage 133 files · guide
+  build clean (only pre-existing Mermaid CJS warning) · cumulative ch14 client `ng build` compiles.
+- Runtime/375px sweep: deferred — commit is additive (no value change), real visual verification belongs to the
+  component-adoption commit (next).
+- Decisions locked: kept cited brand hexes + clamps verbatim; single accent = ember (teal demoted to status); a fuller
+  OKLCH re-value + ch08 prose rewrite is a DELIBERATE future content upgrade, not done here (would falsify prose).
+- Gotcha hit: materialize EPERM — leftover `TaskForge.Api.exe` + ng/esbuild from `.build/ch14` locked it; killed PIDs,
+  re-materialized. Also: piping materialize through `tail` masked its crash exit code — run it un-piped when checking.
+- WHAT'S NEXT: **Phase 0a component adoption** — adopt elevation/motion/density in the ch09-owned primitives
+  (`reference/ch09/client/src/app/shared/ui/{dialog,toast,button,field}/*.scss`, badge) and `project-card.scss`
+  (ch09 owner) for the visible jump; then two-server smoke + 375px/dark-light sweep; commit. After that: companion
+  re-skin (`companion-reskin.md`).
+
+### 2026-06-13 — Handoff bundle created — done
+- What I did: Ran the grill-me planning session with Oleg; locked the 9 decisions; wrote this `context/craft-upgrade/`
+  bundle (00–07 + 8 chapter specs). NO app/snapshot/registry/code changes were made — docs only.
+- Where (files + commit hash): `taskforge-companion/context/craft-upgrade/**` (uncommitted at time of writing — commit
+  when ready). Local plan mirror: `~/.claude/plans/structured-hugging-globe.md`.
+- Gate outcomes: n/a (no code touched).
+- Decisions locked: see `01-MASTER-PLAN.md` "9 locked decisions". Design language = neutral + single accent (best
+  practice), additive token retrofit; all four craft surfaces in scope; hand-roll architecture then @ngrx/signals
+  capstone; companion polish-only; backend grows to match; craft wave (ch15–20) before the shifted testing/production waves.
+- Surprises: none.
+- WHAT'S NEXT: **Phase 0a** — implement Design-Language v2 per `02-DESIGN-LANGUAGE-V2.md` into
+  `reference/ch08/client/src/styles/_tokens.scss` (additive; rename nothing), run Procedure A in
+  `03-PROPAGATION-AND-SYNC.md`, get all 6 gates + visual sweep green, commit, then log the FINAL token names/values here
+  so every later spec uses the real names. (Also do the placeholder renumber ch15–20 → ch21–26 around this time.)
