@@ -21,7 +21,7 @@
 | Unit | Spec | Status |
 |---|---|---|
 | Phase 0a — ch08 design-tokens v2 | `04-chapter-specs/ch08-retrofit.md` | DONE — token foundation `743ce36`; component adoption completion `3919f87` |
-| Phase 0b — companion re-skin | `04-chapter-specs/companion-reskin.md` | NOT STARTED |
+| Phase 0b — companion re-skin | `04-chapter-specs/companion-reskin.md` | DONE — implementation commit pending in this entry |
 | Renumber placeholders ch15–20 → ch21–26 | `03-PROPAGATION-AND-SYNC.md` Procedure C | NOT STARTED |
 | ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | NOT STARTED |
 | ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | NOT STARTED |
@@ -36,6 +36,32 @@
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-13 — Phase 0b: companion guide re-skin — done
+- What I did: Re-skinned the guide shell onto the same v2 vocabulary as the taught app: neutral surface ramp, one
+  ember accent, semantic status colors, density/radius/motion/elevation tokens, tokenized focus rings, and quieter
+  shell/card/source-browser transitions. Removed the reported home hero gradient and the remaining guide-level
+  gradients from the shell/chapter/source/demo surfaces without adding new guide features.
+- Where: `src/styles.scss`, `src/app/app.scss`, `src/app/core/ui/home/home.scss`,
+  `src/app/core/ui/chapter-page/chapter-page.scss`, `src/app/core/ui/panels/code-panel.scss`,
+  `src/app/core/ui/panels/live-demo-panel.ts`, `src/app/core/ui/source-browser/source-browser.scss`.
+  Implementation commit will be recorded by the next progress-log correction once this entry is committed.
+- Gate outcomes: gradient scan clean for guide source · `git diff --check` clean except expected CRLF warnings ·
+  test 90 passed · verify:coverage 133 files · guide build clean with only the pre-existing Mermaid CommonJS warning.
+- Runtime smoke / 375px sweep: Guide `http://127.0.0.1:4400` verified in the in-app browser. Desktop home and
+  `shared-ui-kit` source browser had `scrollWidth === clientWidth`, source browser rendered rows/status chips with
+  tokenized transitions/radius/shadow, and computed gradient count was 0. Mobile `375px` home + chapter + source
+  browser also had no horizontal overflow. Light mode computed `data-theme="light"`, warm paper `--bg`, ember hero
+  text with no gradient, and no console warnings/errors.
+- Decisions made / values locked: The companion keeps existing alias names (`--txt`, `--sur3/4`, `--eglow`, etc.)
+  while adding the v2 primitives. Code blocks stay dark in both themes. No feature work or roadmap content changed
+  in this unit.
+- Surprises / deviations from the spec: The in-app browser exposes both desktop and mobile theme buttons in the DOM;
+  the visible desktop toggle was coordinate-clicked after rectangle verification because locator targeting the hidden
+  duplicate was flaky.
+- WHAT'S NEXT: Run the roadmap sync: insert Wave 4 Craft & Polish as ch15-ch20, shift old Quality/Production
+  placeholders to ch21-ch26, update registry/plan/progress together, regenerate manifest, run gates, and browser-check
+  the home roadmap.
 
 ### 2026-06-13 — Phase 0a: component adoption + content sync — done
 - What I did: Completed the visible ch09 primitive adoption of the ch08 v2 token vocabulary. Buttons, fields, dialogs,

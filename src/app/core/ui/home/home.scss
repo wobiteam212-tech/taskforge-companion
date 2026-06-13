@@ -16,17 +16,7 @@
   overflow: hidden;
 
   .hero-glow {
-    position: absolute;
-    inset-inline-end: -190px;
-    top: -210px;
-    width: 380px;
-    height: 380px;
-    border-radius: 50%;
-    background:
-      radial-gradient(circle at center, color-mix(in srgb, var(--ember) 26%, transparent), transparent 66%);
-    filter: blur(34px);
-    opacity: 0.5;
-    pointer-events: none;
+    display: none;
   }
 }
 
@@ -37,10 +27,8 @@
   margin-bottom: 16px;
 
   .forge {
-    background: linear-gradient(105deg, var(--ember), var(--ember2) 58%, #ffe0b2);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--ember);
+    text-shadow: 0 1px 0 color-mix(in srgb, var(--ember) 18%, transparent);
   }
 }
 
@@ -66,6 +54,12 @@
   background: var(--edim);
   border-radius: var(--rad);
   padding: 12px 20px;
+  box-shadow: var(--shadow-1);
+  transition:
+    border-color var(--dur-2) var(--ease-out),
+    background-color var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out),
+    transform var(--dur-2) var(--ease-out);
 
   .c-label {
     font-size: 12px;
@@ -80,7 +74,8 @@
   }
 
   &:hover {
-    box-shadow: 0 0 18px var(--eglow);
+    box-shadow: var(--shadow-2);
+    transform: translateY(-2px);
   }
 }
 
@@ -136,7 +131,11 @@
   background: var(--sur);
   padding: 18px 20px;
   color: var(--txt);
-  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: var(--shadow-1);
+  transition:
+    transform var(--dur-2) var(--ease-out),
+    border-color var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out);
 
   &:not(.card--soon):hover {
     transform: translateY(-3px);
@@ -215,7 +214,7 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--txt4);
-  transition: color 0.18s ease;
+  transition: color var(--dur-2) var(--ease-out);
 }
 
 /* ---------- extras ---------- */
@@ -235,6 +234,11 @@
   background: var(--sur);
   padding: 16px 20px;
   color: var(--txt);
+  box-shadow: var(--shadow-1);
+  transition:
+    border-color var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out),
+    transform var(--dur-2) var(--ease-out);
 
   .x-icon {
     font-size: 24px;
@@ -252,6 +256,8 @@
   }
 
   &:hover {
-    border-color: var(--teal);
+    border-color: var(--ember);
+    box-shadow: var(--shadow-2);
+    transform: translateY(-2px);
   }
 }

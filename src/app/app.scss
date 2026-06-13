@@ -22,7 +22,7 @@
   font-weight: 700;
   padding: 8px 16px;
   border-radius: var(--rad-sm);
-  transition: top 0.2s ease;
+  transition: top var(--dur-2) var(--ease-out);
 
   &:focus-visible {
     top: 10px;
@@ -39,8 +39,8 @@
   gap: 12px;
   height: var(--topbar-h);
   padding: 0 14px;
-  background: color-mix(in srgb, var(--bg) 82%, transparent);
-  backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--bdr);
 
   @media (max-width: 900px) {
@@ -54,6 +54,13 @@
     border-radius: var(--rad-sm);
     font-size: 16px;
     padding: 4px 12px;
+    transition: all var(--dur-1) var(--ease-out);
+
+    &:hover {
+      border-color: var(--ember);
+      color: var(--ember);
+      background: var(--accent-subtle);
+    }
   }
 
   .brand-min {
@@ -76,10 +83,12 @@
   font-size: 14px;
   padding: 4px 11px;
   line-height: 1.4;
+  transition: all var(--dur-1) var(--ease-out);
 
   &:hover {
     border-color: var(--ember);
     color: var(--ember);
+    background: var(--accent-subtle);
   }
 }
 
@@ -113,9 +122,9 @@
     width: min(86vw, 330px);
     z-index: 50;
     transform: translateX(100%);
-    transition: transform 0.25s ease;
+    transition: transform var(--dur-3) var(--ease-out);
     border-inline-end: 1px solid var(--bdr2);
-    box-shadow: var(--shadow-2);
+    box-shadow: var(--shadow-3);
 
     &.open {
       transform: none;
@@ -160,10 +169,10 @@
     width: 36px;
     height: 36px;
     border-radius: 10px;
-    background: linear-gradient(135deg, var(--ember), #c2530f);
-    color: #fff;
+    background: var(--ember);
+    color: var(--accent-contrast);
     font-size: 18px;
-    box-shadow: 0 0 14px var(--eglow);
+    box-shadow: var(--shadow-1);
   }
 
   .brand-text {
@@ -197,6 +206,7 @@
     font-family: var(--heb);
     font-size: 13.5px;
     padding: 8px 13px;
+    transition: border-color var(--dur-1) var(--ease-out), box-shadow var(--dur-1) var(--ease-out);
 
     &::placeholder {
       color: var(--txt4);
@@ -205,6 +215,7 @@
     &:focus {
       outline: none;
       border-color: var(--ember);
+      box-shadow: var(--ring);
     }
   }
 
@@ -274,6 +285,7 @@
   background: var(--edim);
   border-radius: var(--rad-sm);
   padding: 9px 13px;
+  box-shadow: var(--shadow-1);
 
   .resume-label {
     font-size: 11.5px;
@@ -330,6 +342,7 @@
   color: var(--txt2);
   font-size: 13.5px;
   border-inline-start: 2px solid transparent;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 
   .no {
     font-size: 10.5px;

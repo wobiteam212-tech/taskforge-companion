@@ -1,6 +1,6 @@
 /* ============================================================
-   TaskForge Companion — the "forge" design system
-   Dark graphite + ember/amber primary + teal secondary.
+   TaskForge Companion — design language v2
+   Neutral surfaces + one ember accent. Status colors are semantic.
    RTL-first: layout uses logical properties only; code is LTR.
    ============================================================ */
 
@@ -8,43 +8,68 @@
 :root {
   color-scheme: dark;
 
-  /* surfaces — graphite, blue-leaning black */
-  --bg: #0b0c10;
-  --sur: #14161d;
-  --sur2: #1a1d26;
-  --sur3: #222632;
-  --sur4: #2a2f3d;
+  /* primitive neutral ramp */
+  --gray-1: #0f1217;
+  --gray-2: #161a21;
+  --gray-3: #1c212b;
+  --gray-4: #232834;
+  --gray-5: #2a2f3a;
+  --gray-6: #353b48;
+  --gray-7: #434a5a;
+  --gray-8: #5c6373;
+  --gray-9: #8a93a5;
+  --gray-10: #aeb6c8;
+  --gray-11: #d2d7e3;
+  --gray-12: #e8ebf2;
+
+  /* surfaces */
+  --bg: var(--gray-1);
+  --sur: var(--gray-2);
+  --sur2: var(--gray-3);
+  --sur3: var(--gray-4);
+  --sur4: var(--gray-5);
 
   /* borders */
-  --bdr: #262a36;
-  --bdr2: #323848;
-  --bdr3: #424a5e;
+  --bdr: var(--gray-5);
+  --bdr2: var(--gray-6);
+  --bdr3: var(--gray-7);
 
-  /* brand: ember (primary) + teal (secondary) */
+  /* one brand accent: ember */
   --ember: #ff8a3d;
-  --ember2: #ffb25e;
-  --edim: rgba(255, 138, 61, 0.13);
-  --eglow: rgba(255, 138, 61, 0.35);
-  --teal: #2dd4bf;
-  --tdim: rgba(45, 212, 191, 0.12);
+  --ember2: #ff7a1f;
+  --accent: var(--ember);
+  --accent-strong: var(--ember2);
+  --accent-subtle: color-mix(in srgb, var(--ember) 15%, transparent);
+  --accent-contrast: #1a0e04;
+  --edim: var(--accent-subtle);
+  --eglow: color-mix(in srgb, var(--ember) 28%, transparent);
 
-  /* accent palette (badges, levels, callouts) */
+  /* semantic/status colors */
+  --teal: #2dd4bf;
+  --info: var(--teal);
+  --tdim: color-mix(in srgb, var(--teal) 14%, transparent);
+
+  /* palette for badges, levels, callouts */
   --blue: #7c9aff;
-  --bdim: rgba(124, 154, 255, 0.13);
+  --bdim: color-mix(in srgb, var(--blue) 14%, transparent);
   --grn: #4ade80;
-  --gdim: rgba(74, 222, 128, 0.12);
+  --success: var(--grn);
+  --gdim: color-mix(in srgb, var(--grn) 13%, transparent);
   --ylw: #fbbf24;
-  --ydim: rgba(251, 191, 36, 0.13);
+  --warning: var(--ylw);
+  --ydim: color-mix(in srgb, var(--ylw) 14%, transparent);
   --red: #f87171;
-  --rdim: rgba(248, 113, 113, 0.13);
+  --danger: var(--red);
+  --rdim: color-mix(in srgb, var(--red) 14%, transparent);
   --pur: #c084fc;
-  --pdim: rgba(192, 132, 252, 0.13);
+  --pdim: color-mix(in srgb, var(--pur) 14%, transparent);
 
   /* text */
-  --txt: #edf0f7;
-  --txt2: #b8bfce;
-  --txt3: #8b93a7;
-  --txt4: #5d6477;
+  --txt: var(--gray-12);
+  --txt1: var(--gray-12);
+  --txt2: var(--gray-10);
+  --txt3: var(--gray-9);
+  --txt4: var(--gray-8);
 
   /* code blocks are ALWAYS dark, in both themes */
   --code-bg: #101218;
@@ -57,55 +82,87 @@
   --mono: 'JetBrains Mono', Consolas, monospace;
 
   /* metrics */
-  --rad-sm: 7px;
-  --rad: 11px;
-  --rad-lg: 18px;
+  --rad-sm: 8px;
+  --rad: 12px;
+  --rad-lg: 16px;
+  --rad-full: 999px;
   --sidebar-w: 304px;
   --topbar-h: 56px;
   --measure: 70ch;
-  --shadow-1: 0 2px 10px rgba(0, 0, 0, 0.35);
-  --shadow-2: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --control-h: 36px;
+  --control-h-sm: 28px;
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 1px rgb(0 0 0 / 0.18);
+  --shadow-2: 0 4px 14px rgb(0 0 0 / 0.36), 0 2px 5px rgb(0 0 0 / 0.2);
+  --shadow-3: 0 14px 40px rgb(0 0 0 / 0.46), 0 5px 12px rgb(0 0 0 / 0.26);
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-1: 120ms;
+  --dur-2: 160ms;
+  --dur-3: 240ms;
+  --dur-4: 360ms;
+  --fw-regular: 400;
+  --fw-medium: 550;
+  --fw-semibold: 650;
+  --fw-bold: 750;
 }
 
 /* ---------- design tokens: light (warm paper) ---------- */
 :root[data-theme='light'] {
   color-scheme: light;
 
-  --bg: #f5f3ef;
-  --sur: #ffffff;
-  --sur2: #faf8f4;
-  --sur3: #f1eee7;
-  --sur4: #e8e4da;
+  --gray-1: #f5f1ea;
+  --gray-2: #fffdf9;
+  --gray-3: #f1ece2;
+  --gray-4: #e8e2d6;
+  --gray-5: #ddd5c7;
+  --gray-6: #cbc2b0;
+  --gray-7: #b3a892;
+  --gray-8: #9aa0ad;
+  --gray-9: #6f7787;
+  --gray-10: #4a5263;
+  --gray-11: #343a46;
+  --gray-12: #252a33;
 
-  --bdr: #e3dfd5;
-  --bdr2: #d3cec1;
-  --bdr3: #b9b3a3;
+  --bg: var(--gray-1);
+  --sur: var(--gray-2);
+  --sur2: var(--gray-3);
+  --sur3: var(--gray-4);
+  --sur4: var(--gray-5);
 
-  --ember: #d96d1f;
-  --ember2: #b35309;
-  --edim: rgba(217, 109, 31, 0.12);
-  --eglow: rgba(217, 109, 31, 0.25);
+  --bdr: var(--gray-5);
+  --bdr2: var(--gray-6);
+  --bdr3: var(--gray-7);
+
+  --ember: #e06616;
+  --ember2: #c95a10;
+  --accent-contrast: #fffdf9;
+  --edim: color-mix(in srgb, var(--ember) 13%, transparent);
+  --eglow: color-mix(in srgb, var(--ember) 20%, transparent);
   --teal: #0f9d8f;
-  --tdim: rgba(15, 157, 143, 0.12);
+  --tdim: color-mix(in srgb, var(--teal) 12%, transparent);
 
   --blue: #4163d8;
-  --bdim: rgba(65, 99, 216, 0.1);
+  --bdim: color-mix(in srgb, var(--blue) 10%, transparent);
   --grn: #1f9d63;
-  --gdim: rgba(31, 157, 99, 0.11);
+  --gdim: color-mix(in srgb, var(--grn) 11%, transparent);
   --ylw: #b07d10;
-  --ydim: rgba(176, 125, 16, 0.12);
+  --ydim: color-mix(in srgb, var(--ylw) 12%, transparent);
   --red: #d64545;
-  --rdim: rgba(214, 69, 69, 0.1);
+  --rdim: color-mix(in srgb, var(--red) 10%, transparent);
   --pur: #8b50d6;
-  --pdim: rgba(139, 80, 214, 0.1);
+  --pdim: color-mix(in srgb, var(--pur) 10%, transparent);
 
-  --txt: #23262e;
-  --txt2: #494e5c;
-  --txt3: #6e7484;
-  --txt4: #9aa0af;
+  --txt: var(--gray-12);
+  --txt1: var(--gray-12);
+  --txt2: var(--gray-10);
+  --txt3: var(--gray-9);
+  --txt4: var(--gray-8);
 
-  --shadow-1: 0 2px 10px rgba(35, 30, 20, 0.08);
-  --shadow-2: 0 12px 36px rgba(35, 30, 20, 0.14);
+  --shadow-1: 0 1px 2px rgb(35 30 20 / 0.08), 0 1px 1px rgb(35 30 20 / 0.05);
+  --shadow-2: 0 4px 14px rgb(35 30 20 / 0.12), 0 2px 5px rgb(35 30 20 / 0.08);
+  --shadow-3: 0 14px 40px rgb(35 30 20 / 0.16), 0 5px 12px rgb(35 30 20 / 0.1);
 }
 
 /* ---------- reset & base ---------- */
@@ -128,6 +185,9 @@ body {
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  transition:
+    background-color var(--dur-3) var(--ease-out),
+    color var(--dur-3) var(--ease-out);
 }
 
 h1,
@@ -158,13 +218,13 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid var(--ember);
-  outline-offset: 2px;
-  border-radius: 4px;
+  outline: 0;
+  box-shadow: var(--ring);
+  border-radius: var(--rad-sm);
 }
 
 ::selection {
-  background: var(--eglow);
+  background: var(--accent-subtle);
 }
 
 /* scrollbar (webkit) */
@@ -213,10 +273,12 @@ code.ic {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  min-block-size: var(--control-h-sm);
   font-size: 12px;
-  font-weight: 600;
-  border-radius: 999px;
-  padding: 2px 11px;
+  font-weight: var(--fw-semibold);
+  border-radius: var(--rad-full);
+  padding-block: 0;
+  padding-inline: 11px;
   border: 1px solid var(--bdr2);
   background: var(--sur2);
   color: var(--txt2);
@@ -254,15 +316,22 @@ code.ic {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-block-size: var(--control-h);
   border-radius: var(--rad-sm);
   border: 1px solid var(--bdr2);
   background: var(--sur2);
   color: var(--txt);
   font-family: var(--heb);
   font-size: 14px;
-  font-weight: 600;
-  padding: 8px 16px;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  font-weight: var(--fw-semibold);
+  padding-block: 0;
+  padding-inline: 16px;
+  transition:
+    background-color var(--dur-1) var(--ease-out),
+    border-color var(--dur-1) var(--ease-out),
+    color var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-1) var(--ease-out),
+    transform var(--dur-1) var(--ease-out);
 }
 
 .btn:hover {
@@ -270,10 +339,15 @@ code.ic {
   border-color: var(--bdr3);
 }
 
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
 .btn--primary {
   background: var(--ember);
   border-color: var(--ember);
-  color: #1a0e04;
+  color: var(--accent-contrast);
+  box-shadow: var(--shadow-1);
 }
 
 .btn--primary:hover {

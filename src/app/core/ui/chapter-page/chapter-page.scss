@@ -19,9 +19,9 @@
 
   .ch-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--ember), var(--teal));
+    background: var(--ember);
     border-radius: 2px;
-    transition: width 0.3s ease;
+    transition: width var(--dur-3) var(--ease-out);
   }
 
   @media (max-width: 900px) {
@@ -50,10 +50,7 @@
     font-size: clamp(28px, 4vw, 42px);
     font-weight: 800;
     margin: 14px 0 8px;
-    background: linear-gradient(120deg, var(--txt), var(--ember2));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--txt);
   }
 
   .ch-blurb {
@@ -99,7 +96,7 @@
   flex-direction: column;
   justify-content: center;
   opacity: 0.38;
-  transition: opacity 0.35s ease;
+  transition: opacity var(--dur-4) var(--ease-out);
   padding-block: 30px;
 
   &.is-active {
@@ -163,7 +160,10 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(14px);
-  transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s;
+  transition:
+    opacity var(--dur-4) var(--ease-out),
+    transform var(--dur-4) var(--ease-out),
+    visibility var(--dur-4);
 
   &.is-active {
     position: relative;
@@ -207,7 +207,9 @@ panel-host {
     height: 9px;
     border-radius: 50%;
     background: var(--bdr3);
-    transition: background 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      background-color var(--dur-2) var(--ease-out),
+      box-shadow var(--dur-2) var(--ease-out);
   }
 
   .rail-label {
@@ -218,7 +220,7 @@ panel-host {
     text-overflow: ellipsis;
     white-space: nowrap;
     text-align: start;
-    transition: color 0.2s ease;
+    transition: color var(--dur-2) var(--ease-out);
   }
 
   &:hover .rail-label {
@@ -247,6 +249,9 @@ panel-host {
   background: var(--sur);
   padding: 26px 30px;
   box-shadow: var(--shadow-1);
+  transition:
+    border-color var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out);
 
   .endcap-title {
     font-size: 21px;
@@ -382,7 +387,11 @@ panel-host {
   border-radius: var(--rad);
   background: var(--sur);
   padding: 14px 18px;
-  transition: border-color 0.15s ease, transform 0.15s ease;
+  box-shadow: var(--shadow-1);
+  transition:
+    border-color var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out),
+    transform var(--dur-2) var(--ease-out);
 
   .dir {
     font-size: 12px;
@@ -396,6 +405,7 @@ panel-host {
 
   &:hover:not(.nav-card--soon) {
     border-color: var(--ember);
+    box-shadow: var(--shadow-2);
     transform: translateY(-2px);
   }
 

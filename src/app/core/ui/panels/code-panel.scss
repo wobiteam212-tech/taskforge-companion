@@ -30,6 +30,7 @@
   box-shadow: var(--shadow-1);
   min-width: 0;
   max-width: 100%;
+  transition: box-shadow var(--dur-2) var(--ease-out);
 }
 
 .code-head {
@@ -93,15 +94,19 @@
     border: 1px solid #323848;
     background: transparent;
     color: #b8bfce;
-    border-radius: 6px;
+    border-radius: var(--rad-sm);
     font-family: var(--heb);
     font-size: 12px;
     padding: 3px 11px;
-    transition: border-color 0.15s ease, color 0.15s ease;
+    transition:
+      border-color var(--dur-1) var(--ease-out),
+      color var(--dur-1) var(--ease-out),
+      background-color var(--dur-1) var(--ease-out);
 
     &:hover {
       border-color: var(--ember);
       color: var(--ember);
+      background: var(--edim);
     }
   }
 }

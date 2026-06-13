@@ -34,8 +34,11 @@ import { NgComponentOutlet } from '@angular/common';
     .demo {
       border: 1px solid var(--bdr);
       border-radius: var(--rad);
-      background: linear-gradient(145deg, var(--tdim), transparent 38%), var(--sur);
+      background: var(--sur);
       box-shadow: var(--shadow-1);
+      transition:
+        border-color var(--dur-2) var(--ease-out),
+        box-shadow var(--dur-2) var(--ease-out);
     }
 
     .demo-bar {
@@ -50,8 +53,8 @@ import { NgComponentOutlet } from '@angular/common';
         height: 9px;
         border-radius: 50%;
         background: var(--grn);
-        box-shadow: 0 0 8px var(--grn);
-        animation: pulse 2s ease infinite;
+        box-shadow: 0 0 8px color-mix(in srgb, var(--grn) 65%, transparent);
+        animation: pulse var(--dur-4) var(--ease-in-out) infinite;
       }
 
       .demo-label {
@@ -70,7 +73,7 @@ import { NgComponentOutlet } from '@angular/common';
       font-size: 13px;
       text-align: center;
       padding: 26px 0;
-      animation: pulse 1.4s ease infinite;
+      animation: pulse var(--dur-4) var(--ease-in-out) infinite;
     }
 
     .cap {
