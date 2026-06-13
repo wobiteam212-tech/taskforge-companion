@@ -1,10 +1,12 @@
 :host {
   display: inline-flex;
   align-items: center;
-  border-radius: 999px;
-  padding-block: 2px;
+  min-block-size: var(--control-h-sm);
+  border-radius: var(--rad-full);
+  padding-block: 0;
   padding-inline: var(--sp-2);
   font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
   white-space: nowrap;
 }
 

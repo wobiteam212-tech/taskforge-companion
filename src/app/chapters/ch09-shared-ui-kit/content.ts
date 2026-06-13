@@ -141,7 +141,7 @@ export const CH09_CONTENT: ChapterContent = {
           kind: 'ul',
           items: [
             'מקלדת: ‏`Tab`, מקש הרווח ו-Enter עובדים בלי שורת קוד נוספת.',
-            'פוקוס: ‏`:focus-visible` outline חינמי מהדפדפן.',
+            'פוקוס: הדפדפן נותן focusability; ה-CSS שלנו נותן `:focus-visible` ברור בצבע ember.',
             'טפסים: ‏`type="submit"` פועל; ‏`[disabled]` עוצר הגשה.',
             'קורא מסך: הדפדפן כבר יודע ש-`<button>` הוא interactive — אין צורך ב-`role="button"`.',
           ],
@@ -192,7 +192,9 @@ export const CH09_CONTENT: ChapterContent = {
             'Primary: ‏`background: var(--ember)` + `color-mix` ב-hover.',
             'Ghost: ‏`background: transparent`; hover מציב `border-color: var(--ember)` + `color: var(--ember)`.',
             'Danger: ‏`color: var(--danger)`; border נגזר עם `color-mix(in srgb, var(--danger) 55%, var(--bdr))`.',
-            '‏`:focus-visible` עם `outline: 2px solid var(--teal)` — נגישות מקלדת גלויה.',
+            'תנועה אחידה: ה-transition משתמש ב-`--dur-1` ו-`--ease-out`, וה-`active` מוריד את הכפתור פיקסל אחד לתחושת לחיצה.',
+            'Primary מקבל `box-shadow: var(--shadow-1)` — elevation קל שמגיע ממערכת העיצוב, לא מצל אקראי.',
+            '‏`:focus-visible` עם `outline: 2px solid var(--ember)` — נגישות מקלדת גלויה, בצבע הדגש היחיד.',
             '‏`:disabled` עם `opacity: 0.5` — מצב מנוטרל.',
           ],
         },
@@ -230,7 +232,7 @@ export const CH09_CONTENT: ChapterContent = {
             'הטוקנים מגיעים מפרק 08 — ‏`var(--teal)` לסטטוס open, ‏`var(--ember)` לסטטוס progress, ' +
             '‏`var(--txt3)` לסטטוס done. ' +
             'הצבע לא קשיח: הוא חי ב-`badge.scss` בצורת `color-mix(in srgb, var(--teal) 16%, transparent)` — ' +
-            'כך dark mode עובד בחינם.',
+            'כך dark mode עובד בחינם. גם הצורה והצפיפות מגיעות מטוקנים: `--rad-full`, ‏`--control-h-sm`, ו-`--fw-semibold`.',
         },
         {
           kind: 'code',
@@ -239,10 +241,12 @@ export const CH09_CONTENT: ChapterContent = {
           code: `:host {
   display: inline-flex;
   align-items: center;
-  border-radius: 999px;
-  padding-block: 2px;
+  min-block-size: var(--control-h-sm);
+  border-radius: var(--rad-full);
+  padding-block: 0;
   padding-inline: var(--sp-2);
   font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
   white-space: nowrap;
 }
 
@@ -307,7 +311,8 @@ export const CH09_CONTENT: ChapterContent = {
           text:
             'הסגנון ב-`client/src/app/shared/ui/field/field.scss` משתמש ב-`::ng-deep` ' +
             'לסגנן `input`, `select` ו-`textarea` שמוקרנים פנימה — ' +
-            'כי הם נמצאים ב-light DOM של ההורה, לא בתוך ה-encapsulation של ה-field.',
+            'כי הם נמצאים ב-light DOM של ההורה, לא בתוך ה-encapsulation של ה-field. ' +
+            'שם גם מוגדרים transition קצר, border ב-ember בזמן focus, ו-`:focus-visible` עקבי.',
         },
         {
           kind: 'p',
@@ -458,8 +463,8 @@ export const CH09_CONTENT: ChapterContent = {
           kind: 'p',
           text:
             '‏`dialog.scss` מסגנן את ה-dialog עצמו עם `border-radius: var(--rad)`, ' +
-            '`background: var(--sur)`, ו-`box-shadow` כבד שמפריד אותו מהתוכן מאחוריו. ' +
-            'ה-`::backdrop` pseudo-element מקבל `rgb(0 0 0 / 0.55)` — ' +
+            '`background: var(--sur)`, ו-`box-shadow: var(--shadow-3)` שמפריד אותו מהתוכן מאחוריו. ' +
+            'כשה-dialog פתוח הוא מקבל animation קצר דרך `--dur-3` ו-`--ease-out`, וה-`::backdrop` מקבל גם blur עדין — ' +
             'תכונה שאפשר לסגנן רק ב-`<dialog>` מקורי.',
         },
       ],
@@ -551,7 +556,7 @@ export const CH09_CONTENT: ChapterContent = {
           kind: 'ul',
           items: [
             '‏`client/src/app/shared/ui/toast/toast-container.ts` — ה-component class: מזריק `ToastService`, selector ‏`tf-toast-container`, ‏`templateUrl` ו-`styleUrl`.',
-            '‏`client/src/app/shared/ui/toast/toast-container.scss` — `position: fixed` בפינה התחתונה-קצה בשיטת logical properties (‏`inset-block-end`, ‏`inset-inline-end`), עם `z-index: 50` וצבעי success/danger דרך `color-mix`.',
+            '‏`client/src/app/shared/ui/toast/toast-container.scss` — `position: fixed` בפינה התחתונה-קצה בשיטת logical properties (‏`inset-block-end`, ‏`inset-inline-end`), עם `z-index: 50`, ‏`box-shadow: var(--shadow-2)`, animation דרך `--ease-spring`, וצבעי success/danger דרך `color-mix`.',
           ],
         },
         {
@@ -702,7 +707,7 @@ export const CH09_CONTENT: ChapterContent = {
           items: [
             '‏`client/src/app/features/projects/project-card.ts` — מייבא `TfBadge` ו-`TfButton`; הלוגיקה לא השתנתה.',
             '‏`client/src/app/features/projects/project-card.html` — ‏`<span class="count">` הוחלף ב-`<tf-badge tone="count">`, וה-`<button>` הגולמי הוחלף ב-`<button tf-button variant="ghost">`.',
-            '‏`client/src/app/features/projects/project-card.scss` — ‏`// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count`: ה-CSS המיותר נמחק.',
+            '‏`client/src/app/features/projects/project-card.scss` — ה-container query נשאר, ה-CSS של `.count` נמחק, והכרטיס קיבל `--shadow-1/2`, ‏`--dur-2`, ‏`--ease-out` ו-hover `translateY`.',
           ],
         },
         {
@@ -735,12 +740,12 @@ export const CH09_CONTENT: ChapterContent = {
         {
           kind: 'ul',
           items: [
-            '‏`shared/ui/button/` — attribute selector שמשאיר `<button>` אמיתי; variant input ו-host classes.',
-            '‏`shared/ui/badge/` — tone input; צבעים מ-`color-mix` על טוקני פרק 08.',
-            '‏`shared/ui/field/` — label עוטף; פקד מוקרן פנימה; error/hint inputs.',
-            '‏`shared/ui/dialog/` — `<dialog>` מקורי עם focus trap, Escape ו-backdrop חינם; `model()` two-way; `effect` כגשר signals-DOM.',
-            '‏`shared/ui/toast/` — store קטן עם `asReadonly`; self-dismiss לאחר 4 שניות; `aria-live="polite"` לקוראי מסך.',
-            '‏`project-card`, ‏`project-list`, ‏`app` — כולם עברו רפקטורינג לצרוך את הערכה.',
+            '‏`shared/ui/button/` — attribute selector שמשאיר `<button>` אמיתי; variant input, host classes, motion tokens, active transform ו-elevation קל.',
+            '‏`shared/ui/badge/` — tone input; צבעים מ-`color-mix`; צפיפות ורדיוס דרך `--control-h-sm` ו-`--rad-full`.',
+            '‏`shared/ui/field/` — label עוטף; פקד מוקרן פנימה; error/hint inputs; ember focus ו-transition קצר.',
+            '‏`shared/ui/dialog/` — `<dialog>` מקורי עם focus trap, Escape ו-backdrop חינם; `model()` two-way; elevation ו-entry motion.',
+            '‏`shared/ui/toast/` — store קטן עם `asReadonly`; self-dismiss לאחר 4 שניות; `aria-live="polite"`; shadow ו-spring motion.',
+            '‏`project-card`, ‏`project-list`, ‏`app` — כולם עברו רפקטורינג לצרוך את הערכה, כולל hover lift בכרטיס.',
           ],
         },
         {

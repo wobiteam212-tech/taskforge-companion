@@ -17,7 +17,8 @@
   font-size: var(--fs-small);
   text-align: start;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 0.3);
+  box-shadow: var(--shadow-2);
+  animation: tf-toast-in var(--dur-3) var(--ease-spring);
 
   &--success {
     border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));
@@ -27,5 +28,12 @@
   &--danger {
     border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));
     color: var(--danger);
+  }
+}
+
+@keyframes tf-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
 }

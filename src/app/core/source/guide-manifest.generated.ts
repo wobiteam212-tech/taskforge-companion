@@ -11452,17 +11452,24 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/features/projects/project-card.scss": {
-          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  transition: border-color 0.2s ease;\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
+          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  box-shadow: var(--shadow-1);\n  transition:\n    border-color var(--dur-2) var(--ease-out),\n    box-shadow var(--dur-2) var(--ease-out),\n    transform var(--dur-2) var(--ease-out);\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n    box-shadow: var(--shadow-2);\n    transform: translateY(-2px);\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
           "status": "modified",
           "regions": {
             "step-8.10": {
               "start": 1,
-              "end": 37
+              "end": 43
             }
           },
           "changedLines": [
-            51,
-            52
+            15,
+            16,
+            17,
+            18,
+            19,
+            23,
+            24,
+            57,
+            58
           ]
         },
         "client/src/app/features/projects/project-card.ts": {
@@ -11556,7 +11563,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/badge/badge.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  border-radius: 999px;\n  padding-block: 2px;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  min-block-size: var(--control-h-sm);\n  border-radius: var(--rad-full);\n  padding-block: 0;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  font-weight: var(--fw-semibold);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -11589,7 +11596,9 @@ export const GUIDE_MANIFEST = {
             27,
             28,
             29,
-            30
+            30,
+            31,
+            32
           ]
         },
         "client/src/app/shared/ui/badge/badge.ts": {
@@ -11620,7 +11629,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/button/button.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;\n\n  &:focus-visible {\n    outline: 2px solid var(--teal);\n    outline-offset: 2px;\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition:\n    border-color var(--dur-1) var(--ease-out),\n    background-color var(--dur-1) var(--ease-out),\n    color var(--dur-1) var(--ease-out),\n    box-shadow var(--dur-1) var(--ease-out),\n    transform var(--dur-1) var(--ease-out);\n\n  &:focus-visible {\n    outline: 2px solid var(--ember);\n    outline-offset: 2px;\n  }\n\n  &:active:not(:disabled) {\n    transform: translateY(1px);\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n  box-shadow: var(--shadow-1);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -11678,7 +11687,17 @@ export const GUIDE_MANIFEST = {
             52,
             53,
             54,
-            55
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65
           ]
         },
         "client/src/app/shared/ui/button/button.ts": {
@@ -11734,7 +11753,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/dialog/dialog.scss": {
-          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: 0 18px 60px rgb(0 0 0 / 0.45);\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
+          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: var(--shadow-3);\n\n  &[open] {\n    animation: tf-dialog-in var(--dur-3) var(--ease-out);\n  }\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n    backdrop-filter: blur(2px);\n  }\n}\n\n@keyframes tf-dialog-in {\n  from {\n    opacity: 0;\n    transform: translateY(8px) scale(0.98);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -11786,7 +11805,19 @@ export const GUIDE_MANIFEST = {
             46,
             47,
             48,
-            49
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61
           ]
         },
         "client/src/app/shared/ui/dialog/dialog.ts": {
@@ -11855,7 +11886,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/field/field.scss": {
-          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n\n    &:focus-visible {\n      outline: 2px solid var(--teal);\n      outline-offset: 1px;\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
+          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n    transition:\n      border-color var(--dur-1) var(--ease-out),\n      box-shadow var(--dur-1) var(--ease-out);\n\n    &:focus-visible {\n      outline: 2px solid var(--ember);\n      outline-offset: 1px;\n    }\n\n    &:focus {\n      border-color: var(--ember);\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -11896,7 +11927,14 @@ export const GUIDE_MANIFEST = {
             35,
             36,
             37,
-            38
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45
           ]
         },
         "client/src/app/shared/ui/field/field.ts": {
@@ -11969,7 +12007,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/toast/toast-container.scss": {
-          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: 0 8px 24px rgb(0 0 0 / 0.3);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n",
+          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: var(--shadow-2);\n  animation: tf-toast-in var(--dur-3) var(--ease-spring);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n\n@keyframes tf-toast-in {\n  from {\n    opacity: 0;\n    transform: translateY(10px);\n  }\n}\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -12004,7 +12042,15 @@ export const GUIDE_MANIFEST = {
             29,
             30,
             31,
-            32
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40
           ]
         },
         "client/src/app/shared/ui/toast/toast-container.ts": {
@@ -12619,17 +12665,24 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/features/projects/project-card.scss": {
-          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  transition: border-color 0.2s ease;\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
+          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  box-shadow: var(--shadow-1);\n  transition:\n    border-color var(--dur-2) var(--ease-out),\n    box-shadow var(--dur-2) var(--ease-out),\n    transform var(--dur-2) var(--ease-out);\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n    box-shadow: var(--shadow-2);\n    transform: translateY(-2px);\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
           "status": "modified",
           "regions": {
             "step-8.10": {
               "start": 1,
-              "end": 37
+              "end": 43
             }
           },
           "changedLines": [
-            51,
-            52
+            15,
+            16,
+            17,
+            18,
+            19,
+            23,
+            24,
+            57,
+            58
           ]
         },
         "client/src/app/features/projects/project-card.ts": {
@@ -12723,7 +12776,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/badge/badge.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  border-radius: 999px;\n  padding-block: 2px;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  min-block-size: var(--control-h-sm);\n  border-radius: var(--rad-full);\n  padding-block: 0;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  font-weight: var(--fw-semibold);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -12756,7 +12809,9 @@ export const GUIDE_MANIFEST = {
             27,
             28,
             29,
-            30
+            30,
+            31,
+            32
           ]
         },
         "client/src/app/shared/ui/badge/badge.ts": {
@@ -12787,7 +12842,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/button/button.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;\n\n  &:focus-visible {\n    outline: 2px solid var(--teal);\n    outline-offset: 2px;\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition:\n    border-color var(--dur-1) var(--ease-out),\n    background-color var(--dur-1) var(--ease-out),\n    color var(--dur-1) var(--ease-out),\n    box-shadow var(--dur-1) var(--ease-out),\n    transform var(--dur-1) var(--ease-out);\n\n  &:focus-visible {\n    outline: 2px solid var(--ember);\n    outline-offset: 2px;\n  }\n\n  &:active:not(:disabled) {\n    transform: translateY(1px);\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n  box-shadow: var(--shadow-1);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -12845,7 +12900,17 @@ export const GUIDE_MANIFEST = {
             52,
             53,
             54,
-            55
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65
           ]
         },
         "client/src/app/shared/ui/button/button.ts": {
@@ -12901,7 +12966,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/dialog/dialog.scss": {
-          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: 0 18px 60px rgb(0 0 0 / 0.45);\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
+          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: var(--shadow-3);\n\n  &[open] {\n    animation: tf-dialog-in var(--dur-3) var(--ease-out);\n  }\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n    backdrop-filter: blur(2px);\n  }\n}\n\n@keyframes tf-dialog-in {\n  from {\n    opacity: 0;\n    transform: translateY(8px) scale(0.98);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -12953,7 +13018,19 @@ export const GUIDE_MANIFEST = {
             46,
             47,
             48,
-            49
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61
           ]
         },
         "client/src/app/shared/ui/dialog/dialog.ts": {
@@ -13022,7 +13099,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/field/field.scss": {
-          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n\n    &:focus-visible {\n      outline: 2px solid var(--teal);\n      outline-offset: 1px;\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
+          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n    transition:\n      border-color var(--dur-1) var(--ease-out),\n      box-shadow var(--dur-1) var(--ease-out);\n\n    &:focus-visible {\n      outline: 2px solid var(--ember);\n      outline-offset: 1px;\n    }\n\n    &:focus {\n      border-color: var(--ember);\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -13063,7 +13140,14 @@ export const GUIDE_MANIFEST = {
             35,
             36,
             37,
-            38
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45
           ]
         },
         "client/src/app/shared/ui/field/field.ts": {
@@ -13136,7 +13220,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/toast/toast-container.scss": {
-          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: 0 8px 24px rgb(0 0 0 / 0.3);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n",
+          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: var(--shadow-2);\n  animation: tf-toast-in var(--dur-3) var(--ease-spring);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n\n@keyframes tf-toast-in {\n  from {\n    opacity: 0;\n    transform: translateY(10px);\n  }\n}\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -13171,7 +13255,15 @@ export const GUIDE_MANIFEST = {
             29,
             30,
             31,
-            32
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40
           ]
         },
         "client/src/app/shared/ui/toast/toast-container.ts": {
@@ -13589,12 +13681,12 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/features/projects/project-card.scss": {
-          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  transition: border-color 0.2s ease;\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
+          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  box-shadow: var(--shadow-1);\n  transition:\n    border-color var(--dur-2) var(--ease-out),\n    box-shadow var(--dur-2) var(--ease-out),\n    transform var(--dur-2) var(--ease-out);\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n    box-shadow: var(--shadow-2);\n    transform: translateY(-2px);\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
           "status": "unchanged",
           "regions": {
             "step-8.10": {
               "start": 1,
-              "end": 37
+              "end": 43
             }
           },
           "changedLines": []
@@ -13701,7 +13793,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/badge/badge.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  border-radius: 999px;\n  padding-block: 2px;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  min-block-size: var(--control-h-sm);\n  border-radius: var(--rad-full);\n  padding-block: 0;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  font-weight: var(--fw-semibold);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -13713,7 +13805,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/button/button.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;\n\n  &:focus-visible {\n    outline: 2px solid var(--teal);\n    outline-offset: 2px;\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition:\n    border-color var(--dur-1) var(--ease-out),\n    background-color var(--dur-1) var(--ease-out),\n    color var(--dur-1) var(--ease-out),\n    box-shadow var(--dur-1) var(--ease-out),\n    transform var(--dur-1) var(--ease-out);\n\n  &:focus-visible {\n    outline: 2px solid var(--ember);\n    outline-offset: 2px;\n  }\n\n  &:active:not(:disabled) {\n    transform: translateY(1px);\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n  box-shadow: var(--shadow-1);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -13736,7 +13828,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/dialog/dialog.scss": {
-          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: 0 18px 60px rgb(0 0 0 / 0.45);\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
+          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: var(--shadow-3);\n\n  &[open] {\n    animation: tf-dialog-in var(--dur-3) var(--ease-out);\n  }\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n    backdrop-filter: blur(2px);\n  }\n}\n\n@keyframes tf-dialog-in {\n  from {\n    opacity: 0;\n    transform: translateY(8px) scale(0.98);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -13759,7 +13851,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/field/field.scss": {
-          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n\n    &:focus-visible {\n      outline: 2px solid var(--teal);\n      outline-offset: 1px;\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
+          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n    transition:\n      border-color var(--dur-1) var(--ease-out),\n      box-shadow var(--dur-1) var(--ease-out);\n\n    &:focus-visible {\n      outline: 2px solid var(--ember);\n      outline-offset: 1px;\n    }\n\n    &:focus {\n      border-color: var(--ember);\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -13782,7 +13874,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/toast/toast-container.scss": {
-          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: 0 8px 24px rgb(0 0 0 / 0.3);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n",
+          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: var(--shadow-2);\n  animation: tf-toast-in var(--dur-3) var(--ease-spring);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n\n@keyframes tf-toast-in {\n  from {\n    opacity: 0;\n    transform: translateY(10px);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -15197,12 +15289,12 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/features/projects/project-card.scss": {
-          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  transition: border-color 0.2s ease;\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
+          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  box-shadow: var(--shadow-1);\n  transition:\n    border-color var(--dur-2) var(--ease-out),\n    box-shadow var(--dur-2) var(--ease-out),\n    transform var(--dur-2) var(--ease-out);\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n    box-shadow: var(--shadow-2);\n    transform: translateY(-2px);\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
           "status": "unchanged",
           "regions": {
             "step-8.10": {
               "start": 1,
-              "end": 37
+              "end": 43
             }
           },
           "changedLines": []
@@ -15298,7 +15390,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/shared/ui/badge/badge.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  border-radius: 999px;\n  padding-block: 2px;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  min-block-size: var(--control-h-sm);\n  border-radius: var(--rad-full);\n  padding-block: 0;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  font-weight: var(--fw-semibold);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -15310,7 +15402,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/button/button.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;\n\n  &:focus-visible {\n    outline: 2px solid var(--teal);\n    outline-offset: 2px;\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition:\n    border-color var(--dur-1) var(--ease-out),\n    background-color var(--dur-1) var(--ease-out),\n    color var(--dur-1) var(--ease-out),\n    box-shadow var(--dur-1) var(--ease-out),\n    transform var(--dur-1) var(--ease-out);\n\n  &:focus-visible {\n    outline: 2px solid var(--ember);\n    outline-offset: 2px;\n  }\n\n  &:active:not(:disabled) {\n    transform: translateY(1px);\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n  box-shadow: var(--shadow-1);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -15333,7 +15425,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/dialog/dialog.scss": {
-          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: 0 18px 60px rgb(0 0 0 / 0.45);\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
+          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: var(--shadow-3);\n\n  &[open] {\n    animation: tf-dialog-in var(--dur-3) var(--ease-out);\n  }\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n    backdrop-filter: blur(2px);\n  }\n}\n\n@keyframes tf-dialog-in {\n  from {\n    opacity: 0;\n    transform: translateY(8px) scale(0.98);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -15356,7 +15448,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/field/field.scss": {
-          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n\n    &:focus-visible {\n      outline: 2px solid var(--teal);\n      outline-offset: 1px;\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
+          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n    transition:\n      border-color var(--dur-1) var(--ease-out),\n      box-shadow var(--dur-1) var(--ease-out);\n\n    &:focus-visible {\n      outline: 2px solid var(--ember);\n      outline-offset: 1px;\n    }\n\n    &:focus {\n      border-color: var(--ember);\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -15379,7 +15471,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/toast/toast-container.scss": {
-          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: 0 8px 24px rgb(0 0 0 / 0.3);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n",
+          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: var(--shadow-2);\n  animation: tf-toast-in var(--dur-3) var(--ease-spring);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n\n@keyframes tf-toast-in {\n  from {\n    opacity: 0;\n    transform: translateY(10px);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -16851,12 +16943,12 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/features/projects/project-card.scss": {
-          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  transition: border-color 0.2s ease;\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
+          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  box-shadow: var(--shadow-1);\n  transition:\n    border-color var(--dur-2) var(--ease-out),\n    box-shadow var(--dur-2) var(--ease-out),\n    transform var(--dur-2) var(--ease-out);\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n    box-shadow: var(--shadow-2);\n    transform: translateY(-2px);\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
           "status": "unchanged",
           "regions": {
             "step-8.10": {
               "start": 1,
-              "end": 37
+              "end": 43
             }
           },
           "changedLines": []
@@ -17323,7 +17415,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/badge/badge.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  border-radius: 999px;\n  padding-block: 2px;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  min-block-size: var(--control-h-sm);\n  border-radius: var(--rad-full);\n  padding-block: 0;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  font-weight: var(--fw-semibold);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -17335,7 +17427,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/button/button.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;\n\n  &:focus-visible {\n    outline: 2px solid var(--teal);\n    outline-offset: 2px;\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition:\n    border-color var(--dur-1) var(--ease-out),\n    background-color var(--dur-1) var(--ease-out),\n    color var(--dur-1) var(--ease-out),\n    box-shadow var(--dur-1) var(--ease-out),\n    transform var(--dur-1) var(--ease-out);\n\n  &:focus-visible {\n    outline: 2px solid var(--ember);\n    outline-offset: 2px;\n  }\n\n  &:active:not(:disabled) {\n    transform: translateY(1px);\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n  box-shadow: var(--shadow-1);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -17358,7 +17450,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/dialog/dialog.scss": {
-          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: 0 18px 60px rgb(0 0 0 / 0.45);\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
+          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: var(--shadow-3);\n\n  &[open] {\n    animation: tf-dialog-in var(--dur-3) var(--ease-out);\n  }\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n    backdrop-filter: blur(2px);\n  }\n}\n\n@keyframes tf-dialog-in {\n  from {\n    opacity: 0;\n    transform: translateY(8px) scale(0.98);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -17381,7 +17473,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/field/field.scss": {
-          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n\n    &:focus-visible {\n      outline: 2px solid var(--teal);\n      outline-offset: 1px;\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
+          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n    transition:\n      border-color var(--dur-1) var(--ease-out),\n      box-shadow var(--dur-1) var(--ease-out);\n\n    &:focus-visible {\n      outline: 2px solid var(--ember);\n      outline-offset: 1px;\n    }\n\n    &:focus {\n      border-color: var(--ember);\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -17404,7 +17496,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/toast/toast-container.scss": {
-          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: 0 8px 24px rgb(0 0 0 / 0.3);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n",
+          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: var(--shadow-2);\n  animation: tf-toast-in var(--dur-3) var(--ease-spring);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n\n@keyframes tf-toast-in {\n  from {\n    opacity: 0;\n    transform: translateY(10px);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -20108,12 +20200,12 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/features/projects/project-card.scss": {
-          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  transition: border-color 0.2s ease;\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
+          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  box-shadow: var(--shadow-1);\n  transition:\n    border-color var(--dur-2) var(--ease-out),\n    box-shadow var(--dur-2) var(--ease-out),\n    transform var(--dur-2) var(--ease-out);\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n    box-shadow: var(--shadow-2);\n    transform: translateY(-2px);\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
           "status": "unchanged",
           "regions": {
             "step-8.10": {
               "start": 1,
-              "end": 37
+              "end": 43
             }
           },
           "changedLines": []
@@ -20234,7 +20326,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/badge/badge.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  border-radius: 999px;\n  padding-block: 2px;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  min-block-size: var(--control-h-sm);\n  border-radius: var(--rad-full);\n  padding-block: 0;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  font-weight: var(--fw-semibold);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -20246,7 +20338,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/button/button.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;\n\n  &:focus-visible {\n    outline: 2px solid var(--teal);\n    outline-offset: 2px;\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition:\n    border-color var(--dur-1) var(--ease-out),\n    background-color var(--dur-1) var(--ease-out),\n    color var(--dur-1) var(--ease-out),\n    box-shadow var(--dur-1) var(--ease-out),\n    transform var(--dur-1) var(--ease-out);\n\n  &:focus-visible {\n    outline: 2px solid var(--ember);\n    outline-offset: 2px;\n  }\n\n  &:active:not(:disabled) {\n    transform: translateY(1px);\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n  box-shadow: var(--shadow-1);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -20269,7 +20361,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/dialog/dialog.scss": {
-          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: 0 18px 60px rgb(0 0 0 / 0.45);\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
+          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: var(--shadow-3);\n\n  &[open] {\n    animation: tf-dialog-in var(--dur-3) var(--ease-out);\n  }\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n    backdrop-filter: blur(2px);\n  }\n}\n\n@keyframes tf-dialog-in {\n  from {\n    opacity: 0;\n    transform: translateY(8px) scale(0.98);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -20292,7 +20384,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/field/field.scss": {
-          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n\n    &:focus-visible {\n      outline: 2px solid var(--teal);\n      outline-offset: 1px;\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
+          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n    transition:\n      border-color var(--dur-1) var(--ease-out),\n      box-shadow var(--dur-1) var(--ease-out);\n\n    &:focus-visible {\n      outline: 2px solid var(--ember);\n      outline-offset: 1px;\n    }\n\n    &:focus {\n      border-color: var(--ember);\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -20315,7 +20407,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/toast/toast-container.scss": {
-          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: 0 8px 24px rgb(0 0 0 / 0.3);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n",
+          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: var(--shadow-2);\n  animation: tf-toast-in var(--dur-3) var(--ease-spring);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n\n@keyframes tf-toast-in {\n  from {\n    opacity: 0;\n    transform: translateY(10px);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -22970,12 +23062,12 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/features/projects/project-card.scss": {
-          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  transition: border-color 0.2s ease;\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
+          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  box-shadow: var(--shadow-1);\n  transition:\n    border-color var(--dur-2) var(--ease-out),\n    box-shadow var(--dur-2) var(--ease-out),\n    transform var(--dur-2) var(--ease-out);\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n    box-shadow: var(--shadow-2);\n    transform: translateY(-2px);\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
           "status": "unchanged",
           "regions": {
             "step-8.10": {
               "start": 1,
-              "end": 37
+              "end": 43
             }
           },
           "changedLines": []
@@ -23096,7 +23188,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/badge/badge.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  border-radius: 999px;\n  padding-block: 2px;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  min-block-size: var(--control-h-sm);\n  border-radius: var(--rad-full);\n  padding-block: 0;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  font-weight: var(--fw-semibold);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -23108,7 +23200,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/button/button.scss": {
-          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;\n\n  &:focus-visible {\n    outline: 2px solid var(--teal);\n    outline-offset: 2px;\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition:\n    border-color var(--dur-1) var(--ease-out),\n    background-color var(--dur-1) var(--ease-out),\n    color var(--dur-1) var(--ease-out),\n    box-shadow var(--dur-1) var(--ease-out),\n    transform var(--dur-1) var(--ease-out);\n\n  &:focus-visible {\n    outline: 2px solid var(--ember);\n    outline-offset: 2px;\n  }\n\n  &:active:not(:disabled) {\n    transform: translateY(1px);\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n  box-shadow: var(--shadow-1);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -23131,7 +23223,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/dialog/dialog.scss": {
-          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: 0 18px 60px rgb(0 0 0 / 0.45);\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
+          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: var(--shadow-3);\n\n  &[open] {\n    animation: tf-dialog-in var(--dur-3) var(--ease-out);\n  }\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n    backdrop-filter: blur(2px);\n  }\n}\n\n@keyframes tf-dialog-in {\n  from {\n    opacity: 0;\n    transform: translateY(8px) scale(0.98);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -23154,7 +23246,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/field/field.scss": {
-          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n\n    &:focus-visible {\n      outline: 2px solid var(--teal);\n      outline-offset: 1px;\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
+          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n    transition:\n      border-color var(--dur-1) var(--ease-out),\n      box-shadow var(--dur-1) var(--ease-out);\n\n    &:focus-visible {\n      outline: 2px solid var(--ember);\n      outline-offset: 1px;\n    }\n\n    &:focus {\n      border-color: var(--ember);\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -23177,7 +23269,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/app/shared/ui/toast/toast-container.scss": {
-          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: 0 8px 24px rgb(0 0 0 / 0.3);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n",
+          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: var(--shadow-2);\n  animation: tf-toast-in var(--dur-3) var(--ease-spring);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n\n@keyframes tf-toast-in {\n  from {\n    opacity: 0;\n    transform: translateY(10px);\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []

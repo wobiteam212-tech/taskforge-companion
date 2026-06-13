@@ -20,7 +20,7 @@
 
 | Unit | Spec | Status |
 |---|---|---|
-| Phase 0a — ch08 design-tokens v2 | `04-chapter-specs/ch08-retrofit.md` | IN PROGRESS — token foundation committed `743ce36`; component adoption + (optional) content upgrade pending |
+| Phase 0a — ch08 design-tokens v2 | `04-chapter-specs/ch08-retrofit.md` | DONE — token foundation `743ce36`; component adoption completion `3cd7b2f` |
 | Phase 0b — companion re-skin | `04-chapter-specs/companion-reskin.md` | NOT STARTED |
 | Renumber placeholders ch15–20 → ch21–26 | `03-PROPAGATION-AND-SYNC.md` Procedure C | NOT STARTED |
 | ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | NOT STARTED |
@@ -36,6 +36,30 @@
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-13 — Phase 0a: component adoption + content sync — done
+- What I did: Completed the visible ch09 primitive adoption of the ch08 v2 token vocabulary. Buttons, fields, dialogs,
+  toasts, badges, and project cards now use the additive motion/elevation/density/radius tokens without renaming any
+  existing token. Synced ch08/ch09 prose and the inline badge snippet so panels no longer show unexplained motion,
+  elevation, focus, or density code.
+- Where: `reference/ch09/client/src/app/shared/ui/{button,badge,field,dialog,toast}/*.scss`,
+  `reference/ch09/client/src/app/features/projects/project-card.scss`,
+  `src/app/chapters/ch08-design-system-css/content.ts`, `src/app/chapters/ch09-shared-ui-kit/content.ts`,
+  regenerated `guide-manifest.generated.ts`. Commit `3cd7b2f`.
+- Gate outcomes: gen:manifest clean (14 snapshots, 976 entries) · test 90 passed · verify:coverage 133 files · guide
+  build clean (only pre-existing Mermaid CommonJS warning) · cumulative ch14 client `ng build` passed after installing
+  the materialized client's declared dependencies.
+- Runtime smoke / 375px sweep: API `http://127.0.0.1:5080` + client `http://localhost:4500` verified. Login
+  `demo@taskforge.dev / Passw0rd!` succeeds; project list renders seeded projects; dialog, primary button, badge,
+  card, and toast computed styles show the new tokenized shadow/motion/density values; desktop, light mode, mobile
+  `375px`, and mobile dialog all had `scrollWidth === clientWidth`; browser logs had 0 warnings/errors.
+- Decisions made / values locked: Keep the current additive strategy and cited legacy hex/clamp values for now. Full
+  OKLCH remap remains a deliberate future content upgrade because current ch08 prose still teaches exact old values.
+- Surprises / deviations from the spec: Browser login must use `http://localhost:4500`, not `127.0.0.1:4500`, because
+  the snapshot API base and CORS policy are keyed to `localhost`. Direct ch14 client compile required `pnpm install`
+  inside `reference/.build/ch14/client` so `@angular/cdk` could resolve.
+- WHAT'S NEXT: Phase 0b — re-skin the companion guide site itself from `04-chapter-specs/companion-reskin.md`, then
+  renumber the old soon placeholders before starting ch15.
 
 ### 2026-06-13 — Phase 0a: design-system v2 token foundation — in-progress
 - What I did: Implemented the v2 token VOCABULARY additively (no existing value changed) so all later craft chapters

@@ -11,11 +11,20 @@
   background: var(--sur2);
   color: var(--txt1);
   cursor: pointer;
-  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  transition:
+    border-color var(--dur-1) var(--ease-out),
+    background-color var(--dur-1) var(--ease-out),
+    color var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-1) var(--ease-out),
+    transform var(--dur-1) var(--ease-out);
 
   &:focus-visible {
-    outline: 2px solid var(--teal);
+    outline: 2px solid var(--ember);
     outline-offset: 2px;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
   }
 
   &:disabled {
@@ -28,6 +37,7 @@
   background: var(--ember);
   border-color: var(--ember);
   color: #1a1208;
+  box-shadow: var(--shadow-1);
 
   &:hover:not(:disabled) {
     background: color-mix(in srgb, var(--ember) 85%, white);

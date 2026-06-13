@@ -13,10 +13,16 @@
   padding: var(--sp-3) var(--sp-4);
   display: grid;
   gap: var(--sp-2);
-  transition: border-color 0.2s ease;
+  box-shadow: var(--shadow-1);
+  transition:
+    border-color var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out),
+    transform var(--dur-2) var(--ease-out);
 
   &:hover {
     border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));
+    box-shadow: var(--shadow-2);
+    transform: translateY(-2px);
   }
 }
 

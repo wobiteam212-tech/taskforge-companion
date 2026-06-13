@@ -23,7 +23,7 @@ export const CH08_CONTENT: ChapterContent = {
         {
           kind: 'ul',
           items: [
-            '‏design token — השם המוסכם שמחבר בין ה-"למה" (ember = גחלת, האנרגיה של TaskForge) ל-"מה" (ערך hex).',
+            '‏design token — השם המוסכם שמחבר בין ה-"למה" (ember = גחלת, תנועה מהירה, elevation עדין) ל-"מה" (ערך CSS).',
             '‏`@layer` — הכרזת סדר ה-cascade עוד לפני שכותבים שורת CSS אחת.',
             'ערכת נושא (theme) — שני מצבים של אותם שמות, ערכים שונים. החלפת נושא = שינוי ערכים בלבד.',
           ],
@@ -40,7 +40,7 @@ export const CH08_CONTENT: ChapterContent = {
           kind: 'term',
           name: 'design token',
           definition:
-            'שם מוסכם לערך עיצובי — צבע, ריווח, רדיוס פינות. ' +
+            'שם מוסכם לערך עיצובי — צבע, ריווח, רדיוס פינות, elevation, תנועה, צפיפות או פוקוס. ' +
             'מיושם כ-CSS custom property (`--ember: #ff8a3d`) כדי שניתן לשנות ערכו בזמן ריצה. ' +
             'מקור האמת היחיד: שינוי הטוקן מתפשט לכל הרכיבים שמשתמשים בו.',
         },
@@ -131,6 +131,7 @@ export const CH08_CONTENT: ChapterContent = {
             '‏`--bg`, `--sur`, `--sur2` — שלוש רמות של שטח: רקע, משטח, משטח מוגבה.',
             '‏`--txt1`, `--txt2`, `--txt3` — שלוש רמות של טקסט: ראשי, משני, רמז.',
             '‏`--rad`, `--rad-sm` — רדיוסי פינות עקביים; `--sp-1` עד `--sp-5` — סולם ריווח.',
+            '‏`--shadow-*`, ‏`--dur-*`, ‏`--ease-*`, ‏`--rad-full`, ו-`--control-h-*` — אותו רעיון גם ל-elevation, תנועה וצפיפות.',
           ],
         },
         {
@@ -487,6 +488,7 @@ export const CH08_CONTENT: ChapterContent = {
             'אותו רכיב יכול לחיות ב-sidebar צר (כפתור מתחת) וברשת רחבה (כפתור בצד) — ללא props של פריסה.',
             'הרכיב לא יודע איפה הוא ממוקם; הוא מגיב לרוחב שניתן לו — ה-layout מחליט.',
             'ה-`grid-template-columns: 1fr auto` ב-`@container` מגדיר עמודת תוכן ועמודת כפתור צמד.',
+            'אותו קובץ כבר מאמץ את טוקני ה-elevation והתנועה מפרק 08: `--shadow-1/2`, ‏`--dur-2`, ‏`--ease-out` ו-`transform` קטן ב-hover.',
           ],
         },
         {
@@ -637,13 +639,13 @@ export const CH08_CONTENT: ChapterContent = {
           kind: 'ul',
           items: [
             '‏`_layers.scss` — הכרזת סדר `@layer` שמנצחת specificity wars לנצח.',
-            '‏`_tokens.scss` — design tokens: 3 רמות רקע, 3 רמות טקסט, ember + teal + danger, ריווח, clamp type.',
+            '‏`_tokens.scss` — design tokens: רקע/טקסט, ember + teal + danger, ריווח, clamp type, elevation, motion, density ורדיוסים מורחבים.',
             '‏`_reset.scss` + `_base.scss` — שכבות שקטות שמחברות טוקנים לאלמנטים.',
             '‏`ThemeService` — signal + effect, dark ברירת מחדל, OS-aware, localStorage-persistent.',
             '‏`app.html` + `app.ts` — כפתור theme toggle עם `aria-pressed`.',
             '‏`app.scss` — רק logical properties; אפס `left` / `right` hardcoded.',
             '‏`project-list.scss` — responsive grid ללא breakpoints: `auto-fill minmax(min(100%, 280px), 1fr)`.',
-            '‏`project-card.scss` — container query שמגיב לרוחב הכרטיס; `color-mix` לצבעים נגזרים.',
+            '‏`project-card.scss` — container query שמגיב לרוחב הכרטיס; `color-mix` לצבעים נגזרים; `--shadow-1/2`, ‏`--dur-2`, ‏`--ease-out` ו-hover lift.',
           ],
         },
         {

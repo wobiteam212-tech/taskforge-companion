@@ -18,10 +18,17 @@
     padding-block: var(--sp-1);
     padding-inline: var(--sp-2);
     font-size: var(--fs-body);
+    transition:
+      border-color var(--dur-1) var(--ease-out),
+      box-shadow var(--dur-1) var(--ease-out);
 
     &:focus-visible {
-      outline: 2px solid var(--teal);
+      outline: 2px solid var(--ember);
       outline-offset: 1px;
+    }
+
+    &:focus {
+      border-color: var(--ember);
     }
   }
 
