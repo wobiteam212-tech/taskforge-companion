@@ -20,7 +20,7 @@
 
 | Unit | Spec | Status |
 |---|---|---|
-| Phase 0a — ch08 design-tokens v2 | `04-chapter-specs/ch08-retrofit.md` | DONE — token foundation `743ce36`; component adoption completion `3cd7b2f` |
+| Phase 0a — ch08 design-tokens v2 | `04-chapter-specs/ch08-retrofit.md` | DONE — token foundation `743ce36`; component adoption completion `3919f87` |
 | Phase 0b — companion re-skin | `04-chapter-specs/companion-reskin.md` | NOT STARTED |
 | Renumber placeholders ch15–20 → ch21–26 | `03-PROPAGATION-AND-SYNC.md` Procedure C | NOT STARTED |
 | ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | NOT STARTED |
@@ -45,7 +45,7 @@
 - Where: `reference/ch09/client/src/app/shared/ui/{button,badge,field,dialog,toast}/*.scss`,
   `reference/ch09/client/src/app/features/projects/project-card.scss`,
   `src/app/chapters/ch08-design-system-css/content.ts`, `src/app/chapters/ch09-shared-ui-kit/content.ts`,
-  regenerated `guide-manifest.generated.ts`. Commit `3cd7b2f`.
+  regenerated `guide-manifest.generated.ts`. Implementation commit `3919f87`; this progress-log correction is committed separately.
 - Gate outcomes: gen:manifest clean (14 snapshots, 976 entries) · test 90 passed · verify:coverage 133 files · guide
   build clean (only pre-existing Mermaid CommonJS warning) · cumulative ch14 client `ng build` passed after installing
   the materialized client's declared dependencies.
