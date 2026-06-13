@@ -21,7 +21,7 @@
 | Unit | Spec | Status |
 |---|---|---|
 | Phase 0a — ch08 design-tokens v2 | `04-chapter-specs/ch08-retrofit.md` | DONE — token foundation `743ce36`; component adoption completion `3919f87` |
-| Phase 0b — companion re-skin | `04-chapter-specs/companion-reskin.md` | DONE — implementation commit pending in this entry |
+| Phase 0b — companion re-skin | `04-chapter-specs/companion-reskin.md` | DONE — `47f7712` |
 | Renumber placeholders ch15–20 → ch21–26 | `03-PROPAGATION-AND-SYNC.md` Procedure C | NOT STARTED |
 | ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | NOT STARTED |
 | ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | NOT STARTED |
@@ -45,7 +45,7 @@
 - Where: `src/styles.scss`, `src/app/app.scss`, `src/app/core/ui/home/home.scss`,
   `src/app/core/ui/chapter-page/chapter-page.scss`, `src/app/core/ui/panels/code-panel.scss`,
   `src/app/core/ui/panels/live-demo-panel.ts`, `src/app/core/ui/source-browser/source-browser.scss`.
-  Implementation commit will be recorded by the next progress-log correction once this entry is committed.
+  Implementation commit `47f7712`; this progress-log correction is committed separately.
 - Gate outcomes: gradient scan clean for guide source · `git diff --check` clean except expected CRLF warnings ·
   test 90 passed · verify:coverage 133 files · guide build clean with only the pre-existing Mermaid CommonJS warning.
 - Runtime smoke / 375px sweep: Guide `http://127.0.0.1:4400` verified in the in-app browser. Desktop home and
