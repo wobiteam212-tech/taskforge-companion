@@ -77,7 +77,8 @@ export const CH14_CONTENT: ChapterContent = {
             'המיגרציה `server/TaskForge.Infrastructure/Migrations/20260613053113_AddComments.cs` ' +
             'נוצרה עם `dotnet ef`, לא נכתבה ביד. גם קובץ ה-designer ' +
             '`server/TaskForge.Infrastructure/Migrations/20260613053113_AddComments.Designer.cs` ' +
-            'ו-`TaskForgeDbContextModelSnapshot.cs` נשמרו כדי שה-snapshot ירוץ על DB חדש.',
+            'ו-`server/TaskForge.Infrastructure/Migrations/TaskForgeDbContextModelSnapshot.cs` ' +
+            'נשמרו כדי שה-snapshot ירוץ על DB חדש.',
         },
       ],
       panel: {
@@ -262,6 +263,12 @@ export const CH14_CONTENT: ChapterContent = {
             '`client/src/styles.scss` מכיל את `::view-transition-old(root)` ו-`::view-transition-new(root)`. ' +
             'אלה pseudo-elements גלובליים, ולכן הם לא שייכים ל-SCSS של קומפוננטה. ' +
             'ה-CSS גם מכבד `prefers-reduced-motion`.',
+        },
+        {
+          kind: 'p',
+          text:
+            '`client/src/index.html` נשאר shell קטן, אבל מוסיף favicon כ-`data:` URL. ' +
+            'זה לא פיצ׳ר, זה ניקיון runtime: הדפדפן לא מבקש `/favicon.ico` ולא מזהם את ה-console ב-404.',
         },
       ],
       panel: {

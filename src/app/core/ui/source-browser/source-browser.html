@@ -38,7 +38,7 @@
           [class.on]="scopeFilter() === option.value"
           (click)="scopeFilter.set(option.value)"
         >
-          {{ option.label }}
+          <span [class.ltr]="option.value !== 'all'">{{ option.label }}</span>
         </button>
       }
     </div>

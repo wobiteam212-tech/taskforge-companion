@@ -22937,10 +22937,12 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/index.html": {
-          "content": "<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>TaskForge</title>\n  <base href=\"/\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n</head>\n<body>\n  <app-root></app-root>\n</body>\n</html>\n",
-          "status": "unchanged",
+          "content": "<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>TaskForge</title>\n  <base href=\"/\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <link rel=\"icon\" href=\"data:,\">\n</head>\n<body>\n  <app-root></app-root>\n</body>\n</html>\n",
+          "status": "modified",
           "regions": {},
-          "changedLines": []
+          "changedLines": [
+            8
+          ]
         },
         "client/src/main.ts": {
           "content": "import { bootstrapApplication } from '@angular/platform-browser';\nimport { appConfig } from './app/app.config';\nimport { App } from './app/app';\n\nbootstrapApplication(App, appConfig)\n  .catch((err) => console.error(err));\n",
@@ -25092,6 +25094,14 @@ export const GUIDE_MANIFEST = {
             22,
             23,
             24
+          ]
+        },
+        "client/src/index.html": {
+          "content": "<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>TaskForge</title>\n  <base href=\"/\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <link rel=\"icon\" href=\"data:,\">\n</head>\n<body>\n  <app-root></app-root>\n</body>\n</html>\n",
+          "status": "modified",
+          "regions": {},
+          "changedLines": [
+            8
           ]
         },
         "client/src/styles.scss": {

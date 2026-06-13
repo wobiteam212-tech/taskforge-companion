@@ -97,7 +97,7 @@
           </button>
         }
         <button type="button" role="tab" [attr.aria-selected]="endTab() === 'source'" class="etab" [class.on]="endTab() === 'source'" (click)="endTab.set('source')">
-          קוד הפרק <span class="count ltr">{{ changedSourceFiles().length }}</span>
+          עץ הקוד <span class="count ltr">{{ changedSourceFiles().length }}</span>
         </button>
       </div>
 
@@ -145,7 +145,7 @@
             @if (!sourceFiles().length) {
               <p class="src-empty">בפרק הזה עוד לא נכתב קוד אפליקציה — הקבצים הראשונים מגיעים בפרק 01.</p>
             } @else {
-              <source-browser [chapter]="m.id" title="קבצי הפרק" initialStatus="changed" variant="endcap" />
+              <source-browser [chapter]="m.id" title="עץ קוד הפרק" initialStatus="changed" variant="endcap" />
             }
           }
         }

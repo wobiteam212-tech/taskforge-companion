@@ -85,6 +85,7 @@
 
   &.scrolly--narrow {
     grid-template-columns: 1fr;
+    overflow-x: clip;
   }
 }
 
