@@ -10092,7 +10092,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/styles/_base.scss": {
-          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition: background-color 0.25s ease, color 0.25s ease;\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
+          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition:\n      background-color var(--dur-3) var(--ease-out),\n      color var(--dur-3) var(--ease-out);\n  }\n\n  // פוקוס נראה אחיד בכל האפליקציה — נגזר מצבע ה-accent, ידידותי למקלדת\n  :focus-visible {\n    outline: 2px solid var(--accent);\n    outline-offset: 2px;\n    border-radius: var(--rad-sm);\n  }\n\n  ::selection {\n    background: var(--accent-subtle);\n  }\n\n  // כיבוד העדפת תנועה מופחתת — חובה לכל מערכת תנועה\n  @media (prefers-reduced-motion: reduce) {\n    *,\n    *::before,\n    *::after {\n      animation-duration: 0.01ms !important;\n      animation-iteration-count: 1 !important;\n      transition-duration: 0.01ms !important;\n    }\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -10137,7 +10137,31 @@ export const GUIDE_MANIFEST = {
             39,
             40,
             41,
-            42
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66
           ]
         },
         "client/src/styles/_layers.scss": {
@@ -10199,16 +10223,24 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/styles/_tokens.scss": {
-          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --bdr: #2a2f3a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --bdr: #ddd5c7;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n}\n",
+          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --sur3: #232834;\n    --bdr: #2a2f3a;\n    --bdr2: #353b48;\n    --bdr3: #434a5a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n    --txt4: #5c6373;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --sur3: #e8e2d6;\n    --bdr: #ddd5c7;\n    --bdr2: #cbc2b0;\n    --bdr3: #b3a892;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n    --txt4: #9aa0ad;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  // שכבת ה\"מערכת\": דגש יחיד נגזר, סולם הגבהה (elevation), ותנועה כטוקנים.\n  // הכול נגזר מהסמנטיקה למעלה — שינוי ערכת נושא מעדכן גם את אלה.\n  :root {\n    // דגש יחיד: ember הוא הצבע הראשי. teal יורד לתפקיד סטטוס/מידע בלבד.\n    --accent: var(--ember);\n    --accent-strong: #ff7a1f;\n    --accent-subtle: color-mix(in srgb, var(--ember) 15%, transparent);\n    --accent-contrast: #1a0e04; // טקסט/אייקון על רקע accent\n\n    // elevation — צללים מדורגים, קלים ושכבתיים (לא drop-shadow כבד)\n    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 1px rgb(0 0 0 / 0.18);\n    --shadow-2: 0 4px 14px rgb(0 0 0 / 0.36), 0 2px 5px rgb(0 0 0 / 0.2);\n    --shadow-3: 0 14px 40px rgb(0 0 0 / 0.46), 0 5px 12px rgb(0 0 0 / 0.26);\n    --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);\n\n    // radius נוסף\n    --rad-lg: 16px;\n    --rad-full: 999px;\n\n    // תנועה כטוקנים: משכים ועקומות האצה אחידים בכל האפליקציה\n    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);\n    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);\n    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);\n    --dur-1: 120ms;\n    --dur-2: 160ms;\n    --dur-3: 240ms;\n    --dur-4: 360ms;\n\n    // density — גובה פקדים אחיד; מצב compact דורס דרך attribute\n    --control-h: 36px;\n    --control-h-sm: 28px;\n  }\n\n  [data-theme='light'] {\n    --accent-strong: #c95a10;\n    --accent-contrast: #fffdf9;\n    --shadow-1: 0 1px 2px rgb(35 30 20 / 0.08), 0 1px 1px rgb(35 30 20 / 0.05);\n    --shadow-2: 0 4px 14px rgb(35 30 20 / 0.12), 0 2px 5px rgb(35 30 20 / 0.08);\n    --shadow-3: 0 14px 40px rgb(35 30 20 / 0.16), 0 5px 12px rgb(35 30 20 / 0.1);\n  }\n\n  [data-density='compact'] {\n    --control-h: 30px;\n    --control-h-sm: 24px;\n    --sp-3: 10px;\n    --sp-4: 16px;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n\n  // סולם טיפוגרפיה מלא + משקלים וגבהי-שורה כטוקנים — שמות נוחים לרכיבים חדשים.\n  // השמות הישנים נשמרים כ-alias כדי שאף רכיב קיים לא יישבר.\n  :root {\n    --fs-xs: clamp(11px, 10.6px + 0.12vw, 12px);\n    --fs-sm: var(--fs-small);\n    --fs-base: var(--fs-body);\n    --fs-lg: clamp(16px, 15px + 0.4vw, 18px);\n    --fs-xl: var(--fs-h2);\n    --fs-2xl: var(--fs-h1);\n\n    --lh-tight: 1.2;\n    --lh-snug: 1.4;\n    --lh-normal: 1.6;\n\n    --fw-regular: 400;\n    --fw-medium: 550;\n    --fw-semibold: 650;\n    --fw-bold: 750;\n\n    --tracking-tight: -0.01em;\n  }\n}\n",
           "status": "added",
           "regions": {
             "step-8.3": {
               "start": 5,
-              "end": 42
+              "end": 50
+            },
+            "step-8.3b": {
+              "start": 52,
+              "end": 98
             },
             "step-8.5": {
-              "start": 44,
-              "end": 51
+              "start": 100,
+              "end": 107
+            },
+            "step-8.5b": {
+              "start": 109,
+              "end": 129
             }
           },
           "changedLines": [
@@ -10264,7 +10296,85 @@ export const GUIDE_MANIFEST = {
             50,
             51,
             52,
-            53
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131
           ]
         },
         "client/tsconfig.app.json": {
@@ -10893,7 +11003,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/styles/_base.scss": {
-          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition: background-color 0.25s ease, color 0.25s ease;\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
+          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition:\n      background-color var(--dur-3) var(--ease-out),\n      color var(--dur-3) var(--ease-out);\n  }\n\n  // פוקוס נראה אחיד בכל האפליקציה — נגזר מצבע ה-accent, ידידותי למקלדת\n  :focus-visible {\n    outline: 2px solid var(--accent);\n    outline-offset: 2px;\n    border-radius: var(--rad-sm);\n  }\n\n  ::selection {\n    background: var(--accent-subtle);\n  }\n\n  // כיבוד העדפת תנועה מופחתת — חובה לכל מערכת תנועה\n  @media (prefers-reduced-motion: reduce) {\n    *,\n    *::before,\n    *::after {\n      animation-duration: 0.01ms !important;\n      animation-iteration-count: 1 !important;\n      transition-duration: 0.01ms !important;\n    }\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
           "status": "added",
           "regions": {},
           "changedLines": [
@@ -10938,7 +11048,31 @@ export const GUIDE_MANIFEST = {
             39,
             40,
             41,
-            42
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66
           ]
         },
         "client/src/styles/_layers.scss": {
@@ -11000,16 +11134,24 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/styles/_tokens.scss": {
-          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --bdr: #2a2f3a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --bdr: #ddd5c7;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n}\n",
+          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --sur3: #232834;\n    --bdr: #2a2f3a;\n    --bdr2: #353b48;\n    --bdr3: #434a5a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n    --txt4: #5c6373;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --sur3: #e8e2d6;\n    --bdr: #ddd5c7;\n    --bdr2: #cbc2b0;\n    --bdr3: #b3a892;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n    --txt4: #9aa0ad;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  // שכבת ה\"מערכת\": דגש יחיד נגזר, סולם הגבהה (elevation), ותנועה כטוקנים.\n  // הכול נגזר מהסמנטיקה למעלה — שינוי ערכת נושא מעדכן גם את אלה.\n  :root {\n    // דגש יחיד: ember הוא הצבע הראשי. teal יורד לתפקיד סטטוס/מידע בלבד.\n    --accent: var(--ember);\n    --accent-strong: #ff7a1f;\n    --accent-subtle: color-mix(in srgb, var(--ember) 15%, transparent);\n    --accent-contrast: #1a0e04; // טקסט/אייקון על רקע accent\n\n    // elevation — צללים מדורגים, קלים ושכבתיים (לא drop-shadow כבד)\n    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 1px rgb(0 0 0 / 0.18);\n    --shadow-2: 0 4px 14px rgb(0 0 0 / 0.36), 0 2px 5px rgb(0 0 0 / 0.2);\n    --shadow-3: 0 14px 40px rgb(0 0 0 / 0.46), 0 5px 12px rgb(0 0 0 / 0.26);\n    --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);\n\n    // radius נוסף\n    --rad-lg: 16px;\n    --rad-full: 999px;\n\n    // תנועה כטוקנים: משכים ועקומות האצה אחידים בכל האפליקציה\n    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);\n    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);\n    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);\n    --dur-1: 120ms;\n    --dur-2: 160ms;\n    --dur-3: 240ms;\n    --dur-4: 360ms;\n\n    // density — גובה פקדים אחיד; מצב compact דורס דרך attribute\n    --control-h: 36px;\n    --control-h-sm: 28px;\n  }\n\n  [data-theme='light'] {\n    --accent-strong: #c95a10;\n    --accent-contrast: #fffdf9;\n    --shadow-1: 0 1px 2px rgb(35 30 20 / 0.08), 0 1px 1px rgb(35 30 20 / 0.05);\n    --shadow-2: 0 4px 14px rgb(35 30 20 / 0.12), 0 2px 5px rgb(35 30 20 / 0.08);\n    --shadow-3: 0 14px 40px rgb(35 30 20 / 0.16), 0 5px 12px rgb(35 30 20 / 0.1);\n  }\n\n  [data-density='compact'] {\n    --control-h: 30px;\n    --control-h-sm: 24px;\n    --sp-3: 10px;\n    --sp-4: 16px;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n\n  // סולם טיפוגרפיה מלא + משקלים וגבהי-שורה כטוקנים — שמות נוחים לרכיבים חדשים.\n  // השמות הישנים נשמרים כ-alias כדי שאף רכיב קיים לא יישבר.\n  :root {\n    --fs-xs: clamp(11px, 10.6px + 0.12vw, 12px);\n    --fs-sm: var(--fs-small);\n    --fs-base: var(--fs-body);\n    --fs-lg: clamp(16px, 15px + 0.4vw, 18px);\n    --fs-xl: var(--fs-h2);\n    --fs-2xl: var(--fs-h1);\n\n    --lh-tight: 1.2;\n    --lh-snug: 1.4;\n    --lh-normal: 1.6;\n\n    --fw-regular: 400;\n    --fw-medium: 550;\n    --fw-semibold: 650;\n    --fw-bold: 750;\n\n    --tracking-tight: -0.01em;\n  }\n}\n",
           "status": "added",
           "regions": {
             "step-8.3": {
               "start": 5,
-              "end": 42
+              "end": 50
+            },
+            "step-8.3b": {
+              "start": 52,
+              "end": 98
             },
             "step-8.5": {
-              "start": 44,
-              "end": 51
+              "start": 100,
+              "end": 107
+            },
+            "step-8.5b": {
+              "start": 109,
+              "end": 129
             }
           },
           "changedLines": [
@@ -11065,7 +11207,85 @@ export const GUIDE_MANIFEST = {
             50,
             51,
             52,
-            53
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131
           ]
         }
       }
@@ -11873,7 +12093,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/styles/_base.scss": {
-          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition: background-color 0.25s ease, color 0.25s ease;\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
+          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition:\n      background-color var(--dur-3) var(--ease-out),\n      color var(--dur-3) var(--ease-out);\n  }\n\n  // פוקוס נראה אחיד בכל האפליקציה — נגזר מצבע ה-accent, ידידותי למקלדת\n  :focus-visible {\n    outline: 2px solid var(--accent);\n    outline-offset: 2px;\n    border-radius: var(--rad-sm);\n  }\n\n  ::selection {\n    background: var(--accent-subtle);\n  }\n\n  // כיבוד העדפת תנועה מופחתת — חובה לכל מערכת תנועה\n  @media (prefers-reduced-motion: reduce) {\n    *,\n    *::before,\n    *::after {\n      animation-duration: 0.01ms !important;\n      animation-iteration-count: 1 !important;\n      transition-duration: 0.01ms !important;\n    }\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -11891,16 +12111,24 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/styles/_tokens.scss": {
-          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --bdr: #2a2f3a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --bdr: #ddd5c7;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n}\n",
+          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --sur3: #232834;\n    --bdr: #2a2f3a;\n    --bdr2: #353b48;\n    --bdr3: #434a5a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n    --txt4: #5c6373;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --sur3: #e8e2d6;\n    --bdr: #ddd5c7;\n    --bdr2: #cbc2b0;\n    --bdr3: #b3a892;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n    --txt4: #9aa0ad;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  // שכבת ה\"מערכת\": דגש יחיד נגזר, סולם הגבהה (elevation), ותנועה כטוקנים.\n  // הכול נגזר מהסמנטיקה למעלה — שינוי ערכת נושא מעדכן גם את אלה.\n  :root {\n    // דגש יחיד: ember הוא הצבע הראשי. teal יורד לתפקיד סטטוס/מידע בלבד.\n    --accent: var(--ember);\n    --accent-strong: #ff7a1f;\n    --accent-subtle: color-mix(in srgb, var(--ember) 15%, transparent);\n    --accent-contrast: #1a0e04; // טקסט/אייקון על רקע accent\n\n    // elevation — צללים מדורגים, קלים ושכבתיים (לא drop-shadow כבד)\n    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 1px rgb(0 0 0 / 0.18);\n    --shadow-2: 0 4px 14px rgb(0 0 0 / 0.36), 0 2px 5px rgb(0 0 0 / 0.2);\n    --shadow-3: 0 14px 40px rgb(0 0 0 / 0.46), 0 5px 12px rgb(0 0 0 / 0.26);\n    --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);\n\n    // radius נוסף\n    --rad-lg: 16px;\n    --rad-full: 999px;\n\n    // תנועה כטוקנים: משכים ועקומות האצה אחידים בכל האפליקציה\n    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);\n    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);\n    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);\n    --dur-1: 120ms;\n    --dur-2: 160ms;\n    --dur-3: 240ms;\n    --dur-4: 360ms;\n\n    // density — גובה פקדים אחיד; מצב compact דורס דרך attribute\n    --control-h: 36px;\n    --control-h-sm: 28px;\n  }\n\n  [data-theme='light'] {\n    --accent-strong: #c95a10;\n    --accent-contrast: #fffdf9;\n    --shadow-1: 0 1px 2px rgb(35 30 20 / 0.08), 0 1px 1px rgb(35 30 20 / 0.05);\n    --shadow-2: 0 4px 14px rgb(35 30 20 / 0.12), 0 2px 5px rgb(35 30 20 / 0.08);\n    --shadow-3: 0 14px 40px rgb(35 30 20 / 0.16), 0 5px 12px rgb(35 30 20 / 0.1);\n  }\n\n  [data-density='compact'] {\n    --control-h: 30px;\n    --control-h-sm: 24px;\n    --sp-3: 10px;\n    --sp-4: 16px;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n\n  // סולם טיפוגרפיה מלא + משקלים וגבהי-שורה כטוקנים — שמות נוחים לרכיבים חדשים.\n  // השמות הישנים נשמרים כ-alias כדי שאף רכיב קיים לא יישבר.\n  :root {\n    --fs-xs: clamp(11px, 10.6px + 0.12vw, 12px);\n    --fs-sm: var(--fs-small);\n    --fs-base: var(--fs-body);\n    --fs-lg: clamp(16px, 15px + 0.4vw, 18px);\n    --fs-xl: var(--fs-h2);\n    --fs-2xl: var(--fs-h1);\n\n    --lh-tight: 1.2;\n    --lh-snug: 1.4;\n    --lh-normal: 1.6;\n\n    --fw-regular: 400;\n    --fw-medium: 550;\n    --fw-semibold: 650;\n    --fw-bold: 750;\n\n    --tracking-tight: -0.01em;\n  }\n}\n",
           "status": "unchanged",
           "regions": {
             "step-8.3": {
               "start": 5,
-              "end": 42
+              "end": 50
+            },
+            "step-8.3b": {
+              "start": 52,
+              "end": 98
             },
             "step-8.5": {
-              "start": 44,
-              "end": 51
+              "start": 100,
+              "end": 107
+            },
+            "step-8.5b": {
+              "start": 109,
+              "end": 129
             }
           },
           "changedLines": []
@@ -13600,7 +13828,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/styles/_base.scss": {
-          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition: background-color 0.25s ease, color 0.25s ease;\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
+          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition:\n      background-color var(--dur-3) var(--ease-out),\n      color var(--dur-3) var(--ease-out);\n  }\n\n  // פוקוס נראה אחיד בכל האפליקציה — נגזר מצבע ה-accent, ידידותי למקלדת\n  :focus-visible {\n    outline: 2px solid var(--accent);\n    outline-offset: 2px;\n    border-radius: var(--rad-sm);\n  }\n\n  ::selection {\n    background: var(--accent-subtle);\n  }\n\n  // כיבוד העדפת תנועה מופחתת — חובה לכל מערכת תנועה\n  @media (prefers-reduced-motion: reduce) {\n    *,\n    *::before,\n    *::after {\n      animation-duration: 0.01ms !important;\n      animation-iteration-count: 1 !important;\n      transition-duration: 0.01ms !important;\n    }\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -13618,16 +13846,24 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/styles/_tokens.scss": {
-          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --bdr: #2a2f3a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --bdr: #ddd5c7;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n}\n",
+          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --sur3: #232834;\n    --bdr: #2a2f3a;\n    --bdr2: #353b48;\n    --bdr3: #434a5a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n    --txt4: #5c6373;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --sur3: #e8e2d6;\n    --bdr: #ddd5c7;\n    --bdr2: #cbc2b0;\n    --bdr3: #b3a892;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n    --txt4: #9aa0ad;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  // שכבת ה\"מערכת\": דגש יחיד נגזר, סולם הגבהה (elevation), ותנועה כטוקנים.\n  // הכול נגזר מהסמנטיקה למעלה — שינוי ערכת נושא מעדכן גם את אלה.\n  :root {\n    // דגש יחיד: ember הוא הצבע הראשי. teal יורד לתפקיד סטטוס/מידע בלבד.\n    --accent: var(--ember);\n    --accent-strong: #ff7a1f;\n    --accent-subtle: color-mix(in srgb, var(--ember) 15%, transparent);\n    --accent-contrast: #1a0e04; // טקסט/אייקון על רקע accent\n\n    // elevation — צללים מדורגים, קלים ושכבתיים (לא drop-shadow כבד)\n    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 1px rgb(0 0 0 / 0.18);\n    --shadow-2: 0 4px 14px rgb(0 0 0 / 0.36), 0 2px 5px rgb(0 0 0 / 0.2);\n    --shadow-3: 0 14px 40px rgb(0 0 0 / 0.46), 0 5px 12px rgb(0 0 0 / 0.26);\n    --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);\n\n    // radius נוסף\n    --rad-lg: 16px;\n    --rad-full: 999px;\n\n    // תנועה כטוקנים: משכים ועקומות האצה אחידים בכל האפליקציה\n    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);\n    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);\n    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);\n    --dur-1: 120ms;\n    --dur-2: 160ms;\n    --dur-3: 240ms;\n    --dur-4: 360ms;\n\n    // density — גובה פקדים אחיד; מצב compact דורס דרך attribute\n    --control-h: 36px;\n    --control-h-sm: 28px;\n  }\n\n  [data-theme='light'] {\n    --accent-strong: #c95a10;\n    --accent-contrast: #fffdf9;\n    --shadow-1: 0 1px 2px rgb(35 30 20 / 0.08), 0 1px 1px rgb(35 30 20 / 0.05);\n    --shadow-2: 0 4px 14px rgb(35 30 20 / 0.12), 0 2px 5px rgb(35 30 20 / 0.08);\n    --shadow-3: 0 14px 40px rgb(35 30 20 / 0.16), 0 5px 12px rgb(35 30 20 / 0.1);\n  }\n\n  [data-density='compact'] {\n    --control-h: 30px;\n    --control-h-sm: 24px;\n    --sp-3: 10px;\n    --sp-4: 16px;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n\n  // סולם טיפוגרפיה מלא + משקלים וגבהי-שורה כטוקנים — שמות נוחים לרכיבים חדשים.\n  // השמות הישנים נשמרים כ-alias כדי שאף רכיב קיים לא יישבר.\n  :root {\n    --fs-xs: clamp(11px, 10.6px + 0.12vw, 12px);\n    --fs-sm: var(--fs-small);\n    --fs-base: var(--fs-body);\n    --fs-lg: clamp(16px, 15px + 0.4vw, 18px);\n    --fs-xl: var(--fs-h2);\n    --fs-2xl: var(--fs-h1);\n\n    --lh-tight: 1.2;\n    --lh-snug: 1.4;\n    --lh-normal: 1.6;\n\n    --fw-regular: 400;\n    --fw-medium: 550;\n    --fw-semibold: 650;\n    --fw-bold: 750;\n\n    --tracking-tight: -0.01em;\n  }\n}\n",
           "status": "unchanged",
           "regions": {
             "step-8.3": {
               "start": 5,
-              "end": 42
+              "end": 50
+            },
+            "step-8.3b": {
+              "start": 52,
+              "end": 98
             },
             "step-8.5": {
-              "start": 44,
-              "end": 51
+              "start": 100,
+              "end": 107
+            },
+            "step-8.5b": {
+              "start": 109,
+              "end": 129
             }
           },
           "changedLines": []
@@ -15189,7 +15425,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/styles/_base.scss": {
-          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition: background-color 0.25s ease, color 0.25s ease;\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
+          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition:\n      background-color var(--dur-3) var(--ease-out),\n      color var(--dur-3) var(--ease-out);\n  }\n\n  // פוקוס נראה אחיד בכל האפליקציה — נגזר מצבע ה-accent, ידידותי למקלדת\n  :focus-visible {\n    outline: 2px solid var(--accent);\n    outline-offset: 2px;\n    border-radius: var(--rad-sm);\n  }\n\n  ::selection {\n    background: var(--accent-subtle);\n  }\n\n  // כיבוד העדפת תנועה מופחתת — חובה לכל מערכת תנועה\n  @media (prefers-reduced-motion: reduce) {\n    *,\n    *::before,\n    *::after {\n      animation-duration: 0.01ms !important;\n      animation-iteration-count: 1 !important;\n      transition-duration: 0.01ms !important;\n    }\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -15207,16 +15443,24 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/styles/_tokens.scss": {
-          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --bdr: #2a2f3a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --bdr: #ddd5c7;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n}\n",
+          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --sur3: #232834;\n    --bdr: #2a2f3a;\n    --bdr2: #353b48;\n    --bdr3: #434a5a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n    --txt4: #5c6373;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --sur3: #e8e2d6;\n    --bdr: #ddd5c7;\n    --bdr2: #cbc2b0;\n    --bdr3: #b3a892;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n    --txt4: #9aa0ad;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  // שכבת ה\"מערכת\": דגש יחיד נגזר, סולם הגבהה (elevation), ותנועה כטוקנים.\n  // הכול נגזר מהסמנטיקה למעלה — שינוי ערכת נושא מעדכן גם את אלה.\n  :root {\n    // דגש יחיד: ember הוא הצבע הראשי. teal יורד לתפקיד סטטוס/מידע בלבד.\n    --accent: var(--ember);\n    --accent-strong: #ff7a1f;\n    --accent-subtle: color-mix(in srgb, var(--ember) 15%, transparent);\n    --accent-contrast: #1a0e04; // טקסט/אייקון על רקע accent\n\n    // elevation — צללים מדורגים, קלים ושכבתיים (לא drop-shadow כבד)\n    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 1px rgb(0 0 0 / 0.18);\n    --shadow-2: 0 4px 14px rgb(0 0 0 / 0.36), 0 2px 5px rgb(0 0 0 / 0.2);\n    --shadow-3: 0 14px 40px rgb(0 0 0 / 0.46), 0 5px 12px rgb(0 0 0 / 0.26);\n    --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);\n\n    // radius נוסף\n    --rad-lg: 16px;\n    --rad-full: 999px;\n\n    // תנועה כטוקנים: משכים ועקומות האצה אחידים בכל האפליקציה\n    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);\n    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);\n    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);\n    --dur-1: 120ms;\n    --dur-2: 160ms;\n    --dur-3: 240ms;\n    --dur-4: 360ms;\n\n    // density — גובה פקדים אחיד; מצב compact דורס דרך attribute\n    --control-h: 36px;\n    --control-h-sm: 28px;\n  }\n\n  [data-theme='light'] {\n    --accent-strong: #c95a10;\n    --accent-contrast: #fffdf9;\n    --shadow-1: 0 1px 2px rgb(35 30 20 / 0.08), 0 1px 1px rgb(35 30 20 / 0.05);\n    --shadow-2: 0 4px 14px rgb(35 30 20 / 0.12), 0 2px 5px rgb(35 30 20 / 0.08);\n    --shadow-3: 0 14px 40px rgb(35 30 20 / 0.16), 0 5px 12px rgb(35 30 20 / 0.1);\n  }\n\n  [data-density='compact'] {\n    --control-h: 30px;\n    --control-h-sm: 24px;\n    --sp-3: 10px;\n    --sp-4: 16px;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n\n  // סולם טיפוגרפיה מלא + משקלים וגבהי-שורה כטוקנים — שמות נוחים לרכיבים חדשים.\n  // השמות הישנים נשמרים כ-alias כדי שאף רכיב קיים לא יישבר.\n  :root {\n    --fs-xs: clamp(11px, 10.6px + 0.12vw, 12px);\n    --fs-sm: var(--fs-small);\n    --fs-base: var(--fs-body);\n    --fs-lg: clamp(16px, 15px + 0.4vw, 18px);\n    --fs-xl: var(--fs-h2);\n    --fs-2xl: var(--fs-h1);\n\n    --lh-tight: 1.2;\n    --lh-snug: 1.4;\n    --lh-normal: 1.6;\n\n    --fw-regular: 400;\n    --fw-medium: 550;\n    --fw-semibold: 650;\n    --fw-bold: 750;\n\n    --tracking-tight: -0.01em;\n  }\n}\n",
           "status": "unchanged",
           "regions": {
             "step-8.3": {
               "start": 5,
-              "end": 42
+              "end": 50
+            },
+            "step-8.3b": {
+              "start": 52,
+              "end": 98
             },
             "step-8.5": {
-              "start": 44,
-              "end": 51
+              "start": 100,
+              "end": 107
+            },
+            "step-8.5b": {
+              "start": 109,
+              "end": 129
             }
           },
           "changedLines": []
@@ -17206,7 +17450,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/styles/_base.scss": {
-          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition: background-color 0.25s ease, color 0.25s ease;\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
+          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition:\n      background-color var(--dur-3) var(--ease-out),\n      color var(--dur-3) var(--ease-out);\n  }\n\n  // פוקוס נראה אחיד בכל האפליקציה — נגזר מצבע ה-accent, ידידותי למקלדת\n  :focus-visible {\n    outline: 2px solid var(--accent);\n    outline-offset: 2px;\n    border-radius: var(--rad-sm);\n  }\n\n  ::selection {\n    background: var(--accent-subtle);\n  }\n\n  // כיבוד העדפת תנועה מופחתת — חובה לכל מערכת תנועה\n  @media (prefers-reduced-motion: reduce) {\n    *,\n    *::before,\n    *::after {\n      animation-duration: 0.01ms !important;\n      animation-iteration-count: 1 !important;\n      transition-duration: 0.01ms !important;\n    }\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -17224,16 +17468,24 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/styles/_tokens.scss": {
-          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --bdr: #2a2f3a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --bdr: #ddd5c7;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n}\n",
+          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --sur3: #232834;\n    --bdr: #2a2f3a;\n    --bdr2: #353b48;\n    --bdr3: #434a5a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n    --txt4: #5c6373;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --sur3: #e8e2d6;\n    --bdr: #ddd5c7;\n    --bdr2: #cbc2b0;\n    --bdr3: #b3a892;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n    --txt4: #9aa0ad;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  // שכבת ה\"מערכת\": דגש יחיד נגזר, סולם הגבהה (elevation), ותנועה כטוקנים.\n  // הכול נגזר מהסמנטיקה למעלה — שינוי ערכת נושא מעדכן גם את אלה.\n  :root {\n    // דגש יחיד: ember הוא הצבע הראשי. teal יורד לתפקיד סטטוס/מידע בלבד.\n    --accent: var(--ember);\n    --accent-strong: #ff7a1f;\n    --accent-subtle: color-mix(in srgb, var(--ember) 15%, transparent);\n    --accent-contrast: #1a0e04; // טקסט/אייקון על רקע accent\n\n    // elevation — צללים מדורגים, קלים ושכבתיים (לא drop-shadow כבד)\n    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 1px rgb(0 0 0 / 0.18);\n    --shadow-2: 0 4px 14px rgb(0 0 0 / 0.36), 0 2px 5px rgb(0 0 0 / 0.2);\n    --shadow-3: 0 14px 40px rgb(0 0 0 / 0.46), 0 5px 12px rgb(0 0 0 / 0.26);\n    --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);\n\n    // radius נוסף\n    --rad-lg: 16px;\n    --rad-full: 999px;\n\n    // תנועה כטוקנים: משכים ועקומות האצה אחידים בכל האפליקציה\n    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);\n    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);\n    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);\n    --dur-1: 120ms;\n    --dur-2: 160ms;\n    --dur-3: 240ms;\n    --dur-4: 360ms;\n\n    // density — גובה פקדים אחיד; מצב compact דורס דרך attribute\n    --control-h: 36px;\n    --control-h-sm: 28px;\n  }\n\n  [data-theme='light'] {\n    --accent-strong: #c95a10;\n    --accent-contrast: #fffdf9;\n    --shadow-1: 0 1px 2px rgb(35 30 20 / 0.08), 0 1px 1px rgb(35 30 20 / 0.05);\n    --shadow-2: 0 4px 14px rgb(35 30 20 / 0.12), 0 2px 5px rgb(35 30 20 / 0.08);\n    --shadow-3: 0 14px 40px rgb(35 30 20 / 0.16), 0 5px 12px rgb(35 30 20 / 0.1);\n  }\n\n  [data-density='compact'] {\n    --control-h: 30px;\n    --control-h-sm: 24px;\n    --sp-3: 10px;\n    --sp-4: 16px;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n\n  // סולם טיפוגרפיה מלא + משקלים וגבהי-שורה כטוקנים — שמות נוחים לרכיבים חדשים.\n  // השמות הישנים נשמרים כ-alias כדי שאף רכיב קיים לא יישבר.\n  :root {\n    --fs-xs: clamp(11px, 10.6px + 0.12vw, 12px);\n    --fs-sm: var(--fs-small);\n    --fs-base: var(--fs-body);\n    --fs-lg: clamp(16px, 15px + 0.4vw, 18px);\n    --fs-xl: var(--fs-h2);\n    --fs-2xl: var(--fs-h1);\n\n    --lh-tight: 1.2;\n    --lh-snug: 1.4;\n    --lh-normal: 1.6;\n\n    --fw-regular: 400;\n    --fw-medium: 550;\n    --fw-semibold: 650;\n    --fw-bold: 750;\n\n    --tracking-tight: -0.01em;\n  }\n}\n",
           "status": "unchanged",
           "regions": {
             "step-8.3": {
               "start": 5,
-              "end": 42
+              "end": 50
+            },
+            "step-8.3b": {
+              "start": 52,
+              "end": 98
             },
             "step-8.5": {
-              "start": 44,
-              "end": 51
+              "start": 100,
+              "end": 107
+            },
+            "step-8.5b": {
+              "start": 109,
+              "end": 129
             }
           },
           "changedLines": []
@@ -20109,7 +20361,7 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/styles/_base.scss": {
-          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition: background-color 0.25s ease, color 0.25s ease;\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
+          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition:\n      background-color var(--dur-3) var(--ease-out),\n      color var(--dur-3) var(--ease-out);\n  }\n\n  // פוקוס נראה אחיד בכל האפליקציה — נגזר מצבע ה-accent, ידידותי למקלדת\n  :focus-visible {\n    outline: 2px solid var(--accent);\n    outline-offset: 2px;\n    border-radius: var(--rad-sm);\n  }\n\n  ::selection {\n    background: var(--accent-subtle);\n  }\n\n  // כיבוד העדפת תנועה מופחתת — חובה לכל מערכת תנועה\n  @media (prefers-reduced-motion: reduce) {\n    *,\n    *::before,\n    *::after {\n      animation-duration: 0.01ms !important;\n      animation-iteration-count: 1 !important;\n      transition-duration: 0.01ms !important;\n    }\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -20127,16 +20379,24 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/styles/_tokens.scss": {
-          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --bdr: #2a2f3a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --bdr: #ddd5c7;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n}\n",
+          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --sur3: #232834;\n    --bdr: #2a2f3a;\n    --bdr2: #353b48;\n    --bdr3: #434a5a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n    --txt4: #5c6373;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --sur3: #e8e2d6;\n    --bdr: #ddd5c7;\n    --bdr2: #cbc2b0;\n    --bdr3: #b3a892;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n    --txt4: #9aa0ad;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  // שכבת ה\"מערכת\": דגש יחיד נגזר, סולם הגבהה (elevation), ותנועה כטוקנים.\n  // הכול נגזר מהסמנטיקה למעלה — שינוי ערכת נושא מעדכן גם את אלה.\n  :root {\n    // דגש יחיד: ember הוא הצבע הראשי. teal יורד לתפקיד סטטוס/מידע בלבד.\n    --accent: var(--ember);\n    --accent-strong: #ff7a1f;\n    --accent-subtle: color-mix(in srgb, var(--ember) 15%, transparent);\n    --accent-contrast: #1a0e04; // טקסט/אייקון על רקע accent\n\n    // elevation — צללים מדורגים, קלים ושכבתיים (לא drop-shadow כבד)\n    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 1px rgb(0 0 0 / 0.18);\n    --shadow-2: 0 4px 14px rgb(0 0 0 / 0.36), 0 2px 5px rgb(0 0 0 / 0.2);\n    --shadow-3: 0 14px 40px rgb(0 0 0 / 0.46), 0 5px 12px rgb(0 0 0 / 0.26);\n    --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);\n\n    // radius נוסף\n    --rad-lg: 16px;\n    --rad-full: 999px;\n\n    // תנועה כטוקנים: משכים ועקומות האצה אחידים בכל האפליקציה\n    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);\n    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);\n    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);\n    --dur-1: 120ms;\n    --dur-2: 160ms;\n    --dur-3: 240ms;\n    --dur-4: 360ms;\n\n    // density — גובה פקדים אחיד; מצב compact דורס דרך attribute\n    --control-h: 36px;\n    --control-h-sm: 28px;\n  }\n\n  [data-theme='light'] {\n    --accent-strong: #c95a10;\n    --accent-contrast: #fffdf9;\n    --shadow-1: 0 1px 2px rgb(35 30 20 / 0.08), 0 1px 1px rgb(35 30 20 / 0.05);\n    --shadow-2: 0 4px 14px rgb(35 30 20 / 0.12), 0 2px 5px rgb(35 30 20 / 0.08);\n    --shadow-3: 0 14px 40px rgb(35 30 20 / 0.16), 0 5px 12px rgb(35 30 20 / 0.1);\n  }\n\n  [data-density='compact'] {\n    --control-h: 30px;\n    --control-h-sm: 24px;\n    --sp-3: 10px;\n    --sp-4: 16px;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n\n  // סולם טיפוגרפיה מלא + משקלים וגבהי-שורה כטוקנים — שמות נוחים לרכיבים חדשים.\n  // השמות הישנים נשמרים כ-alias כדי שאף רכיב קיים לא יישבר.\n  :root {\n    --fs-xs: clamp(11px, 10.6px + 0.12vw, 12px);\n    --fs-sm: var(--fs-small);\n    --fs-base: var(--fs-body);\n    --fs-lg: clamp(16px, 15px + 0.4vw, 18px);\n    --fs-xl: var(--fs-h2);\n    --fs-2xl: var(--fs-h1);\n\n    --lh-tight: 1.2;\n    --lh-snug: 1.4;\n    --lh-normal: 1.6;\n\n    --fw-regular: 400;\n    --fw-medium: 550;\n    --fw-semibold: 650;\n    --fw-bold: 750;\n\n    --tracking-tight: -0.01em;\n  }\n}\n",
           "status": "unchanged",
           "regions": {
             "step-8.3": {
               "start": 5,
-              "end": 42
+              "end": 50
+            },
+            "step-8.3b": {
+              "start": 52,
+              "end": 98
             },
             "step-8.5": {
-              "start": 44,
-              "end": 51
+              "start": 100,
+              "end": 107
+            },
+            "step-8.5b": {
+              "start": 109,
+              "end": 129
             }
           },
           "changedLines": []
@@ -22999,7 +23259,7 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/styles/_base.scss": {
-          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition: background-color 0.25s ease, color 0.25s ease;\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
+          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition:\n      background-color var(--dur-3) var(--ease-out),\n      color var(--dur-3) var(--ease-out);\n  }\n\n  // פוקוס נראה אחיד בכל האפליקציה — נגזר מצבע ה-accent, ידידותי למקלדת\n  :focus-visible {\n    outline: 2px solid var(--accent);\n    outline-offset: 2px;\n    border-radius: var(--rad-sm);\n  }\n\n  ::selection {\n    background: var(--accent-subtle);\n  }\n\n  // כיבוד העדפת תנועה מופחתת — חובה לכל מערכת תנועה\n  @media (prefers-reduced-motion: reduce) {\n    *,\n    *::before,\n    *::after {\n      animation-duration: 0.01ms !important;\n      animation-iteration-count: 1 !important;\n      transition-duration: 0.01ms !important;\n    }\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
           "status": "unchanged",
           "regions": {},
           "changedLines": []
@@ -23017,16 +23277,24 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "client/src/styles/_tokens.scss": {
-          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --bdr: #2a2f3a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --bdr: #ddd5c7;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n}\n",
+          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --sur3: #232834;\n    --bdr: #2a2f3a;\n    --bdr2: #353b48;\n    --bdr3: #434a5a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n    --txt4: #5c6373;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --sur3: #e8e2d6;\n    --bdr: #ddd5c7;\n    --bdr2: #cbc2b0;\n    --bdr3: #b3a892;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n    --txt4: #9aa0ad;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  // שכבת ה\"מערכת\": דגש יחיד נגזר, סולם הגבהה (elevation), ותנועה כטוקנים.\n  // הכול נגזר מהסמנטיקה למעלה — שינוי ערכת נושא מעדכן גם את אלה.\n  :root {\n    // דגש יחיד: ember הוא הצבע הראשי. teal יורד לתפקיד סטטוס/מידע בלבד.\n    --accent: var(--ember);\n    --accent-strong: #ff7a1f;\n    --accent-subtle: color-mix(in srgb, var(--ember) 15%, transparent);\n    --accent-contrast: #1a0e04; // טקסט/אייקון על רקע accent\n\n    // elevation — צללים מדורגים, קלים ושכבתיים (לא drop-shadow כבד)\n    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 1px rgb(0 0 0 / 0.18);\n    --shadow-2: 0 4px 14px rgb(0 0 0 / 0.36), 0 2px 5px rgb(0 0 0 / 0.2);\n    --shadow-3: 0 14px 40px rgb(0 0 0 / 0.46), 0 5px 12px rgb(0 0 0 / 0.26);\n    --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);\n\n    // radius נוסף\n    --rad-lg: 16px;\n    --rad-full: 999px;\n\n    // תנועה כטוקנים: משכים ועקומות האצה אחידים בכל האפליקציה\n    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);\n    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);\n    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);\n    --dur-1: 120ms;\n    --dur-2: 160ms;\n    --dur-3: 240ms;\n    --dur-4: 360ms;\n\n    // density — גובה פקדים אחיד; מצב compact דורס דרך attribute\n    --control-h: 36px;\n    --control-h-sm: 28px;\n  }\n\n  [data-theme='light'] {\n    --accent-strong: #c95a10;\n    --accent-contrast: #fffdf9;\n    --shadow-1: 0 1px 2px rgb(35 30 20 / 0.08), 0 1px 1px rgb(35 30 20 / 0.05);\n    --shadow-2: 0 4px 14px rgb(35 30 20 / 0.12), 0 2px 5px rgb(35 30 20 / 0.08);\n    --shadow-3: 0 14px 40px rgb(35 30 20 / 0.16), 0 5px 12px rgb(35 30 20 / 0.1);\n  }\n\n  [data-density='compact'] {\n    --control-h: 30px;\n    --control-h-sm: 24px;\n    --sp-3: 10px;\n    --sp-4: 16px;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n\n  // סולם טיפוגרפיה מלא + משקלים וגבהי-שורה כטוקנים — שמות נוחים לרכיבים חדשים.\n  // השמות הישנים נשמרים כ-alias כדי שאף רכיב קיים לא יישבר.\n  :root {\n    --fs-xs: clamp(11px, 10.6px + 0.12vw, 12px);\n    --fs-sm: var(--fs-small);\n    --fs-base: var(--fs-body);\n    --fs-lg: clamp(16px, 15px + 0.4vw, 18px);\n    --fs-xl: var(--fs-h2);\n    --fs-2xl: var(--fs-h1);\n\n    --lh-tight: 1.2;\n    --lh-snug: 1.4;\n    --lh-normal: 1.6;\n\n    --fw-regular: 400;\n    --fw-medium: 550;\n    --fw-semibold: 650;\n    --fw-bold: 750;\n\n    --tracking-tight: -0.01em;\n  }\n}\n",
           "status": "unchanged",
           "regions": {
             "step-8.3": {
               "start": 5,
-              "end": 42
+              "end": 50
+            },
+            "step-8.3b": {
+              "start": 52,
+              "end": 98
             },
             "step-8.5": {
-              "start": 44,
-              "end": 51
+              "start": 100,
+              "end": 107
+            },
+            "step-8.5b": {
+              "start": 109,
+              "end": 129
             }
           },
           "changedLines": []

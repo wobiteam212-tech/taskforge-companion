@@ -8,10 +8,14 @@
     --bg: #0f1217;
     --sur: #161a21;
     --sur2: #1c212b;
+    --sur3: #232834;
     --bdr: #2a2f3a;
+    --bdr2: #353b48;
+    --bdr3: #434a5a;
     --txt1: #e8ebf2;
     --txt2: #aeb6c8;
     --txt3: #8a93a5;
+    --txt4: #5c6373;
 
     --ember: #ff8a3d;
     --teal: #2dd4bf;
@@ -32,14 +36,68 @@
     --bg: #f5f1ea;
     --sur: #fffdf9;
     --sur2: #f1ece2;
+    --sur3: #e8e2d6;
     --bdr: #ddd5c7;
+    --bdr2: #cbc2b0;
+    --bdr3: #b3a892;
     --txt1: #252a33;
     --txt2: #4a5263;
     --txt3: #6f7787;
+    --txt4: #9aa0ad;
 
     --ember: #e06616;
     --teal: #0f9e87;
     --danger: #d23f3f;
+  }
+  // #endregion
+
+  // #region step-8.3b
+  // שכבת ה"מערכת": דגש יחיד נגזר, סולם הגבהה (elevation), ותנועה כטוקנים.
+  // הכול נגזר מהסמנטיקה למעלה — שינוי ערכת נושא מעדכן גם את אלה.
+  :root {
+    // דגש יחיד: ember הוא הצבע הראשי. teal יורד לתפקיד סטטוס/מידע בלבד.
+    --accent: var(--ember);
+    --accent-strong: #ff7a1f;
+    --accent-subtle: color-mix(in srgb, var(--ember) 15%, transparent);
+    --accent-contrast: #1a0e04; // טקסט/אייקון על רקע accent
+
+    // elevation — צללים מדורגים, קלים ושכבתיים (לא drop-shadow כבד)
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 1px rgb(0 0 0 / 0.18);
+    --shadow-2: 0 4px 14px rgb(0 0 0 / 0.36), 0 2px 5px rgb(0 0 0 / 0.2);
+    --shadow-3: 0 14px 40px rgb(0 0 0 / 0.46), 0 5px 12px rgb(0 0 0 / 0.26);
+    --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+
+    // radius נוסף
+    --rad-lg: 16px;
+    --rad-full: 999px;
+
+    // תנועה כטוקנים: משכים ועקומות האצה אחידים בכל האפליקציה
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --dur-1: 120ms;
+    --dur-2: 160ms;
+    --dur-3: 240ms;
+    --dur-4: 360ms;
+
+    // density — גובה פקדים אחיד; מצב compact דורס דרך attribute
+    --control-h: 36px;
+    --control-h-sm: 28px;
+  }
+
+  [data-theme='light'] {
+    --accent-strong: #c95a10;
+    --accent-contrast: #fffdf9;
+    --shadow-1: 0 1px 2px rgb(35 30 20 / 0.08), 0 1px 1px rgb(35 30 20 / 0.05);
+    --shadow-2: 0 4px 14px rgb(35 30 20 / 0.12), 0 2px 5px rgb(35 30 20 / 0.08);
+    --shadow-3: 0 14px 40px rgb(35 30 20 / 0.16), 0 5px 12px rgb(35 30 20 / 0.1);
+  }
+
+  [data-density='compact'] {
+    --control-h: 30px;
+    --control-h-sm: 24px;
+    --sp-3: 10px;
+    --sp-4: 16px;
   }
   // #endregion
 
@@ -51,6 +109,30 @@
     --fs-h1: clamp(20px, 17px + 1vw, 28px);
     --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);
     --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);
+  }
+  // #endregion
+
+  // #region step-8.5b
+  // סולם טיפוגרפיה מלא + משקלים וגבהי-שורה כטוקנים — שמות נוחים לרכיבים חדשים.
+  // השמות הישנים נשמרים כ-alias כדי שאף רכיב קיים לא יישבר.
+  :root {
+    --fs-xs: clamp(11px, 10.6px + 0.12vw, 12px);
+    --fs-sm: var(--fs-small);
+    --fs-base: var(--fs-body);
+    --fs-lg: clamp(16px, 15px + 0.4vw, 18px);
+    --fs-xl: var(--fs-h2);
+    --fs-2xl: var(--fs-h1);
+
+    --lh-tight: 1.2;
+    --lh-snug: 1.4;
+    --lh-normal: 1.6;
+
+    --fw-regular: 400;
+    --fw-medium: 550;
+    --fw-semibold: 650;
+    --fw-bold: 750;
+
+    --tracking-tight: -0.01em;
   }
   // #endregion
 }
