@@ -1,0 +1,196 @@
+:host {
+  display: block;
+}
+
+.pg {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.pg-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-full);
+  padding: 2px;
+  background: var(--sur2);
+}
+
+.seg-btn {
+  border: none;
+  background: transparent;
+  color: var(--txt2);
+  font-family: var(--mono);
+  font-size: var(--fs-small);
+  padding: 4px 12px;
+  border-radius: var(--rad-full);
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+
+  &.on {
+    background: var(--accent);
+    color: var(--accent-contrast, #1a0e04);
+  }
+}
+
+.slider {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--fs-small);
+  color: var(--txt3);
+
+  input {
+    accent-color: var(--accent);
+    inline-size: clamp(160px, 30vw, 260px);
+  }
+}
+
+.pg-stage {
+  /* רקע משובץ שמדגיש את גבול ה-container בזמן שמזיזים את הסליידר */
+  display: flex;
+  justify-content: center;
+  padding: var(--sp-3);
+  border: 1px dashed var(--bdr2);
+  border-radius: var(--rad);
+  background: var(--sur);
+  overflow: clip;
+}
+
+.lab {
+  /* זה ה-query container: הילדים שואלים על רוחבו, לא על רוחב החלון */
+  container-type: inline-size;
+  max-inline-size: 100%;
+  border: 1px solid var(--bdr3);
+  border-radius: var(--rad);
+  padding: var(--sp-2);
+  background: var(--sur2);
+  transition: outline-color var(--dur-2) var(--ease-out);
+  outline: 2px solid transparent;
+}
+
+/* :has() — ה-parent מגיב לבחירה פנימית בלי class או signal */
+.cards:has(input:checked) {
+  outline: none;
+}
+.lab:has(input:checked) {
+  outline-color: color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+.cards {
+  display: grid;
+  gap: var(--sp-2);
+
+  &[data-mode='grid'] {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  }
+
+  &[data-mode='flex'] {
+    display: flex;
+    flex-wrap: wrap;
+
+    .card {
+      flex: 1 1 9rem;
+    }
+  }
+
+  /* subgrid: רשת חיצונית של עמודות, וכל כרטיס יורש את מסילות השורה כדי
+     שכותרות ו-meta יתיישרו על פני כל הכרטיסים. fallback ל-grid רגיל. */
+  &[data-mode='subgrid'] {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+    grid-auto-rows: auto;
+
+    @supports (grid-template-rows: subgrid) {
+      grid-template-rows: repeat(2, auto);
+
+      .card {
+        display: grid;
+        grid-row: span 2;
+        grid-template-rows: subgrid;
+      }
+    }
+  }
+}
+
+/* container query: מתחת ל-22rem של ה-container (לא ה-viewport) — עמודה אחת */
+@container (max-width: 22rem) {
+  .cards[data-mode='grid'],
+  .cards[data-mode='subgrid'] {
+    grid-template-columns: 1fr;
+  }
+
+  .cards[data-mode='flex'] .card {
+    flex-basis: 100%;
+  }
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  background: var(--sur);
+  padding: var(--sp-2);
+  cursor: pointer;
+  box-shadow: var(--shadow-1);
+  transition:
+    border-color var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-1) var(--ease-out),
+    transform var(--dur-1) var(--ease-out);
+
+  input {
+    position: absolute;
+    inset-block-start: var(--sp-1);
+    inset-inline-end: var(--sp-1);
+    accent-color: var(--accent);
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+  }
+
+  &:has(input:checked) {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-2);
+  }
+
+  .card-title {
+    font-weight: 600;
+    font-size: var(--fs-small);
+    padding-inline-end: var(--sp-3);
+  }
+
+  .card-meta {
+    font-size: var(--fs-xs, 11px);
+    color: var(--txt3);
+  }
+}
+
+.pg-hint {
+  margin: 0;
+  font-size: var(--fs-small);
+  color: var(--txt3);
+
+  code {
+    background: var(--sur3);
+    border-radius: 4px;
+    padding: 0 4px;
+    color: var(--txt2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seg-btn,
+  .lab,
+  .card {
+    transition: none;
+  }
+}

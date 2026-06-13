@@ -216,7 +216,9 @@ export const WAVES: WaveDef[] = [
         blurb:
           'subgrid, anchor positioning, cascade layers, ‎:has(), OKLCH/color-mix, container queries ו-playground חי לשדרוג מסכים קיימים.',
         wave: 4,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch15-modern-css/content').then((m) => m.CH15_CONTENT),
       },
       {
         id: 'ch16',

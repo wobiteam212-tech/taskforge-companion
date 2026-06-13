@@ -1,0 +1,48 @@
+<div class="pg">
+  <div class="pg-controls">
+    <div class="seg" role="group" aria-label="מנגנון פריסה">
+      @for (m of modes; track m) {
+        <button
+          type="button"
+          class="seg-btn"
+          [class.on]="mode() === m"
+          (click)="mode.set(m)"
+        >{{ m }}</button>
+      }
+    </div>
+
+    <label class="slider">
+      <span class="ltr">container: {{ width() }}px</span>
+      <input
+        type="range"
+        min="240"
+        max="760"
+        step="10"
+        [value]="width()"
+        (input)="onWidth($event)"
+        aria-label="רוחב ה-container"
+      />
+    </label>
+  </div>
+
+  <!-- ה-stage: רוחב ה-container נשלט על ידכם; container-type הופך אותו ל-query container -->
+  <div class="pg-stage">
+    <div class="lab" [style.inline-size.px]="width()">
+      <div class="cards ltr" [attr.data-mode]="mode()">
+        @for (c of cards; track c.id) {
+          <label class="card">
+            <input type="radio" name="pg-card" [value]="c.id" />
+            <span class="card-title">{{ c.title }}</span>
+            <span class="card-meta">{{ c.meta }}</span>
+          </label>
+        }
+      </div>
+    </div>
+  </div>
+
+  <p class="pg-hint">
+    בחרו כרטיס: ה-parent מגיב דרך <code class="ltr">:has(input:checked)</code> בלי class ובלי signal.
+    הזיזו את הסליידר מתחת ל-<code class="ltr">22rem</code> וה-<code class="ltr">&#64;container</code> מקפל לעמודה אחת —
+    ה-viewport לא זז, רק ה-container.
+  </p>
+</div>

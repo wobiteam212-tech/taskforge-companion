@@ -23,7 +23,7 @@
 | Phase 0a — ch08 design-tokens v2 | `04-chapter-specs/ch08-retrofit.md` | DONE — token foundation `743ce36`; component adoption completion `3919f87` |
 | Phase 0b — companion re-skin | `04-chapter-specs/companion-reskin.md` | DONE — `47f7712` |
 | Renumber placeholders ch15–20 → ch21–26 | `03-PROPAGATION-AND-SYNC.md` Procedure C | DONE — `27811b6` |
-| ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | NOT STARTED |
+| ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | DONE — snapshot `c7f7b7d`, content + demo committed (see latest log entry) |
 | ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | NOT STARTED |
 | ch17 — Kanban DnD | `04-chapter-specs/ch17-kanban-dnd.md` | NOT STARTED |
 | ch18 — Dashboard | `04-chapter-specs/ch18-dashboard.md` | NOT STARTED |
@@ -36,6 +36,44 @@
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-14 — ch15 content + demo done — done (Claude)
+- ch15 content delegated to sonnet agent, then reviewed line-by-line: 17 steps (15.1–15.17) covering auto-fit/minmax,
+  subgrid+@supports, container queries (×2 screens), intrinsic toolbar grid, clamp, `:has()`, anchor positioning
+  (intro for ch16), scroll-driven animations, OKLCH/color-mix, logical properties, cascade layers, View Transitions
+  (intro for ch19), the live playground, pixel-perfect craft. 8 quiz, 5 proveIt, exercise, terms.
+- Review fixes: replaced awkward transliteration "מוציון" → `motion`, fixed "contrastz" typo (×2). Agent's panel/region
+  refs all resolved; live-demo import path correct; reused ch14 `step-14.11b` region for the View-Transitions tour.
+- Built the live demo myself earlier: `CssPlaygroundDemo` (playground.demo.{ts,html,scss}).
+- Gates: gen:manifest (15 snapshots, 1109 entries) · test 96 passed (+6 ch15) · verify:coverage 133 · build clean.
+- Browser smoke (guide port): chapter renders 17 steps, 0 overflow; playground verified live — mode toggle
+  grid→flex→subgrid, container slider to 260px collapses cards to 1 col (container query fires), `:has(input:checked)`
+  recolors the parent outline (ember 60%) with no JS class, 0 console errors, 0 overflow at 375px.
+- registry: ch15 flipped to `ready` + loadContent. launch.json snapshot config → ch15.
+- WHAT'S NEXT: **ch16 — Motion + Command palette** (`04-chapter-specs/ch16-command-palette.md`). Spine piece #1
+  (command registry + bus), Cmd-K palette (anchor positioning from ch15), keyboard service; backend search endpoint.
+  Snapshot-first: build overlay (client palette/keyboard/command files + server SearchEndpoints) → milestones → compile
+  → two-server smoke → delegate content → review → gates → commit.
+
+### 2026-06-13 — Review of codex Phase 0 + ch15 snapshot/demo — in-progress (Claude)
+- Reviewed codex's committed work after the handoff: `743ce36` token foundation, `3919f87` component adoption,
+  `47f7712` companion re-skin, `27811b6` roadmap renumber. **Verdict: good, in-sync, gate-green.** Specifically
+  confirmed: registry ch00-14 untouched (`ready`), ch15-20 new Wave 4 (`soon`), ch21-26 shifted (`soon`), wave nos
+  0-6 sequential; codex SYNCED prose (ch09 focus line now `var(--ember)`, added motion/elevation/field/dialog/toast
+  lines; ch08 content teaches the new token dimensions). No fixes needed.
+- Runtime-verified the cumulative app (two-server smoke, demo@taskforge.dev): project cards elevated + auto-fit grid,
+  board toolbar intrinsic grid collapsing to 1 col at 375px (container query fires), virtual scroll 11 rows /
+  "Page 1 of 2 — 60 issues", new-project dialog opens with `tf-dialog-in` animation + shadow. 0 console errors,
+  0 overflow desktop + 375px. ch15 client `ng build` clean.
+- Committed codex's in-progress ch15 snapshot (2 refined SCSS + milestone) as `c7f7b7d` after review. Built the ch15
+  live demo myself: `src/app/chapters/ch15-modern-css/demos/playground.demo.{ts,html,scss}` (CssPlaygroundDemo —
+  grid/subgrid/flex segmented control + container-width slider + `:has()` selection; reduced-motion safe; uses v2
+  tokens confirmed present in companion). Verified all v2 tokens exist in `src/styles.scss` before using them.
+- Updated `.claude/launch.json` snapshot config ch13 → ch15.
+- Gotcha: re-confirmed the EPERM pattern — stop the snapshot API + preview before any materialize.
+- WHAT'S NEXT: ch15 content delegated to sonnet agent (writes `content.ts` + flips registry to ready). On return:
+  review per `05-DELEGATION-GUIDE` checklist, run gates, browser-verify the chapter + the playground demo (navigate to
+  the live-demo step; toggle modes + slider + `:has()`), commit ch15 content, then start ch16 (command palette).
 
 ### 2026-06-13 — Roadmap sync: Craft & Polish wave inserted — done
 - What I did: Inserted the new Wave 4 Craft & Polish as ch15-ch20 in the registry, shifted the old Quality
