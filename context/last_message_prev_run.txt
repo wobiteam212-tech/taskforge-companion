@@ -1,11 +1,38 @@
-Chapter 04 — "Projects & Issues API" is complete (snapshot + content + all gates green). The snapshot was runtime-proven before any prose was written: filtered/sorted/paged queries, .NET 10's AddValidation() returning real 400 ValidationProblems, 201+Location, 404 ProblemDetails, and a generated OpenAPI document. It also introduced overlay deletion support — ch04 retires the ch01 probes and the in-memory repository ("the scaffolding comes down" step).
+TaskForge Companion is currently verified through chapter 14.
 
-Chapter 05 — Auth snapshot is built and runtime-proven: hand-rolled PBKDF2 hashing, JWT issuing + AddJwtBearer validation, refresh-token rotation (replaying a used token → 401), resource-based authorization (non-member creating an issue → 403, creator auto-becomes Owner), migration #2 (AddAuth) generated for real. Its content chapter is being authored by an agent right now.
+Ready chapters:
+- ch00 setup
+- ch01 .NET anatomy
+- ch02 backend architecture
+- ch03 data layer
+- ch04 Projects & Issues API
+- ch05 Auth JWT
+- ch06 Angular foundation
+- ch07 frontend architecture
+- ch08 design system CSS
+- ch09 shared UI kit
+- ch10 routing
+- ch11 HTTP and state
+- ch12 projects feature
+- ch13 issue board
+- ch14 issue detail and comments
 
-How the speed-up works (your request)
-I do the precision work: reference snapshots (every line compile- and runtime-gated), architecture decisions, and exact step-by-step outlines with panel/region specs.
-Sonnet agents author the Hebrew content in the background from those outlines, with the ch03 chapter as their gold-standard exemplar.
-Quality is enforced by machines, not trust — I added content-rules.spec.ts: 30+ assertions per run covering step structure, the arrow ban, manifest/region resolution, interview-callout format, quiz integrity, and glossary terms. Agents must pass gen:manifest + test + verify:coverage + build before returning.
-The review loop caught exactly the kind of thing it's designed for: the ch04 agent dumped 17 future-file paths into a callout to satisfy the coverage gate. I cleaned the prose and fixed the root cause — the coverage tool is now "ready-chapter aware," so files from not-yet-authored chapters are pending, not failures.
+Latest quality pass:
+- Home hero gradient fixed: the decorative glow no longer washes over the headline, and the highlighted Hebrew word uses a smoother warm gradient.
+- ch14 source-tree/runtime checkpoint remains in place: tracked `client/src/index.html` data favicon, source-tree labels, mobile overflow hardening, and full model-snapshot path in content.
+- ch14 content now explicitly teaches the small changed contracts that were previously only named in prose: `Issue.Comments`, comment request/response contracts, `TitleAvailabilityResponse`, and `TitleExistsAsync`.
+- ch14 `issue-row.ts` comment/region now matches reality: the row imports `RouterLink` only for the title detail link, while state/optimism/store concerns stay outside the row.
+- Context index now points future continuation to ch15, not older ch04/ch05 work.
 
-Five chapters live (ch00–ch04), ch05 content in flight — I'll review it against the gates the moment the agent reports back, then start the frontend wave (ch06) with the same pipeline.
+Most recent gates from this pass:
+- `pnpm gen:manifest` passed.
+- `pnpm verify:coverage` passed: all 133 ready-chapter files are taught or toured.
+- `pnpm test -- --watch=false` passed: 90 tests.
+- `pnpm build` passed; the only warning is the existing Mermaid CommonJS warning.
+- Direct `pnpm install` in materialized ch08 passed after the earlier transient verifier failure.
+- A direct compile of every milestone in `reference/milestones.json` passed: all listed `dotnet build` and `ng build` steps from ch01 through ch14 compiled.
+- Full `pnpm verify:snapshots` was attempted again but exceeded the Codex command timeout during the long reinstall/materialization flow, so use the direct milestone compile result above as the current compile evidence.
+- Browser/CDP verification passed: 15 guide chapter routes checked on desktop and mobile, home gradient checked, ch14 source tree opened `CommentEndpoints.cs`, and the real ch14 app completed login, board load, issue detail, comment submit, and mobile overflow checks.
+
+Next chapter:
+- ch15 testing. Start snapshot-first. The goal is a real test pyramid for this exact app: xUnit/WebApplicationFactory for server endpoints and auth/resource checks, Vitest/TestBed for stores/forms/interceptors/routing, and a browser/E2E proof for login, board mutation, detail route, and comments.

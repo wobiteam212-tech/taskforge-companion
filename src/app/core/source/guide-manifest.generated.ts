@@ -22568,16 +22568,19 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/features/issues/issue-row.ts": {
-          "content": "import { Component, input, output } from '@angular/core';\nimport { RouterLink } from '@angular/router';\nimport { Issue, IssueStatus } from '../../core/models/issue.model';\nimport { TfBadge } from '../../shared/ui/badge/badge';\n\n// שורה טיפשה לחלוטין: issue נכנס, בקשת שינוי סטטוס יוצאת כאירוע.\n// היא לא מכירה את ה-store, לא את הראוטר, ולא את משחק האופטימיות —\n// ולכן virtual scroll יכול למחזר אותה בחופשיות.\n@Component({\n  selector: 'tf-issue-row',\n  imports: [RouterLink, TfBadge],\n  templateUrl: './issue-row.html',\n  styleUrl: './issue-row.scss',\n})\nexport class IssueRow {\n  readonly issue = input.required<Issue>();\n\n  readonly statusChange = output<IssueStatus>();\n\n  protected readonly statuses: IssueStatus[] = ['Open', 'InProgress', 'Done'];\n\n  protected toneOf(status: IssueStatus): 'open' | 'progress' | 'done' {\n    return status === 'Open' ? 'open' : status === 'InProgress' ? 'progress' : 'done';\n  }\n\n  protected onSelect(value: string): void {\n    if (value !== this.issue().status) this.statusChange.emit(value as IssueStatus);\n  }\n}\n",
+          "content": "import { Component, input, output } from '@angular/core';\nimport { RouterLink } from '@angular/router';\nimport { Issue, IssueStatus } from '../../core/models/issue.model';\nimport { TfBadge } from '../../shared/ui/badge/badge';\n\n// השורה עדיין טיפשה מבחינת state: issue נכנס, שינוי סטטוס יוצא כאירוע.\n// בפרק 14 היא מקבלת RouterLink רק כדי להפוך את הכותרת לקישור detail;\n// ה-store, האופטימיות וההרשאות עדיין נשארים מחוץ לרכיב.\n@Component({\n  selector: 'tf-issue-row',\n  imports: [RouterLink, TfBadge],\n  templateUrl: './issue-row.html',\n  styleUrl: './issue-row.scss',\n})\nexport class IssueRow {\n  readonly issue = input.required<Issue>();\n\n  readonly statusChange = output<IssueStatus>();\n\n  protected readonly statuses: IssueStatus[] = ['Open', 'InProgress', 'Done'];\n\n  protected toneOf(status: IssueStatus): 'open' | 'progress' | 'done' {\n    return status === 'Open' ? 'open' : status === 'InProgress' ? 'progress' : 'done';\n  }\n\n  protected onSelect(value: string): void {\n    if (value !== this.issue().status) this.statusChange.emit(value as IssueStatus);\n  }\n}\n",
           "status": "modified",
           "regions": {
-            "step-13.10": {
+            "step-14.11": {
               "start": 6,
               "end": 29
             }
           },
           "changedLines": [
             2,
+            6,
+            7,
+            8,
             11
           ]
         },
@@ -24992,16 +24995,19 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/features/issues/issue-row.ts": {
-          "content": "import { Component, input, output } from '@angular/core';\nimport { RouterLink } from '@angular/router';\nimport { Issue, IssueStatus } from '../../core/models/issue.model';\nimport { TfBadge } from '../../shared/ui/badge/badge';\n\n// שורה טיפשה לחלוטין: issue נכנס, בקשת שינוי סטטוס יוצאת כאירוע.\n// היא לא מכירה את ה-store, לא את הראוטר, ולא את משחק האופטימיות —\n// ולכן virtual scroll יכול למחזר אותה בחופשיות.\n@Component({\n  selector: 'tf-issue-row',\n  imports: [RouterLink, TfBadge],\n  templateUrl: './issue-row.html',\n  styleUrl: './issue-row.scss',\n})\nexport class IssueRow {\n  readonly issue = input.required<Issue>();\n\n  readonly statusChange = output<IssueStatus>();\n\n  protected readonly statuses: IssueStatus[] = ['Open', 'InProgress', 'Done'];\n\n  protected toneOf(status: IssueStatus): 'open' | 'progress' | 'done' {\n    return status === 'Open' ? 'open' : status === 'InProgress' ? 'progress' : 'done';\n  }\n\n  protected onSelect(value: string): void {\n    if (value !== this.issue().status) this.statusChange.emit(value as IssueStatus);\n  }\n}\n",
+          "content": "import { Component, input, output } from '@angular/core';\nimport { RouterLink } from '@angular/router';\nimport { Issue, IssueStatus } from '../../core/models/issue.model';\nimport { TfBadge } from '../../shared/ui/badge/badge';\n\n// השורה עדיין טיפשה מבחינת state: issue נכנס, שינוי סטטוס יוצא כאירוע.\n// בפרק 14 היא מקבלת RouterLink רק כדי להפוך את הכותרת לקישור detail;\n// ה-store, האופטימיות וההרשאות עדיין נשארים מחוץ לרכיב.\n@Component({\n  selector: 'tf-issue-row',\n  imports: [RouterLink, TfBadge],\n  templateUrl: './issue-row.html',\n  styleUrl: './issue-row.scss',\n})\nexport class IssueRow {\n  readonly issue = input.required<Issue>();\n\n  readonly statusChange = output<IssueStatus>();\n\n  protected readonly statuses: IssueStatus[] = ['Open', 'InProgress', 'Done'];\n\n  protected toneOf(status: IssueStatus): 'open' | 'progress' | 'done' {\n    return status === 'Open' ? 'open' : status === 'InProgress' ? 'progress' : 'done';\n  }\n\n  protected onSelect(value: string): void {\n    if (value !== this.issue().status) this.statusChange.emit(value as IssueStatus);\n  }\n}\n",
           "status": "modified",
           "regions": {
-            "step-13.10": {
+            "step-14.11": {
               "start": 6,
               "end": 29
             }
           },
           "changedLines": [
             2,
+            6,
+            7,
+            8,
             11
           ]
         },

@@ -52,6 +52,12 @@ export const CH14_CONTENT: ChapterContent = {
             '`server/TaskForge.Core/Entities/Issue.cs` מקבל `Comments` navigation. ' +
             'זה הופך את התגובות לחלק מחיי ה-issue: מוחקים issue, מוחקים גם את thread התגובות שלו.',
         },
+        {
+          kind: 'code',
+          lang: 'csharp',
+          title: 'השינוי המלא ב-Issue.cs',
+          code: 'public List<Comment> Comments { get; set; } = [];',
+        },
       ],
       panel: {
         kind: 'code',
@@ -128,6 +134,21 @@ export const CH14_CONTENT: ChapterContent = {
             'ו-`POST /api/issues/{issueId}/comments`.',
         },
         {
+          kind: 'code',
+          lang: 'csharp',
+          title: 'חוזי התגובות שעל הקו',
+          code:
+            'public sealed record CreateCommentRequest(\n' +
+            '    [property: Required, StringLength(1200, MinimumLength = 2)] string Body);\n\n' +
+            'public sealed record CommentResponse(\n' +
+            '    int Id,\n' +
+            '    int IssueId,\n' +
+            '    string Body,\n' +
+            '    int AuthorUserId,\n' +
+            '    string AuthorName,\n' +
+            '    DateTime CreatedAtUtc);',
+        },
+        {
           kind: 'p',
           text:
             'ה-handler קודם טוען את ה-issue. אם אין issue, מחזיר 404. ' +
@@ -161,6 +182,18 @@ export const CH14_CONTENT: ChapterContent = {
             '`server/TaskForge.Api/Contracts/IssueContracts.cs` מוסיף את `TitleAvailabilityResponse`, ' +
             'ו-`server/TaskForge.Core/Abstractions/IIssueRepository.cs` מוסיף `TitleExistsAsync`. ' +
             'המימוש ב-`server/TaskForge.Infrastructure/Repositories/EfIssueRepository.cs` מתעלם מה-issue הנוכחי דרך `excludeIssueId`.',
+        },
+        {
+          kind: 'code',
+          lang: 'csharp',
+          title: 'החוזה הקטן שמחבר שרת לטופס',
+          code:
+            'public sealed record TitleAvailabilityResponse(bool Available);\n\n' +
+            'Task<bool> TitleExistsAsync(\n' +
+            '    int projectId,\n' +
+            '    string title,\n' +
+            '    int? excludeIssueId = null,\n' +
+            '    CancellationToken cancellationToken = default);',
         },
       ],
       panel: {
@@ -289,6 +322,12 @@ export const CH14_CONTENT: ChapterContent = {
             '`client/src/app/features/issues/issue-row.ts` מוסיף `RouterLink`, ' +
             'ו-`client/src/app/features/issues/issue-row.html` הופך את הכותרת לקישור יחסי: `issues/{id}`. ' +
             'כי הרכיב כבר נמצא תחת `/projects/:projectId`, הקישור נשאר קצר.',
+        },
+        {
+          kind: 'p',
+          text:
+            'זה לא הופך את ה-row לרכיב stateful: הוא עדיין לא מכיר store, הרשאות או optimistic rollback. ' +
+            'הוא מכיר רק שני דברים מקומיים: איך להציג issue, ואיך להפנות את הכותרת ל-detail route.',
         },
         {
           kind: 'p',

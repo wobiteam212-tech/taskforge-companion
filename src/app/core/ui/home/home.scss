@@ -17,13 +17,15 @@
 
   .hero-glow {
     position: absolute;
-    inset-inline-start: -120px;
-    top: -140px;
-    width: 420px;
-    height: 420px;
+    inset-inline-end: -190px;
+    top: -210px;
+    width: 380px;
+    height: 380px;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--eglow), transparent 65%);
-    filter: blur(20px);
+    background:
+      radial-gradient(circle at center, color-mix(in srgb, var(--ember) 26%, transparent), transparent 66%);
+    filter: blur(34px);
+    opacity: 0.5;
     pointer-events: none;
   }
 }
@@ -35,7 +37,7 @@
   margin-bottom: 16px;
 
   .forge {
-    background: linear-gradient(110deg, var(--ember), var(--ember2), var(--teal));
+    background: linear-gradient(105deg, var(--ember), var(--ember2) 58%, #ffe0b2);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

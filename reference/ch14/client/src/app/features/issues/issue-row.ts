@@ -3,10 +3,10 @@ import { RouterLink } from '@angular/router';
 import { Issue, IssueStatus } from '../../core/models/issue.model';
 import { TfBadge } from '../../shared/ui/badge/badge';
 
-// #region step-13.10
-// שורה טיפשה לחלוטין: issue נכנס, בקשת שינוי סטטוס יוצאת כאירוע.
-// היא לא מכירה את ה-store, לא את הראוטר, ולא את משחק האופטימיות —
-// ולכן virtual scroll יכול למחזר אותה בחופשיות.
+// #region step-14.11
+// השורה עדיין טיפשה מבחינת state: issue נכנס, שינוי סטטוס יוצא כאירוע.
+// בפרק 14 היא מקבלת RouterLink רק כדי להפוך את הכותרת לקישור detail;
+// ה-store, האופטימיות וההרשאות עדיין נשארים מחוץ לרכיב.
 @Component({
   selector: 'tf-issue-row',
   imports: [RouterLink, TfBadge],
