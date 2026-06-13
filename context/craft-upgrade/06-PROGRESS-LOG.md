@@ -22,7 +22,7 @@
 |---|---|---|
 | Phase 0a — ch08 design-tokens v2 | `04-chapter-specs/ch08-retrofit.md` | DONE — token foundation `743ce36`; component adoption completion `3919f87` |
 | Phase 0b — companion re-skin | `04-chapter-specs/companion-reskin.md` | DONE — `47f7712` |
-| Renumber placeholders ch15–20 → ch21–26 | `03-PROPAGATION-AND-SYNC.md` Procedure C | NOT STARTED |
+| Renumber placeholders ch15–20 → ch21–26 | `03-PROPAGATION-AND-SYNC.md` Procedure C | DONE — implementation commit pending in this entry |
 | ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | NOT STARTED |
 | ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | NOT STARTED |
 | ch17 — Kanban DnD | `04-chapter-specs/ch17-kanban-dnd.md` | NOT STARTED |
@@ -36,6 +36,27 @@
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-13 — Roadmap sync: Craft & Polish wave inserted — done
+- What I did: Inserted the new Wave 4 Craft & Polish as ch15-ch20 in the registry, shifted the old Quality
+  placeholders to ch21-ch22, shifted Production to ch23-ch26, and synced the long-form plan plus project context
+  files that still pointed to the old 21-chapter/ch15-testing roadmap.
+- Where: `src/app/core/registry/registry.ts`, `context/plan.txt`, `context/MEMORY.md`,
+  `context/taskforge-companion-project.md`, `context/CH07-09-PLAN.md`, `context/last_message_prev_run.txt`,
+  and this progress log. Implementation commit will be recorded by the next progress-log correction once this entry
+  is committed.
+- Gate outcomes: `pnpm gen:manifest` clean (14 snapshots, 976 entries) · test 90 passed · verify:coverage 133 files ·
+  build clean with only the pre-existing Mermaid CommonJS warning.
+- Runtime smoke / 375px sweep: Guide `http://127.0.0.1:4400` home verified in the in-app browser. Desktop roadmap
+  showed 27 chapters, Wave 4 Craft & Polish, ch15 Modern CSS 2026, ch21 Testing, and ch23 Hardening, with old
+  ch15-testing/ch17-hardening pairings absent. Desktop and mobile `375px` had `scrollWidth === clientWidth`; mobile
+  kept the hero gradient removed; console warnings/errors were 0.
+- Decisions made / values locked: Built chapters ch00-ch14 remain unchanged. Only unbuilt `soon` metadata moved.
+  The taught-app command palette is now in scope for ch16; personal notes and printable summaries remain out of scope.
+- Surprises / deviations from the spec: Several older context handoffs still said `21 chapters / 6 waves` or
+  `NEXT = ch15 testing`; those were updated so future continuation starts from ch15 Modern CSS 2026.
+- WHAT'S NEXT: Regenerate/verify/build, browser-check the roadmap, commit this metadata sync, then start ch15
+  snapshot-first if the tree is clean enough.
 
 ### 2026-06-13 — Phase 0b: companion guide re-skin — done
 - What I did: Re-skinned the guide shell onto the same v2 vocabulary as the taught app: neutral surface ramp, one

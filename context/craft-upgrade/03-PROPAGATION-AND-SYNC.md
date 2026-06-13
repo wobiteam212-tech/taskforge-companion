@@ -70,13 +70,14 @@ prove every panel/region still resolves; `verify:snapshots` proves every milesto
 
 ## Procedure C — renumbering the unbuilt placeholder chapters
 
-The registry currently has `ch15..ch20` as `status:'soon'` placeholders (testing/perf/hardening/realtime/ship/capstone).
+Before Procedure C was applied, the registry had `ch15..ch20` as `status:'soon'` placeholders (testing/perf/hardening/realtime/ship/capstone).
 They have **no snapshots and no content** → safe to renumber to `ch21..ch26`.
 1. Edit `src/app/core/registry/registry.ts`: change those `id`/`no`/`slug` and group them under the shifted waves; add a
    new Wave 4 with the ch15–20 craft chapters as `status:'soon'` until each is built.
 2. Update `context/plan.txt` roadmap section to match.
 3. `pnpm gen:manifest` + `pnpm test` + `pnpm build` (no snapshot impact since they're metadata-only).
-Do this renumber as part of Phase 0 or just before ch15, and log it.
+This renumber belongs to Phase 0 or just before ch15, and must be logged. Current branch status: applied during
+Phase 0 after the companion re-skin.
 
 ## What each gate protects (so you trust them)
 

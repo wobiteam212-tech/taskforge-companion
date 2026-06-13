@@ -61,9 +61,9 @@ breaking the 14 built chapters.**
 ## Registry / numbering changes
 
 - ch00–14: **unchanged** (built).
-- The CURRENT registry has placeholder "soon" chapters ch15 testing, ch16 perf, ch17 hardening, ch18 realtime,
-  ch19 ship-it, ch20 capstone. These are **unbuilt metadata** → renumber them to ch21–26 and add a new Wave 4 with
-  ch15–20 as above. This is the ONLY renumbering allowed and it touches metadata only (no snapshots exist for them).
+- Before the roadmap sync, the registry had placeholder "soon" chapters ch15 testing, ch16 perf, ch17 hardening,
+  ch18 realtime, ch19 ship-it, ch20 capstone. These were **unbuilt metadata** and have been renumbered to ch21–26;
+  the new Wave 4 now owns ch15–20 as above. This was the ONLY renumbering allowed and it touched metadata only.
 - Update `context/plan.txt` (the long-form roadmap) to match.
 
 ## Scope, trimming, and effort

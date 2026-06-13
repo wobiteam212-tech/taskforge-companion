@@ -22,15 +22,15 @@ Three learning apps have been built in this repo, each proving a different piece
 6. **Visual identity** = new **"forge" theme**: dark graphite surfaces + ember/amber primary accent + teal secondary, with a full **light mode** and toggle. Distinct from ng-ninja (red) and HireHub (indigo). Code blocks always dark in both modes.
 7. **Chapter layout** = **scrollytelling + end sections**: the narrative is pure two-pane scrollytelling (steps right RTL, sticky panel left); each chapter ends with tabbed sections — **Quiz / Prove-it / Exercise / Full source (this chapter's snapshot)**.
 8. **Navigation shell** = persistent **sidebar** (waves → chapters with progress checkmarks, search box, resume button) + a rich **roadmap home** (wave map, progress overview, "continue where you left off").
-9. **Extras in scope**: progress tracking, per-chapter quizzes + prove-it + exercises, global search, bookmarks, interview drill page, **glossary page** (auto-collected terms, each linking back to the step that teaches it). Explicitly out of scope for v1: keyboard nav/command palette, personal notes, printable summaries.
+9. **Extras in scope**: progress tracking, per-chapter quizzes + prove-it + exercises, global search, bookmarks, interview drill page, **glossary page** (auto-collected terms, each linking back to the step that teaches it). Craft wave now adds the taught app's keyboard system + Cmd-K command palette. Explicitly out of scope for v1: personal notes and printable summaries.
 
 ---
 
 ## Part 1 — The taught app: TaskForge spec
 
-**Backend** (.NET 10 Minimal APIs): layered `TaskForge.Core` / `TaskForge.Infrastructure` / `TaskForge.Api`; EF Core + SQLite; entities `User`, `Project`, `ProjectMember(role)`, `Issue(status, priority)`, `Label`, `IssueLabel`, `Comment`; DTOs as records; MapGroup-organized endpoints; .NET 10 built-in validation; `TypedResults` + `Results<…>` unions; ProblemDetails (RFC 7807); endpoint filters; OpenAPI; manual JWT auth (PBKDF2 hashing, refresh-token rotation, roles/policies); global exception handler; xUnit + WebApplicationFactory tests. Production wave adds: OutputCaching, RateLimiter, health checks, SignalR hub for live board updates, Dockerfile, CI.
+**Backend** (.NET 10 Minimal APIs): layered `TaskForge.Core` / `TaskForge.Infrastructure` / `TaskForge.Api`; EF Core + SQLite; entities `User`, `Project`, `ProjectMember(role)`, `Issue(status, priority, rank)`, `Label`, `IssueLabel`, `Comment`; DTOs as records; MapGroup-organized endpoints; .NET 10 built-in validation; `TypedResults` + `Results<…>` unions; ProblemDetails (RFC 7807); endpoint filters; OpenAPI; manual JWT auth (PBKDF2 hashing, refresh-token rotation, roles/policies); global exception handler; auth-scoped search endpoint, rank/reorder endpoint, dashboard stats + activity endpoints, multipart attachment endpoints with path/size safeguards; xUnit + WebApplicationFactory tests. Production wave adds: OutputCaching, RateLimiter, health checks, SignalR hub for live board updates, Dockerfile, CI.
 
-**Frontend** (Angular v22): standalone, zoneless (`provideZonelessChangeDetection()`), signals everywhere, `core/shared/features` layout, smart/dumb split, signal forms, `httpResource`/`resource`, functional interceptors (auth + error), router with guards (`CanActivate`/`CanMatch`) + lazy `loadComponent`/`loadChildren`, signal-based store services with optimistic updates + rollback, `@defer`, OnPush-by-default, NgOptimizedImage, a11y, native animations + View Transitions, Vitest + Playwright.
+**Frontend** (Angular v22): standalone, zoneless (`provideZonelessChangeDetection()`), signals everywhere, `core/shared/features` layout, smart/dumb split, signal forms, `httpResource`/`resource`, functional interceptors (auth + error), router with guards (`CanActivate`/`CanMatch`) + lazy `loadComponent`/`loadChildren`, signal-based store services with optimistic updates + rollback, command registry/bus, Cmd-K palette, accessible keyboard/pointer Kanban DnD, dashboard selectors + hand-rolled SVG charts, rich issue detail with markdown/mentions/attachments/activity, one capstone refactor to `@ngrx/signals`, `@defer`, OnPush-by-default, NgOptimizedImage, a11y, native animations + View Transitions, Vitest + Playwright.
 
 ## Part 2 — Reference snapshots (the answer key)
 
@@ -101,14 +101,21 @@ Per-step teaching contract: see Part 3.5 rule 2 — plus per-chapter quiz, prove
   - ch12 — Projects feature: list/create/manage members, roles in the UI
   - ch13 — Issue board: filter/search/sort/paging synced to URL, optimistic updates + rollback, @defer, virtual scroll
   - ch14 — Issue detail & comments: signal forms deep (validators, async validation, custom controls), View Transitions
-- **Wave 4 — Quality**
-  - ch15 — Testing: xUnit + WebApplicationFactory, Vitest + TestBed, Playwright e2e — the testing pyramid for this exact app
-  - ch16 — Performance & a11y: OnPush/zoneless audit, bundle budgets, NgOptimizedImage, CWV, keyboard/screen-reader pass
-- **Wave 5 — Production**
-  - ch17 — Hardening: OutputCaching, RateLimiter, health checks, logging
-  - ch18 — Real-time: SignalR live board (server hub + Angular client, reconnect strategy)
-  - ch19 — Ship it: Dockerfile (multi-stage), docker-compose, CI (GitHub Actions build+test), deployment mental models
-  - ch20 — Capstone: full-app recap map, interview drill finale
+- **Wave 4 — Craft & Polish**
+  - ch15 — Modern CSS 2026: subgrid, container queries, anchor positioning, cascade layers, `:has()`, OKLCH/`color-mix`, fluid type, logical/RTL, scroll-driven animation, View Transitions intro, and a CSS playground demo
+  - ch16 — Cmd-K command palette: keyboard service, command registry/bus, focus trap, fuzzy search, shortcuts help, and auth-scoped `GET /api/search?q=`
+  - ch17 — Kanban DnD: accessible pointer + keyboard reorder, optimistic rollback, `Issue.Rank` string rank keys, reorder endpoint, and rebalance fallback
+  - ch18 — Dashboard: stats endpoint, activity-log entity/endpoints, derived selectors, summary cards, activity feed, and hand-rolled SVG charts
+  - ch19 — Rich issue detail: markdown editor, mentions, attachments stored under app data with DB metadata, activity timeline, undo and rollback
+  - ch20 — State architecture capstone: refactor one store to `@ngrx/signals` while preserving its public surface
+- **Wave 5 — Quality**
+  - ch21 — Testing: xUnit + WebApplicationFactory, Vitest + TestBed, Playwright e2e — the testing pyramid for this exact app
+  - ch22 — Performance & a11y: OnPush/zoneless audit, bundle budgets, NgOptimizedImage, CWV, keyboard/screen-reader pass
+- **Wave 6 — Production**
+  - ch23 — Hardening: OutputCaching, RateLimiter, health checks, logging
+  - ch24 — Real-time: SignalR live board (server hub + Angular client, reconnect strategy)
+  - ch25 — Ship it: Dockerfile (multi-stage), docker-compose, CI (GitHub Actions build+test), deployment mental models
+  - ch26 — Capstone: full-app recap map, interview drill finale
 
 ## Part 5 — Build order (sessions)
 

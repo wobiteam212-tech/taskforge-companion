@@ -10,12 +10,13 @@
 `taskforge-companion/` is an Angular v22 app that IS a guide: it teaches Oleg to hand-build
 **TaskForge** (project/issue tracker) — .NET 10 Minimal API backend + Angular v22 client.
 Oleg types every line of the *taught* app himself; we build only the guide + verified
-reference snapshots. Hebrew RTL prose, English code. 21 chapters / 6 waves.
+reference snapshots. Hebrew RTL prose, English code. Historical note: this ch07-ch09 handoff was written before the
+craft upgrade; the current roadmap is 27 chapters / 7 waves.
 
 - Wave 0: setup (ch00) ✅
 - Wave 1 backend: ch01 anatomy ✅, ch02 layers ✅, ch03 EF+SQLite ✅, ch04 full API ✅, ch05 Auth/JWT ✅
 - Wave 2 frontend foundation: ch06 Angular foundation ✅, **ch07 architecture / ch08 design system / ch09 UI kit ← THIS PLAN**, ch10 routing, ch11 HTTP+state
-- Wave 3 features (ch12–14), wave 4 quality (ch15–16), wave 5 production (ch17–20)
+- Wave 3 features (ch12–14), wave 4 craft/polish (ch15–20), wave 5 quality (ch21–22), wave 6 production (ch23–26)
 
 Registry (`src/app/core/registry/registry.ts`) is the single source of truth for
 chapter ids/slugs/titles/blurbs. ch07–ch11 entries are LOCKED:

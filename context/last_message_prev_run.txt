@@ -18,11 +18,11 @@ Ready chapters:
 - ch14 issue detail and comments
 
 Latest quality pass:
-- Home hero gradient fixed: the decorative glow no longer washes over the headline, and the highlighted Hebrew word uses a smoother warm gradient.
+- Home hero gradient fixed again during Phase 0b: the decorative glow is removed, and the highlighted Hebrew word is now solid ember text with no gradient.
 - ch14 source-tree/runtime checkpoint remains in place: tracked `client/src/index.html` data favicon, source-tree labels, mobile overflow hardening, and full model-snapshot path in content.
 - ch14 content now explicitly teaches the small changed contracts that were previously only named in prose: `Issue.Comments`, comment request/response contracts, `TitleAvailabilityResponse`, and `TitleExistsAsync`.
 - ch14 `issue-row.ts` comment/region now matches reality: the row imports `RouterLink` only for the title detail link, while state/optimism/store concerns stay outside the row.
-- Context index now points future continuation to ch15, not older ch04/ch05 work.
+- Context index now points future continuation to ch15 Modern CSS 2026, not the older ch15 testing placeholder or older ch04/ch05 work.
 
 Most recent gates from this pass:
 - `pnpm gen:manifest` passed.
@@ -35,4 +35,4 @@ Most recent gates from this pass:
 - Browser/CDP verification passed: 15 guide chapter routes checked on desktop and mobile, home gradient checked, ch14 source tree opened `CommentEndpoints.cs`, and the real ch14 app completed login, board load, issue detail, comment submit, and mobile overflow checks.
 
 Next chapter:
-- ch15 testing. Start snapshot-first. The goal is a real test pyramid for this exact app: xUnit/WebApplicationFactory for server endpoints and auth/resource checks, Vitest/TestBed for stores/forms/interceptors/routing, and a browser/E2E proof for login, board mutation, detail route, and comments.
+- ch15 Modern CSS 2026. Start snapshot-first. The goal is frontend-only craft: modern layout/style capabilities applied to existing TaskForge screens plus a CSS playground demo. The old testing chapter is shifted to ch21.
