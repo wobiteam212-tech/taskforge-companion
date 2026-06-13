@@ -1,0 +1,14 @@
+<div class="priority-picker" role="radiogroup" aria-label="Priority">
+  @for (priority of priorities; track priority) {
+    <button
+      type="button"
+      role="radio"
+      [class.on]="value() === priority"
+      [attr.aria-checked]="value() === priority"
+      [disabled]="disabled()"
+      (click)="choose(priority)"
+    >
+      {{ priority }}
+    </button>
+  }
+</div>

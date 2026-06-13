@@ -1,0 +1,115 @@
+<section class="detail">
+  <a class="back" [routerLink]="['/projects', projectId()]" [queryParamsHandling]="'preserve'">
+    Back to {{ project().name }}
+  </a>
+
+  @if (!issue()) {
+    @if (store.loading()) {
+      <p class="hint">Loading issue...</p>
+    } @else if (store.loadError()) {
+      <div class="load-error" role="alert">
+        <p>Could not load this issue.</p>
+        <button type="button" tf-button (click)="store.reload()">Try again</button>
+      </div>
+    } @else {
+      <p class="hint">Sign in to load the issue.</p>
+    }
+  } @else {
+    <header class="detail-head">
+      <div>
+        <p class="eyebrow">Issue #{{ issue()!.id }}</p>
+        <h2 [style.view-transition-name]="'issue-' + issue()!.id">{{ issue()!.title }}</h2>
+      </div>
+      <tf-badge [tone]="toneOf(issue()!.status)">{{ issue()!.status }}</tf-badge>
+    </header>
+
+    <!-- #region step-14.13 -->
+    <form class="issue-form" (submit)="saveIssue(); $event.preventDefault()">
+      <label class="field">
+        <span>Title</span>
+        <input [formField]="issueForm.title" />
+        @if (issueForm.title().pending()) {
+          <small>Checking title...</small>
+        } @else if (firstError(issueForm.title().errors()); as error) {
+          <small class="error">{{ error }}</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Description</span>
+        <textarea rows="5" [formField]="issueForm.description"></textarea>
+        @if (firstError(issueForm.description().errors()); as error) {
+          <small class="error">{{ error }}</small>
+        }
+      </label>
+
+      <div class="form-grid">
+        <label class="field">
+          <span>Status</span>
+          <select [formField]="issueForm.status">
+            <option value="Open">Open</option>
+            <option value="InProgress">In progress</option>
+            <option value="Done">Done</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Priority</span>
+          <tf-priority-picker [formField]="issueForm.priority" />
+        </label>
+      </div>
+
+      <div class="actions">
+        <button
+          type="submit"
+          tf-button
+          [disabled]="savingIssue() || issueForm().invalid() || issueForm().pending()"
+        >
+          {{ savingIssue() ? 'Saving...' : 'Save issue' }}
+        </button>
+      </div>
+    </form>
+    <!-- #endregion -->
+
+    <!-- #region step-14.17 -->
+    <section class="comments">
+      <header>
+        <h3>Comments</h3>
+        <span>{{ comments().length }}</span>
+      </header>
+
+      <ol class="comment-list">
+        @for (comment of comments(); track comment.id) {
+          <li>
+            <div class="comment-meta">
+              <strong>{{ comment.authorName }}</strong>
+              <time>{{ formattedDate(comment) }}</time>
+            </div>
+            <p>{{ comment.body }}</p>
+          </li>
+        } @empty {
+          <li class="empty">No comments yet.</li>
+        }
+      </ol>
+
+      <form class="comment-form" (submit)="addComment(); $event.preventDefault()">
+        <label class="field">
+          <span>Add comment</span>
+          <textarea rows="3" [formField]="commentForm.body"></textarea>
+          @if (firstError(commentForm.body().errors()); as error) {
+            <small class="error">{{ error }}</small>
+          }
+        </label>
+
+        <button
+          type="submit"
+          tf-button
+          [disabled]="postingComment() || commentForm().invalid() || commentForm().pending()"
+        >
+          {{ postingComment() ? 'Posting...' : 'Post comment' }}
+        </button>
+      </form>
+    </section>
+    <!-- #endregion -->
+  }
+</section>

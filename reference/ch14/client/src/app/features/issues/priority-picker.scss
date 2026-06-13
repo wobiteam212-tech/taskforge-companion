@@ -1,0 +1,25 @@
+.priority-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+button {
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  background: var(--sur2);
+  color: var(--txt1);
+  padding: 8px 10px;
+  font: inherit;
+  cursor: pointer;
+
+  &.on {
+    border-color: var(--ember);
+    background: color-mix(in srgb, var(--ember) 14%, var(--sur2));
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}

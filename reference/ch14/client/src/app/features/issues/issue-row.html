@@ -1,0 +1,32 @@
+<div class="row" [class.row--done]="issue().status === 'Done'">
+  <div class="row-main">
+    <a
+      class="title title-link"
+      [routerLink]="['issues', issue().id]"
+      [style.view-transition-name]="'issue-' + issue().id"
+    >
+      {{ issue().title }}
+    </a>
+    <span class="meta">
+      <span class="prio prio--{{ issue().priority.toLowerCase() }}">{{ issue().priority }}</span>
+      @for (label of issue().labels; track label.id) {
+        <span class="label">{{ label.name }}</span>
+      }
+    </span>
+  </div>
+
+  <tf-badge [tone]="toneOf(issue().status)">{{ issue().status }}</tf-badge>
+
+  <label class="status-pick">
+    <span class="visually-hidden">Change status of {{ issue().title }}</span>
+    <select
+      [name]="'issue-status-' + issue().id"
+      [value]="issue().status"
+      (change)="onSelect($any($event.target).value)"
+    >
+      @for (s of statuses; track s) {
+        <option [value]="s">{{ s }}</option>
+      }
+    </select>
+  </label>
+</div>

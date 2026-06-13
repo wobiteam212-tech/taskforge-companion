@@ -1,0 +1,42 @@
+// #region step-8.2
+// סדר הטעינה הוא סדר הפלט: layers קודם (הכרזת סדר השכבות),
+// ואז כל שכבה ממלאת את עצמה. Sass פולט כל מודול במקום ה-@use הראשון שלו.
+@use './styles/layers';
+@use './styles/reset';
+@use './styles/tokens';
+@use './styles/base';
+// #endregion
+
+// סטיילים של קומפוננטות (scss של כל רכיב) חיים מחוץ לשכבות —
+// ולכן גוברים על base בלי שום טריק. זו ברירת המחדל הנכונה.
+
+// #region step-14.11b
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+::view-transition-old(root) {
+  animation: 120ms ease-out both vt-fade-out;
+}
+
+::view-transition-new(root) {
+  animation: 180ms ease-out 40ms both vt-fade-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 1ms;
+  }
+}
+// #endregion

@@ -1,0 +1,165 @@
+:host {
+  display: block;
+}
+
+.detail {
+  display: grid;
+  gap: var(--sp-4);
+  max-width: 920px;
+}
+
+.back {
+  color: var(--txt2);
+  font-size: var(--fs-small);
+}
+
+.detail-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+
+  h2 {
+    margin: var(--sp-1) 0 0;
+    font-size: 28px;
+    line-height: 1.12;
+  }
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--txt3);
+  font-size: var(--fs-small);
+}
+
+.issue-form,
+.comments {
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  background: var(--sur);
+  padding: var(--sp-4);
+}
+
+.issue-form,
+.comment-form {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.field {
+  display: grid;
+  gap: var(--sp-1);
+
+  > span {
+    font-size: var(--fs-small);
+    color: var(--txt2);
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--bdr);
+    border-radius: var(--rad-sm);
+    background: var(--sur2);
+    color: var(--txt1);
+    padding: 10px 12px;
+    font: inherit;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  small {
+    color: var(--txt3);
+  }
+
+  .error {
+    color: var(--danger);
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--sp-3);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.comments {
+  display: grid;
+  gap: var(--sp-3);
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h3 {
+      margin: 0;
+    }
+
+    span {
+      color: var(--txt3);
+      font-size: var(--fs-small);
+    }
+  }
+}
+
+.comment-list {
+  display: grid;
+  gap: var(--sp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    border: 1px solid var(--bdr);
+    border-radius: var(--rad-sm);
+    background: var(--sur2);
+    padding: var(--sp-3);
+  }
+
+  p {
+    margin: var(--sp-2) 0 0;
+    color: var(--txt2);
+  }
+
+  .empty {
+    color: var(--txt3);
+  }
+}
+
+.comment-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  color: var(--txt3);
+  font-size: var(--fs-small);
+
+  strong {
+    color: var(--txt1);
+  }
+}
+
+.load-error,
+.hint {
+  color: var(--txt2);
+}
+
+@media (max-width: 720px) {
+  .detail-head,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-head {
+    display: grid;
+  }
+}
