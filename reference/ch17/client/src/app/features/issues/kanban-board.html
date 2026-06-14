@@ -1,0 +1,76 @@
+<!-- #region step-17.17 -->
+<!-- שלוש עמודות status בתוך cdkDropListGroup — CDK מחבר אותן אוטומטית כך
+     שאפשר לגרור ביניהן. כל קלף הוא cdkDrag (עכבר) וגם פוקוסבילי עם
+     מטפל keydown משלו (מקלדת). אזור ה-aria-live בתחתית מקריא כל הזזה. -->
+<section class="kanban" aria-label="לוח Kanban">
+  @if (!tokenStore.isLoggedIn()) {
+    <p class="hint">התחברו כדי לראות את הלוח.</p>
+  } @else if (store.loadError() && !store.issues().length) {
+    <div class="load-error" role="alert">
+      <p>טעינת הלוח נכשלה.</p>
+      <button type="button" (click)="store.reload()">נסו שוב</button>
+    </div>
+  } @else if (store.loading() && !store.issues().length) {
+    <div class="cols">
+      @for (s of statuses; track s) {
+        <div class="col" aria-hidden="true">
+          <div class="skel-card"></div>
+          <div class="skel-card"></div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="cols" cdkDropListGroup>
+      @for (col of columns(); track col.status) {
+        <section class="col">
+          <header class="col-head">
+            <h3>{{ col.label }}</h3>
+            <tf-badge tone="count">{{ col.issues.length }}</tf-badge>
+          </header>
+
+          <ul
+            class="cards"
+            role="list"
+            cdkDropList
+            [cdkDropListData]="col.status"
+            (cdkDropListDropped)="onDrop($event, col.status)"
+          >
+            @for (issue of col.issues; track issue.id) {
+              <li
+                class="card"
+                cdkDrag
+                [cdkDragData]="issue"
+                [attr.data-issue-id]="issue.id"
+                [class.card--grabbed]="grabbedId() === issue.id"
+                [class.card--done]="issue.status === 'Done'"
+                tabindex="0"
+                role="button"
+                aria-roledescription="כרטיס הניתן לגרירה"
+                [attr.aria-pressed]="grabbedId() === issue.id"
+                [attr.aria-label]="issue.title + ', ' + col.label"
+                (keydown)="onCardKey($event, issue)"
+              >
+                <span class="card-title">{{ issue.title }}</span>
+                <span class="card-meta">
+                  <span class="prio" [class]="priorityClass(issue)">{{ issue.priority }}</span>
+                  @for (label of issue.labels; track label.id) {
+                    <span class="label">{{ label.name }}</span>
+                  }
+                </span>
+                <span class="card-handle" aria-hidden="true">⋮⋮</span>
+
+                <span class="card-placeholder" *cdkDragPlaceholder aria-hidden="true"></span>
+              </li>
+            } @empty {
+              <li class="empty-col" aria-hidden="true">גררו כרטיס לכאן</li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  }
+
+  <!-- assertive: הזזה היא פעולה יזומה, ראוי שתקטע את ההקראה הנוכחית -->
+  <p class="sr-only" role="status" aria-live="assertive">{{ announcement() }}</p>
+</section>
+<!-- #endregion -->

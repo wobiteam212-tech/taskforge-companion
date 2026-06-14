@@ -240,7 +240,9 @@ export const WAVES: WaveDef[] = [
         blurb:
           'לוח Kanban עם pointer ו-keyboard reorder נגישים, rank keys יציבים, rebalance fallback, ועדכונים אופטימיים.',
         wave: 4,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch17-kanban-dnd/content').then((m) => m.CH17_CONTENT),
       },
       {
         id: 'ch18',

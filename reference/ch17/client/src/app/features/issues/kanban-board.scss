@@ -1,0 +1,237 @@
+// #region step-17.18
+:host {
+  display: block;
+}
+
+.kanban {
+  display: block;
+}
+
+// העמודות: grid אינטרינזי שמתקפל מעצמו. בכל רוחב כל עמודה היא לפחות 240px,
+// וכשאין מקום הן יורדות לעמודה אחת — בלי media query, רק auto-fit + minmax.
+.cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--sp-3);
+  align-items: start;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+  background: var(--sur);
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  // container query: העמודה היא ההקשר, כך שצפיפות הכרטיסים מגיבה לרוחב
+  // העמודה עצמה ולא לרוחב המסך.
+  container-type: inline-size;
+}
+
+.col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-2);
+
+  h3 {
+    margin: 0;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    color: var(--txt2);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-tight);
+  }
+}
+
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  min-height: var(--sp-5);
+
+  // :has() — כשגוררים מעל העמודה הזו, CDK מסמן את ה-list הפעיל; נדגיש אותה.
+  &:has(.cdk-drag-placeholder) {
+    outline: 2px dashed var(--accent);
+    outline-offset: 4px;
+    border-radius: var(--rad-sm);
+  }
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--sur2);
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  cursor: grab;
+  box-shadow: var(--shadow-1);
+  transition:
+    box-shadow var(--dur-2) var(--ease-out),
+    transform var(--dur-2) var(--ease-out),
+    border-color var(--dur-1) var(--ease-out);
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--ring);
+  }
+
+  &.card--grabbed {
+    cursor: grabbing;
+    border-color: var(--accent);
+    box-shadow: var(--shadow-3);
+    transform: scale(1.02);
+  }
+
+  &.card--done .card-title {
+    color: var(--txt3);
+    text-decoration: line-through;
+  }
+}
+
+.card-title {
+  font-weight: var(--fw-medium);
+  color: var(--txt1);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-small);
+}
+
+.card-handle {
+  position: absolute;
+  inset-inline-end: var(--sp-2);
+  inset-block-start: var(--sp-2);
+  color: var(--txt4);
+  letter-spacing: -2px;
+}
+
+.prio {
+  font-weight: var(--fw-bold);
+
+  &.prio--critical {
+    color: var(--danger);
+  }
+  &.prio--high {
+    color: color-mix(in srgb, var(--danger) 65%, var(--txt2));
+  }
+  &.prio--medium {
+    color: var(--ember);
+  }
+  &.prio--low {
+    color: var(--txt3);
+  }
+}
+
+.label {
+  color: var(--txt3);
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-full);
+  padding: 0 var(--sp-2);
+}
+
+.empty-col {
+  list-style: none;
+  padding: var(--sp-3);
+  text-align: center;
+  color: var(--txt4);
+  font-size: var(--fs-small);
+  border: 1px dashed var(--bdr2);
+  border-radius: var(--rad-sm);
+}
+
+// כרטיסים מצטמצמים בעמודה צרה — container query על העמודה, לא על המסך
+@container (max-width: 200px) {
+  .card {
+    padding: var(--sp-1) var(--sp-2);
+  }
+  .card-handle {
+    display: none;
+  }
+}
+// #endregion
+
+// #region step-17.19
+// המראה של ה-DnD מסופק ע"י CDK דרך מחלקות שהיא מוסיפה בזמן ריצה:
+// ‏.cdk-drag-preview = השיבוט הצף; ‏.cdk-drag-placeholder = החלל שנשאר;
+// ‏.cdk-drag-animating = המעבר החלק כשמשחררים.
+.cdk-drag-preview {
+  box-shadow: var(--shadow-3);
+  border-radius: var(--rad-sm);
+  background: var(--sur3);
+  opacity: 0.95;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.4;
+  border: 1px dashed var(--accent);
+  background: var(--accent-subtle);
+}
+
+.cdk-drag-animating {
+  transition: transform var(--dur-3) var(--ease-out);
+}
+
+.cards.cdk-drop-list-dragging .card:not(.cdk-drag-placeholder) {
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hint,
+.empty-col {
+  color: var(--txt3);
+}
+
+.load-error {
+  padding: var(--sp-3);
+  color: var(--danger);
+
+  button {
+    margin-block-start: var(--sp-2);
+  }
+}
+
+.skel-card {
+  height: 52px;
+  border-radius: var(--rad-sm);
+  background: var(--sur2);
+  margin-block-end: var(--sp-2);
+}
+
+// reduced-motion: בלי אנימציות transform/box-shadow על הרמה וריחוף
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .cdk-drag-animating,
+  .cards.cdk-drop-list-dragging .card:not(.cdk-drag-placeholder) {
+    transition: none;
+  }
+  .card.card--grabbed {
+    transform: none;
+  }
+}
+// #endregion
