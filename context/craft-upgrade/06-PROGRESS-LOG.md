@@ -25,7 +25,7 @@
 | Renumber placeholders ch15–20 → ch21–26 | `03-PROPAGATION-AND-SYNC.md` Procedure C | DONE — `27811b6` |
 | ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | DONE — snapshot `c7f7b7d`, content + demo committed (see latest log entry) |
 | ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | DONE — snapshot (`bfc4bb7`/`974f074`/`1de5821`) + demo + content; see latest log entry |
-| ch17 — Kanban DnD | `04-chapter-specs/ch17-kanban-dnd.md` | IN PROGRESS — backend rank/reorder + migration done & curl-verified; frontend (entity-store/optimistic + kanban DnD) + content remain |
+| ch17 — Kanban DnD | `04-chapter-specs/ch17-kanban-dnd.md` | DONE — backend `b68c9af`; frontend + content + demo `9b3f79a` (entity-store/optimistic spine, accessible pointer+keyboard DnD, runtime-verified) |
 | ch18 — Dashboard | `04-chapter-specs/ch18-dashboard.md` | NOT STARTED |
 | ch19 — Rich detail | `04-chapter-specs/ch19-rich-detail.md` | NOT STARTED |
 | ch20 — State capstone | `04-chapter-specs/ch20-state-capstone.md` | NOT STARTED |
@@ -36,6 +36,46 @@
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-14 — ch17 frontend + content + demo — DONE (Claude)
+- Finished ch17 (commit `9b3f79a`). Frontend overlay (`reference/ch17/client/`):
+  - **spine #2** `core/state/entity-store.ts` — generic `EntityStore<T>` built ON linkedSignal (resets to server truth,
+    allows local patch/upsert/remove/snapshot/restore) + reusable `optimistic(apply, persist, rollback)` (returns bool).
+  - Refactored `IssuesStore` onto EntityStore WITHOUT changing its public surface; `setStatus` + new `reorder` both go
+    through `optimistic`. `reorder` = optimistic patch(status+rank) → `PATCH /api/issues/{id}/rank`; NO reload on success
+    (unlike setStatus) because the final position is already drawn. issue.model.ts += `rank:number` + `'rank'` sort.
+  - New `features/issues/kanban-board.{ts,html,scss}` — columns by status (computed, re-sorted by rank so optimistic
+    patches jump instantly). **CDK pointer DnD** (cdkDropListGroup/cdkDropList/cdkDrag) AND **hand-built keyboard DnD**
+    (Space grab, arrows move in/across columns, Esc cancel, refocus-after-render by `data-issue-id`, aria-live assertive).
+    Both paths converge on `commitMove` → midpoint-rank → `store.reorder`. CSS: auto-fit columns, `:has(.cdk-drag-placeholder)`
+    over-state, container query, CDK drag classes, reduced-motion block.
+  - `project-board.{ts,html}` += `?view=kanban` URL toggle (reuses `.filters` style; no new scss). milestones += ch17 ng.
+- DECISION (locked): `pageSize` cap is **100** (server `Range(1,100)` from ch04) — BOARD_PAGE_SIZE=100, not 200. My first
+  pass used 200 → 400 validation error at runtime; fixed. Board >100 issues would need paging/virtual-scroll (out of scope).
+- DECISION: `double Rank` with client-computed midpoints (gap seed 1024) — kept simple; taught the precision limit vs LexoRank.
+- Content: wrote `chapters/ch17-kanban-dnd/content.ts` MYSELF (22 steps, 7 quiz, 5 proveIt, exercise=WIP-limit, 6 terms) +
+  built the live demo `demos/kanban.demo.*` (mini kanban, keyboard+native drag, break-server toggle → rollback, DestroyRef
+  timers). registry ch17 → `ready` + loadContent. (Did NOT delegate — harness rule: no agents unless asked.)
+- Runtime-verified (two-server smoke, demo@taskforge.dev, preview on 4500 + API 5080): kanban renders 3 cols
+  (Open21/InProgress20/Done19=60 by rank); KEYBOARD reorder persists (issue 2 ArrowDown→rank 4608 exact midpoint;
+  ArrowLeft cross-col→InProgress rank 60416; focus follows; aria-live announces "פתוח, 2 מתוך 21"); break-server (fetch
+  override 500) → order reverts + grab released + toast "boom"; pointer `onDrop` both branches persist (same-col 10752,
+  cross-col 2560 exact midpoints) — verified via real CdkDragDrop event shape (synthetic raw pointer events don't engage
+  CDK in the headless harness, a harness limit not an app bug; cdk-drag/cdk-drop-list confirmed attached); 375px → single
+  307px col, 3 stacked rows, 0 horizontal overflow; reduced-motion + placeholder + card-transition CSS all shipped; list
+  view paging intact ("Page 1 of 2 — 60 issues"); view toggle URL-synced both ways via real router (aria-current moves).
+- GOTCHA confirmed (memory): the 4→12 console `InvalidStateError: Transition was aborted` are `withViewTransitions` failing
+  because `document.visibilityState==='hidden'` (preview tab not foregrounded) — NOT a feature bug; the kanban load +
+  keyboard reorders produced ZERO errors. Same cause makes `preview_screenshot` time out (renderer not painting) — used
+  eval/snapshot instead (more precise anyway).
+- Gates ALL green: gen:manifest 17 snapshots/1409 entries · verify:coverage 153 files (0 pending) · vitest 108 passed
+  (+6 = one describe.each block for ch17; its 6 `it`s incl. panel-region resolution all pass) · guide `pnpm build` clean
+  (only pre-existing Mermaid CJS warning) · re-materialized + ch17 client `ng build` 0 errors + ch17 server `dotnet build`
+  0/0. `.claude/launch.json` snapshot config ch16 → ch17.
+- WHAT'S NEXT: **ch18 — Dashboard & Data Viz** (`04-chapter-specs/ch18-dashboard.md`): summary cards, activity feed,
+  stats endpoint(s), derived selectors over the EntityStore/store, hand-rolled SVG charts bound to real data. Snapshot-first
+  as usual (backend stats endpoint + client selectors/charts → milestones → compile → two-server smoke → content → gates →
+  commit). Reuse the ch17 spine (EntityStore + derived computed) for the dashboard's derived numbers.
 
 ### 2026-06-14 — ch17 snapshot pt1: backend rank + reorder + migration — in-progress (Claude)
 - Backend ordering model + reorder endpoint (committed next). Decision: `double Rank` with client-computed midpoints
