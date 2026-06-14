@@ -29706,6 +29706,62 @@ export const GUIDE_MANIFEST = {
           "regions": {},
           "changedLines": []
         },
+        "server/TaskForge.Api/Endpoints/SearchEndpoints.cs": {
+          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Filters;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class SearchEndpoints\n{\n    // אותו דפוס כמו שאר הקבוצות: prefix /api, תג OpenAPI, פילטר תזמון,\n    // והכול דורש אימות. שורה אחת ב-Program מחברת.\n    public static IEndpointRouteBuilder MapSearchEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api\")\n            .WithTags(\"Search\")\n            .AddEndpointFilter<HandlerTimingFilter>()\n            .RequireAuthorization();\n\n        group.MapGet(\"/search\", Search);\n\n        return app;\n    }\n\n    // query קצר מדי = תוצאה ריקה (בלי לפגוע ב-DB על תו אחד).\n    // ההרשאה נאכפת בתוך ה-repository: רק מה שהמשתמש חבר בו חוזר.\n    private static async Task<Ok<SearchResults>> Search(\n        string? q,\n        ClaimsPrincipal user,\n        ISearchRepository search,\n        CancellationToken cancellationToken)\n    {\n        var term = (q ?? string.Empty).Trim();\n        if (term.Length < 2)\n        {\n            return TypedResults.Ok(new SearchResults([], []));\n        }\n\n        var results = await search.SearchForMemberAsync(user.GetUserId(), term, 5, cancellationToken);\n        return TypedResults.Ok(results);\n    }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-16.12": {
+              "start": 12,
+              "end": 42
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
+        },
         "server/TaskForge.Api/Filters/HandlerTimingFilter.cs": {
           "content": "using System.Diagnostics;\n\nnamespace TaskForge.Api.Filters;\n\n// Endpoint filter: עוטף את ה-handler בלבד — לא את כל הצינור כמו middleware.\n// ההשוואה בין X-Handler-Ms לבין X-Elapsed-Ms (מפרק 01) מספרת\n// כמה זמן נבלע ב-middleware, ב-routing וב-binding מסביב ל-handler עצמו.\npublic sealed class HandlerTimingFilter : IEndpointFilter\n{\n    public async ValueTask<object?> InvokeAsync(\n        EndpointFilterInvocationContext context,\n        EndpointFilterDelegate next)\n    {\n        var stopwatch = Stopwatch.StartNew();\n\n        var result = await next(context); // ה-handler (או הפילטר הבא בשרשרת)\n\n        stopwatch.Stop();\n        context.HttpContext.Response.Headers.Append(\"X-Handler-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n\n        return result;\n    }\n}\n",
           "status": "unchanged",
@@ -29713,8 +29769,8 @@ export const GUIDE_MANIFEST = {
           "changedLines": []
         },
         "server/TaskForge.Api/Program.cs": {
-          "content": "using System.Text;\nusing System.Text.Json.Serialization;\nusing Microsoft.AspNetCore.Authentication.JwtBearer;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.IdentityModel.Tokens;\nusing TaskForge.Api.Endpoints;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Infrastructure.Auth;\nusing TaskForge.Infrastructure.Data;\nusing TaskForge.Infrastructure.Repositories;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// enums נכנסים ויוצאים כטקסט (\"Open\") בכל ה-API — הגדרה אחת, לכולם\nbuilder.Services.ConfigureHttpJsonOptions(options =>\n    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));\n\n// הקליינט חי ב-origin אחר (4500 מול 5080) — הדפדפן יחסום כל בקשה\n// עד שהשרת יצהיר במפורש שה-origin הזה רצוי. זו לא \"תקלה לעקוף\",\n// זו הצהרת אמון: רק האפליקציה שלנו, רק הכותרות והמתודות שביקשנו.\nconst string ClientCors = \"taskforge-client\";\n\nbuilder.Services.AddCors(options =>\n    options.AddPolicy(ClientCors, policy => policy\n        .WithOrigins(\"http://localhost:4500\")\n        .AllowAnyHeader()\n        .AllowAnyMethod()));\n\n// ה-DbContext נרשם Scoped מעצם הגדרתו: יחידת עבודה אחת לכל בקשה.\n// מחרוזת החיבור מגיעה מהקונפיגורציה — לא מקובעת בקוד.\nbuilder.Services.AddDbContext<TaskForgeDbContext>(options =>\n    options.UseSqlite(builder.Configuration.GetConnectionString(\"Default\")));\n\n// ה-seams של הדומיין: חוזה מה-Core, מימוש מה-Infrastructure\nbuilder.Services.AddScoped<IProjectRepository, EfProjectRepository>();\nbuilder.Services.AddScoped<IIssueRepository, EfIssueRepository>();\nbuilder.Services.AddScoped<ICommentRepository, EfCommentRepository>();\nbuilder.Services.AddScoped<IUserRepository, EfUserRepository>();\nbuilder.Services.AddScoped<IRefreshTokenRepository, EfRefreshTokenRepository>();\n\n// שירותי auth חסרי-state — ‏Singleton בלב שלם\nbuilder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();\nbuilder.Services.AddSingleton<ITokenService, TokenService>();\n\n// קושרים את סקציית \"Jwt\" מהקונפיגורציה אל ה-options — מקור אמת אחד\nbuilder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));\nvar jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()\n    ?? throw new InvalidOperationException(\"Missing Jwt configuration section\");\n\n// צד האימות: ה-handler של Bearer מצרף לכל בקשה את ה-ClaimsPrincipal\n// אם הטוקן חתום נכון, בתוקף, ומגיע מהמנפיק ולקהל הנכונים.\nbuilder.Services\n    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)\n    .AddJwtBearer(options =>\n    {\n        options.TokenValidationParameters = new TokenValidationParameters\n        {\n            ValidateIssuer = true,\n            ValidIssuer = jwt.Issuer,\n            ValidateAudience = true,\n            ValidAudience = jwt.Audience,\n            ValidateIssuerSigningKey = true,\n            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),\n            ValidateLifetime = true,\n            // ברירת המחדל היא 5 דקות חסד — נצמיד לשעון אמיתי\n            ClockSkew = TimeSpan.FromSeconds(30),\n        };\n    });\n\nbuilder.Services.AddAuthorization();\n\n// הוולידציה המובנית של .NET 10: כל DTO מסומן ב-DataAnnotations נבדק\n// אוטומטית לפני ה-handler; כישלון מחזיר 400 ValidationProblem אחיד.\nbuilder.Services.AddValidation();\n\n// ProblemDetails (RFC 7807) כברירת מחדל לכל שגיאה וסטטוס ללא גוף\nbuilder.Services.AddProblemDetails();\n\nbuilder.Services.AddOpenApi();\n\nvar app = builder.Build();\n\n// בעליית האפליקציה: מיישמים מיגרציות שחסרות ומזריעים DB ריק.\n// CreateScope חובה — DbContext הוא Scoped, ומחוץ לבקשה אין scope.\nusing (var scope = app.Services.CreateScope())\n{\n    var db = scope.ServiceProvider.GetRequiredService<TaskForgeDbContext>();\n    await db.Database.MigrateAsync();\n    await DbSeeder.SeedAsync(db);\n}\n\n// העוטפים החיצוניים: חריגה לא מטופלת הופכת ל-500 ProblemDetails,\n// וכל תשובת סטטוס בלי גוף (כמו 404 של routing) מקבלת גוף אחיד.\napp.UseExceptionHandler();\napp.UseStatusCodePages();\n\n// מוקדם ב-pipeline: גם preflight ‏(OPTIONS) וגם תשובות שגיאה\n// צריכים לשאת את כותרות ה-CORS, אחרת הדפדפן יסתיר אותן מהקליינט.\napp.UseCors(ClientCors);\n\n// ── ה-pipeline המוכר מפרק 01: לוגים ומדידת זמן ──\n\napp.Use(async (context, next) =>\n{\n    app.Logger.LogInformation(\"{Method} {Path} started\",\n        context.Request.Method, context.Request.Path);\n\n    await next(context);\n\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\n});\n\napp.Use(async (context, next) =>\n{\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\n\n    context.Response.OnStarting(() =>\n    {\n        stopwatch.Stop();\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n        return Task.CompletedTask;\n    });\n\n    await next(context);\n});\n\n// קודם מזהים (מי אתה?), אחר כך מחליטים (מותר לך?) — הסדר קשיח\napp.UseAuthentication();\napp.UseAuthorization();\n\n// תיאור ה-API נוצר מהקוד עצמו — בסביבת פיתוח בלבד\nif (app.Environment.IsDevelopment())\n{\n    app.MapOpenApi(); // GET /openapi/v1.json\n}\n\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\n\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\n\n// כל ה-API העסקי — מאורגן בקבצים לפי פיצ׳ר\napp.MapAuthEndpoints();\napp.MapProjectEndpoints();\napp.MapIssueEndpoints();\napp.MapCommentEndpoints();\n\n// קבוצת ה-members מצטרפת לאותו דפוס: קובץ לפי פיצ׳ר, שורה אחת כאן\napp.MapMemberEndpoints();\n\napp.Run();\n",
-          "status": "unchanged",
+          "content": "using System.Text;\nusing System.Text.Json.Serialization;\nusing Microsoft.AspNetCore.Authentication.JwtBearer;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.IdentityModel.Tokens;\nusing TaskForge.Api.Endpoints;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Infrastructure.Auth;\nusing TaskForge.Infrastructure.Data;\nusing TaskForge.Infrastructure.Repositories;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// enums נכנסים ויוצאים כטקסט (\"Open\") בכל ה-API — הגדרה אחת, לכולם\nbuilder.Services.ConfigureHttpJsonOptions(options =>\n    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));\n\n// הקליינט חי ב-origin אחר (4500 מול 5080) — הדפדפן יחסום כל בקשה\n// עד שהשרת יצהיר במפורש שה-origin הזה רצוי. זו לא \"תקלה לעקוף\",\n// זו הצהרת אמון: רק האפליקציה שלנו, רק הכותרות והמתודות שביקשנו.\nconst string ClientCors = \"taskforge-client\";\n\nbuilder.Services.AddCors(options =>\n    options.AddPolicy(ClientCors, policy => policy\n        .WithOrigins(\"http://localhost:4500\")\n        .AllowAnyHeader()\n        .AllowAnyMethod()));\n\n// ה-DbContext נרשם Scoped מעצם הגדרתו: יחידת עבודה אחת לכל בקשה.\n// מחרוזת החיבור מגיעה מהקונפיגורציה — לא מקובעת בקוד.\nbuilder.Services.AddDbContext<TaskForgeDbContext>(options =>\n    options.UseSqlite(builder.Configuration.GetConnectionString(\"Default\")));\n\n// ה-seams של הדומיין: חוזה מה-Core, מימוש מה-Infrastructure\nbuilder.Services.AddScoped<IProjectRepository, EfProjectRepository>();\nbuilder.Services.AddScoped<IIssueRepository, EfIssueRepository>();\nbuilder.Services.AddScoped<ICommentRepository, EfCommentRepository>();\nbuilder.Services.AddScoped<IUserRepository, EfUserRepository>();\nbuilder.Services.AddScoped<IRefreshTokenRepository, EfRefreshTokenRepository>();\n// פרק 16: seam החיפוש מצטרף לאותו דפוס רישום\nbuilder.Services.AddScoped<ISearchRepository, EfSearchRepository>();\n\n// שירותי auth חסרי-state — ‏Singleton בלב שלם\nbuilder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();\nbuilder.Services.AddSingleton<ITokenService, TokenService>();\n\n// קושרים את סקציית \"Jwt\" מהקונפיגורציה אל ה-options — מקור אמת אחד\nbuilder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));\nvar jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()\n    ?? throw new InvalidOperationException(\"Missing Jwt configuration section\");\n\n// צד האימות: ה-handler של Bearer מצרף לכל בקשה את ה-ClaimsPrincipal\n// אם הטוקן חתום נכון, בתוקף, ומגיע מהמנפיק ולקהל הנכונים.\nbuilder.Services\n    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)\n    .AddJwtBearer(options =>\n    {\n        options.TokenValidationParameters = new TokenValidationParameters\n        {\n            ValidateIssuer = true,\n            ValidIssuer = jwt.Issuer,\n            ValidateAudience = true,\n            ValidAudience = jwt.Audience,\n            ValidateIssuerSigningKey = true,\n            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),\n            ValidateLifetime = true,\n            // ברירת המחדל היא 5 דקות חסד — נצמיד לשעון אמיתי\n            ClockSkew = TimeSpan.FromSeconds(30),\n        };\n    });\n\nbuilder.Services.AddAuthorization();\n\n// הוולידציה המובנית של .NET 10: כל DTO מסומן ב-DataAnnotations נבדק\n// אוטומטית לפני ה-handler; כישלון מחזיר 400 ValidationProblem אחיד.\nbuilder.Services.AddValidation();\n\n// ProblemDetails (RFC 7807) כברירת מחדל לכל שגיאה וסטטוס ללא גוף\nbuilder.Services.AddProblemDetails();\n\nbuilder.Services.AddOpenApi();\n\nvar app = builder.Build();\n\n// בעליית האפליקציה: מיישמים מיגרציות שחסרות ומזריעים DB ריק.\n// CreateScope חובה — DbContext הוא Scoped, ומחוץ לבקשה אין scope.\nusing (var scope = app.Services.CreateScope())\n{\n    var db = scope.ServiceProvider.GetRequiredService<TaskForgeDbContext>();\n    await db.Database.MigrateAsync();\n    await DbSeeder.SeedAsync(db);\n}\n\n// העוטפים החיצוניים: חריגה לא מטופלת הופכת ל-500 ProblemDetails,\n// וכל תשובת סטטוס בלי גוף (כמו 404 של routing) מקבלת גוף אחיד.\napp.UseExceptionHandler();\napp.UseStatusCodePages();\n\n// מוקדם ב-pipeline: גם preflight ‏(OPTIONS) וגם תשובות שגיאה\n// צריכים לשאת את כותרות ה-CORS, אחרת הדפדפן יסתיר אותן מהקליינט.\napp.UseCors(ClientCors);\n\n// ── ה-pipeline המוכר מפרק 01: לוגים ומדידת זמן ──\n\napp.Use(async (context, next) =>\n{\n    app.Logger.LogInformation(\"{Method} {Path} started\",\n        context.Request.Method, context.Request.Path);\n\n    await next(context);\n\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\n});\n\napp.Use(async (context, next) =>\n{\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\n\n    context.Response.OnStarting(() =>\n    {\n        stopwatch.Stop();\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n        return Task.CompletedTask;\n    });\n\n    await next(context);\n});\n\n// קודם מזהים (מי אתה?), אחר כך מחליטים (מותר לך?) — הסדר קשיח\napp.UseAuthentication();\napp.UseAuthorization();\n\n// תיאור ה-API נוצר מהקוד עצמו — בסביבת פיתוח בלבד\nif (app.Environment.IsDevelopment())\n{\n    app.MapOpenApi(); // GET /openapi/v1.json\n}\n\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\n\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\n\n// כל ה-API העסקי — מאורגן בקבצים לפי פיצ׳ר\napp.MapAuthEndpoints();\napp.MapProjectEndpoints();\napp.MapIssueEndpoints();\napp.MapCommentEndpoints();\n\n// קבוצת ה-members מצטרפת לאותו דפוס: קובץ לפי פיצ׳ר, שורה אחת כאן\napp.MapMemberEndpoints();\n\n// פרק 16: endpoint החיפוש שמזין את ה-command palette\napp.MapSearchEndpoints();\n\napp.Run();\n",
+          "status": "modified",
           "regions": {
             "step-4.2": {
               "start": 15,
@@ -29728,60 +29784,74 @@ export const GUIDE_MANIFEST = {
               "start": 30,
               "end": 33
             },
+            "step-16.13": {
+              "start": 41,
+              "end": 42
+            },
             "step-4.4": {
               "start": 35,
-              "end": 40
+              "end": 42
             },
             "step-5.8": {
-              "start": 42,
-              "end": 49
+              "start": 44,
+              "end": 51
             },
             "step-5.9": {
-              "start": 51,
-              "end": 71
+              "start": 53,
+              "end": 73
             },
             "step-4.9": {
-              "start": 73,
-              "end": 75
+              "start": 75,
+              "end": 77
             },
             "step-3.11": {
-              "start": 84,
-              "end": 91
+              "start": 86,
+              "end": 93
             },
             "step-4.10": {
-              "start": 93,
-              "end": 96
+              "start": 95,
+              "end": 98
             },
             "step-11.2b": {
-              "start": 98,
-              "end": 100
+              "start": 100,
+              "end": 102
             },
             "step-1.10": {
-              "start": 102,
-              "end": 128
+              "start": 104,
+              "end": 130
             },
             "step-5.10": {
-              "start": 130,
-              "end": 132
+              "start": 132,
+              "end": 134
             },
             "step-4.17": {
-              "start": 134,
-              "end": 138
+              "start": 136,
+              "end": 140
             },
             "step-14.5b": {
-              "start": 148,
-              "end": 148
+              "start": 150,
+              "end": 150
             },
             "step-4.16": {
-              "start": 140,
-              "end": 148
+              "start": 142,
+              "end": 150
             },
             "step-12.6b": {
-              "start": 150,
-              "end": 151
+              "start": 152,
+              "end": 153
+            },
+            "step-16.13b": {
+              "start": 155,
+              "end": 156
             }
           },
-          "changedLines": []
+          "changedLines": [
+            41,
+            42,
+            155,
+            156,
+            157
+          ]
         },
         "server/TaskForge.Api/Properties/launchSettings.json": {
           "content": "{\n  \"$schema\": \"https://json.schemastore.org/launchsettings.json\",\n  \"profiles\": {\n    \"http\": {\n      \"commandName\": \"Project\",\n      \"dotnetRunMessages\": true,\n      \"launchBrowser\": false,\n      \"applicationUrl\": \"http://localhost:5080\",\n      \"environmentVariables\": {\n        \"ASPNETCORE_ENVIRONMENT\": \"Development\"\n      }\n    }\n  }\n}\n",
@@ -29836,6 +29906,34 @@ export const GUIDE_MANIFEST = {
           "regions": {},
           "changedLines": []
         },
+        "server/TaskForge.Core/Abstractions/ISearchRepository.cs": {
+          "content": "using TaskForge.Core.Common;\n\nnamespace TaskForge.Core.Abstractions;\n\n// חיפוש חי כ-seam נפרד: הוא חוצה ישויות (פרויקטים + issues), ולכן מקבל\n// חוזה משלו במקום להעמיס על repo קיים. הפלטה צורכת אותו, לא יודעת על EF.\npublic interface ISearchRepository\n{\n    /// <summary>חיפוש מוגבל-הרשאה: רק פרויקטים ו-issues שהמשתמש חבר בהם.</summary>\n    Task<SearchResults> SearchForMemberAsync(\n        int userId,\n        string term,\n        int take,\n        CancellationToken cancellationToken = default);\n}\n",
+          "status": "added",
+          "regions": {
+            "step-16.11": {
+              "start": 5,
+              "end": 15
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ]
+        },
         "server/TaskForge.Core/Abstractions/ITokenService.cs": {
           "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\npublic interface ITokenService\n{\n    /// <summary>JWT חתום עם זהות המשתמש והתפקיד — תקף לדקות ספורות.</summary>\n    string CreateAccessToken(User user);\n\n    /// <summary>מחרוזת אקראית קריפטוגרפית — נשמרת ב-DB דרך IRefreshTokenRepository.</summary>\n    string CreateRefreshToken();\n}\n",
           "status": "unchanged",
@@ -29876,6 +29974,32 @@ export const GUIDE_MANIFEST = {
           "status": "unchanged",
           "regions": {},
           "changedLines": []
+        },
+        "server/TaskForge.Core/Common/SearchResults.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Common;\n\n// תוצאות חיפוש כהקרנות רזות — בדיוק מה שה-palette צריך כדי לקפוץ ליעד.\n// חיים ב-Core/Common כמו ProjectSummary: POCO חוצה-שכבות, לא ישות מלאה.\npublic sealed record ProjectHit(int Id, string Name);\n\npublic sealed record IssueHit(int Id, int ProjectId, string Title, IssueStatus Status);\n\npublic sealed record SearchResults(\n    IReadOnlyList<ProjectHit> Projects,\n    IReadOnlyList<IssueHit> Issues);\n",
+          "status": "added",
+          "regions": {
+            "step-16.11": {
+              "start": 5,
+              "end": 13
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ]
         },
         "server/TaskForge.Core/Entities/Comment.cs": {
           "content": "namespace TaskForge.Core.Entities;\n\npublic sealed class Comment\n{\n    public int Id { get; set; }\n\n    public required string Body { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    public int IssueId { get; set; }\n    public Issue? Issue { get; set; }\n\n    public int AuthorUserId { get; set; }\n    public User? Author { get; set; }\n}\n",
@@ -30074,6 +30198,62 @@ export const GUIDE_MANIFEST = {
           "status": "unchanged",
           "regions": {},
           "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfSearchRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\n// שתי שאילתות רזות, שתיהן מסוננות-הרשאה דרך טבלת ה-membership:\n// רק פרויקטים/issues שהמשתמש חבר בהם חוזרים. Take מגביל את העלות —\n// palette צריך כמה תוצאות מובילות, לא את הכול.\npublic sealed class EfSearchRepository(TaskForgeDbContext db) : ISearchRepository\n{\n    public async Task<SearchResults> SearchForMemberAsync(\n        int userId,\n        string term,\n        int take,\n        CancellationToken cancellationToken = default)\n    {\n        var like = $\"%{term}%\";\n\n        var projects = await db.Projects\n            .AsNoTracking()\n            .Where(p =>\n                EF.Functions.Like(p.Name, like) &&\n                db.ProjectMembers.Any(m => m.ProjectId == p.Id && m.UserId == userId))\n            .OrderBy(p => p.Name)\n            .Take(take)\n            .Select(p => new ProjectHit(p.Id, p.Name))\n            .ToListAsync(cancellationToken);\n\n        var issues = await db.Issues\n            .AsNoTracking()\n            .Where(i =>\n                EF.Functions.Like(i.Title, like) &&\n                db.ProjectMembers.Any(m => m.ProjectId == i.ProjectId && m.UserId == userId))\n            .OrderByDescending(i => i.CreatedAtUtc)\n            .Take(take)\n            .Select(i => new IssueHit(i.Id, i.ProjectId, i.Title, i.Status))\n            .ToListAsync(cancellationToken);\n\n        return new SearchResults(projects, issues);\n    }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-16.11b": {
+              "start": 8,
+              "end": 43
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
         },
         "server/TaskForge.Infrastructure/Repositories/EfUserRepository.cs": {
           "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfUserRepository(TaskForgeDbContext db) : IUserRepository\n{\n    public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default) =>\n        db.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);\n\n    public Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id, cancellationToken);\n\n    public Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default) =>\n        db.Users.AnyAsync(u => u.Email == email, cancellationToken);\n\n    public async Task<User> AddAsync(User user, CancellationToken cancellationToken = default)\n    {\n        db.Users.Add(user);\n        await db.SaveChangesAsync(cancellationToken);\n        return user;\n    }\n}\n",
@@ -30725,6 +30905,257 @@ export const GUIDE_MANIFEST = {
             15,
             16,
             17
+          ]
+        },
+        "server/TaskForge.Api/Endpoints/SearchEndpoints.cs": {
+          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Filters;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class SearchEndpoints\n{\n    // אותו דפוס כמו שאר הקבוצות: prefix /api, תג OpenAPI, פילטר תזמון,\n    // והכול דורש אימות. שורה אחת ב-Program מחברת.\n    public static IEndpointRouteBuilder MapSearchEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api\")\n            .WithTags(\"Search\")\n            .AddEndpointFilter<HandlerTimingFilter>()\n            .RequireAuthorization();\n\n        group.MapGet(\"/search\", Search);\n\n        return app;\n    }\n\n    // query קצר מדי = תוצאה ריקה (בלי לפגוע ב-DB על תו אחד).\n    // ההרשאה נאכפת בתוך ה-repository: רק מה שהמשתמש חבר בו חוזר.\n    private static async Task<Ok<SearchResults>> Search(\n        string? q,\n        ClaimsPrincipal user,\n        ISearchRepository search,\n        CancellationToken cancellationToken)\n    {\n        var term = (q ?? string.Empty).Trim();\n        if (term.Length < 2)\n        {\n            return TypedResults.Ok(new SearchResults([], []));\n        }\n\n        var results = await search.SearchForMemberAsync(user.GetUserId(), term, 5, cancellationToken);\n        return TypedResults.Ok(results);\n    }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-16.12": {
+              "start": 12,
+              "end": 42
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
+          ]
+        },
+        "server/TaskForge.Api/Program.cs": {
+          "content": "using System.Text;\nusing System.Text.Json.Serialization;\nusing Microsoft.AspNetCore.Authentication.JwtBearer;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.IdentityModel.Tokens;\nusing TaskForge.Api.Endpoints;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Infrastructure.Auth;\nusing TaskForge.Infrastructure.Data;\nusing TaskForge.Infrastructure.Repositories;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// enums נכנסים ויוצאים כטקסט (\"Open\") בכל ה-API — הגדרה אחת, לכולם\nbuilder.Services.ConfigureHttpJsonOptions(options =>\n    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));\n\n// הקליינט חי ב-origin אחר (4500 מול 5080) — הדפדפן יחסום כל בקשה\n// עד שהשרת יצהיר במפורש שה-origin הזה רצוי. זו לא \"תקלה לעקוף\",\n// זו הצהרת אמון: רק האפליקציה שלנו, רק הכותרות והמתודות שביקשנו.\nconst string ClientCors = \"taskforge-client\";\n\nbuilder.Services.AddCors(options =>\n    options.AddPolicy(ClientCors, policy => policy\n        .WithOrigins(\"http://localhost:4500\")\n        .AllowAnyHeader()\n        .AllowAnyMethod()));\n\n// ה-DbContext נרשם Scoped מעצם הגדרתו: יחידת עבודה אחת לכל בקשה.\n// מחרוזת החיבור מגיעה מהקונפיגורציה — לא מקובעת בקוד.\nbuilder.Services.AddDbContext<TaskForgeDbContext>(options =>\n    options.UseSqlite(builder.Configuration.GetConnectionString(\"Default\")));\n\n// ה-seams של הדומיין: חוזה מה-Core, מימוש מה-Infrastructure\nbuilder.Services.AddScoped<IProjectRepository, EfProjectRepository>();\nbuilder.Services.AddScoped<IIssueRepository, EfIssueRepository>();\nbuilder.Services.AddScoped<ICommentRepository, EfCommentRepository>();\nbuilder.Services.AddScoped<IUserRepository, EfUserRepository>();\nbuilder.Services.AddScoped<IRefreshTokenRepository, EfRefreshTokenRepository>();\n// פרק 16: seam החיפוש מצטרף לאותו דפוס רישום\nbuilder.Services.AddScoped<ISearchRepository, EfSearchRepository>();\n\n// שירותי auth חסרי-state — ‏Singleton בלב שלם\nbuilder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();\nbuilder.Services.AddSingleton<ITokenService, TokenService>();\n\n// קושרים את סקציית \"Jwt\" מהקונפיגורציה אל ה-options — מקור אמת אחד\nbuilder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));\nvar jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()\n    ?? throw new InvalidOperationException(\"Missing Jwt configuration section\");\n\n// צד האימות: ה-handler של Bearer מצרף לכל בקשה את ה-ClaimsPrincipal\n// אם הטוקן חתום נכון, בתוקף, ומגיע מהמנפיק ולקהל הנכונים.\nbuilder.Services\n    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)\n    .AddJwtBearer(options =>\n    {\n        options.TokenValidationParameters = new TokenValidationParameters\n        {\n            ValidateIssuer = true,\n            ValidIssuer = jwt.Issuer,\n            ValidateAudience = true,\n            ValidAudience = jwt.Audience,\n            ValidateIssuerSigningKey = true,\n            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),\n            ValidateLifetime = true,\n            // ברירת המחדל היא 5 דקות חסד — נצמיד לשעון אמיתי\n            ClockSkew = TimeSpan.FromSeconds(30),\n        };\n    });\n\nbuilder.Services.AddAuthorization();\n\n// הוולידציה המובנית של .NET 10: כל DTO מסומן ב-DataAnnotations נבדק\n// אוטומטית לפני ה-handler; כישלון מחזיר 400 ValidationProblem אחיד.\nbuilder.Services.AddValidation();\n\n// ProblemDetails (RFC 7807) כברירת מחדל לכל שגיאה וסטטוס ללא גוף\nbuilder.Services.AddProblemDetails();\n\nbuilder.Services.AddOpenApi();\n\nvar app = builder.Build();\n\n// בעליית האפליקציה: מיישמים מיגרציות שחסרות ומזריעים DB ריק.\n// CreateScope חובה — DbContext הוא Scoped, ומחוץ לבקשה אין scope.\nusing (var scope = app.Services.CreateScope())\n{\n    var db = scope.ServiceProvider.GetRequiredService<TaskForgeDbContext>();\n    await db.Database.MigrateAsync();\n    await DbSeeder.SeedAsync(db);\n}\n\n// העוטפים החיצוניים: חריגה לא מטופלת הופכת ל-500 ProblemDetails,\n// וכל תשובת סטטוס בלי גוף (כמו 404 של routing) מקבלת גוף אחיד.\napp.UseExceptionHandler();\napp.UseStatusCodePages();\n\n// מוקדם ב-pipeline: גם preflight ‏(OPTIONS) וגם תשובות שגיאה\n// צריכים לשאת את כותרות ה-CORS, אחרת הדפדפן יסתיר אותן מהקליינט.\napp.UseCors(ClientCors);\n\n// ── ה-pipeline המוכר מפרק 01: לוגים ומדידת זמן ──\n\napp.Use(async (context, next) =>\n{\n    app.Logger.LogInformation(\"{Method} {Path} started\",\n        context.Request.Method, context.Request.Path);\n\n    await next(context);\n\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\n});\n\napp.Use(async (context, next) =>\n{\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\n\n    context.Response.OnStarting(() =>\n    {\n        stopwatch.Stop();\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n        return Task.CompletedTask;\n    });\n\n    await next(context);\n});\n\n// קודם מזהים (מי אתה?), אחר כך מחליטים (מותר לך?) — הסדר קשיח\napp.UseAuthentication();\napp.UseAuthorization();\n\n// תיאור ה-API נוצר מהקוד עצמו — בסביבת פיתוח בלבד\nif (app.Environment.IsDevelopment())\n{\n    app.MapOpenApi(); // GET /openapi/v1.json\n}\n\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\n\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\n\n// כל ה-API העסקי — מאורגן בקבצים לפי פיצ׳ר\napp.MapAuthEndpoints();\napp.MapProjectEndpoints();\napp.MapIssueEndpoints();\napp.MapCommentEndpoints();\n\n// קבוצת ה-members מצטרפת לאותו דפוס: קובץ לפי פיצ׳ר, שורה אחת כאן\napp.MapMemberEndpoints();\n\n// פרק 16: endpoint החיפוש שמזין את ה-command palette\napp.MapSearchEndpoints();\n\napp.Run();\n",
+          "status": "modified",
+          "regions": {
+            "step-4.2": {
+              "start": 15,
+              "end": 17
+            },
+            "step-11.2": {
+              "start": 19,
+              "end": 28
+            },
+            "step-3.7": {
+              "start": 30,
+              "end": 33
+            },
+            "step-16.13": {
+              "start": 41,
+              "end": 42
+            },
+            "step-4.4": {
+              "start": 35,
+              "end": 42
+            },
+            "step-5.8": {
+              "start": 44,
+              "end": 51
+            },
+            "step-5.9": {
+              "start": 53,
+              "end": 73
+            },
+            "step-4.9": {
+              "start": 75,
+              "end": 77
+            },
+            "step-3.11": {
+              "start": 86,
+              "end": 93
+            },
+            "step-4.10": {
+              "start": 95,
+              "end": 98
+            },
+            "step-11.2b": {
+              "start": 100,
+              "end": 102
+            },
+            "step-1.10": {
+              "start": 104,
+              "end": 130
+            },
+            "step-5.10": {
+              "start": 132,
+              "end": 134
+            },
+            "step-4.17": {
+              "start": 136,
+              "end": 140
+            },
+            "step-14.5b": {
+              "start": 150,
+              "end": 150
+            },
+            "step-4.16": {
+              "start": 142,
+              "end": 150
+            },
+            "step-12.6b": {
+              "start": 152,
+              "end": 153
+            },
+            "step-16.13b": {
+              "start": 155,
+              "end": 156
+            }
+          },
+          "changedLines": [
+            41,
+            42,
+            155,
+            156,
+            157
+          ]
+        },
+        "server/TaskForge.Core/Abstractions/ISearchRepository.cs": {
+          "content": "using TaskForge.Core.Common;\n\nnamespace TaskForge.Core.Abstractions;\n\n// חיפוש חי כ-seam נפרד: הוא חוצה ישויות (פרויקטים + issues), ולכן מקבל\n// חוזה משלו במקום להעמיס על repo קיים. הפלטה צורכת אותו, לא יודעת על EF.\npublic interface ISearchRepository\n{\n    /// <summary>חיפוש מוגבל-הרשאה: רק פרויקטים ו-issues שהמשתמש חבר בהם.</summary>\n    Task<SearchResults> SearchForMemberAsync(\n        int userId,\n        string term,\n        int take,\n        CancellationToken cancellationToken = default);\n}\n",
+          "status": "added",
+          "regions": {
+            "step-16.11": {
+              "start": 5,
+              "end": 15
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ]
+        },
+        "server/TaskForge.Core/Common/SearchResults.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Common;\n\n// תוצאות חיפוש כהקרנות רזות — בדיוק מה שה-palette צריך כדי לקפוץ ליעד.\n// חיים ב-Core/Common כמו ProjectSummary: POCO חוצה-שכבות, לא ישות מלאה.\npublic sealed record ProjectHit(int Id, string Name);\n\npublic sealed record IssueHit(int Id, int ProjectId, string Title, IssueStatus Status);\n\npublic sealed record SearchResults(\n    IReadOnlyList<ProjectHit> Projects,\n    IReadOnlyList<IssueHit> Issues);\n",
+          "status": "added",
+          "regions": {
+            "step-16.11": {
+              "start": 5,
+              "end": 13
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ]
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfSearchRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\n// שתי שאילתות רזות, שתיהן מסוננות-הרשאה דרך טבלת ה-membership:\n// רק פרויקטים/issues שהמשתמש חבר בהם חוזרים. Take מגביל את העלות —\n// palette צריך כמה תוצאות מובילות, לא את הכול.\npublic sealed class EfSearchRepository(TaskForgeDbContext db) : ISearchRepository\n{\n    public async Task<SearchResults> SearchForMemberAsync(\n        int userId,\n        string term,\n        int take,\n        CancellationToken cancellationToken = default)\n    {\n        var like = $\"%{term}%\";\n\n        var projects = await db.Projects\n            .AsNoTracking()\n            .Where(p =>\n                EF.Functions.Like(p.Name, like) &&\n                db.ProjectMembers.Any(m => m.ProjectId == p.Id && m.UserId == userId))\n            .OrderBy(p => p.Name)\n            .Take(take)\n            .Select(p => new ProjectHit(p.Id, p.Name))\n            .ToListAsync(cancellationToken);\n\n        var issues = await db.Issues\n            .AsNoTracking()\n            .Where(i =>\n                EF.Functions.Like(i.Title, like) &&\n                db.ProjectMembers.Any(m => m.ProjectId == i.ProjectId && m.UserId == userId))\n            .OrderByDescending(i => i.CreatedAtUtc)\n            .Take(take)\n            .Select(i => new IssueHit(i.Id, i.ProjectId, i.Title, i.Status))\n            .ToListAsync(cancellationToken);\n\n        return new SearchResults(projects, issues);\n    }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-16.11b": {
+              "start": 8,
+              "end": 43
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44
           ]
         }
       }
