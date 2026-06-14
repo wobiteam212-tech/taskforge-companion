@@ -24,7 +24,7 @@
 | Phase 0b — companion re-skin | `04-chapter-specs/companion-reskin.md` | DONE — `47f7712` |
 | Renumber placeholders ch15–20 → ch21–26 | `03-PROPAGATION-AND-SYNC.md` Procedure C | DONE — `27811b6` |
 | ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | DONE — snapshot `c7f7b7d`, content + demo committed (see latest log entry) |
-| ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | IN PROGRESS — client command spine + palette committed `bfc4bb7`; backend search + content remain |
+| ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | IN PROGRESS — SNAPSHOT COMPLETE (spine `bfc4bb7` + backend `974f074` + search-mode); live demo + content remain |
 | ch17 — Kanban DnD | `04-chapter-specs/ch17-kanban-dnd.md` | NOT STARTED |
 | ch18 — Dashboard | `04-chapter-specs/ch18-dashboard.md` | NOT STARTED |
 | ch19 — Rich detail | `04-chapter-specs/ch19-rich-detail.md` | NOT STARTED |
@@ -36,6 +36,25 @@
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-14 — ch16 snapshot pt2: backend search endpoint — in-progress (Claude)
+- Added `GET /api/search?q=` as a dedicated search seam (committed `974f074`): Core `SearchResults`/`ProjectHit`/
+  `IssueHit`, `ISearchRepository`, `EfSearchRepository` (two membership-scoped `EF.Functions.Like` queries, AsNoTracking
+  + Take 5), `SearchEndpoints` (RequireAuthorization, min-length 2 guard), Program.cs DI + MapSearchEndpoints.
+  milestones += ch16 dotnet. Chose a separate repo (not editing the 4 existing repo/interface files) to keep the
+  overlay small and the seam clean.
+- Verified (two-server curl, demo@taskforge.dev): anon→401, q=login→issue hit (status 'InProgress' string),
+  q=a→empty (guard), q=Mobile→project hit; membership-scoped. ch16 server compiles 0/0. 96 tests, manifest 1254.
+- WHAT'S NEXT to finish ch16 (3 sub-steps):
+  1. **Client search-mode**: a small `SearchService` (httpResource over `/api/search?q=` keyed by a debounced query
+     signal, undefined when query<2 or logged-out) + integrate into the palette so typing also lists project/issue
+     HITS (navigable rows → router.navigate to `/projects/{id}` or `/projects/{pid}/issues/{id}`). Keep local commands
+     above hits. Two-server smoke: Cmd-K, type "login", jump to the issue. Commit as ch16 snapshot pt3.
+  2. **Live demo**: mini self-contained palette (fake command list + fuzzy + keyboard nav + no-op run/log), timers
+     cleaned in DestroyRef — for the content's live-demo panel.
+  3. **Content**: delegate ch16 Hebrew content (template in `05-DELEGATION-GUIDE.md`) with verified facts
+     (keyboard/registry/fuzzy signatures, palette behavior, search endpoint shape + the curl examples above, demo
+     behavior), flip registry ch16 → ready, gates, browser-verify (Cmd-K + search jump + 375px), commit.
 
 ### 2026-06-14 — ch16 snapshot pt1: command palette + keyboard spine — in-progress (Claude)
 - Built the client command spine (spine piece #1) as a clean compiling increment, committed `bfc4bb7`:

@@ -28639,6 +28639,36 @@ export const GUIDE_MANIFEST = {
           },
           "changedLines": []
         },
+        "client/src/app/core/models/search.model.ts": {
+          "content": "// המראה של Core/Common/SearchResults.cs על הקו — הקרנות רזות לקפיצה מהירה.\nexport interface ProjectHit {\n  id: number;\n  name: string;\n}\n\nexport interface IssueHit {\n  id: number;\n  projectId: number;\n  title: string;\n  status: 'Open' | 'InProgress' | 'Done';\n}\n\nexport interface SearchResults {\n  projects: ProjectHit[];\n  issues: IssueHit[];\n}\n",
+          "status": "added",
+          "regions": {
+            "step-16.14": {
+              "start": 1,
+              "end": 17
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18
+          ]
+        },
         "client/src/app/core/state/issue-detail.store.ts": {
           "content": "import { Injectable, computed, inject, signal } from '@angular/core';\nimport { HttpClient, httpResource } from '@angular/common/http';\nimport { firstValueFrom } from 'rxjs';\nimport { API_BASE } from '../api/api';\nimport { TokenStore } from '../auth/token.store';\nimport { Comment, CreateCommentRequest } from '../models/comment.model';\nimport { Issue, UpdateIssueRequest } from '../models/issue.model';\n\n@Injectable({ providedIn: 'root' })\nexport class IssueDetailStore {\n  private readonly http = inject(HttpClient);\n  private readonly tokenStore = inject(TokenStore);\n  private readonly issueId = signal<number | null>(null);\n\n  setIssueId(issueId: number): void {\n    this.issueId.set(issueId);\n  }\n\n  clear(): void {\n    this.issueId.set(null);\n  }\n\n  private readonly issueResource = httpResource<Issue>(() => {\n    const id = this.issueId();\n    return id && this.tokenStore.isLoggedIn() ? `${API_BASE}/issues/${id}` : undefined;\n  });\n\n  private readonly commentsResource = httpResource<Comment[]>(() => {\n    const id = this.issueId();\n    return id && this.tokenStore.isLoggedIn() ? `${API_BASE}/issues/${id}/comments` : undefined;\n  });\n\n  readonly issue = computed(() => (this.issueResource.hasValue() ? this.issueResource.value() : null));\n  readonly comments = computed(() =>\n    this.commentsResource.hasValue() ? this.commentsResource.value() : [],\n  );\n  readonly loading = computed(() => this.issueResource.isLoading());\n  readonly loadError = computed(() => this.issueResource.error() || this.commentsResource.error());\n\n  reload(): void {\n    this.issueResource.reload();\n    this.commentsResource.reload();\n  }\n\n  async saveIssue(issueId: number, request: UpdateIssueRequest): Promise<void> {\n    await firstValueFrom(this.http.put(`${API_BASE}/issues/${issueId}`, request));\n    this.reload();\n  }\n\n  async addComment(issueId: number, request: CreateCommentRequest): Promise<void> {\n    await firstValueFrom(this.http.post(`${API_BASE}/issues/${issueId}/comments`, request));\n    this.commentsResource.reload();\n  }\n}\n",
           "status": "unchanged",
@@ -28922,12 +28952,16 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/features/command-palette/command-palette.ts": {
-          "content": "import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';\nimport { CommandRegistry } from '../../core/commands/command-registry';\nimport { Command } from '../../core/commands/command.model';\nimport { fuzzyRank } from '../../core/commands/fuzzy';\nimport { PaletteService } from './palette.service';\n\n// ה-palette הוא צרכן טיפש: הוא לא יודע אילו פקודות קיימות או מי רשם אותן.\n// הוא קורא את ה-registry, מסנן ב-fuzzy, ומריץ את הנבחרת. אותו גשר\n// signal->DOM של tf-dialog (פרק 09) נותן focus trap, Escape ו-backdrop בחינם.\n@Component({\n  selector: 'tf-command-palette',\n  templateUrl: './command-palette.html',\n  styleUrl: './command-palette.scss',\n})\nexport class CommandPalette {\n  private readonly registry = inject(CommandRegistry);\n  protected readonly palette = inject(PaletteService);\n\n  private readonly dlg = viewChild<ElementRef<HTMLDialogElement>>('dlg');\n  private readonly queryInput = viewChild<ElementRef<HTMLInputElement>>('q');\n\n  protected readonly query = signal('');\n  protected readonly active = signal(0);\n\n  protected readonly results = computed<Command[]>(() =>\n    fuzzyRank(\n      this.registry.commands(),\n      this.query(),\n      (c) => `${c.title} ${c.group} ${c.keywords ?? ''}`,\n    ),\n  );\n\n  constructor() {\n    // גשר signal->DOM: showModal/close לפי ה-open signal, כמו tf-dialog\n    effect(() => {\n      const el = this.dlg()?.nativeElement;\n      if (!el) return;\n      if (this.palette.open() && !el.open) {\n        this.query.set('');\n        this.active.set(0);\n        el.showModal();\n        queueMicrotask(() => this.queryInput()?.nativeElement.focus());\n      } else if (!this.palette.open() && el.open) {\n        el.close();\n      }\n    });\n\n    // התוצאות התכווצו? אל תשאיר את ה-active מצביע מעבר לסוף\n    effect(() => {\n      const len = this.results().length;\n      if (this.active() > len - 1) this.active.set(Math.max(0, len - 1));\n    });\n  }\n\n  protected onInput(value: string): void {\n    this.query.set(value);\n    this.active.set(0);\n  }\n\n  protected onKeydown(event: KeyboardEvent): void {\n    const len = this.results().length;\n    if (event.key === 'ArrowDown') {\n      event.preventDefault();\n      this.active.update((i) => (len ? (i + 1) % len : 0));\n    } else if (event.key === 'ArrowUp') {\n      event.preventDefault();\n      this.active.update((i) => (len ? (i - 1 + len) % len : 0));\n    } else if (event.key === 'Enter') {\n      event.preventDefault();\n      const cmd = this.results()[this.active()];\n      if (cmd) this.run(cmd);\n    }\n  }\n\n  protected run(cmd: Command): void {\n    this.palette.close();\n    cmd.run();\n  }\n\n  protected onClose(): void {\n    this.palette.close();\n  }\n}\n",
+          "content": "import {\n  Component,\n  DestroyRef,\n  ElementRef,\n  computed,\n  effect,\n  inject,\n  signal,\n  viewChild,\n} from '@angular/core';\nimport { Router } from '@angular/router';\nimport { CommandRegistry } from '../../core/commands/command-registry';\nimport { Command } from '../../core/commands/command.model';\nimport { fuzzyRank } from '../../core/commands/fuzzy';\nimport { SearchResults } from '../../core/models/search.model';\nimport { PaletteService } from './palette.service';\nimport { SearchService } from './search.service';\n\n// ה-palette הוא צרכן טיפש: הוא לא יודע אילו פקודות קיימות או מי רשם אותן.\n// הוא קורא את ה-registry, מסנן ב-fuzzy, ומריץ את הנבחרת. אותו גשר\n// signal->DOM של tf-dialog (פרק 09) נותן focus trap, Escape ו-backdrop בחינם.\n@Component({\n  selector: 'tf-command-palette',\n  templateUrl: './command-palette.html',\n  styleUrl: './command-palette.scss',\n})\nexport class CommandPalette {\n  private readonly registry = inject(CommandRegistry);\n  private readonly search = inject(SearchService);\n  private readonly router = inject(Router);\n  protected readonly palette = inject(PaletteService);\n\n  private readonly dlg = viewChild<ElementRef<HTMLDialogElement>>('dlg');\n  private readonly queryInput = viewChild<ElementRef<HTMLInputElement>>('q');\n\n  protected readonly query = signal('');\n  protected readonly active = signal(0);\n\n  // התוצאות = פקודות מקומיות (fuzzy) + תוצאות חיפוש מהשרת, ממופות לאותו\n  // טיפוס Command. כך כל לוגיקת הניווט/הרצה נשארת זהה — hit הוא פשוט פקודה\n  // שה-run שלה מנווט.\n  protected readonly results = computed<Command[]>(() => {\n    const local = fuzzyRank(\n      this.registry.commands(),\n      this.query(),\n      (c) => `${c.title} ${c.group} ${c.keywords ?? ''}`,\n    );\n    return [...local, ...this.toHitCommands(this.search.results())];\n  });\n\n  private toHitCommands(hits: SearchResults): Command[] {\n    const projects = hits.projects.map<Command>((p) => ({\n      id: `hit.project.${p.id}`,\n      title: p.name,\n      group: 'Project',\n      run: () => void this.router.navigate(['/projects', p.id]),\n    }));\n    const issues = hits.issues.map<Command>((i) => ({\n      id: `hit.issue.${i.id}`,\n      title: i.title,\n      group: 'Issue',\n      run: () => void this.router.navigate(['/projects', i.projectId, 'issues', i.id]),\n    }));\n    return [...projects, ...issues];\n  }\n\n  private searchTimer: ReturnType<typeof setTimeout> | undefined;\n\n  constructor() {\n    inject(DestroyRef).onDestroy(() => clearTimeout(this.searchTimer));\n\n    // גשר signal->DOM: showModal/close לפי ה-open signal, כמו tf-dialog\n    effect(() => {\n      const el = this.dlg()?.nativeElement;\n      if (!el) return;\n      if (this.palette.open() && !el.open) {\n        this.query.set('');\n        this.search.setQuery('');\n        this.active.set(0);\n        el.showModal();\n        queueMicrotask(() => this.queryInput()?.nativeElement.focus());\n      } else if (!this.palette.open() && el.open) {\n        el.close();\n      }\n    });\n\n    // התוצאות התכווצו? אל תשאיר את ה-active מצביע מעבר לסוף\n    effect(() => {\n      const len = this.results().length;\n      if (this.active() > len - 1) this.active.set(Math.max(0, len - 1));\n    });\n  }\n\n  protected onInput(value: string): void {\n    this.query.set(value);\n    this.active.set(0);\n    // debounce הוא דאגת UI: ה-store/שירות נשארים פשוטים וסינכרוניים\n    clearTimeout(this.searchTimer);\n    this.searchTimer = setTimeout(() => this.search.setQuery(value), 200);\n  }\n\n  protected onKeydown(event: KeyboardEvent): void {\n    const len = this.results().length;\n    if (event.key === 'ArrowDown') {\n      event.preventDefault();\n      this.active.update((i) => (len ? (i + 1) % len : 0));\n    } else if (event.key === 'ArrowUp') {\n      event.preventDefault();\n      this.active.update((i) => (len ? (i - 1 + len) % len : 0));\n    } else if (event.key === 'Enter') {\n      event.preventDefault();\n      const cmd = this.results()[this.active()];\n      if (cmd) this.run(cmd);\n    }\n  }\n\n  protected run(cmd: Command): void {\n    this.palette.close();\n    cmd.run();\n  }\n\n  protected onClose(): void {\n    this.palette.close();\n  }\n}\n",
           "status": "added",
           "regions": {
+            "step-16.16": {
+              "start": 39,
+              "end": 65
+            },
             "step-16.8": {
-              "start": 7,
-              "end": 83
+              "start": 19,
+              "end": 125
             }
           },
           "changedLines": [
@@ -29014,7 +29048,49 @@ export const GUIDE_MANIFEST = {
             81,
             82,
             83,
-            84
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126
           ]
         },
         "client/src/app/features/command-palette/palette.service.ts": {
@@ -29044,6 +29120,48 @@ export const GUIDE_MANIFEST = {
             15,
             16,
             17
+          ]
+        },
+        "client/src/app/features/command-palette/search.service.ts": {
+          "content": "import { Injectable, computed, inject, signal } from '@angular/core';\nimport { httpResource } from '@angular/common/http';\nimport { API_BASE } from '../../core/api/api';\nimport { TokenStore } from '../../core/auth/token.store';\nimport { SearchResults } from '../../core/models/search.model';\n\n// אותו דפוס httpResource ריאקטיבי מפרק 11/12: ה-query הוא signal,\n// וה-URL נגזר ממנו. מתחת ל-2 תווים או בלי login -> undefined = אין בקשה.\n// ה-palette כותב ל-setQuery (עם debounce), ה-resource עושה את השאר.\n@Injectable({ providedIn: 'root' })\nexport class SearchService {\n  private readonly tokenStore = inject(TokenStore);\n\n  private readonly query = signal('');\n\n  setQuery(value: string): void {\n    this.query.set(value.trim());\n  }\n\n  private readonly resource = httpResource<SearchResults>(() => {\n    const q = this.query();\n    if (q.length < 2 || !this.tokenStore.isLoggedIn()) return undefined;\n    return `${API_BASE}/search?q=${encodeURIComponent(q)}`;\n  });\n\n  readonly results = computed<SearchResults>(() =>\n    this.resource.hasValue() ? this.resource.value() : { projects: [], issues: [] },\n  );\n}\n",
+          "status": "added",
+          "regions": {
+            "step-16.15": {
+              "start": 7,
+              "end": 29
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30
           ]
         },
         "client/src/app/features/issues/issue-board.html": {
@@ -30601,6 +30719,36 @@ export const GUIDE_MANIFEST = {
             56
           ]
         },
+        "client/src/app/core/models/search.model.ts": {
+          "content": "// המראה של Core/Common/SearchResults.cs על הקו — הקרנות רזות לקפיצה מהירה.\nexport interface ProjectHit {\n  id: number;\n  name: string;\n}\n\nexport interface IssueHit {\n  id: number;\n  projectId: number;\n  title: string;\n  status: 'Open' | 'InProgress' | 'Done';\n}\n\nexport interface SearchResults {\n  projects: ProjectHit[];\n  issues: IssueHit[];\n}\n",
+          "status": "added",
+          "regions": {
+            "step-16.14": {
+              "start": 1,
+              "end": 17
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18
+          ]
+        },
         "client/src/app/features/command-palette/command-palette.html": {
           "content": "<dialog #dlg class=\"cmdk\" (close)=\"onClose()\" (keydown)=\"onKeydown($event)\">\n  <div class=\"cmdk-search\">\n    <span class=\"cmdk-icon ltr\" aria-hidden=\"true\">⌘K</span>\n    <input\n      #q\n      class=\"cmdk-input\"\n      type=\"text\"\n      name=\"command-query\"\n      autocomplete=\"off\"\n      placeholder=\"הקלידו פקודה…\"\n      [value]=\"query()\"\n      (input)=\"onInput($any($event.target).value)\"\n      aria-label=\"חיפוש פקודות\"\n    />\n  </div>\n\n  @if (results().length) {\n    <ul class=\"cmdk-list\" role=\"listbox\">\n      @for (cmd of results(); track cmd.id; let i = $index) {\n        <li\n          class=\"cmdk-item\"\n          role=\"option\"\n          [class.active]=\"i === active()\"\n          [attr.aria-selected]=\"i === active()\"\n          (mouseenter)=\"active.set(i)\"\n          (click)=\"run(cmd)\"\n        >\n          <span class=\"cmdk-title\">{{ cmd.title }}</span>\n          <span class=\"cmdk-group ltr\">{{ cmd.group }}</span>\n          @if (cmd.hint) {\n            <kbd class=\"cmdk-hint ltr\">{{ cmd.hint }}</kbd>\n          }\n        </li>\n      }\n    </ul>\n  } @else {\n    <p class=\"cmdk-empty\">אין פקודה תואמת.</p>\n  }\n</dialog>\n",
           "status": "added",
@@ -30783,12 +30931,16 @@ export const GUIDE_MANIFEST = {
           ]
         },
         "client/src/app/features/command-palette/command-palette.ts": {
-          "content": "import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';\nimport { CommandRegistry } from '../../core/commands/command-registry';\nimport { Command } from '../../core/commands/command.model';\nimport { fuzzyRank } from '../../core/commands/fuzzy';\nimport { PaletteService } from './palette.service';\n\n// ה-palette הוא צרכן טיפש: הוא לא יודע אילו פקודות קיימות או מי רשם אותן.\n// הוא קורא את ה-registry, מסנן ב-fuzzy, ומריץ את הנבחרת. אותו גשר\n// signal->DOM של tf-dialog (פרק 09) נותן focus trap, Escape ו-backdrop בחינם.\n@Component({\n  selector: 'tf-command-palette',\n  templateUrl: './command-palette.html',\n  styleUrl: './command-palette.scss',\n})\nexport class CommandPalette {\n  private readonly registry = inject(CommandRegistry);\n  protected readonly palette = inject(PaletteService);\n\n  private readonly dlg = viewChild<ElementRef<HTMLDialogElement>>('dlg');\n  private readonly queryInput = viewChild<ElementRef<HTMLInputElement>>('q');\n\n  protected readonly query = signal('');\n  protected readonly active = signal(0);\n\n  protected readonly results = computed<Command[]>(() =>\n    fuzzyRank(\n      this.registry.commands(),\n      this.query(),\n      (c) => `${c.title} ${c.group} ${c.keywords ?? ''}`,\n    ),\n  );\n\n  constructor() {\n    // גשר signal->DOM: showModal/close לפי ה-open signal, כמו tf-dialog\n    effect(() => {\n      const el = this.dlg()?.nativeElement;\n      if (!el) return;\n      if (this.palette.open() && !el.open) {\n        this.query.set('');\n        this.active.set(0);\n        el.showModal();\n        queueMicrotask(() => this.queryInput()?.nativeElement.focus());\n      } else if (!this.palette.open() && el.open) {\n        el.close();\n      }\n    });\n\n    // התוצאות התכווצו? אל תשאיר את ה-active מצביע מעבר לסוף\n    effect(() => {\n      const len = this.results().length;\n      if (this.active() > len - 1) this.active.set(Math.max(0, len - 1));\n    });\n  }\n\n  protected onInput(value: string): void {\n    this.query.set(value);\n    this.active.set(0);\n  }\n\n  protected onKeydown(event: KeyboardEvent): void {\n    const len = this.results().length;\n    if (event.key === 'ArrowDown') {\n      event.preventDefault();\n      this.active.update((i) => (len ? (i + 1) % len : 0));\n    } else if (event.key === 'ArrowUp') {\n      event.preventDefault();\n      this.active.update((i) => (len ? (i - 1 + len) % len : 0));\n    } else if (event.key === 'Enter') {\n      event.preventDefault();\n      const cmd = this.results()[this.active()];\n      if (cmd) this.run(cmd);\n    }\n  }\n\n  protected run(cmd: Command): void {\n    this.palette.close();\n    cmd.run();\n  }\n\n  protected onClose(): void {\n    this.palette.close();\n  }\n}\n",
+          "content": "import {\n  Component,\n  DestroyRef,\n  ElementRef,\n  computed,\n  effect,\n  inject,\n  signal,\n  viewChild,\n} from '@angular/core';\nimport { Router } from '@angular/router';\nimport { CommandRegistry } from '../../core/commands/command-registry';\nimport { Command } from '../../core/commands/command.model';\nimport { fuzzyRank } from '../../core/commands/fuzzy';\nimport { SearchResults } from '../../core/models/search.model';\nimport { PaletteService } from './palette.service';\nimport { SearchService } from './search.service';\n\n// ה-palette הוא צרכן טיפש: הוא לא יודע אילו פקודות קיימות או מי רשם אותן.\n// הוא קורא את ה-registry, מסנן ב-fuzzy, ומריץ את הנבחרת. אותו גשר\n// signal->DOM של tf-dialog (פרק 09) נותן focus trap, Escape ו-backdrop בחינם.\n@Component({\n  selector: 'tf-command-palette',\n  templateUrl: './command-palette.html',\n  styleUrl: './command-palette.scss',\n})\nexport class CommandPalette {\n  private readonly registry = inject(CommandRegistry);\n  private readonly search = inject(SearchService);\n  private readonly router = inject(Router);\n  protected readonly palette = inject(PaletteService);\n\n  private readonly dlg = viewChild<ElementRef<HTMLDialogElement>>('dlg');\n  private readonly queryInput = viewChild<ElementRef<HTMLInputElement>>('q');\n\n  protected readonly query = signal('');\n  protected readonly active = signal(0);\n\n  // התוצאות = פקודות מקומיות (fuzzy) + תוצאות חיפוש מהשרת, ממופות לאותו\n  // טיפוס Command. כך כל לוגיקת הניווט/הרצה נשארת זהה — hit הוא פשוט פקודה\n  // שה-run שלה מנווט.\n  protected readonly results = computed<Command[]>(() => {\n    const local = fuzzyRank(\n      this.registry.commands(),\n      this.query(),\n      (c) => `${c.title} ${c.group} ${c.keywords ?? ''}`,\n    );\n    return [...local, ...this.toHitCommands(this.search.results())];\n  });\n\n  private toHitCommands(hits: SearchResults): Command[] {\n    const projects = hits.projects.map<Command>((p) => ({\n      id: `hit.project.${p.id}`,\n      title: p.name,\n      group: 'Project',\n      run: () => void this.router.navigate(['/projects', p.id]),\n    }));\n    const issues = hits.issues.map<Command>((i) => ({\n      id: `hit.issue.${i.id}`,\n      title: i.title,\n      group: 'Issue',\n      run: () => void this.router.navigate(['/projects', i.projectId, 'issues', i.id]),\n    }));\n    return [...projects, ...issues];\n  }\n\n  private searchTimer: ReturnType<typeof setTimeout> | undefined;\n\n  constructor() {\n    inject(DestroyRef).onDestroy(() => clearTimeout(this.searchTimer));\n\n    // גשר signal->DOM: showModal/close לפי ה-open signal, כמו tf-dialog\n    effect(() => {\n      const el = this.dlg()?.nativeElement;\n      if (!el) return;\n      if (this.palette.open() && !el.open) {\n        this.query.set('');\n        this.search.setQuery('');\n        this.active.set(0);\n        el.showModal();\n        queueMicrotask(() => this.queryInput()?.nativeElement.focus());\n      } else if (!this.palette.open() && el.open) {\n        el.close();\n      }\n    });\n\n    // התוצאות התכווצו? אל תשאיר את ה-active מצביע מעבר לסוף\n    effect(() => {\n      const len = this.results().length;\n      if (this.active() > len - 1) this.active.set(Math.max(0, len - 1));\n    });\n  }\n\n  protected onInput(value: string): void {\n    this.query.set(value);\n    this.active.set(0);\n    // debounce הוא דאגת UI: ה-store/שירות נשארים פשוטים וסינכרוניים\n    clearTimeout(this.searchTimer);\n    this.searchTimer = setTimeout(() => this.search.setQuery(value), 200);\n  }\n\n  protected onKeydown(event: KeyboardEvent): void {\n    const len = this.results().length;\n    if (event.key === 'ArrowDown') {\n      event.preventDefault();\n      this.active.update((i) => (len ? (i + 1) % len : 0));\n    } else if (event.key === 'ArrowUp') {\n      event.preventDefault();\n      this.active.update((i) => (len ? (i - 1 + len) % len : 0));\n    } else if (event.key === 'Enter') {\n      event.preventDefault();\n      const cmd = this.results()[this.active()];\n      if (cmd) this.run(cmd);\n    }\n  }\n\n  protected run(cmd: Command): void {\n    this.palette.close();\n    cmd.run();\n  }\n\n  protected onClose(): void {\n    this.palette.close();\n  }\n}\n",
           "status": "added",
           "regions": {
+            "step-16.16": {
+              "start": 39,
+              "end": 65
+            },
             "step-16.8": {
-              "start": 7,
-              "end": 83
+              "start": 19,
+              "end": 125
             }
           },
           "changedLines": [
@@ -30875,7 +31027,49 @@ export const GUIDE_MANIFEST = {
             81,
             82,
             83,
-            84
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126
           ]
         },
         "client/src/app/features/command-palette/palette.service.ts": {
@@ -30905,6 +31099,48 @@ export const GUIDE_MANIFEST = {
             15,
             16,
             17
+          ]
+        },
+        "client/src/app/features/command-palette/search.service.ts": {
+          "content": "import { Injectable, computed, inject, signal } from '@angular/core';\nimport { httpResource } from '@angular/common/http';\nimport { API_BASE } from '../../core/api/api';\nimport { TokenStore } from '../../core/auth/token.store';\nimport { SearchResults } from '../../core/models/search.model';\n\n// אותו דפוס httpResource ריאקטיבי מפרק 11/12: ה-query הוא signal,\n// וה-URL נגזר ממנו. מתחת ל-2 תווים או בלי login -> undefined = אין בקשה.\n// ה-palette כותב ל-setQuery (עם debounce), ה-resource עושה את השאר.\n@Injectable({ providedIn: 'root' })\nexport class SearchService {\n  private readonly tokenStore = inject(TokenStore);\n\n  private readonly query = signal('');\n\n  setQuery(value: string): void {\n    this.query.set(value.trim());\n  }\n\n  private readonly resource = httpResource<SearchResults>(() => {\n    const q = this.query();\n    if (q.length < 2 || !this.tokenStore.isLoggedIn()) return undefined;\n    return `${API_BASE}/search?q=${encodeURIComponent(q)}`;\n  });\n\n  readonly results = computed<SearchResults>(() =>\n    this.resource.hasValue() ? this.resource.value() : { projects: [], issues: [] },\n  );\n}\n",
+          "status": "added",
+          "regions": {
+            "step-16.15": {
+              "start": 7,
+              "end": 29
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30
           ]
         },
         "server/TaskForge.Api/Endpoints/SearchEndpoints.cs": {
