@@ -1,0 +1,118 @@
+:host {
+  display: block;
+}
+
+.pal-demo {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.pal {
+  border: 1px solid var(--bdr2);
+  border-radius: var(--rad-lg);
+  background: var(--sur);
+  box-shadow: var(--shadow-2);
+  overflow: clip;
+}
+
+.pal-search {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  border-block-end: 1px solid var(--bdr);
+}
+
+.pal-icon {
+  font-size: var(--fs-small);
+  color: var(--txt3);
+  border: 1px solid var(--bdr2);
+  border-radius: var(--rad-sm);
+  padding: 1px 6px;
+}
+
+.pal-input {
+  flex: 1;
+  min-inline-size: 0;
+  border: none;
+  background: transparent;
+  color: var(--txt1);
+  font-size: var(--fs-lg);
+  outline: none;
+
+  &::placeholder {
+    color: var(--txt3);
+  }
+}
+
+.pal-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-1);
+  max-block-size: 16rem;
+  overflow-y: auto;
+}
+
+.pal-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--rad-sm);
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out);
+
+  &.active {
+    background: var(--accent-subtle);
+  }
+
+  .pal-title {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pal-group {
+    font-size: var(--fs-xs);
+    color: var(--txt3);
+  }
+}
+
+.pal-empty {
+  margin: 0;
+  padding: var(--sp-4);
+  text-align: center;
+  color: var(--txt3);
+  font-size: var(--fs-small);
+}
+
+.pal-log {
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  background: var(--sur2);
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--fs-small);
+
+  .pal-log-head {
+    color: var(--txt3);
+    font-size: var(--fs-xs);
+    margin-block-end: var(--sp-1);
+  }
+
+  .pal-log-line {
+    font-family: var(--mono);
+    color: var(--txt2);
+  }
+
+  .pal-log-empty {
+    color: var(--txt3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pal-item {
+    transition: none;
+  }
+}

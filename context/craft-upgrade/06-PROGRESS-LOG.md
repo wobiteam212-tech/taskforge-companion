@@ -24,7 +24,7 @@
 | Phase 0b — companion re-skin | `04-chapter-specs/companion-reskin.md` | DONE — `47f7712` |
 | Renumber placeholders ch15–20 → ch21–26 | `03-PROPAGATION-AND-SYNC.md` Procedure C | DONE — `27811b6` |
 | ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | DONE — snapshot `c7f7b7d`, content + demo committed (see latest log entry) |
-| ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | IN PROGRESS — SNAPSHOT COMPLETE (spine `bfc4bb7` + backend `974f074` + search-mode); live demo + content remain |
+| ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | DONE — snapshot (`bfc4bb7`/`974f074`/`1de5821`) + demo + content; see latest log entry |
 | ch17 — Kanban DnD | `04-chapter-specs/ch17-kanban-dnd.md` | NOT STARTED |
 | ch18 — Dashboard | `04-chapter-specs/ch18-dashboard.md` | NOT STARTED |
 | ch19 — Rich detail | `04-chapter-specs/ch19-rich-detail.md` | NOT STARTED |
@@ -36,6 +36,27 @@
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-14 — ch16 content + demo done — done (Claude)
+- Built the ch16 live demo (`demos/palette.demo.*` — mini always-open palette, fuzzy + keyboard nav + run log,
+  reduced-motion safe). Delegated ch16 content to a sonnet agent; it wrote `content.ts` (22 steps) + flipped registry
+  to ready, but STALLED on the watchdog right after the registry flip (before running gates). I finished the gates and
+  reviewed.
+- Review fixes (the agent left two real issues the test does NOT catch): (1) `verify:coverage` failed —
+  `SearchResults.cs` was only in a filetree line (no `server/` prefix), never as a panel path; split step 16.11 into
+  16.11 (SearchResults.cs panel) + 16.11a (ISearchRepository panel) so both files are covered + shown. (2) the agent
+  used raw Markdown `**bold**` (12) and `*italic*` (4) in prose — the inline renderer only does backtick code, so they'd
+  render literally; stripped all of them (kept the `/** */` JSDoc in the displayed code panels, which is real code).
+- Gates: gen:manifest 16 snapshots, test 102 passed (+6 ch16), verify:coverage 147 files OK, build clean.
+- Browser-verified (guide): ch16 chapter renders 22 steps, 0 overflow at 1270px AND 375px (an earlier "225px overflow"
+  was a false reading from a 0-width preview window — code panels correctly have overflow-x:auto). Live demo: type
+  "dark" → filters to theme command → Enter runs → log "הורץ: …". 0 console errors.
+- GOTCHA for future: the content-rules test does NOT catch raw markdown `**`/`*` in prose, nor filetree-only file
+  mentions (coverage needs the full `server/`|`client/` path as a panel `file:` or prose literal). Tell content agents
+  explicitly: no `**`/`*` emphasis (backticks only), and every NEW file needs a real code panel (not just a filetree row).
+- WHAT'S NEXT: commit ch16 content, then **ch17 — Drag-and-drop kanban** (`04-chapter-specs/ch17-kanban-dnd.md`):
+  spine piece #2 (entity-store base + optimistic+rollback util), backend rank/order model + reorder endpoint + EF
+  migration, accessible pointer+keyboard DnD. Snapshot-first as usual.
 
 ### 2026-06-14 — ch16 snapshot pt2: backend search endpoint — in-progress (Claude)
 - Added `GET /api/search?q=` as a dedicated search seam (committed `974f074`): Core `SearchResults`/`ProjectHit`/

@@ -228,7 +228,9 @@ export const WAVES: WaveDef[] = [
         blurb:
           'keyboard service, command registry/bus, palette עם focus trap ו-fuzzy search, ושרת עם ‎GET /api/search?q=.',
         wave: 4,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch16-command-palette/content').then((m) => m.CH16_CONTENT),
       },
       {
         id: 'ch17',

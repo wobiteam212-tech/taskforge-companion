@@ -1,0 +1,48 @@
+<div class="pal-demo">
+  <div class="pal" (keydown)="onKeydown($event)">
+    <div class="pal-search">
+      <span class="pal-icon ltr" aria-hidden="true">⌘K</span>
+      <input
+        class="pal-input"
+        type="text"
+        name="demo-command-query"
+        autocomplete="off"
+        placeholder="הקלידו פקודה…"
+        [value]="query()"
+        (input)="onInput($any($event.target).value)"
+        aria-label="חיפוש פקודות (דמו)"
+      />
+    </div>
+
+    @if (results().length) {
+      <ul class="pal-list" role="listbox">
+        @for (cmd of results(); track cmd.id; let i = $index) {
+          <li
+            class="pal-item"
+            role="option"
+            [class.active]="i === active()"
+            [attr.aria-selected]="i === active()"
+            (mouseenter)="active.set(i)"
+            (click)="run(cmd)"
+          >
+            <span class="pal-title">{{ cmd.title }}</span>
+            <span class="pal-group ltr">{{ cmd.group }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="pal-empty">אין פקודה תואמת.</p>
+    }
+  </div>
+
+  <div class="pal-log">
+    <div class="pal-log-head">לוג הרצה</div>
+    @if (log().length) {
+      @for (line of log(); track $index) {
+        <div class="pal-log-line">{{ line }}</div>
+      }
+    } @else {
+      <div class="pal-log-empty">בחרו פקודה (חיצים + Enter, או לחיצה) כדי לראות מה רץ.</div>
+    }
+  </div>
+</div>
