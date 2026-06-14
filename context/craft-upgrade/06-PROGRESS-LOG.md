@@ -25,7 +25,7 @@
 | Renumber placeholders ch15–20 → ch21–26 | `03-PROPAGATION-AND-SYNC.md` Procedure C | DONE — `27811b6` |
 | ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | DONE — snapshot `c7f7b7d`, content + demo committed (see latest log entry) |
 | ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | DONE — snapshot (`bfc4bb7`/`974f074`/`1de5821`) + demo + content; see latest log entry |
-| ch17 — Kanban DnD | `04-chapter-specs/ch17-kanban-dnd.md` | NOT STARTED |
+| ch17 — Kanban DnD | `04-chapter-specs/ch17-kanban-dnd.md` | IN PROGRESS — backend rank/reorder + migration done & curl-verified; frontend (entity-store/optimistic + kanban DnD) + content remain |
 | ch18 — Dashboard | `04-chapter-specs/ch18-dashboard.md` | NOT STARTED |
 | ch19 — Rich detail | `04-chapter-specs/ch19-rich-detail.md` | NOT STARTED |
 | ch20 — State capstone | `04-chapter-specs/ch20-state-capstone.md` | NOT STARTED |
@@ -36,6 +36,32 @@
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-14 — ch17 snapshot pt1: backend rank + reorder + migration — in-progress (Claude)
+- Backend ordering model + reorder endpoint (committed next). Decision: `double Rank` with client-computed midpoints
+  (simple + correct; teach the precision trade-off vs LexoRank) and REUSE the existing `UpdateAsync(id, apply)` for the
+  reorder handler — no new repo method. Files (ch17 server overlay): `Issue.cs` +`Rank` (step-17.1); `IssueContracts`
+  +`ReorderIssueRequest` + `Rank` on `IssueResponse` (17.2/17.2b); `EfIssueRepository` +`"rank"` sort (17.3);
+  `IssueEndpoints` +`PATCH /api/issues/{id}/rank` (member-authz via IsMemberAsync, UpdateAsync sets Status+Rank) + new
+  issues get `Rank = DateTime.UtcNow.Ticks` (17.4/4b/4c); `DbSeeder` gap-based initial ranks 1024,2048,… per project
+  (17.5). EF migration `AddIssueRank` generated in `.build` and copied to the overlay (+ updated ModelSnapshot).
+  milestones += ch17 dotnet.
+- Verified: ch17 server compiles 0/0; curl (demo@taskforge.dev): `sort=rank` → ranks 1024/2048/3072/4096; PATCH
+  reorder issue 1 → status Done, rank 1536; anon reorder → 401. gen:manifest 17 snapshots/1405 entries, 102 tests.
+- WHAT'S NEXT to finish ch17 (frontend + content):
+  1. **Frontend** (`reference/ch17/client/`): `core/state/entity-store.ts` (spine #2: generic signal entity map +
+     reusable `optimistic(apply, persist, rollback)` helper); refactor `IssuesStore` to use it WITHOUT changing its
+     public surface; client `Issue` model +`rank`; new `kanban-board.{ts,html,scss}` (columns by status, ordered by
+     rank) with **accessible DnD** (pointer + keyboard + ARIA live) — CDK DragDrop (`@angular/cdk` already present from
+     ch13) or native + keyboard fallback; reorder = optimistic move + client-computed midpoint rank → `PATCH .../rank`,
+     rollback on failure; URL view toggle list/kanban; `sort=rank` when kanban. milestones += ch17 ng. Two-server smoke
+     incl. KEYBOARD-only reorder + break-server rollback + 375px + reduced-motion.
+  2. **Live demo**: self-contained kanban (2–3 columns, draggable fake cards, break-server toggle showing optimistic
+     move then rollback, keyboard path), DestroyRef timer cleanup.
+  3. **Content**: delegate (template in `05-DELEGATION-GUIDE.md`) with verified facts (rank strategy + endpoint +
+     curl examples above, entity-store/optimistic signatures, the a11y interactions ACTUALLY verified). Flip ch17 →
+     ready, gates, browser-verify, commit. REMEMBER agent gotchas: no `**`/`*` markdown in prose; every new file needs
+     a real code panel (not just filetree); agents can stall after writing — run gates yourself.
 
 ### 2026-06-14 — ch16 content + demo done — done (Claude)
 - Built the ch16 live demo (`demos/palette.demo.*` — mini always-open palette, fuzzy + keyboard nav + run log,
