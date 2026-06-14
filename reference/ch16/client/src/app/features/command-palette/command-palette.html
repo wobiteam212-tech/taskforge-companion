@@ -1,0 +1,39 @@
+<dialog #dlg class="cmdk" (close)="onClose()" (keydown)="onKeydown($event)">
+  <div class="cmdk-search">
+    <span class="cmdk-icon ltr" aria-hidden="true">⌘K</span>
+    <input
+      #q
+      class="cmdk-input"
+      type="text"
+      name="command-query"
+      autocomplete="off"
+      placeholder="הקלידו פקודה…"
+      [value]="query()"
+      (input)="onInput($any($event.target).value)"
+      aria-label="חיפוש פקודות"
+    />
+  </div>
+
+  @if (results().length) {
+    <ul class="cmdk-list" role="listbox">
+      @for (cmd of results(); track cmd.id; let i = $index) {
+        <li
+          class="cmdk-item"
+          role="option"
+          [class.active]="i === active()"
+          [attr.aria-selected]="i === active()"
+          (mouseenter)="active.set(i)"
+          (click)="run(cmd)"
+        >
+          <span class="cmdk-title">{{ cmd.title }}</span>
+          <span class="cmdk-group ltr">{{ cmd.group }}</span>
+          @if (cmd.hint) {
+            <kbd class="cmdk-hint ltr">{{ cmd.hint }}</kbd>
+          }
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="cmdk-empty">אין פקודה תואמת.</p>
+  }
+</dialog>

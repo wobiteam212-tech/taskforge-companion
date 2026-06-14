@@ -1,0 +1,69 @@
+// השלד עובר לטוקנים — ורק logical properties.
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  // #region step-16.10d
+  // ה-header נושא עכשיו טריגר נוסף (Cmd+K). flex-wrap מבטיח שהפעולות
+  // יגלשו לשורה שנייה במסך צר במקום לדחוף את הכותרת מחוץ ל-viewport.
+  flex-wrap: wrap;
+  // #endregion
+  padding-block: var(--sp-4);
+  padding-inline: var(--sp-5);
+  border-block-end: 1px solid var(--bdr);
+  background: var(--sur);
+
+  // המותג הפך לקישור הביתה — בלי להיראות כמו קישור
+  .brand {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  h1 {
+    margin: 0;
+  }
+
+  .tagline {
+    margin: var(--sp-1) 0 0;
+    color: var(--txt3);
+    font-size: var(--fs-small);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--sp-2);
+
+    .who {
+      color: var(--txt2);
+      font-size: var(--fs-small);
+    }
+
+    // טריגר לוח הפקודות: תווית + kbd. ה-kbd קטן ומופרד בטוקני v2.
+    .cmdk-trigger {
+      kbd {
+        margin-inline-start: var(--sp-1);
+        font-size: var(--fs-xs);
+        color: var(--txt3);
+        border: 1px solid var(--bdr2);
+        border-radius: var(--rad-sm);
+        padding: 0 5px;
+      }
+    }
+  }
+
+  // מסך צר: ריווח פנימי מצומצם כדי שהשורה הראשונה לא תילחץ
+  @media (max-width: 480px) {
+    padding-inline: var(--sp-3);
+  }
+}
+
+.app-main {
+  padding-block: var(--sp-5);
+  padding-inline: var(--sp-5);
+  max-inline-size: 980px;
+  margin-inline: auto;
+}

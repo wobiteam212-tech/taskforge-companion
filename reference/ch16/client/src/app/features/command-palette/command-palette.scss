@@ -1,0 +1,123 @@
+// #region step-16.9
+// overlay ממורכז למעלה בסגנון Linear: elevation-3, תנועה עדינה בכניסה,
+// ו-:has() לסימון מצב ריק. הכול בטוקני v2 — אפס צבעים קשיחים.
+.cmdk {
+  inline-size: min(92vw, 36rem);
+  max-block-size: min(70vh, 30rem);
+  margin-block-start: 12vh;
+  margin-inline: auto;
+  padding: 0;
+  border: 1px solid var(--bdr2);
+  border-radius: var(--rad-lg);
+  background: var(--sur);
+  color: var(--txt1);
+  box-shadow: var(--shadow-3);
+  overflow: clip;
+
+  &[open] {
+    animation: cmdk-in var(--dur-3) var(--ease-out);
+  }
+
+  &::backdrop {
+    background: rgb(0 0 0 / 0.5);
+    backdrop-filter: blur(3px);
+  }
+}
+
+@keyframes cmdk-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.985);
+  }
+}
+
+.cmdk-search {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  border-block-end: 1px solid var(--bdr);
+}
+
+.cmdk-icon {
+  font-size: var(--fs-small);
+  color: var(--txt3);
+  border: 1px solid var(--bdr2);
+  border-radius: var(--rad-sm);
+  padding: 1px 6px;
+}
+
+.cmdk-input {
+  flex: 1;
+  min-inline-size: 0;
+  border: none;
+  background: transparent;
+  color: var(--txt1);
+  font-size: var(--fs-lg);
+  outline: none;
+
+  &::placeholder {
+    color: var(--txt3);
+  }
+}
+
+.cmdk-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-1);
+  overflow-y: auto;
+  max-block-size: calc(min(70vh, 30rem) - 4rem);
+}
+
+.cmdk-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--rad-sm);
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out);
+
+  &.active {
+    background: var(--accent-subtle);
+  }
+
+  .cmdk-title {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cmdk-group {
+    font-size: var(--fs-xs);
+    color: var(--txt3);
+  }
+
+  .cmdk-hint {
+    font-size: var(--fs-xs);
+    color: var(--txt3);
+    border: 1px solid var(--bdr2);
+    border-radius: var(--rad-sm);
+    padding: 0 5px;
+  }
+}
+
+.cmdk-empty {
+  margin: 0;
+  padding: var(--sp-4);
+  text-align: center;
+  color: var(--txt3);
+  font-size: var(--fs-small);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cmdk[open] {
+    animation: none;
+  }
+  .cmdk-item {
+    transition: none;
+  }
+}
+// #endregion
