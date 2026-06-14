@@ -24,7 +24,7 @@
 | Phase 0b — companion re-skin | `04-chapter-specs/companion-reskin.md` | DONE — `47f7712` |
 | Renumber placeholders ch15–20 → ch21–26 | `03-PROPAGATION-AND-SYNC.md` Procedure C | DONE — `27811b6` |
 | ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | DONE — snapshot `c7f7b7d`, content + demo committed (see latest log entry) |
-| ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | NOT STARTED |
+| ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | IN PROGRESS — client command spine + palette committed `bfc4bb7`; backend search + content remain |
 | ch17 — Kanban DnD | `04-chapter-specs/ch17-kanban-dnd.md` | NOT STARTED |
 | ch18 — Dashboard | `04-chapter-specs/ch18-dashboard.md` | NOT STARTED |
 | ch19 — Rich detail | `04-chapter-specs/ch19-rich-detail.md` | NOT STARTED |
@@ -36,6 +36,27 @@
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-14 — ch16 snapshot pt1: command palette + keyboard spine — in-progress (Claude)
+- Built the client command spine (spine piece #1) as a clean compiling increment, committed `bfc4bb7`:
+  `core/commands/{command.model,command-registry,fuzzy}.ts`, `core/keyboard/keyboard.service.ts`,
+  `features/command-palette/{palette.service,command-palette.ts/.html/.scss}`, app.ts/app.html wiring (bind mod+k,
+  register Navigation/View/Identity commands, header ⌘K trigger), app.scss header flex-wrap + mobile padding.
+  milestones += ch16 ng.
+- Verified: ch16 client compiles; served standalone on 4500 — Cmd-K opens palette, input auto-focused, fuzzy filter
+  ('dark' → theme command), Enter runs (theme dark→light) and closes, 0 console errors, 0 overflow at 375px (closed
+  AND open after the header wrap fix). Gates: gen:manifest 16 snapshots/1250 entries, 96 tests, build clean.
+- Note: a header overflow at 375px appeared when I added the ⌘K trigger; fixed with `flex-wrap` on
+  `.header-actions`/`.app-header` + reduced mobile padding in a ch16 `app.scss` overlay (real shell improvement).
+- WHAT'S NEXT for ch16 (two increments remain):
+  1. **Backend search** (`reference/ch16/server/`): `GET /api/search?q=` returning member-scoped project + issue hits
+     (EF.Functions.Like, Take cap, AsNoTracking); add `SearchEndpoints.cs` + repo methods on IProjectRepository/
+     IIssueRepository + Ef impls + Program.cs MapSearchEndpoints; contracts `SearchResponse`/hit records. No new
+     entity → NO migration. milestones += ch16 dotnet. Then a "search…" mode in the palette (debounced httpResource)
+     that lists hits as navigable rows. Two-server smoke (login demo@taskforge.dev): Cmd-K, type, jump to issue/project.
+  2. **Content**: delegate ch16 Hebrew content to a sonnet agent (template in `05-DELEGATION-GUIDE.md`) with verified
+     facts (command/keyboard/fuzzy signatures, palette behavior, search endpoint shape + example, the mini live-demo),
+     flip registry ch16 → ready, gates, browser-verify, commit. Build the ch16 live demo (mini palette) first.
 
 ### 2026-06-14 — ch15 content + demo done — done (Claude)
 - ch15 content delegated to sonnet agent, then reviewed line-by-line: 17 steps (15.1–15.17) covering auto-fit/minmax,
