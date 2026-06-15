@@ -264,7 +264,9 @@ export const WAVES: WaveDef[] = [
         blurb:
           'markdown editor, mentions, attachments עם שמירה בטוחה, timeline של פעילות, undo ו-rollback סביב פעולות עשירות.',
         wave: 4,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch19-rich-issue-detail/content').then((m) => m.CH19_CONTENT),
       },
       {
         id: 'ch20',

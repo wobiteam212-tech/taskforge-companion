@@ -1,0 +1,57 @@
+<div class="md-editor">
+  <div class="md-tabs" role="tablist">
+    <button
+      type="button"
+      role="tab"
+      [class.on]="!preview()"
+      [attr.aria-selected]="!preview()"
+      (click)="preview.set(false)"
+    >
+      כתיבה
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [class.on]="preview()"
+      [attr.aria-selected]="preview()"
+      (click)="preview.set(true)"
+    >
+      תצוגה מקדימה
+    </button>
+  </div>
+
+  @if (!preview()) {
+    <div class="md-input">
+      <textarea
+        #ta
+        [rows]="rows()"
+        [value]="value()"
+        [disabled]="disabled()"
+        [attr.placeholder]="placeholder()"
+        (input)="onInput($event)"
+        (keydown)="onKeydown($event)"
+      ></textarea>
+
+      @if (mentionMatches().length) {
+        <ul class="md-mentions" role="listbox" aria-label="הזכרת חבר">
+          @for (name of mentionMatches(); track name; let i = $index) {
+            <li
+              role="option"
+              [class.active]="i === activeMention()"
+              [attr.aria-selected]="i === activeMention()"
+              (mousedown)="$event.preventDefault(); choose(name)"
+            >
+              {{ name }}
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  } @else {
+    @if (value().trim()) {
+      <div class="md-preview" [innerHTML]="rendered()"></div>
+    } @else {
+      <p class="md-empty">אין מה להציג עדיין.</p>
+    }
+  }
+</div>

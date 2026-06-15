@@ -1,0 +1,178 @@
+<section class="detail">
+  <a class="back" [routerLink]="['/projects', projectId()]" [queryParamsHandling]="'preserve'">
+    Back to {{ project().name }}
+  </a>
+
+  @if (!issue()) {
+    @if (store.loading()) {
+      <p class="hint">Loading issue...</p>
+    } @else if (store.loadError()) {
+      <div class="load-error" role="alert">
+        <p>Could not load this issue.</p>
+        <button type="button" tf-button (click)="store.reload()">Try again</button>
+      </div>
+    } @else {
+      <p class="hint">Sign in to load the issue.</p>
+    }
+  } @else {
+    <header class="detail-head">
+      <div>
+        <p class="eyebrow">Issue #{{ issue()!.id }}</p>
+        <h2 [style.view-transition-name]="'issue-' + issue()!.id">{{ issue()!.title }}</h2>
+      </div>
+      <tf-badge [tone]="toneOf(issue()!.status)">{{ issue()!.status }}</tf-badge>
+    </header>
+
+    <!-- #region step-19.22 -->
+    <!-- שתי עמודות: ראשית (טופס + תגובות) וצדדית (קבצים + ציר זמן פעילות).
+         auto-fit + minmax מתקפל לעמודה אחת במסך צר, בלי media query. -->
+    <div class="detail-grid">
+      <div class="detail-main">
+        <form class="issue-form" (submit)="saveIssue(); $event.preventDefault()">
+          <label class="field">
+            <span>Title</span>
+            <input [formField]="issueForm.title" />
+            @if (issueForm.title().pending()) {
+              <small>Checking title...</small>
+            } @else if (firstError(issueForm.title().errors()); as error) {
+              <small class="error">{{ error }}</small>
+            }
+          </label>
+
+          <label class="field">
+            <span>Description</span>
+            <tf-markdown-editor
+              [formField]="issueForm.description"
+              [mentionCandidates]="store.memberNames()"
+              [rows]="5"
+              placeholder="Markdown נתמך — **מודגש**, `קוד`, וקישורים"
+            />
+            @if (firstError(issueForm.description().errors()); as error) {
+              <small class="error">{{ error }}</small>
+            }
+          </label>
+
+          <div class="form-grid">
+            <label class="field">
+              <span>Status</span>
+              <select [formField]="issueForm.status">
+                <option value="Open">Open</option>
+                <option value="InProgress">In progress</option>
+                <option value="Done">Done</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Priority</span>
+              <tf-priority-picker [formField]="issueForm.priority" />
+            </label>
+          </div>
+
+          <div class="actions">
+            <button
+              type="submit"
+              tf-button
+              [disabled]="savingIssue() || issueForm().invalid() || issueForm().pending()"
+            >
+              {{ savingIssue() ? 'Saving...' : 'Save issue' }}
+            </button>
+          </div>
+        </form>
+
+        <!-- #region step-19.23 -->
+        <section class="comments">
+          <header>
+            <h3>Comments</h3>
+            <span>{{ comments().length }}</span>
+          </header>
+
+          <ol class="comment-list">
+            @for (comment of comments(); track comment.id) {
+              <li [class.pending]="isPending(comment)">
+                <div class="comment-meta">
+                  <strong>{{ comment.authorName }}</strong>
+                  <time>{{ formattedDate(comment.createdAtUtc) }}</time>
+                </div>
+                <div class="comment-body" [innerHTML]="commentHtml(comment)"></div>
+              </li>
+            } @empty {
+              <li class="empty">No comments yet.</li>
+            }
+          </ol>
+
+          @if (store.pendingComment()) {
+            <div class="undo-bar" role="status">
+              <span>התגובה נשלחת…</span>
+              <button type="button" (click)="undoComment()">בטל</button>
+            </div>
+          }
+
+          <form class="comment-form" (submit)="addComment(); $event.preventDefault()">
+            <label class="field">
+              <span>Add comment</span>
+              <tf-markdown-editor
+                [formField]="commentForm.body"
+                [mentionCandidates]="store.memberNames()"
+                [rows]="3"
+                placeholder="הקלידו @ כדי להזכיר חבר"
+              />
+              @if (firstError(commentForm.body().errors()); as error) {
+                <small class="error">{{ error }}</small>
+              }
+            </label>
+
+            <button type="submit" tf-button [disabled]="commentForm().invalid() || commentForm().pending()">
+              Post comment
+            </button>
+          </form>
+        </section>
+        <!-- #endregion -->
+      </div>
+
+      <!-- #region step-19.24 -->
+      <aside class="detail-side">
+        <section class="attachments">
+          <header>
+            <h3>קבצים מצורפים</h3>
+            <span>{{ store.attachments().length }}</span>
+          </header>
+
+          <label class="upload">
+            <input type="file" (change)="onFileSelected($event)" [disabled]="uploading()" />
+            <span>{{ uploading() ? 'מעלה…' : 'צרף קובץ (עד 5MB)' }}</span>
+          </label>
+
+          <ul class="attach-list" role="list">
+            @for (att of store.attachments(); track att.id) {
+              <li>
+                <button type="button" class="attach-name" (click)="download(att)">{{ att.fileName }}</button>
+                <span class="attach-meta">{{ prettySize(att.sizeBytes) }} · {{ att.uploadedByName }}</span>
+              </li>
+            } @empty {
+              <li class="empty">אין קבצים עדיין.</li>
+            }
+          </ul>
+        </section>
+
+        <section class="timeline">
+          <header><h3>פעילות</h3></header>
+          <ol class="timeline-list">
+            @for (event of store.activity(); track trackActivity($index, event)) {
+              <li>
+                <span class="t-icon" aria-hidden="true">{{ activityIcon(event.type) }}</span>
+                <span class="t-body">
+                  <span class="t-summary"><strong>{{ event.actorName }}</strong> {{ event.summary }}</span>
+                  <time class="t-time" [attr.datetime]="event.createdAtUtc">{{ formattedDate(event.createdAtUtc) }}</time>
+                </span>
+              </li>
+            } @empty {
+              <li class="empty">אין פעילות עדיין.</li>
+            }
+          </ol>
+        </section>
+      </aside>
+      <!-- #endregion -->
+    </div>
+    <!-- #endregion -->
+  }
+</section>

@@ -41411,6 +41411,6140 @@ export const GUIDE_MANIFEST = {
           ]
         }
       }
+    },
+    "ch19": {
+      "files": {
+        "client/angular.json": {
+          "content": "{\n  \"$schema\": \"./node_modules/@angular/cli/lib/config/schema.json\",\n  \"version\": 1,\n  \"cli\": {\n    \"packageManager\": \"pnpm\"\n  },\n  \"newProjectRoot\": \"projects\",\n  \"projects\": {\n    \"taskforge-client\": {\n      \"projectType\": \"application\",\n      \"schematics\": {\n        \"@schematics/angular:component\": {\n          \"style\": \"scss\"\n        }\n      },\n      \"root\": \"\",\n      \"sourceRoot\": \"src\",\n      \"prefix\": \"tf\",\n      \"architect\": {\n        \"build\": {\n          \"builder\": \"@angular/build:application\",\n          \"options\": {\n            \"browser\": \"src/main.ts\",\n            \"tsConfig\": \"tsconfig.app.json\",\n            \"inlineStyleLanguage\": \"scss\",\n            \"assets\": [],\n            \"styles\": [\n              \"src/styles.scss\"\n            ]\n          },\n          \"configurations\": {\n            \"production\": {\n              \"budgets\": [\n                {\n                  \"type\": \"initial\",\n                  \"maximumWarning\": \"500kB\",\n                  \"maximumError\": \"1MB\"\n                },\n                {\n                  \"type\": \"anyComponentStyle\",\n                  \"maximumWarning\": \"4kB\",\n                  \"maximumError\": \"8kB\"\n                }\n              ],\n              \"outputHashing\": \"all\"\n            },\n            \"development\": {\n              \"optimization\": false,\n              \"extractLicenses\": false,\n              \"sourceMap\": true\n            }\n          },\n          \"defaultConfiguration\": \"production\"\n        },\n        \"serve\": {\n          \"builder\": \"@angular/build:dev-server\",\n          \"configurations\": {\n            \"production\": {\n              \"buildTarget\": \"taskforge-client:build:production\"\n            },\n            \"development\": {\n              \"buildTarget\": \"taskforge-client:build:development\"\n            }\n          },\n          \"defaultConfiguration\": \"development\",\n          \"options\": {\n            \"port\": 4500\n          }\n        },\n        \"test\": {\n          \"builder\": \"@angular/build:unit-test\"\n        }\n      }\n    }\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/package.json": {
+          "content": "{\n  \"name\": \"taskforge-client\",\n  \"version\": \"0.0.0\",\n  \"scripts\": {\n    \"ng\": \"ng\",\n    \"start\": \"ng serve\",\n    \"build\": \"ng build\",\n    \"watch\": \"ng build --watch --configuration development\",\n    \"test\": \"ng test\"\n  },\n  \"private\": true,\n  \"packageManager\": \"pnpm@10.28.0\",\n  \"dependencies\": {\n    \"@angular/cdk\": \"^22.0.0\",\n    \"@angular/common\": \"^22.0.0\",\n    \"@angular/compiler\": \"^22.0.0\",\n    \"@angular/core\": \"^22.0.0\",\n    \"@angular/forms\": \"^22.0.0\",\n    \"@angular/platform-browser\": \"^22.0.0\",\n    \"@angular/router\": \"^22.0.0\",\n    \"rxjs\": \"~7.8.0\",\n    \"tslib\": \"^2.3.0\"\n  },\n  \"devDependencies\": {\n    \"@angular/build\": \"^22.0.0\",\n    \"@angular/cli\": \"^22.0.0\",\n    \"@angular/compiler-cli\": \"^22.0.0\",\n    \"jsdom\": \"^28.0.0\",\n    \"prettier\": \"^3.8.1\",\n    \"typescript\": \"~6.0.2\",\n    \"vitest\": \"^4.0.8\"\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/app.config.ts": {
+          "content": "import {\n  ApplicationConfig,\n  provideBrowserGlobalErrorListeners,\n  provideZonelessChangeDetection,\n} from '@angular/core';\nimport { provideHttpClient, withInterceptors } from '@angular/common/http';\nimport { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';\n\nimport { routes } from './app.routes';\nimport { errorInterceptor } from './core/api/error.interceptor';\nimport { authInterceptor } from './core/auth/auth.interceptor';\n\nexport const appConfig: ApplicationConfig = {\n  providers: [\n    // zoneless הוא ברירת המחדל ב-v22 (אין zone.js ב-package.json) —\n    // אנחנו מצהירים עליו במפורש כדי שהבחירה תהיה גלויה, לא מובלעת.\n    provideZonelessChangeDetection(),\n    provideBrowserGlobalErrorListeners(),\n    // withComponentInputBinding: פרמטרים מהנתיב, query string ונתוני\n    // resolver נקשרים ישירות ל-inputs של הקומפוננטה — בלי ActivatedRoute ידני.\n    provideRouter(\n      routes,\n      withComponentInputBinding(),\n      withViewTransitions({ skipInitialTransition: true }),\n    ),\n    // HttpClient נכנס לתמונה — עם שני interceptors פונקציונליים:\n    // auth מצרף Bearer לבקשות ל-API, error מתרגם ProblemDetails לטוסט.\n    // הסדר קובע: הבקשה עוברת אותם משמאל לימין, התשובה בכיוון ההפוך.\n    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),\n  ],\n};\n",
+          "status": "unchanged",
+          "regions": {
+            "step-14.11": {
+              "start": 21,
+              "end": 25
+            },
+            "step-10.2": {
+              "start": 19,
+              "end": 25
+            },
+            "step-11.3": {
+              "start": 26,
+              "end": 29
+            },
+            "step-6.8": {
+              "start": 13,
+              "end": 31
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/app.html": {
+          "content": "<header class=\"app-header\">\n  <a routerLink=\"/\" class=\"brand\">\n    <h1>{{ title() }}</h1>\n    <p class=\"tagline\">{{ tagline() }}</p>\n  </a>\n\n  <div class=\"header-actions\">\n    <button\n      tf-button\n      variant=\"ghost\"\n      type=\"button\"\n      class=\"cmdk-trigger\"\n      (click)=\"palette.toggle()\"\n      aria-label=\"פתיחת לוח הפקודות\"\n    >\n      <span>פקודות</span>\n      <kbd class=\"ltr\">⌘K</kbd>\n    </button>\n\n    @if (tokenStore.user(); as user) {\n      <span class=\"who\">{{ user.displayName }}</span>\n      <button tf-button variant=\"ghost\" type=\"button\" (click)=\"logout()\">Sign out</button>\n    } @else {\n      <button tf-button type=\"button\" (click)=\"loginOpen.set(true)\">Sign in</button>\n    }\n\n    <button\n      tf-button\n      variant=\"ghost\"\n      type=\"button\"\n      (click)=\"themeSvc.toggle()\"\n      [attr.aria-pressed]=\"themeSvc.theme() === 'light'\"\n    >\n      {{ themeSvc.theme() === 'dark' ? 'Light' : 'Dark' }} mode\n    </button>\n  </div>\n</header>\n\n<main class=\"app-main\">\n  <router-outlet />\n</main>\n\n<tf-login-dialog [(open)]=\"loginOpen\" />\n<tf-command-palette />\n<tf-toast-container />\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.10c": {
+              "start": 8,
+              "end": 18
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/app.routes.ts": {
+          "content": "import { Routes } from '@angular/router';\nimport { ProjectList } from './features/projects/project-list';\nimport { projectExistsGuard } from './features/projects/project.guard';\nimport { projectResolver } from './features/projects/project.resolver';\n\n// מפת הניווט כולה במקום אחד. שימו לב לשני סגנונות הטעינה:\n// הבית נטען מיד (eager) כי זה המסך הראשון; לוח הפרויקט נטען עצל —\n// הקוד שלו לא יורד לדפדפן עד שמישהו באמת מנווט אליו.\nexport const routes: Routes = [\n  {\n    path: '',\n    component: ProjectList,\n    title: 'TaskForge — Projects',\n  },\n  {\n    path: 'projects/:projectId/issues/:issueId',\n    loadComponent: () => import('./features/issues/issue-detail').then((m) => m.IssueDetail),\n    canActivate: [projectExistsGuard],\n    resolve: { project: projectResolver },\n    title: 'TaskForge — Issue detail',\n  },\n  // הדשבורד הוא מסך נפרד תחת הפרויקט — נתיב יותר ספציפי מהלוח, ולכן לפניו.\n  // אותם guard ו-resolver כמו הלוח: 404 אם הפרויקט לא קיים, ושם הפרויקט מוזרק.\n  {\n    path: 'projects/:projectId/dashboard',\n    loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),\n    canActivate: [projectExistsGuard],\n    resolve: { project: projectResolver },\n    title: 'TaskForge — Dashboard',\n  },\n  {\n    path: 'projects/:projectId',\n    loadComponent: () => import('./features/projects/project-board').then((m) => m.ProjectBoard),\n    canActivate: [projectExistsGuard],\n    resolve: { project: projectResolver },\n    title: 'TaskForge — Board',\n  },\n  {\n    path: '**',\n    loadComponent: () => import('./core/ui/not-found').then((m) => m.NotFound),\n    title: 'TaskForge — Not found',\n  },\n];\n",
+          "status": "unchanged",
+          "regions": {
+            "step-14.10": {
+              "start": 15,
+              "end": 21
+            },
+            "step-18.22": {
+              "start": 22,
+              "end": 30
+            },
+            "step-10.3": {
+              "start": 6,
+              "end": 43
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/app.scss": {
+          "content": "// השלד עובר לטוקנים — ורק logical properties.\n.app-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  // ה-header נושא עכשיו טריגר נוסף (Cmd+K). flex-wrap מבטיח שהפעולות\n  // יגלשו לשורה שנייה במסך צר במקום לדחוף את הכותרת מחוץ ל-viewport.\n  flex-wrap: wrap;\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-5);\n  border-block-end: 1px solid var(--bdr);\n  background: var(--sur);\n\n  // המותג הפך לקישור הביתה — בלי להיראות כמו קישור\n  .brand {\n    text-decoration: none;\n    color: inherit;\n  }\n\n  h1 {\n    margin: 0;\n  }\n\n  .tagline {\n    margin: var(--sp-1) 0 0;\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n\n  .header-actions {\n    display: flex;\n    align-items: center;\n    flex-wrap: wrap;\n    justify-content: flex-end;\n    gap: var(--sp-2);\n\n    .who {\n      color: var(--txt2);\n      font-size: var(--fs-small);\n    }\n\n    // טריגר לוח הפקודות: תווית + kbd. ה-kbd קטן ומופרד בטוקני v2.\n    .cmdk-trigger {\n      kbd {\n        margin-inline-start: var(--sp-1);\n        font-size: var(--fs-xs);\n        color: var(--txt3);\n        border: 1px solid var(--bdr2);\n        border-radius: var(--rad-sm);\n        padding: 0 5px;\n      }\n    }\n  }\n\n  // מסך צר: ריווח פנימי מצומצם כדי שהשורה הראשונה לא תילחץ\n  @media (max-width: 480px) {\n    padding-inline: var(--sp-3);\n  }\n}\n\n.app-main {\n  padding-block: var(--sp-5);\n  padding-inline: var(--sp-5);\n  max-inline-size: 980px;\n  margin-inline: auto;\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.10d": {
+              "start": 7,
+              "end": 9
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/app.spec.ts": {
+          "content": "import { TestBed } from '@angular/core/testing';\nimport { provideHttpClient } from '@angular/common/http';\nimport { provideHttpClientTesting } from '@angular/common/http/testing';\nimport { provideRouter } from '@angular/router';\nimport { App } from './app';\nimport { routes } from './app.routes';\n\ndescribe('App', () => {\n  beforeEach(async () => {\n    await TestBed.configureTestingModule({\n      imports: [App],\n      // הראוטר מהפרק הקודם, וה-HttpClient מהפרק הזה — בגרסת הטסטים:\n      // provideHttpClientTesting מחליף את ה-backend בכפיל, כך ששום\n      // בקשת רשת אמיתית לא יוצאת מטסט יחידה.\n      providers: [provideRouter(routes), provideHttpClient(), provideHttpClientTesting()],\n    }).compileComponents();\n  });\n\n  it('should create the app', () => {\n    const fixture = TestBed.createComponent(App);\n    const app = fixture.componentInstance;\n    expect(app).toBeTruthy();\n  });\n\n  it('should render the title and tagline from signals', async () => {\n    const fixture = TestBed.createComponent(App);\n    await fixture.whenStable();\n    const compiled = fixture.nativeElement as HTMLElement;\n    expect(compiled.querySelector('h1')?.textContent).toContain('TaskForge');\n    expect(compiled.querySelector('.tagline')?.textContent).toContain('forged by hand');\n  });\n});\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/app.ts": {
+          "content": "import { Component, computed, inject, signal } from '@angular/core';\nimport { Router, RouterLink, RouterOutlet } from '@angular/router';\nimport { AuthService } from './core/auth/auth.service';\nimport { TokenStore } from './core/auth/token.store';\nimport { ThemeService } from './core/state/theme';\nimport { CommandRegistry } from './core/commands/command-registry';\nimport { KeyboardService } from './core/keyboard/keyboard.service';\nimport { LoginDialog } from './features/auth/login-dialog';\nimport { CommandPalette } from './features/command-palette/command-palette';\nimport { PaletteService } from './features/command-palette/palette.service';\nimport { TfButton } from './shared/ui/button/button';\nimport { ToastContainer } from './shared/ui/toast/toast-container';\n\n@Component({\n  selector: 'app-root',\n  // השלד עדיין לא מכיר פיצ'רים של תוכן — אבל זהות היא חוצת-אפליקציה,\n  // ולכן ה-login נטען כאן, לצד ה-theme וה-toasts.\n  imports: [RouterOutlet, RouterLink, LoginDialog, TfButton, ToastContainer, CommandPalette],\n  templateUrl: './app.html',\n  styleUrl: './app.scss',\n})\nexport class App {\n  protected readonly themeSvc = inject(ThemeService);\n  protected readonly tokenStore = inject(TokenStore);\n  private readonly auth = inject(AuthService);\n\n  // signal = ערך + הודעה לכל מי שתלוי בו כשהוא משתנה.\n  // ב-zoneless זו הדרך היחידה שהתבנית יודעת להתעדכן.\n  protected readonly title = signal('TaskForge');\n\n  protected readonly tagline = computed(() => `${this.title()} — issues, forged by hand`);\n\n  protected readonly loginOpen = signal(false);\n\n  protected logout(): void {\n    this.auth.logout();\n  }\n\n  // ה-shell מחבר את שלוש החתיכות: keyboard (Cmd+K פותח), palette (מצב),\n  // ו-registry (הפקודות הגלובליות). פיצ'רים עתידיים פשוט יקראו register()\n  // עם פקודות משלהם — בלי לגעת כאן.\n  protected readonly palette = inject(PaletteService);\n  private readonly keyboard = inject(KeyboardService);\n  private readonly registry = inject(CommandRegistry);\n  private readonly router = inject(Router);\n\n  constructor() {\n    this.keyboard.bind('mod+k', () => this.palette.toggle());\n\n    this.registry.register(\n      {\n        id: 'nav.projects',\n        title: 'מעבר לכל הפרויקטים',\n        group: 'Navigation',\n        keywords: 'home projects list',\n        hint: 'g p',\n        run: () => void this.router.navigate(['/']),\n      },\n      {\n        id: 'view.theme',\n        title: 'החלפת מצב כהה / בהיר',\n        group: 'View',\n        keywords: 'theme dark light mode',\n        run: () => this.themeSvc.toggle(),\n      },\n      {\n        id: 'auth.signin',\n        title: 'התחברות',\n        group: 'Identity',\n        keywords: 'sign in login',\n        run: () => this.loginOpen.set(true),\n      },\n      {\n        id: 'auth.signout',\n        title: 'התנתקות',\n        group: 'Identity',\n        keywords: 'sign out logout',\n        run: () => this.logout(),\n      },\n    );\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.10b": {
+              "start": 18,
+              "end": 18
+            },
+            "step-7.11": {
+              "start": 16,
+              "end": 18
+            },
+            "step-11.14": {
+              "start": 33,
+              "end": 37
+            },
+            "step-16.10": {
+              "start": 39,
+              "end": 81
+            },
+            "step-6.10": {
+              "start": 14,
+              "end": 82
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/api/api.ts": {
+          "content": "// כתובת ה-API במקום אחד. בפרודקשן זה יגיע מהגדרת סביבה או reverse proxy —\n// בפיתוח, השרת חי על 5080 והקליינט על 4500, ו-CORS (צד השרת) מתיר את הפער.\nexport const API_BASE = 'http://localhost:5080/api';\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/core/api/error.interceptor.ts": {
+          "content": "import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';\nimport { inject } from '@angular/core';\nimport { catchError, throwError } from 'rxjs';\nimport { ToastService } from '../../shared/ui/toast/toast.service';\n\ninterface ProblemDetails {\n  title?: string;\n  detail?: string;\n  errors?: Record<string, string[]>;\n}\n\n// קצה אחד לכל השגיאות: השרת מדבר ProblemDetails (RFC 7807) מאז פרק 04,\n// והקליינט מתרגם אותו להודעה אנושית אחת — במקום try/catch בכל רכיב.\nexport const errorInterceptor: HttpInterceptorFn = (req, next) => {\n  const toastSvc = inject(ToastService);\n\n  return next(req).pipe(\n    catchError((err: HttpErrorResponse) => {\n      toastSvc.show(problemText(err), 'danger');\n      // מתרגמים, לא בולעים: הקורא עדיין יודע שהבקשה נכשלה\n      return throwError(() => err);\n    }),\n  );\n};\n\nfunction problemText(err: HttpErrorResponse): string {\n  // הסים משלם שוב: השרת למד ניב חדש (409 עם גוף string מ-TypedResults.Conflict),\n  // ורק המתרגם האחד הזה צריך לדעת על זה — אף רכיב לא נגע.\n  if (typeof err.error === 'string' && err.error) return err.error;\n\n  const problem = err.error as ProblemDetails | null;\n\n  // 400 של AddValidation: מילון שגיאות לפי שדה — מציגים את הראשונה\n  const firstFieldError = problem?.errors && Object.values(problem.errors)[0]?.[0];\n  if (firstFieldError) return firstFieldError;\n\n  if (problem?.detail) return problem.detail;\n\n  if (err.status === 0) return 'Cannot reach the server — is the API running?';\n  if (err.status === 401) return 'You need to sign in for that';\n  if (err.status === 403) return 'You are not a member of this project';\n\n  if (problem?.title) return problem.title;\n\n  return `Request failed (${err.status})`;\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-12.14": {
+              "start": 27,
+              "end": 29
+            },
+            "step-11.9": {
+              "start": 12,
+              "end": 46
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/auth/auth.interceptor.ts": {
+          "content": "import { HttpInterceptorFn } from '@angular/common/http';\nimport { inject } from '@angular/core';\nimport { API_BASE } from '../api/api';\nimport { TokenStore } from './token.store';\n\n// ה-interceptor הפונקציונלי: פונקציה, לא class. רץ על כל בקשה יוצאת,\n// ומצרף Bearer רק לבקשות שמיועדות ל-API שלנו — טוקן לא דולף לדומיינים זרים.\nexport const authInterceptor: HttpInterceptorFn = (req, next) => {\n  const token = inject(TokenStore).accessToken();\n\n  if (!token || !req.url.startsWith(API_BASE)) {\n    return next(req);\n  }\n\n  // בקשות הן immutable — clone עם הכותרת, לא מוטציה\n  return next(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }));\n};\n",
+          "status": "unchanged",
+          "regions": {
+            "step-11.8": {
+              "start": 6,
+              "end": 17
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/auth/auth.service.ts": {
+          "content": "import { Injectable, inject } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { firstValueFrom } from 'rxjs';\nimport { API_BASE } from '../api/api';\nimport { AuthSession } from '../models/auth.model';\nimport { TokenStore } from './token.store';\n\n// פעולות זהות הן ציוויות (פקודה, לא מצב) — ולכן HttpClient רגיל\n// עם await, לא httpResource. ה-store שומר את התוצאה; השירות רק מתווך.\n@Injectable({ providedIn: 'root' })\nexport class AuthService {\n  private readonly http = inject(HttpClient);\n  private readonly tokenStore = inject(TokenStore);\n\n  async login(email: string, password: string): Promise<void> {\n    const session = await firstValueFrom(\n      this.http.post<AuthSession>(`${API_BASE}/auth/login`, { email, password }),\n    );\n    this.tokenStore.setSession(session);\n  }\n\n  logout(): void {\n    // ביטול ה-refresh token בשרת (rotation) מגיע בפרק ההקשחה —\n    // בינתיים ניקוי מקומי מספיק כדי לצאת.\n    this.tokenStore.clear();\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-11.11": {
+              "start": 8,
+              "end": 27
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/auth/token.store.ts": {
+          "content": "import { Injectable, computed, signal } from '@angular/core';\nimport { AuthSession, AuthUser } from '../models/auth.model';\n\nconst STORAGE_KEY = 'taskforge-auth';\n\n// אותו דפוס store, הפעם לזהות: ה-session חי כ-signal, נשמר ב-localStorage,\n// ונחשף לקריאה בלבד. ההחלטה \"מי מחובר\" מתקבלת במקום אחד — לא בכל רכיב.\n@Injectable({ providedIn: 'root' })\nexport class TokenStore {\n  private readonly _session = signal<AuthSession | null>(restoreSession());\n\n  readonly accessToken = computed(() => this._session()?.accessToken ?? null);\n\n  readonly user = computed<AuthUser | null>(() => this._session()?.user ?? null);\n\n  readonly isLoggedIn = computed(() => this._session() !== null);\n\n  setSession(session: AuthSession): void {\n    this._session.set(session);\n    localStorage.setItem(STORAGE_KEY, JSON.stringify(session));\n  }\n\n  clear(): void {\n    this._session.set(null);\n    localStorage.removeItem(STORAGE_KEY);\n  }\n}\n\n/** שחזור session מרענון קודם — ערך פגום נזרק בשקט, לא מפיל את האפליקציה */\nfunction restoreSession(): AuthSession | null {\n  try {\n    const raw = localStorage.getItem(STORAGE_KEY);\n    return raw ? (JSON.parse(raw) as AuthSession) : null;\n  } catch {\n    return null;\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-11.10": {
+              "start": 6,
+              "end": 37
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/commands/command-registry.ts": {
+          "content": "import { Injectable, signal } from '@angular/core';\nimport { Command } from './command.model';\n\n// ה-command bus: מקור אמת אחד לכל הפקודות. פיצ'רים קוראים register();\n// ה-palette קורא commands(). אף צד לא מכיר את השני ישירות — בדיוק כמו\n// event bus, אבל declarative וטיפוסי. זו אבן הפינה הראשונה של ארכיטקטורת\n// ה-spine שתחזור בפרקים 17–20.\n@Injectable({ providedIn: 'root' })\nexport class CommandRegistry {\n  private readonly _commands = signal<readonly Command[]>([]);\n\n  /** ציבורי-לקריאה בלבד: ה-palette צורך, לא משנה */\n  readonly commands = this._commands.asReadonly();\n\n  register(...commands: Command[]): void {\n    this._commands.update((list) => [...list, ...commands]);\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.5": {
+              "start": 4,
+              "end": 18
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/commands/command.model.ts": {
+          "content": "// פקודה = יחידת פעולה אחת שה-palette יכול להציג ולהריץ.\n// פיצ'רים רושמים פקודות; ה-palette הוא צרכן טיפש שלא יודע מאיפה הן הגיעו.\nexport interface Command {\n  /** מזהה יציב (לשימוש ב-track ולמניעת כפילויות) */\n  id: string;\n  /** הטקסט שמוצג ב-palette */\n  title: string;\n  /** קבוצה לוגית להצגה ולמיון (\"ניווט\", \"תצוגה\", \"זהות\") */\n  group: string;\n  /** מילים נרדפות לחיפוש fuzzy (למשל \"logout\" עבור \"Sign out\") */\n  keywords?: string;\n  /** תווית קיצור מקלדת להצגה בלבד (לא מבוצעת כאן) */\n  hint?: string;\n  /** מה הפקודה עושה כשבוחרים אותה */\n  run: () => void;\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.4": {
+              "start": 1,
+              "end": 16
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/commands/fuzzy.ts": {
+          "content": "// התאמת fuzzy בעבודת יד: כל תווי ה-query חייבים להופיע ב-text לפי הסדר.\n// בונוסים על התאמה בתחילת מילה ועל רצף — כדי שתוצאות \"טבעיות\" יעלו למעלה.\n// אין כאן ספרייה: כ-50 שורות מלמדות בדיוק איך scoring כזה עובד.\ninterface Ranked<T> {\n  item: T;\n  score: number;\n}\n\n/** מחזיר ציון; ‎-1 אם ולו תו אחד מה-query לא נמצא לפי הסדר. */\nexport function fuzzyScore(text: string, query: string): number {\n  if (!query) return 0;\n  const t = text.toLowerCase();\n  const q = query.toLowerCase();\n\n  let score = 0;\n  let from = 0;\n  let prevMatch = -2;\n\n  for (const ch of q) {\n    const at = t.indexOf(ch, from);\n    if (at === -1) return -1;\n\n    // בונוס: התאמה בתחילת מילה (אחרי רווח/מקף/לוכסן) או בתחילת המחרוזת\n    const atBoundary = at === 0 || /[\\s\\-/_]/.test(t[at - 1]);\n    score += atBoundary ? 8 : 1;\n\n    // בונוס רצף: תווים סמוכים שווים יותר מתווים מפוזרים\n    if (at === prevMatch + 1) score += 3;\n\n    prevMatch = at;\n    from = at + 1;\n  }\n\n  return score;\n}\n\n/** מסנן לפי התאמה וממיין מהציון הגבוה לנמוך. query ריק = הכול, כסדרו. */\nexport function fuzzyRank<T>(items: readonly T[], query: string, key: (item: T) => string): T[] {\n  if (!query.trim()) return [...items];\n\n  const ranked: Ranked<T>[] = [];\n  for (const item of items) {\n    const score = fuzzyScore(key(item), query);\n    if (score >= 0) ranked.push({ item, score });\n  }\n  ranked.sort((a, b) => b.score - a.score);\n  return ranked.map((r) => r.item);\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.6": {
+              "start": 1,
+              "end": 48
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/keyboard/keyboard.service.ts": {
+          "content": "import { DestroyRef, Injectable, inject } from '@angular/core';\n\n// שכבת מקלדת גלובלית אחת. רכיבים רושמים צירוף -> handler במקום שכל\n// רכיב יוסיף listener משלו. \"mod\" = Cmd ב-macOS, Ctrl במקום אחר.\n// הקלדה בשדה טקסט לא חוטפת קיצורים — אלא אם הצירוף כולל mod, כך ש-Cmd+K\n// עובד גם בתוך input.\ntype Handler = () => void;\n\n@Injectable({ providedIn: 'root' })\nexport class KeyboardService {\n  private readonly bindings = new Map<string, Handler>();\n\n  constructor() {\n    if (typeof document === 'undefined') return; // בטוח ל-SSR/jsdom\n    document.addEventListener('keydown', this.onKeydown);\n    inject(DestroyRef).onDestroy(() => document.removeEventListener('keydown', this.onKeydown));\n  }\n\n  /** combo בפורמט 'mod+k', 'shift+/' וכו' (אותיות קטנות) */\n  bind(combo: string, handler: Handler): void {\n    this.bindings.set(combo.toLowerCase(), handler);\n  }\n\n  private readonly onKeydown = (event: KeyboardEvent): void => {\n    const combo = comboOf(event);\n    const handler = this.bindings.get(combo);\n    if (!handler) return;\n\n    const hasMod = event.metaKey || event.ctrlKey;\n    if (isTyping(event.target) && !hasMod) return;\n\n    event.preventDefault();\n    handler();\n  };\n}\n\nfunction comboOf(event: KeyboardEvent): string {\n  const parts: string[] = [];\n  if (event.metaKey || event.ctrlKey) parts.push('mod');\n  if (event.shiftKey) parts.push('shift');\n  if (event.altKey) parts.push('alt');\n  parts.push(event.key.toLowerCase());\n  return parts.join('+');\n}\n\nfunction isTyping(target: EventTarget | null): boolean {\n  const el = target as HTMLElement | null;\n  if (!el) return false;\n  return (\n    el.tagName === 'INPUT' ||\n    el.tagName === 'TEXTAREA' ||\n    el.tagName === 'SELECT' ||\n    el.isContentEditable\n  );\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.3": {
+              "start": 3,
+              "end": 55
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/markdown/markdown.ts": {
+          "content": "// Markdown מינימלי ובטוח. הכלל הזהב: בורחים מ-HTML *קודם*, ורק אז מוסיפים\n// תגיות בטוחות. כך טקסט כמו \"<script>alert(1)</script>\" שמישהו מדביק בתגובה\n// הופך לטקסט מוצג, לא לקוד שרץ — הגנת ה-XSS היא בסדר הפעולות, לא בסינון בדיעבד.\n\nconst ESCAPE: Record<string, string> = {\n  '&': '&amp;',\n  '<': '&lt;',\n  '>': '&gt;',\n  '\"': '&quot;',\n  \"'\": '&#39;',\n};\n\nfunction escapeHtml(text: string): string {\n  return text.replace(/[&<>\"']/g, (ch) => ESCAPE[ch]);\n}\n\n// רק סכימות בטוחות לקישורים — חוסם javascript:, data:, וכו'.\n// ה-url כבר עבר escape, ולכן בודקים את התחילית בלבד.\nfunction isSafeUrl(url: string): boolean {\n  return /^(https?:\\/\\/|\\/)/i.test(url);\n}\n\n/**\n * ממיר Markdown מצומצם ל-HTML בטוח: `code`, **bold**, *italic*,\n * [text](url) (סכימות בטוחות בלבד), ‎@mention, ושבירת שורות.\n * הקלט עובר escape מלא לפני כל טרנספורם — מה שלא בתבנית נשאר טקסט.\n */\nexport function renderMarkdown(source: string): string {\n  let html = escapeHtml(source);\n\n  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');\n  html = html.replace(/\\*\\*([^*]+)\\*\\*/g, '<strong>$1</strong>');\n  html = html.replace(/\\*([^*]+)\\*/g, '<em>$1</em>');\n\n  html = html.replace(/\\[([^\\]]+)\\]\\(([^)\\s]+)\\)/g, (_match, text: string, url: string) =>\n    isSafeUrl(url) ? `<a href=\"${url}\" target=\"_blank\" rel=\"noopener noreferrer\">${text}</a>` : text,\n  );\n\n  // ‏@mention — הוזכר חבר. ה-‎@ נשאר טקסט; רק עוטפים אותו לעיצוב.\n  html = html.replace(/(^|\\s)@([\\w.-]+)/g, '$1<span class=\"mention\">@$2</span>');\n\n  html = html.replace(/\\n/g, '<br>');\n\n  return html;\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.12": {
+              "start": 1,
+              "end": 45
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46
+          ]
+        },
+        "client/src/app/core/models/api.model.ts": {
+          "content": "// המראה של server/TaskForge.Core/Common/PagedResult.cs על הקו.\n// שימו לב: TotalPages הוא get-only property ב-C# — אבל System.Text.Json\n// מסריאלייז גם properties כאלה, ולכן הוא חלק מהחוזה שהקליינט רואה.\nexport interface PagedResult<T> {\n  items: T[];\n  total: number;\n  page: number;\n  pageSize: number;\n  totalPages: number;\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-7.4": {
+              "start": 1,
+              "end": 10
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/models/attachment.model.ts": {
+          "content": "// המראה של AttachmentResponse על הקו — מטא-דאטה בלבד, בלי ה-bytes.\n// ההורדה היא GET /api/attachments/{id} שמחזיר את הקובץ עצמו.\nexport interface Attachment {\n  id: number;\n  issueId: number;\n  fileName: string;\n  contentType: string;\n  sizeBytes: number;\n  uploadedByName: string;\n  createdAtUtc: string;\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.13": {
+              "start": 1,
+              "end": 11
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        },
+        "client/src/app/core/models/auth.model.ts": {
+          "content": "// המראה של server/TaskForge.Api/Contracts/AuthContracts.cs על הקו.\n// השימוש המלא מגיע עם מסך ההתחברות (גל 3) — אבל החוזה מוגדר כבר עכשיו,\n// כי הוא חלק מהשפה המשותפת של שני הצדדים.\nexport type UserRole = 'Member' | 'Admin';\n\n/** המראה של UserResponse */\nexport interface AuthUser {\n  id: number;\n  email: string;\n  displayName: string;\n  role: UserRole;\n}\n\n/** המראה של AuthResponse — הזוג המלא + מתי ה-access פג */\nexport interface AuthSession {\n  accessToken: string;\n  refreshToken: string;\n  expiresAtUtc: string;\n  user: AuthUser;\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/core/models/comment.model.ts": {
+          "content": "/** Mirrors server/TaskForge.Api/Contracts/CommentContracts.cs */\nexport interface Comment {\n  id: number;\n  issueId: number;\n  body: string;\n  authorUserId: number;\n  authorName: string;\n  createdAtUtc: string;\n}\n\nexport interface CreateCommentRequest {\n  body: string;\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/core/models/dashboard.model.ts": {
+          "content": "import { IssuePriority, IssueStatus } from './issue.model';\n\n// המראה של חוזי הדשבורד על הקו. ProjectStats מקביל ל-Core/Common/ProjectStats,\n// ו-ActivityEvent ל-ActivityResponse. ה-DateOnly של השרת מגיע כמחרוזת ISO\n// ('2026-01-14'); enums מגיעים כמחרוזות (JsonStringEnumConverter מפרק 04).\nexport interface StatusCount {\n  status: IssueStatus;\n  count: number;\n}\n\nexport interface PriorityCount {\n  priority: IssuePriority;\n  count: number;\n}\n\nexport interface DayCount {\n  day: string; // 'YYYY-MM-DD'\n  count: number;\n}\n\nexport interface ProjectStats {\n  total: number;\n  open: number;\n  inProgress: number;\n  done: number;\n  byStatus: StatusCount[];\n  byPriority: PriorityCount[];\n  createdPerDay: DayCount[];\n}\n\n// פרק 19 מוסיף 'AttachmentAdded' ל-union — מקביל לערך החדש ב-enum ActivityType\n// בשרת. ה-timeline של מסך הפרטים מציג גם אירועי צירוף קובץ.\nexport type ActivityType = 'IssueCreated' | 'IssueMoved' | 'CommentAdded' | 'AttachmentAdded';\n\nexport interface ActivityEvent {\n  id: number;\n  type: ActivityType;\n  summary: string;\n  issueId: number | null;\n  actorName: string;\n  createdAtUtc: string;\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.13b": {
+              "start": 31,
+              "end": 33
+            },
+            "step-18.13": {
+              "start": 3,
+              "end": 42
+            }
+          },
+          "changedLines": [
+            31,
+            32,
+            33
+          ]
+        },
+        "client/src/app/core/models/issue.model.ts": {
+          "content": "// המראה של server/TaskForge.Api/Contracts/IssueContracts.cs על הקו.\n\n// enums של C# עוברים על הקו כמחרוזות (JsonStringEnumConverter, פרק 04),\n// בשמות החברים המקוריים. לכן כאן הם string unions ולא TS enum:\n// הם מתעדים בדיוק את מה שה-JSON מכיל, בלי שום קוד בזמן ריצה.\nexport type IssueStatus = 'Open' | 'InProgress' | 'Done';\n\nexport type IssuePriority = 'Low' | 'Medium' | 'High' | 'Critical';\n\n/** המראה של LabelResponse */\nexport interface LabelRef {\n  id: number;\n  name: string;\n  color: string | null;\n}\n\n/** המראה של IssueResponse — תאריכים מגיעים כמחרוזות ISO, לא כ-Date */\nexport interface Issue {\n  id: number;\n  title: string;\n  description: string | null;\n  status: IssueStatus;\n  priority: IssuePriority;\n  projectId: number;\n  createdAtUtc: string;\n  // ‏Rank מגיע כ-double מהשרת — מיקום ה-issue בעמודת הלוח. הלוח ממיין לפיו;\n  // סידור-מחדש מחשב נקודת אמצע חדשה בין שני השכנים ושולח אותה בחזרה.\n  rank: number;\n  labels: LabelRef[];\n}\n\n// המראה של IssueListParams — הצד השני של [AsParameters] מפרק 04.\n// אותם שמות, אותם defaults; ה-store ישמיט ברירות מחדל מה-URL היוצא.\n// פרק 17 מוסיף 'rank' — סדר הלוח הידני, שבו תצוגת ה-Kanban משתמשת.\nexport type IssueSort = '-created' | 'created' | 'title' | 'priority' | 'rank';\n\nexport interface IssueListQuery {\n  projectId: number;\n  status: IssueStatus | null;\n  search: string | null;\n  sort: IssueSort;\n  page: number;\n  pageSize: number;\n}\n\n/** המראה של UpdateIssueRequest — ‏PUT הוא עדכון מלא, לא חלקי */\nexport interface UpdateIssueRequest {\n  title: string;\n  description: string | null;\n  status: IssueStatus;\n  priority: IssuePriority;\n}\n\nexport interface TitleAvailabilityResponse {\n  available: boolean;\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-7.5": {
+              "start": 3,
+              "end": 8
+            },
+            "step-17.10": {
+              "start": 26,
+              "end": 28
+            },
+            "step-13.2": {
+              "start": 32,
+              "end": 56
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/models/member.model.ts": {
+          "content": "// המראה של MemberResponse מהשרת. ה-Role הוא string union —\n// ה-JsonStringEnumConverter מפרק 04 משדר enums כטקסט, לא כמספר.\nexport type ProjectRole = 'Member' | 'Owner';\n\nexport interface ProjectMember {\n  userId: number;\n  displayName: string;\n  email: string;\n  role: ProjectRole;\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-12.12": {
+              "start": 1,
+              "end": 10
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/models/project.model.ts": {
+          "content": "// המראה של server/TaskForge.Core/Common/ProjectSummary.cs על הקו:\n// בדיוק מה ש-GET /api/projects מחזיר לכל פרויקט — לא הישות, ההקרנה.\nexport interface ProjectSummary {\n  id: number;\n  name: string;\n  description: string | null;\n  openIssues: number;\n}\n\n// המראה של ProjectResponse — מה ש-POST /api/projects מחזיר ב-201.\n// הקליינט צריך בעיקר את ה-id, כדי לנווט ישר ללוח החדש.\nexport interface ProjectDetail {\n  id: number;\n  name: string;\n  description: string | null;\n  createdAtUtc: string;\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-12.9": {
+              "start": 10,
+              "end": 17
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/models/search.model.ts": {
+          "content": "// המראה של Core/Common/SearchResults.cs על הקו — הקרנות רזות לקפיצה מהירה.\nexport interface ProjectHit {\n  id: number;\n  name: string;\n}\n\nexport interface IssueHit {\n  id: number;\n  projectId: number;\n  title: string;\n  status: 'Open' | 'InProgress' | 'Done';\n}\n\nexport interface SearchResults {\n  projects: ProjectHit[];\n  issues: IssueHit[];\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.14": {
+              "start": 1,
+              "end": 17
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/state/dashboard.store.ts": {
+          "content": "import { Injectable, computed, inject, signal } from '@angular/core';\nimport { httpResource } from '@angular/common/http';\nimport { API_BASE } from '../api/api';\nimport { TokenStore } from '../auth/token.store';\nimport { ActivityEvent, ProjectStats } from '../models/dashboard.model';\n\n// מודל-תצוגה אחיד לכל פרוסת גרף: התווית, הערך, והצבע (משתנה CSS).\n// הרכיבים הטיפשים של הגרפים מקבלים בדיוק את זה — לא ProjectStats גולמי.\nexport interface ChartSlice {\n  label: string;\n  value: number;\n  color: string;\n}\n\nexport interface SummaryCard {\n  label: string;\n  value: number;\n  tone: 'total' | 'open' | 'progress' | 'done';\n}\n\nconst STATUS_ORDER = ['Open', 'InProgress', 'Done'] as const;\nconst STATUS_LABEL: Record<string, string> = { Open: 'פתוח', InProgress: 'בעבודה', Done: 'הושלם' };\nconst STATUS_COLOR: Record<string, string> = {\n  Open: 'var(--chart-open)',\n  InProgress: 'var(--chart-progress)',\n  Done: 'var(--chart-done)',\n};\n\nconst PRIORITY_ORDER = ['Low', 'Medium', 'High', 'Critical'] as const;\nconst PRIORITY_LABEL: Record<string, string> = {\n  Low: 'נמוך',\n  Medium: 'בינוני',\n  High: 'גבוה',\n  Critical: 'קריטי',\n};\nconst PRIORITY_COLOR: Record<string, string> = {\n  Low: 'var(--chart-p1)',\n  Medium: 'var(--chart-p2)',\n  High: 'var(--chart-p3)',\n  Critical: 'var(--chart-p4)',\n};\n\n// אותו דפוס store כמו IssueDetailStore: שני httpResource מפתח לפי projectId,\n// שמחזירים undefined (= אין בקשה) כשאין פרויקט או כשמנותקים. spine #3 כאן הוא\n// ה-selectors הנגזרים: מספרים גולמיים מהשרת → מודלי-תצוגה מוכנים-לציור.\n@Injectable({ providedIn: 'root' })\nexport class DashboardStore {\n  private readonly tokenStore = inject(TokenStore);\n  private readonly projectId = signal<number | null>(null);\n\n  setProject(id: number): void {\n    this.projectId.set(id);\n  }\n\n  clear(): void {\n    this.projectId.set(null);\n  }\n\n  private readonly statsResource = httpResource<ProjectStats>(() => {\n    const id = this.projectId();\n    return id && this.tokenStore.isLoggedIn() ? `${API_BASE}/projects/${id}/stats` : undefined;\n  });\n\n  private readonly activityResource = httpResource<ActivityEvent[]>(() => {\n    const id = this.projectId();\n    return id && this.tokenStore.isLoggedIn() ? `${API_BASE}/projects/${id}/activity?take=8` : undefined;\n  });\n\n  readonly stats = computed(() => (this.statsResource.hasValue() ? this.statsResource.value() : null));\n  readonly activity = computed(() =>\n    this.activityResource.hasValue() ? this.activityResource.value() : [],\n  );\n  readonly loading = computed(() => this.statsResource.isLoading() || this.activityResource.isLoading());\n  readonly loadError = computed(() => this.statsResource.error() || this.activityResource.error());\n\n  reload(): void {\n    this.statsResource.reload();\n    this.activityResource.reload();\n  }\n\n  // ה-selectors הנגזרים (spine #3): כל אחד הוא computed שמעצב את אותם נתונים\n  // גולמיים לצורה שרכיב מסוים צריך. הרכיבים נשארים טיפשים — כל הצורה כאן.\n  readonly summaryCards = computed<SummaryCard[]>(() => {\n    const s = this.stats();\n    if (!s) return [];\n    return [\n      { label: 'סה״כ', value: s.total, tone: 'total' },\n      { label: STATUS_LABEL['Open'], value: s.open, tone: 'open' },\n      { label: STATUS_LABEL['InProgress'], value: s.inProgress, tone: 'progress' },\n      { label: STATUS_LABEL['Done'], value: s.done, tone: 'done' },\n    ];\n  });\n\n  readonly statusSlices = computed<ChartSlice[]>(() => {\n    const s = this.stats();\n    if (!s) return [];\n    return STATUS_ORDER.map((status) => ({\n      label: STATUS_LABEL[status],\n      value: s.byStatus.find((x) => x.status === status)?.count ?? 0,\n      color: STATUS_COLOR[status],\n    }));\n  });\n\n  readonly prioritySlices = computed<ChartSlice[]>(() => {\n    const s = this.stats();\n    if (!s) return [];\n    return PRIORITY_ORDER.map((priority) => ({\n      label: PRIORITY_LABEL[priority],\n      value: s.byPriority.find((x) => x.priority === priority)?.count ?? 0,\n      color: PRIORITY_COLOR[priority],\n    }));\n  });\n\n  // סדרת המגמה ל-sparkline: רק הספירות, בסדר כרונולוגי שהשרת כבר החזיר\n  readonly trend = computed<number[]>(() => this.stats()?.createdPerDay.map((d) => d.count) ?? []);\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-18.14": {
+              "start": 43,
+              "end": 79
+            },
+            "step-18.15": {
+              "start": 81,
+              "end": 115
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/state/entity-store.ts": {
+          "content": "import { Signal, WritableSignal, computed, linkedSignal } from '@angular/core';\n\n// spine piece #2: בסיס גנרי לאוסף ישויות בזיכרון. בלב שלו linkedSignal\n// (פרק 13) שמומם לאוסף שלם: בכל פעם שה-source (אמת-השרת) מתחדש, המפה\n// מתאפסת לאמת החדשה — ובין תשובות מותר לערוך אותה מקומית (patch/upsert/remove)\n// לטובת עדכון אופטימי. כל store של אוסף יושב על זה במקום לשכפל ניהול-מצב.\n// המפתח הוא id; ‏Map שומר על סדר ההכנסה, ולכן סדר השרת נשמר.\nexport class EntityStore<T extends { id: number }> {\n  private readonly entities: WritableSignal<Map<number, T>>;\n\n  /** source = הפונקציה שמספקת את אמת-השרת; היא נדגמת ריאקטיבית */\n  constructor(source: () => readonly T[]) {\n    this.entities = linkedSignal(() => new Map(source().map((e) => [e.id, e])));\n  }\n\n  /** הרשימה הנגזרת, בסדר ההכנסה */\n  readonly all: Signal<T[]> = computed(() => [...this.entities().values()]);\n\n  byId(id: number): T | undefined {\n    return this.entities().get(id);\n  }\n\n  /** עריכה ממוקדת של ישות אחת — לא נוגעים בשאר המפה */\n  patch(id: number, change: Partial<T>): void {\n    const current = this.entities().get(id);\n    if (!current) return;\n    this.entities.update((m) => new Map(m).set(id, { ...current, ...change }));\n  }\n\n  upsert(entity: T): void {\n    this.entities.update((m) => new Map(m).set(entity.id, entity));\n  }\n\n  remove(id: number): void {\n    this.entities.update((m) => {\n      const next = new Map(m);\n      next.delete(id);\n      return next;\n    });\n  }\n\n  /** צילום מצב לפני פעולה אופטימית, ושחזור אם היא נכשלת */\n  snapshot(): Map<number, T> {\n    return this.entities();\n  }\n\n  restore(snapshot: Map<number, T>): void {\n    this.entities.set(snapshot);\n  }\n}\n\n// optimistic: \"צייר קודם, שאל אחר כך\" כפונקציה אחת לשימוש חוזר. apply משנה\n// את ה-UI מיד; persist שולח לשרת; כישלון → rollback מחזיר את המצב הקודם\n// (ה-toast כבר הוצג ע\"י ה-interceptor מפרק 11). מחזיר true בהצלחה, false\n// בכישלון — כך הקורא יכול להגיב (למשל reload ליישור הדף מול האמת).\nexport async function optimistic(\n  apply: () => void,\n  persist: () => Promise<unknown>,\n  rollback: () => void,\n): Promise<boolean> {\n  apply();\n  try {\n    await persist();\n    return true;\n  } catch {\n    rollback();\n    return false;\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-17.6": {
+              "start": 3,
+              "end": 50
+            },
+            "step-17.7": {
+              "start": 52,
+              "end": 69
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/state/issue-detail.store.ts": {
+          "content": "import { Injectable, computed, inject, signal } from '@angular/core';\nimport { HttpClient, httpResource } from '@angular/common/http';\nimport { firstValueFrom } from 'rxjs';\nimport { API_BASE } from '../api/api';\nimport { TokenStore } from '../auth/token.store';\nimport { Comment } from '../models/comment.model';\nimport { Issue, UpdateIssueRequest } from '../models/issue.model';\nimport { Attachment } from '../models/attachment.model';\nimport { ActivityEvent } from '../models/dashboard.model';\nimport { ProjectMember } from '../models/member.model';\n\n// חלון ה-Undo: התגובה נשלחת רק אחרי השהייה זו, כדי שאפשר לבטל לפני שהשרת ראה אותה\nconst COMMENT_UNDO_MS = 4000;\n\n@Injectable({ providedIn: 'root' })\nexport class IssueDetailStore {\n  private readonly http = inject(HttpClient);\n  private readonly tokenStore = inject(TokenStore);\n  private readonly issueId = signal<number | null>(null);\n\n  setIssueId(issueId: number): void {\n    this.issueId.set(issueId);\n  }\n\n  clear(): void {\n    this.cancelPending();\n    this.issueId.set(null);\n  }\n\n  private readonly issueResource = httpResource<Issue>(() => {\n    const id = this.issueId();\n    return id && this.tokenStore.isLoggedIn() ? `${API_BASE}/issues/${id}` : undefined;\n  });\n\n  private readonly commentsResource = httpResource<Comment[]>(() => {\n    const id = this.issueId();\n    return id && this.tokenStore.isLoggedIn() ? `${API_BASE}/issues/${id}/comments` : undefined;\n  });\n\n  readonly issue = computed(() => (this.issueResource.hasValue() ? this.issueResource.value() : null));\n  readonly loading = computed(() => this.issueResource.isLoading());\n  readonly loadError = computed(() => this.issueResource.error() || this.commentsResource.error());\n\n  reload(): void {\n    this.issueResource.reload();\n    this.commentsResource.reload();\n  }\n\n  // פרק 19: שלושה resources נוספים מפתח לפי אותו issueId — קבצים, פיד פעילות,\n  // וחברי הפרויקט (לרשימת ה-@mention, מפתח לפי projectId של ה-issue שנטען).\n  private readonly attachmentsResource = httpResource<Attachment[]>(() => {\n    const id = this.issueId();\n    return id && this.tokenStore.isLoggedIn() ? `${API_BASE}/issues/${id}/attachments` : undefined;\n  });\n\n  private readonly activityResource = httpResource<ActivityEvent[]>(() => {\n    const id = this.issueId();\n    return id && this.tokenStore.isLoggedIn() ? `${API_BASE}/issues/${id}/activity` : undefined;\n  });\n\n  private readonly membersResource = httpResource<ProjectMember[]>(() => {\n    const issue = this.issueResource.hasValue() ? this.issueResource.value() : null;\n    return issue && this.tokenStore.isLoggedIn()\n      ? `${API_BASE}/projects/${issue.projectId}/members`\n      : undefined;\n  });\n\n  readonly attachments = computed(() =>\n    this.attachmentsResource.hasValue() ? this.attachmentsResource.value() : [],\n  );\n  readonly activity = computed(() =>\n    this.activityResource.hasValue() ? this.activityResource.value() : [],\n  );\n  readonly memberNames = computed(() =>\n    (this.membersResource.hasValue() ? this.membersResource.value() : []).map((m) => m.displayName),\n  );\n\n  // תגובות אופטימיות עם Undo: מציירים תגובה זמנית מיד, פותחים חלון Undo, ורק\n  // כשהחלון נסגר באמת שולחים POST. ביטול בתוך החלון מסיר את התגובה — בלי בקשה.\n  // כישלון בשליחה מסיר את הזמנית (ה-toast כבר הוצג ע\"י ה-interceptor מפרק 11).\n  private readonly pending = signal<Comment | null>(null);\n  private undoTimer: ReturnType<typeof setTimeout> | undefined;\n\n  readonly pendingComment = computed(() => this.pending());\n\n  // ה-comments הציבורי כולל את הזמנית, כך שהיא מופיעה בתהליך בלי קוד מיוחד בתבנית\n  readonly comments = computed<Comment[]>(() => {\n    const base = this.commentsResource.hasValue() ? this.commentsResource.value() : [];\n    const optimistic = this.pending();\n    return optimistic ? [...base, optimistic] : base;\n  });\n\n  postCommentWithUndo(issueId: number, body: string): void {\n    this.cancelPending();\n    const user = this.tokenStore.user();\n    const temp: Comment = {\n      id: -Date.now(), // מזהה זמני שלילי — לא יתנגש ב-ids אמיתיים\n      issueId,\n      body,\n      authorUserId: user?.id ?? 0,\n      authorName: user?.displayName ?? 'אני',\n      createdAtUtc: new Date().toISOString(),\n    };\n    this.pending.set(temp);\n    this.undoTimer = setTimeout(() => void this.commitPending(issueId, body), COMMENT_UNDO_MS);\n  }\n\n  undoPendingComment(): void {\n    this.cancelPending();\n  }\n\n  private cancelPending(): void {\n    clearTimeout(this.undoTimer);\n    this.undoTimer = undefined;\n    this.pending.set(null);\n  }\n\n  private async commitPending(issueId: number, body: string): Promise<void> {\n    this.undoTimer = undefined;\n    try {\n      await firstValueFrom(this.http.post(`${API_BASE}/issues/${issueId}/comments`, { body }));\n      this.pending.set(null);\n      this.commentsResource.reload();\n      this.activityResource.reload();\n    } catch {\n      this.pending.set(null); // מסירים את הזמנית; ה-interceptor כבר הציג שגיאה\n    }\n  }\n\n  async saveIssue(issueId: number, request: UpdateIssueRequest): Promise<void> {\n    await firstValueFrom(this.http.put(`${API_BASE}/issues/${issueId}`, request));\n    this.reload();\n  }\n\n  // העלאת קובץ: multipart דרך FormData. הצלחה → רענון רשימת הקבצים והפעילות.\n  async addAttachment(issueId: number, file: File): Promise<boolean> {\n    const data = new FormData();\n    data.append('file', file);\n    try {\n      await firstValueFrom(this.http.post(`${API_BASE}/issues/${issueId}/attachments`, data));\n      this.attachmentsResource.reload();\n      this.activityResource.reload();\n      return true;\n    } catch {\n      return false;\n    }\n  }\n\n  // הורדה: שולפים blob עם ה-Bearer (ה-interceptor מצרף אותו), ומפעילים הורדת דפדפן.\n  async download(attachment: Attachment): Promise<void> {\n    const blob = await firstValueFrom(\n      this.http.get(`${API_BASE}/attachments/${attachment.id}`, { responseType: 'blob' }),\n    );\n    const url = URL.createObjectURL(blob);\n    const link = document.createElement('a');\n    link.href = url;\n    link.download = attachment.fileName;\n    link.click();\n    URL.revokeObjectURL(url);\n  }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-14.9": {
+              "start": 21,
+              "end": 47
+            },
+            "step-19.16": {
+              "start": 49,
+              "end": 76
+            },
+            "step-19.17": {
+              "start": 78,
+              "end": 128
+            },
+            "step-14.16": {
+              "start": 130,
+              "end": 133
+            },
+            "step-19.18": {
+              "start": 135,
+              "end": 160
+            }
+          },
+          "changedLines": [
+            6,
+            8,
+            9,
+            10,
+            12,
+            13,
+            14,
+            26,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160
+          ]
+        },
+        "client/src/app/core/state/issues.store.ts": {
+          "content": "import { Injectable, computed, inject, signal } from '@angular/core';\nimport { HttpClient, httpResource } from '@angular/common/http';\nimport { firstValueFrom } from 'rxjs';\nimport { API_BASE } from '../api/api';\nimport { TokenStore } from '../auth/token.store';\nimport { PagedResult } from '../models/api.model';\nimport { Issue, IssueListQuery, IssueStatus } from '../models/issue.model';\nimport { EntityStore, optimistic } from './entity-store';\n\n// אותו דפוס store כמו ProjectsStore — אבל הפעם ה-state האמיתי הוא ה-query:\n// הרכיב מספר ל-store \"מה המשתמש מבקש\", וה-resource גוזר מזה את הבקשה.\n@Injectable({ providedIn: 'root' })\nexport class IssuesStore {\n  private readonly http = inject(HttpClient);\n  private readonly tokenStore = inject(TokenStore);\n\n  // ה-query הוא signal אחד. null = אין לוח על המסך, אין בקשה.\n  // הרכיב כותב לכאן בכל שינוי ב-URL — וה-URL של ה-resource מחושב מחדש.\n  private readonly query = signal<IssueListQuery | null>(null);\n\n  setQuery(query: IssueListQuery): void {\n    this.query.set(query);\n  }\n\n  clearQuery(): void {\n    this.query.set(null);\n  }\n\n  // URL ריאקטיבי כמו ב-ProjectMembers (פרק 12), הפעם עם query string אמיתי.\n  // ‏GET issues דורש Bearer מאז פרק 05 — בלי login אין בקשה, אין 401 מיותר.\n  // ברירות מחדל מושמטות — ה-URL היוצא ל-API נשאר נקי ויציב.\n  private readonly pageResource = httpResource<PagedResult<Issue>>(() => {\n    const q = this.query();\n    if (!q || !this.tokenStore.isLoggedIn()) return undefined;\n\n    const params = new URLSearchParams();\n    if (q.status) params.set('status', q.status);\n    if (q.search) params.set('search', q.search);\n    if (q.sort !== '-created') params.set('sort', q.sort);\n    if (q.page > 1) params.set('page', String(q.page));\n    params.set('pageSize', String(q.pageSize));\n\n    return `${API_BASE}/projects/${q.projectId}/issues?${params}`;\n  });\n\n  readonly loading = computed(() => this.pageResource.isLoading());\n\n  readonly loadError = computed(() => this.pageResource.error());\n\n  readonly total = computed(() =>\n    this.pageResource.hasValue() ? this.pageResource.value().total : 0,\n  );\n\n  readonly totalPages = computed(() =>\n    this.pageResource.hasValue() ? this.pageResource.value().totalPages : 0,\n  );\n\n  reload(): void {\n    this.pageResource.reload();\n  }\n\n  // ה-linkedSignal מפרק 13 התבגר ל-EntityStore (הבסיס מ-17.6, שבנוי על אותו\n  // linkedSignal): ה-source הוא items מתשובת השרת, ו-issues() קורא את הרשימה\n  // הנגזרת. המעטפת הציבורית לא השתנתה — הרכיבים עדיין קוראים issues() כמו קודם,\n  // אבל עכשיו יש patch/snapshot/restore ממוקדים שהפקודות האופטימיות נשענות עליהם.\n  private readonly entities = new EntityStore<Issue>(() =>\n    this.pageResource.hasValue() ? this.pageResource.value().items : [],\n  );\n\n  readonly issues = this.entities.all;\n\n  // עדכון אופטימי דרך ה-helper המשותף (17.7): patch מצייר מיד, ה-PUT מתמיד,\n  // וכישלון משחזר את הצילום. הצלחה — reload מיישר את הדף מול האמת\n  // (סינון/מיון עשויים להזיז את ה-issue אל מחוץ לעמוד).\n  async setStatus(issue: Issue, status: IssueStatus): Promise<void> {\n    const before = this.entities.snapshot();\n    const ok = await optimistic(\n      () => this.entities.patch(issue.id, { status }),\n      () =>\n        firstValueFrom(\n          this.http.put(`${API_BASE}/issues/${issue.id}`, {\n            title: issue.title,\n            description: issue.description,\n            status,\n            priority: issue.priority,\n          }),\n        ),\n      () => this.entities.restore(before),\n    );\n    if (ok) this.pageResource.reload();\n  }\n\n  // reorder: אותו דפוס אופטימי, פעולה ממוקדת אחת. ה-PATCH ל-/rank נושא רק את\n  // הסטטוס החדש (העמודה) ואת ה-Rank שהקליינט חישב (נקודת אמצע בין השכנים).\n  // בניגוד ל-setStatus אין reload בהצלחה: כבר ציירנו את המיקום הסופי וה-rank\n  // המקומי תואם למה שהשרת שמר — reload רק היה מהבהב את הלוח לחינם.\n  async reorder(issue: Issue, status: IssueStatus, rank: number): Promise<boolean> {\n    const before = this.entities.snapshot();\n    return optimistic(\n      () => this.entities.patch(issue.id, { status, rank }),\n      () =>\n        firstValueFrom(\n          this.http.patch(`${API_BASE}/issues/${issue.id}/rank`, { status, rank }),\n        ),\n      () => this.entities.restore(before),\n    );\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-13.3": {
+              "start": 17,
+              "end": 60
+            },
+            "step-17.8": {
+              "start": 62,
+              "end": 70
+            },
+            "step-13.5": {
+              "start": 72,
+              "end": 91
+            },
+            "step-17.9": {
+              "start": 93,
+              "end": 107
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/state/projects.store.ts": {
+          "content": "import { Injectable, computed, inject } from '@angular/core';\nimport { HttpClient, httpResource } from '@angular/common/http';\nimport { firstValueFrom } from 'rxjs';\nimport { API_BASE } from '../api/api';\nimport { ProjectDetail, ProjectSummary } from '../models/project.model';\n\n// הסים משלם: ה-SEED מפרק 07 נמחק, הנתונים מגיעים מ-SQLite דרך ה-API —\n// והציבור של ה-store נשאר זהה. אף קומפוננטה לא השתנתה בגלל ההחלפה הזו.\n@Injectable({ providedIn: 'root' })\nexport class ProjectsStore {\n  private readonly http = inject(HttpClient);\n\n  // httpResource: בקשת GET שהיא signal. היא יוצאת מעצמה, יודעת לרענן,\n  // וחושפת hasValue / value / isLoading / error — בלי subscribe ובלי ניהול ידני.\n  private readonly projectsResource = httpResource<ProjectSummary[]>(\n    () => `${API_BASE}/projects`,\n    { defaultValue: [] },\n  );\n\n  /** אותו ציבור בדיוק כמו בעידן המוק — הקוראים לא יודעים שמשהו השתנה */\n  readonly projects = computed(() =>\n    this.projectsResource.hasValue() ? this.projectsResource.value() : [],\n  );\n\n  readonly loading = computed(() => this.projectsResource.isLoading());\n\n  readonly loadError = computed(() => this.projectsResource.error());\n\n  readonly totalOpenIssues = computed(() =>\n    this.projects().reduce((sum, p) => sum + p.openIssues, 0),\n  );\n\n  // \"נסו שוב\" הוא פקודה של המשתמש — ולכן API ציבורי של ה-store,\n  // לא גישה ישירה ל-resource הפרטי. אותו עיקרון encapsulation מ-11.6.\n  reload(): void {\n    this.projectsResource.reload();\n  }\n\n  private readonly projectCache = new Map<number, ProjectSummary>();\n\n  async findProject(id: number): Promise<ProjectSummary | undefined> {\n    const fromCurrentList = this.projects().find((p) => p.id === id);\n    if (fromCurrentList) {\n      this.projectCache.set(id, fromCurrentList);\n      return fromCurrentList;\n    }\n\n    const fromCache = this.projectCache.get(id);\n    if (fromCache) return fromCache;\n\n    const projects = await firstValueFrom(this.http.get<ProjectSummary[]>(`${API_BASE}/projects`));\n    for (const project of projects) this.projectCache.set(project.id, project);\n    return this.projectCache.get(id);\n  }\n\n  // כתיבה היא פקודה: POST אמיתי (דורש Bearer — ה-interceptor מצרף),\n  // ואז reload כדי שה-id והספירות יגיעו מהשרת — לא מנוחשים בקליינט.\n  // חדש בפרק 12: ה-201 מחזיר את הפרויקט שנוצר, והקורא מקבל את ה-id —\n  // כדי שהרשימה תוכל לנווט ישר ללוח החדש.\n  async addProject(name: string): Promise<number> {\n    const created = await firstValueFrom(\n      this.http.post<ProjectDetail>(`${API_BASE}/projects`, { name, description: null }),\n    );\n    this.projectsResource.reload();\n    return created.id;\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-11.5": {
+              "start": 13,
+              "end": 18
+            },
+            "step-11.6": {
+              "start": 20,
+              "end": 31
+            },
+            "step-12.10": {
+              "start": 33,
+              "end": 37
+            },
+            "step-11.7": {
+              "start": 39,
+              "end": 54
+            },
+            "step-12.11": {
+              "start": 56,
+              "end": 66
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/state/theme.ts": {
+          "content": "import { Injectable, effect, signal } from '@angular/core';\n\ntype Theme = 'dark' | 'light';\n\nconst STORAGE_KEY = 'taskforge-theme';\n\n// signal מחזיק את הבחירה; effect הוא הגשר היחיד אל ה-DOM וה-storage.\n// זה שימוש לגיטימי ב-effect: סנכרון עולם חיצוני, לא גזירת state.\n@Injectable({ providedIn: 'root' })\nexport class ThemeService {\n  readonly theme = signal<Theme>(initialTheme());\n\n  constructor() {\n    effect(() => {\n      const theme = this.theme();\n      document.documentElement.dataset['theme'] = theme;\n      localStorage.setItem(STORAGE_KEY, theme);\n    });\n  }\n\n  toggle(): void {\n    this.theme.update((t) => (t === 'dark' ? 'light' : 'dark'));\n  }\n}\n\nfunction initialTheme(): Theme {\n  const saved = localStorage.getItem(STORAGE_KEY);\n  if (saved === 'dark' || saved === 'light') return saved;\n  // אין העדפה שמורה: שואלים את מערכת ההפעלה. הקריאה אופציונלית בכוונה —\n  // הטסטים רצים ב-jsdom, והדפדפן הוא לא הסביבה היחידה של הקוד הזה.\n  return globalThis.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark';\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-8.8": {
+              "start": 7,
+              "end": 32
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/core/ui/not-found.ts": {
+          "content": "import { Component } from '@angular/core';\nimport { RouterLink } from '@angular/router';\n\n// עמוד ה-404: ה-wildcard ** תופס כל URL שאף נתיב לא התאים לו.\n// קומפוננטה קטנה מספיק לקובץ אחד — template ו-styles inline.\n@Component({\n  selector: 'tf-not-found',\n  imports: [RouterLink],\n  template: `\n    <section class=\"nf\">\n      <h2>404 — this anvil is empty</h2>\n      <p>The page you were looking for does not exist.</p>\n      <a routerLink=\"/\">Back to the forge</a>\n    </section>\n  `,\n  styles: `\n    .nf {\n      text-align: center;\n      padding-block: var(--sp-6);\n\n      a {\n        color: var(--ember);\n      }\n    }\n  `,\n})\nexport class NotFound {}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/features/auth/login-dialog.html": {
+          "content": "<tf-dialog heading=\"Sign in\" [(open)]=\"open\">\n  <tf-field label=\"Email\" hint=\"Try demo@taskforge.dev\">\n    <input #email id=\"login-email\" name=\"email\" type=\"email\" autocomplete=\"email\" placeholder=\"you@example.com\" />\n  </tf-field>\n\n  <tf-field label=\"Password\" hint=\"Seeded demo password: Passw0rd!\">\n    <input #password id=\"login-password\" name=\"password\" type=\"password\" autocomplete=\"current-password\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" type=\"button\" (click)=\"open.set(false)\">Cancel</button>\n    <button\n      tf-button\n      type=\"button\"\n      [disabled]=\"pending()\"\n      (click)=\"submit(email.value, password.value)\"\n    >\n      {{ pending() ? 'Signing in...' : 'Sign in' }}\n    </button>\n  </footer>\n</tf-dialog>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/features/auth/login-dialog.scss": {
+          "content": ".dlg-actions {\n  display: flex;\n  justify-content: flex-end;\n  gap: var(--sp-2);\n  margin-block-start: var(--sp-3);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/features/auth/login-dialog.ts": {
+          "content": "import { Component, inject, model, signal } from '@angular/core';\nimport { AuthService } from '../../core/auth/auth.service';\nimport { TfButton } from '../../shared/ui/button/button';\nimport { TfDialog } from '../../shared/ui/dialog/dialog';\nimport { TfField } from '../../shared/ui/field/field';\nimport { ToastService } from '../../shared/ui/toast/toast.service';\n\n// הערכה מפרק 09 משלמת: דיאלוג, שני שדות וכפתור — אפס CSS חדש כמעט.\n// שגיאות (401, ולידציה, שרת כבוי) מטופלות ב-error interceptor; הרכיב\n// רק מחזיק את ה-pending ומגיב להצלחה.\n@Component({\n  selector: 'tf-login-dialog',\n  imports: [TfButton, TfDialog, TfField],\n  templateUrl: './login-dialog.html',\n  styleUrl: './login-dialog.scss',\n})\nexport class LoginDialog {\n  private readonly auth = inject(AuthService);\n  private readonly toastSvc = inject(ToastService);\n\n  readonly open = model(false);\n\n  protected readonly pending = signal(false);\n\n  protected async submit(email: string, password: string): Promise<void> {\n    this.pending.set(true);\n    try {\n      await this.auth.login(email, password);\n      this.toastSvc.show('Welcome back!', 'success');\n      this.open.set(false);\n    } catch {\n      // ההודעה כבר הוצגה על ידי ה-interceptor — הדיאלוג פשוט נשאר פתוח\n    } finally {\n      this.pending.set(false);\n    }\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-11.13": {
+              "start": 8,
+              "end": 37
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/command-palette/command-palette.html": {
+          "content": "<dialog #dlg class=\"cmdk\" (close)=\"onClose()\" (keydown)=\"onKeydown($event)\">\n  <div class=\"cmdk-search\">\n    <span class=\"cmdk-icon ltr\" aria-hidden=\"true\">⌘K</span>\n    <input\n      #q\n      class=\"cmdk-input\"\n      type=\"text\"\n      name=\"command-query\"\n      autocomplete=\"off\"\n      placeholder=\"הקלידו פקודה…\"\n      [value]=\"query()\"\n      (input)=\"onInput($any($event.target).value)\"\n      aria-label=\"חיפוש פקודות\"\n    />\n  </div>\n\n  @if (results().length) {\n    <ul class=\"cmdk-list\" role=\"listbox\">\n      @for (cmd of results(); track cmd.id; let i = $index) {\n        <li\n          class=\"cmdk-item\"\n          role=\"option\"\n          [class.active]=\"i === active()\"\n          [attr.aria-selected]=\"i === active()\"\n          (mouseenter)=\"active.set(i)\"\n          (click)=\"run(cmd)\"\n        >\n          <span class=\"cmdk-title\">{{ cmd.title }}</span>\n          <span class=\"cmdk-group ltr\">{{ cmd.group }}</span>\n          @if (cmd.hint) {\n            <kbd class=\"cmdk-hint ltr\">{{ cmd.hint }}</kbd>\n          }\n        </li>\n      }\n    </ul>\n  } @else {\n    <p class=\"cmdk-empty\">אין פקודה תואמת.</p>\n  }\n</dialog>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/features/command-palette/command-palette.scss": {
+          "content": "// overlay ממורכז למעלה בסגנון Linear: elevation-3, תנועה עדינה בכניסה,\n// ו-:has() לסימון מצב ריק. הכול בטוקני v2 — אפס צבעים קשיחים.\n.cmdk {\n  inline-size: min(92vw, 36rem);\n  max-block-size: min(70vh, 30rem);\n  margin-block-start: 12vh;\n  margin-inline: auto;\n  padding: 0;\n  border: 1px solid var(--bdr2);\n  border-radius: var(--rad-lg);\n  background: var(--sur);\n  color: var(--txt1);\n  box-shadow: var(--shadow-3);\n  overflow: clip;\n\n  &[open] {\n    animation: cmdk-in var(--dur-3) var(--ease-out);\n  }\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.5);\n    backdrop-filter: blur(3px);\n  }\n}\n\n@keyframes cmdk-in {\n  from {\n    opacity: 0;\n    transform: translateY(-8px) scale(0.985);\n  }\n}\n\n.cmdk-search {\n  display: flex;\n  align-items: center;\n  gap: var(--sp-2);\n  padding: var(--sp-3);\n  border-block-end: 1px solid var(--bdr);\n}\n\n.cmdk-icon {\n  font-size: var(--fs-small);\n  color: var(--txt3);\n  border: 1px solid var(--bdr2);\n  border-radius: var(--rad-sm);\n  padding: 1px 6px;\n}\n\n.cmdk-input {\n  flex: 1;\n  min-inline-size: 0;\n  border: none;\n  background: transparent;\n  color: var(--txt1);\n  font-size: var(--fs-lg);\n  outline: none;\n\n  &::placeholder {\n    color: var(--txt3);\n  }\n}\n\n.cmdk-list {\n  list-style: none;\n  margin: 0;\n  padding: var(--sp-1);\n  overflow-y: auto;\n  max-block-size: calc(min(70vh, 30rem) - 4rem);\n}\n\n.cmdk-item {\n  display: flex;\n  align-items: center;\n  gap: var(--sp-2);\n  padding: var(--sp-2) var(--sp-3);\n  border-radius: var(--rad-sm);\n  cursor: pointer;\n  transition: background-color var(--dur-1) var(--ease-out);\n\n  &.active {\n    background: var(--accent-subtle);\n  }\n\n  .cmdk-title {\n    flex: 1;\n    min-inline-size: 0;\n    overflow: hidden;\n    text-overflow: ellipsis;\n    white-space: nowrap;\n  }\n\n  .cmdk-group {\n    font-size: var(--fs-xs);\n    color: var(--txt3);\n  }\n\n  .cmdk-hint {\n    font-size: var(--fs-xs);\n    color: var(--txt3);\n    border: 1px solid var(--bdr2);\n    border-radius: var(--rad-sm);\n    padding: 0 5px;\n  }\n}\n\n.cmdk-empty {\n  margin: 0;\n  padding: var(--sp-4);\n  text-align: center;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .cmdk[open] {\n    animation: none;\n  }\n  .cmdk-item {\n    transition: none;\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.9": {
+              "start": 1,
+              "end": 121
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/command-palette/command-palette.ts": {
+          "content": "import {\n  Component,\n  DestroyRef,\n  ElementRef,\n  computed,\n  effect,\n  inject,\n  signal,\n  viewChild,\n} from '@angular/core';\nimport { Router } from '@angular/router';\nimport { CommandRegistry } from '../../core/commands/command-registry';\nimport { Command } from '../../core/commands/command.model';\nimport { fuzzyRank } from '../../core/commands/fuzzy';\nimport { SearchResults } from '../../core/models/search.model';\nimport { PaletteService } from './palette.service';\nimport { SearchService } from './search.service';\n\n// ה-palette הוא צרכן טיפש: הוא לא יודע אילו פקודות קיימות או מי רשם אותן.\n// הוא קורא את ה-registry, מסנן ב-fuzzy, ומריץ את הנבחרת. אותו גשר\n// signal->DOM של tf-dialog (פרק 09) נותן focus trap, Escape ו-backdrop בחינם.\n@Component({\n  selector: 'tf-command-palette',\n  templateUrl: './command-palette.html',\n  styleUrl: './command-palette.scss',\n})\nexport class CommandPalette {\n  private readonly registry = inject(CommandRegistry);\n  private readonly search = inject(SearchService);\n  private readonly router = inject(Router);\n  protected readonly palette = inject(PaletteService);\n\n  private readonly dlg = viewChild<ElementRef<HTMLDialogElement>>('dlg');\n  private readonly queryInput = viewChild<ElementRef<HTMLInputElement>>('q');\n\n  protected readonly query = signal('');\n  protected readonly active = signal(0);\n\n  // התוצאות = פקודות מקומיות (fuzzy) + תוצאות חיפוש מהשרת, ממופות לאותו\n  // טיפוס Command. כך כל לוגיקת הניווט/הרצה נשארת זהה — hit הוא פשוט פקודה\n  // שה-run שלה מנווט.\n  protected readonly results = computed<Command[]>(() => {\n    const local = fuzzyRank(\n      this.registry.commands(),\n      this.query(),\n      (c) => `${c.title} ${c.group} ${c.keywords ?? ''}`,\n    );\n    return [...local, ...this.toHitCommands(this.search.results())];\n  });\n\n  private toHitCommands(hits: SearchResults): Command[] {\n    const projects = hits.projects.map<Command>((p) => ({\n      id: `hit.project.${p.id}`,\n      title: p.name,\n      group: 'Project',\n      run: () => void this.router.navigate(['/projects', p.id]),\n    }));\n    const issues = hits.issues.map<Command>((i) => ({\n      id: `hit.issue.${i.id}`,\n      title: i.title,\n      group: 'Issue',\n      run: () => void this.router.navigate(['/projects', i.projectId, 'issues', i.id]),\n    }));\n    return [...projects, ...issues];\n  }\n\n  private searchTimer: ReturnType<typeof setTimeout> | undefined;\n\n  constructor() {\n    inject(DestroyRef).onDestroy(() => clearTimeout(this.searchTimer));\n\n    // גשר signal->DOM: showModal/close לפי ה-open signal, כמו tf-dialog\n    effect(() => {\n      const el = this.dlg()?.nativeElement;\n      if (!el) return;\n      if (this.palette.open() && !el.open) {\n        this.query.set('');\n        this.search.setQuery('');\n        this.active.set(0);\n        el.showModal();\n        queueMicrotask(() => this.queryInput()?.nativeElement.focus());\n      } else if (!this.palette.open() && el.open) {\n        el.close();\n      }\n    });\n\n    // התוצאות התכווצו? אל תשאיר את ה-active מצביע מעבר לסוף\n    effect(() => {\n      const len = this.results().length;\n      if (this.active() > len - 1) this.active.set(Math.max(0, len - 1));\n    });\n  }\n\n  protected onInput(value: string): void {\n    this.query.set(value);\n    this.active.set(0);\n    // debounce הוא דאגת UI: ה-store/שירות נשארים פשוטים וסינכרוניים\n    clearTimeout(this.searchTimer);\n    this.searchTimer = setTimeout(() => this.search.setQuery(value), 200);\n  }\n\n  protected onKeydown(event: KeyboardEvent): void {\n    const len = this.results().length;\n    if (event.key === 'ArrowDown') {\n      event.preventDefault();\n      this.active.update((i) => (len ? (i + 1) % len : 0));\n    } else if (event.key === 'ArrowUp') {\n      event.preventDefault();\n      this.active.update((i) => (len ? (i - 1 + len) % len : 0));\n    } else if (event.key === 'Enter') {\n      event.preventDefault();\n      const cmd = this.results()[this.active()];\n      if (cmd) this.run(cmd);\n    }\n  }\n\n  protected run(cmd: Command): void {\n    this.palette.close();\n    cmd.run();\n  }\n\n  protected onClose(): void {\n    this.palette.close();\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.16": {
+              "start": 39,
+              "end": 65
+            },
+            "step-16.8": {
+              "start": 19,
+              "end": 125
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/command-palette/palette.service.ts": {
+          "content": "import { Injectable, signal } from '@angular/core';\n\n// מצב הפתיחה של ה-palette כ-signal יחיד. ה-shell פותח (Cmd+K),\n// הרכיב צורך. הפרדה נקייה בין \"מתי פתוח\" ל\"איך זה נראה\".\n@Injectable({ providedIn: 'root' })\nexport class PaletteService {\n  readonly open = signal(false);\n\n  toggle(): void {\n    this.open.update((v) => !v);\n  }\n\n  close(): void {\n    this.open.set(false);\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.7": {
+              "start": 3,
+              "end": 16
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/command-palette/search.service.ts": {
+          "content": "import { Injectable, computed, inject, signal } from '@angular/core';\nimport { httpResource } from '@angular/common/http';\nimport { API_BASE } from '../../core/api/api';\nimport { TokenStore } from '../../core/auth/token.store';\nimport { SearchResults } from '../../core/models/search.model';\n\n// אותו דפוס httpResource ריאקטיבי מפרק 11/12: ה-query הוא signal,\n// וה-URL נגזר ממנו. מתחת ל-2 תווים או בלי login -> undefined = אין בקשה.\n// ה-palette כותב ל-setQuery (עם debounce), ה-resource עושה את השאר.\n@Injectable({ providedIn: 'root' })\nexport class SearchService {\n  private readonly tokenStore = inject(TokenStore);\n\n  private readonly query = signal('');\n\n  setQuery(value: string): void {\n    this.query.set(value.trim());\n  }\n\n  private readonly resource = httpResource<SearchResults>(() => {\n    const q = this.query();\n    if (q.length < 2 || !this.tokenStore.isLoggedIn()) return undefined;\n    return `${API_BASE}/search?q=${encodeURIComponent(q)}`;\n  });\n\n  readonly results = computed<SearchResults>(() =>\n    this.resource.hasValue() ? this.resource.value() : { projects: [], issues: [] },\n  );\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.15": {
+              "start": 7,
+              "end": 29
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/dashboard/charts/bar-chart.ts": {
+          "content": "import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';\nimport { ChartSlice } from '../../../core/state/dashboard.store';\n\ninterface Bar {\n  label: string;\n  value: number;\n  color: string;\n  x: number;\n  y: number;\n  width: number;\n  height: number;\n}\n\n// גרף עמודות ביד: ממפים value → גובה ביחס לערך המקסימלי. כל עמודה היא <rect>\n// עם x מחושב לפי האינדקס. הקואורדינטות הן ה-data→SVG mapping שהפרק מלמד.\n@Component({\n  selector: 'tf-bar-chart',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  template: `\n    <svg\n      viewBox=\"0 0 200 120\"\n      preserveAspectRatio=\"xMidYMid meet\"\n      role=\"img\"\n      [attr.aria-label]=\"ariaLabel()\"\n      class=\"bars\"\n    >\n      @for (bar of bars(); track bar.label) {\n        <rect\n          [attr.x]=\"bar.x\"\n          [attr.y]=\"bar.y\"\n          [attr.width]=\"bar.width\"\n          [attr.height]=\"bar.height\"\n          [attr.fill]=\"bar.color\"\n          rx=\"3\"\n        />\n        <text [attr.x]=\"bar.x + bar.width / 2\" y=\"112\" text-anchor=\"middle\" class=\"bar-label\">\n          {{ bar.label }}\n        </text>\n        <text [attr.x]=\"bar.x + bar.width / 2\" [attr.y]=\"bar.y - 4\" text-anchor=\"middle\" class=\"bar-value\">\n          {{ bar.value }}\n        </text>\n      }\n    </svg>\n  `,\n  styles: [\n    `\n      :host {\n        display: block;\n        width: 100%;\n      }\n      .bars {\n        display: block;\n        width: 100%;\n        height: 150px;\n      }\n      rect {\n        transition: height var(--dur-3, 240ms) var(--ease-out, ease),\n          y var(--dur-3, 240ms) var(--ease-out, ease);\n      }\n      .bar-label {\n        font-size: 9px;\n        fill: var(--txt3);\n      }\n      .bar-value {\n        font-size: 10px;\n        font-weight: 600;\n        fill: var(--txt2);\n      }\n      @media (prefers-reduced-motion: reduce) {\n        rect {\n          transition: none;\n        }\n      }\n    `,\n  ],\n})\nexport class BarChart {\n  readonly slices = input.required<ChartSlice[]>();\n\n  // אזור הציור: רוחב 200, גובה 120, עם שוליים לתוויות ולערכים\n  private readonly chartTop = 16;\n  private readonly chartBottom = 96;\n  private readonly gap = 10;\n\n  protected readonly bars = computed<Bar[]>(() => {\n    const slices = this.slices();\n    if (!slices.length) return [];\n    const max = Math.max(1, ...slices.map((s) => s.value));\n    const span = this.chartBottom - this.chartTop;\n    const slot = (200 - this.gap) / slices.length;\n    const width = slot - this.gap;\n\n    return slices.map((s, i) => {\n      const height = (s.value / max) * span;\n      return {\n        label: s.label,\n        value: s.value,\n        color: s.color,\n        x: this.gap + i * slot,\n        y: this.chartBottom - height,\n        width,\n        height,\n      };\n    });\n  });\n\n  protected readonly ariaLabel = computed(\n    () => 'התפלגות לפי עדיפות — ' + this.slices().map((s) => `${s.label}: ${s.value}`).join(', '),\n  );\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-18.17": {
+              "start": 14,
+              "end": 110
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/dashboard/charts/donut-chart.ts": {
+          "content": "import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';\nimport { ChartSlice } from '../../../core/state/dashboard.store';\n\ninterface Segment {\n  label: string;\n  value: number;\n  color: string;\n  dasharray: string;\n  dashoffset: number;\n}\n\n// גרף טבעת ביד: כל פרוסה היא אותו <circle>, אבל stroke-dasharray חושף רק\n// קשת באורך (value/total) מההיקף, ו-stroke-dashoffset מסובב אותה למקומה.\n// rotate(-90) מתחיל מלמעלה. role=\"img\" + aria-label נותנים חלופה טקסטואלית.\n@Component({\n  selector: 'tf-donut-chart',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  template: `\n    <svg viewBox=\"0 0 120 120\" role=\"img\" [attr.aria-label]=\"ariaLabel()\" class=\"donut\">\n      @for (seg of segments(); track seg.label) {\n        <circle\n          cx=\"60\"\n          cy=\"60\"\n          r=\"50\"\n          fill=\"none\"\n          [attr.stroke]=\"seg.color\"\n          stroke-width=\"16\"\n          [attr.stroke-dasharray]=\"seg.dasharray\"\n          [attr.stroke-dashoffset]=\"seg.dashoffset\"\n          transform=\"rotate(-90 60 60)\"\n        />\n      }\n      <text x=\"60\" y=\"58\" text-anchor=\"middle\" class=\"donut-total\">{{ total() }}</text>\n      <text x=\"60\" y=\"74\" text-anchor=\"middle\" class=\"donut-cap\">issues</text>\n    </svg>\n  `,\n  styles: [\n    `\n      :host {\n        display: grid;\n        place-items: center;\n        width: 100%;\n        height: 100%;\n      }\n      .donut {\n        display: block;\n        width: 140px;\n        height: 140px;\n        max-width: 100%;\n      }\n      circle {\n        transition: stroke-dasharray var(--dur-3, 240ms) var(--ease-out, ease);\n      }\n      .donut-total {\n        font-size: 26px;\n        font-weight: 700;\n        fill: var(--txt1);\n      }\n      .donut-cap {\n        font-size: 10px;\n        fill: var(--txt3);\n        text-transform: uppercase;\n      }\n      @media (prefers-reduced-motion: reduce) {\n        circle {\n          transition: none;\n        }\n      }\n    `,\n  ],\n})\nexport class DonutChart {\n  readonly slices = input.required<ChartSlice[]>();\n\n  private readonly circumference = 2 * Math.PI * 50;\n\n  protected readonly total = computed(() => this.slices().reduce((sum, s) => sum + s.value, 0));\n\n  protected readonly segments = computed<Segment[]>(() => {\n    const total = this.total() || 1;\n    let acc = 0;\n    return this.slices().map((s) => {\n      const fraction = s.value / total;\n      const seg: Segment = {\n        label: s.label,\n        value: s.value,\n        color: s.color,\n        dasharray: `${fraction * this.circumference} ${this.circumference}`,\n        dashoffset: -acc * this.circumference,\n      };\n      acc += fraction;\n      return seg;\n    });\n  });\n\n  protected readonly ariaLabel = computed(\n    () => 'התפלגות לפי סטטוס — ' + this.slices().map((s) => `${s.label}: ${s.value}`).join(', '),\n  );\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-18.16": {
+              "start": 12,
+              "end": 99
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/dashboard/charts/sparkline.ts": {
+          "content": "import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';\n\n// sparkline ביד: ממפים סדרת מספרים ל-polyline. x מתפרס שווה על הרוחב,\n// y הפוך (SVG y יורד כלפי מטה, אז גובה גדול = y קטן). קו אחד, אפס תלויות.\n@Component({\n  selector: 'tf-sparkline',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  template: `\n    <svg viewBox=\"0 0 200 60\" preserveAspectRatio=\"none\" role=\"img\" [attr.aria-label]=\"ariaLabel()\" class=\"spark\">\n      @if (points(); as pts) {\n        <polyline [attr.points]=\"area()\" class=\"spark-area\" />\n        <polyline [attr.points]=\"pts\" class=\"spark-line\" />\n      }\n    </svg>\n  `,\n  styles: [\n    `\n      :host {\n        display: block;\n        width: 100%;\n      }\n      .spark {\n        display: block;\n        width: 100%;\n        height: 88px;\n      }\n      .spark-line {\n        fill: none;\n        stroke: var(--accent);\n        stroke-width: 2;\n        stroke-linejoin: round;\n        stroke-linecap: round;\n        vector-effect: non-scaling-stroke;\n      }\n      .spark-area {\n        fill: var(--accent-subtle, color-mix(in srgb, var(--accent) 15%, transparent));\n        stroke: none;\n      }\n    `,\n  ],\n})\nexport class Sparkline {\n  readonly values = input.required<number[]>();\n\n  private readonly width = 200;\n  private readonly height = 60;\n  private readonly pad = 4;\n\n  // מיפוי ערך → נקודת SVG. ערך מקסימלי נוגע בקצה העליון (pad), אפס בתחתית.\n  private readonly coords = computed(() => {\n    const values = this.values();\n    if (values.length === 0) return [];\n    const max = Math.max(1, ...values);\n    const innerW = this.width;\n    const innerH = this.height - this.pad * 2;\n    const step = values.length > 1 ? innerW / (values.length - 1) : 0;\n    return values.map((v, i) => ({\n      x: i * step,\n      y: this.pad + innerH - (v / max) * innerH,\n    }));\n  });\n\n  protected readonly points = computed(() =>\n    this.coords()\n      .map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`)\n      .join(' '),\n  );\n\n  // אותה צורה, אבל סגורה לתחתית — מילוי עדין מתחת לקו\n  protected readonly area = computed(() => {\n    const c = this.coords();\n    if (!c.length) return '';\n    const first = `0,${this.height}`;\n    const last = `${c[c.length - 1].x.toFixed(1)},${this.height}`;\n    return `${first} ${this.points()} ${last}`;\n  });\n\n  protected readonly ariaLabel = computed(() => {\n    const v = this.values();\n    return `מגמת issues שנוצרו לאורך ${v.length} ימים, סך הכול ${v.reduce((a, b) => a + b, 0)}`;\n  });\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-18.18": {
+              "start": 3,
+              "end": 82
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/dashboard/dashboard.html": {
+          "content": "<section class=\"dashboard\">\n  <header class=\"dash-head\">\n    <a [routerLink]=\"['/projects', projectId()]\" class=\"back\">חזרה ללוח</a>\n    <h2>{{ project().name }} — דשבורד</h2>\n  </header>\n\n  @if (store.loadError() && !store.stats()) {\n    <div class=\"load-error\" role=\"alert\">\n      <p>טעינת הדשבורד נכשלה.</p>\n      <button type=\"button\" (click)=\"store.reload()\">נסו שוב</button>\n    </div>\n  } @else if (store.loading() && !store.stats()) {\n    <div class=\"skeleton\" aria-hidden=\"true\">\n      @for (n of [1, 2, 3, 4]; track n) {\n        <div class=\"skel-card\"></div>\n      }\n    </div>\n  } @else if (store.stats()) {\n    <!-- כרטיסי סיכום: grid אינטרינזי, container query על כל כרטיס -->\n    <ul class=\"cards\" role=\"list\">\n      @for (card of store.summaryCards(); track card.label) {\n        <li class=\"card\" [attr.data-tone]=\"card.tone\">\n          <span class=\"card-value\">{{ card.value }}</span>\n          <span class=\"card-label\">{{ card.label }}</span>\n        </li>\n      }\n    </ul>\n\n    <!-- אריחי הגרפים: subgrid כדי שכותרת/גרף/כיתוב יתיישרו לאורך השורה -->\n    <div class=\"charts\">\n      <section class=\"tile\">\n        <h3 class=\"tile-title\">לפי סטטוס</h3>\n        <div class=\"tile-body\"><tf-donut-chart [slices]=\"store.statusSlices()\" /></div>\n        <p class=\"tile-cap\">חלוקת ה-issues בין העמודות</p>\n      </section>\n\n      <section class=\"tile\">\n        <h3 class=\"tile-title\">לפי עדיפות</h3>\n        <div class=\"tile-body\"><tf-bar-chart [slices]=\"store.prioritySlices()\" /></div>\n        <p class=\"tile-cap\">כמה issues בכל רמת עדיפות</p>\n      </section>\n\n      <section class=\"tile\">\n        <h3 class=\"tile-title\">מגמת יצירה</h3>\n        <div class=\"tile-body\"><tf-sparkline [values]=\"store.trend()\" /></div>\n        <p class=\"tile-cap\">issues חדשים לאורך זמן</p>\n      </section>\n    </div>\n\n    <!-- פיד הפעילות -->\n    <section class=\"feed\">\n      <h3 class=\"feed-title\">פעילות אחרונה</h3>\n      @if (store.activity().length) {\n        <ul class=\"feed-list\" role=\"list\">\n          @for (event of store.activity(); track event.id) {\n            <li class=\"feed-item\">\n              <span class=\"feed-icon\" aria-hidden=\"true\">{{ iconFor(event.type) }}</span>\n              <span class=\"feed-body\">\n                <span class=\"feed-summary\"><strong class=\"feed-actor\">{{ event.actorName }}</strong> {{ event.summary }}</span>\n                <time class=\"feed-time\" [attr.datetime]=\"event.createdAtUtc\">{{ event.createdAtUtc | date: 'short' }}</time>\n              </span>\n            </li>\n          }\n        </ul>\n      } @else {\n        <p class=\"feed-empty\">אין עדיין פעילות בפרויקט הזה.</p>\n      }\n    </section>\n  }\n</section>\n",
+          "status": "unchanged",
+          "regions": {
+            "step-18.20": {
+              "start": 1,
+              "end": 70
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/dashboard/dashboard.scss": {
+          "content": ":host {\n  display: block;\n}\n\n.dashboard {\n  display: grid;\n  gap: clamp(var(--sp-3), 2vw, var(--sp-5));\n\n  // צבעי הסדרות נגזרים מה-accent ב-OKLCH: הסטטוסים בגוונים נבדלים,\n  // ועדיפות כ-ramp שחולק את גוון ה-ember עם chroma עולה ו-lightness יורד.\n  --chart-open: oklch(0.72 0.17 45);\n  --chart-progress: oklch(0.7 0.13 230);\n  --chart-done: oklch(0.72 0.15 150);\n  --chart-p1: oklch(0.82 0.06 60);\n  --chart-p2: oklch(0.76 0.11 55);\n  --chart-p3: oklch(0.69 0.16 45);\n  --chart-p4: oklch(0.62 0.2 35);\n}\n\n.dash-head {\n  .back {\n    font-size: var(--fs-small);\n    color: var(--txt2);\n  }\n  h2 {\n    margin-block: var(--sp-2) 0;\n  }\n}\n\n// כרטיסי סיכום: grid אינטרינזי שמתקפל לבד; כל כרטיס הוא container query context.\n.cards {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));\n  gap: var(--sp-3);\n}\n\n.card {\n  container-type: inline-size;\n  display: flex;\n  flex-direction: column;\n  gap: var(--sp-1);\n  padding: var(--sp-3);\n  background: var(--sur);\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  border-inline-start: 3px solid var(--accent);\n\n  &[data-tone='open'] {\n    border-inline-start-color: var(--chart-open);\n  }\n  &[data-tone='progress'] {\n    border-inline-start-color: var(--chart-progress);\n  }\n  &[data-tone='done'] {\n    border-inline-start-color: var(--chart-done);\n  }\n}\n\n.card-value {\n  font-size: clamp(1.6rem, 1.2rem + 2cqi, 2.4rem);\n  font-weight: var(--fw-bold);\n  color: var(--txt1);\n  line-height: 1;\n}\n\n.card-label {\n  font-size: var(--fs-small);\n  color: var(--txt2);\n}\n\n// כשהכרטיס צר — מקטינים את המספר עוד, לפי רוחב הכרטיס עצמו (לא המסך)\n@container (max-width: 130px) {\n  .card-value {\n    font-size: 1.5rem;\n  }\n}\n\n// אריחי הגרפים: grid אינטרינזי שמתקפל לבד. align-items:start כדי שאריח לא\n// יימתח לגובה שכנו. כל אריח הוא flex column עם גוף בגובה קבוע — כך הגרפים\n// תחומים ואף פעם לא \"מתנפחים\" אל מעבר לאריח.\n.charts {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: var(--sp-3);\n  align-items: start;\n}\n\n.tile {\n  container-type: inline-size;\n  display: flex;\n  flex-direction: column;\n  gap: var(--sp-2);\n  padding: var(--sp-3);\n  background: var(--sur);\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  overflow: hidden; // רשת ביטחון: גרף לא יחרוג מהאריח\n}\n\n.tile-title {\n  margin: 0;\n  font-size: var(--fs-small);\n  font-weight: var(--fw-semibold);\n  color: var(--txt2);\n  text-transform: uppercase;\n  letter-spacing: var(--tracking-tight);\n}\n\n// גוף בגובה קבוע: כל הגרפים תחומים אליו, ולכן האריחים אחידים ואין חריגה.\n.tile-body {\n  display: grid;\n  place-items: center;\n  block-size: 150px;\n  min-height: 0;\n}\n\n.tile-cap {\n  margin: 0;\n  font-size: var(--fs-small);\n  color: var(--txt3);\n}\n\n// פיד הפעילות\n.feed {\n  padding: var(--sp-3);\n  background: var(--sur);\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n}\n\n.feed-title {\n  margin: 0 0 var(--sp-2);\n  font-size: var(--fs-small);\n  font-weight: var(--fw-semibold);\n  color: var(--txt2);\n  text-transform: uppercase;\n}\n\n.feed-list {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n  display: flex;\n  flex-direction: column;\n  gap: var(--sp-2);\n}\n\n.feed-item {\n  display: flex;\n  align-items: start;\n  gap: var(--sp-2);\n  padding-block: var(--sp-1);\n  border-block-start: 1px solid var(--bdr);\n\n  &:first-child {\n    border-block-start: none;\n  }\n}\n\n.feed-icon {\n  flex: 0 0 auto;\n  width: 1.4rem;\n  text-align: center;\n}\n\n.feed-body {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  min-width: 0;\n}\n\n.feed-summary {\n  color: var(--txt1);\n  font-size: var(--fs-small);\n}\n\n.feed-actor {\n  color: var(--txt1);\n  font-weight: var(--fw-semibold);\n}\n\n.feed-time {\n  font-size: var(--fs-small);\n  color: var(--txt3);\n}\n\n.feed-empty {\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n// מצבי שלד ושגיאה\n.skeleton {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));\n  gap: var(--sp-3);\n}\n\n.skel-card {\n  height: 84px;\n  border-radius: var(--rad);\n  background: var(--sur2);\n}\n\n.load-error {\n  padding: var(--sp-3);\n  color: var(--danger);\n\n  button {\n    margin-block-start: var(--sp-2);\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-18.21": {
+              "start": 1,
+              "end": 216
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/dashboard/dashboard.ts": {
+          "content": "import { Component, DestroyRef, effect, inject, input, numberAttribute } from '@angular/core';\nimport { DatePipe } from '@angular/common';\nimport { RouterLink } from '@angular/router';\nimport { ProjectSummary } from '../../core/models/project.model';\nimport { DashboardStore } from '../../core/state/dashboard.store';\nimport { ActivityType } from '../../core/models/dashboard.model';\nimport { DonutChart } from './charts/donut-chart';\nimport { BarChart } from './charts/bar-chart';\nimport { Sparkline } from './charts/sparkline';\n\n// אייקון קצר לכל סוג אירוע בפיד — ויזואלי בלבד, aria-hidden.\n// פרק 19 הוסיף AttachmentAdded ל-union, אז הפיד מכיר גם אותו.\nconst ACTIVITY_ICON: Record<ActivityType, string> = {\n  IssueCreated: '✚',\n  IssueMoved: '↻',\n  CommentAdded: '💬',\n  AttachmentAdded: '📎',\n};\n\n// הרכיב החכם של הדשבורד: מזריק את ה-DashboardStore, מספר לו את ה-projectId\n// (מה-route), וצורך selectors נגזרים. הוא לא מחשב כלום בעצמו — רק מחבר\n// מודלי-תצוגה מה-store לרכיבי הגרפים הטיפשים ולפיד.\n@Component({\n  selector: 'tf-dashboard',\n  imports: [RouterLink, DatePipe, DonutChart, BarChart, Sparkline],\n  templateUrl: './dashboard.html',\n  styleUrl: './dashboard.scss',\n})\nexport class Dashboard {\n  private readonly destroyRef = inject(DestroyRef);\n  protected readonly store = inject(DashboardStore);\n\n  readonly projectId = input.required({ transform: numberAttribute });\n  readonly project = input.required<ProjectSummary>();\n\n  constructor() {\n    effect(() => this.store.setProject(this.projectId()));\n    this.destroyRef.onDestroy(() => this.store.clear());\n  }\n\n  protected iconFor(type: ActivityType): string {\n    return ACTIVITY_ICON[type];\n  }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.13c": {
+              "start": 17,
+              "end": 17
+            },
+            "step-18.19": {
+              "start": 20,
+              "end": 43
+            }
+          },
+          "changedLines": [
+            11,
+            12,
+            17
+          ]
+        },
+        "client/src/app/features/issues/issue-board.html": {
+          "content": "<section class=\"issue-board\">\n  <!-- ה-toolbar לא מחזיק state: כל פקד קורא מה-inputs (שבאו מה-URL)\n       וכל שינוי מנווט. רענון, שיתוף קישור וכפתור אחורה עובדים בחינם. -->\n  <div class=\"toolbar\">\n    <nav class=\"filters\" aria-label=\"Issue status filter\">\n      <a routerLink=\".\" [queryParams]=\"{ status: null, page: null }\" queryParamsHandling=\"merge\" [class.on]=\"!status()\">All</a>\n      @for (s of statuses; track s) {\n        <a\n          routerLink=\".\"\n          [queryParams]=\"{ status: s, page: null }\"\n          queryParamsHandling=\"merge\"\n          [class.on]=\"status() === s\"\n        >{{ s }}</a>\n      }\n    </nav>\n\n    <input\n      id=\"issue-search\"\n      name=\"issue-search\"\n      class=\"search\"\n      type=\"search\"\n      placeholder=\"Search title...\"\n      [value]=\"search() ?? ''\"\n      (input)=\"onSearch($any($event.target).value)\"\n    />\n\n    <label class=\"sort\">\n      <span>Sort</span>\n      <select name=\"issue-sort\" [value]=\"sort() ?? '-created'\" (change)=\"onSort($any($event.target).value)\">\n        <option value=\"-created\">Newest first</option>\n        <option value=\"created\">Oldest first</option>\n        <option value=\"title\">Title</option>\n        <option value=\"priority\">Priority</option>\n      </select>\n    </label>\n  </div>\n\n  <!-- אותה מכונת מצבים נגזרת כמו בפרק 12 — והרשימה עצמה נדחית עם defer\n       עד שהיא נכנסת ל-viewport, עם שלד באותו גודל כדי שהדף לא יקפוץ. -->\n  @if (!tokenStore.isLoggedIn()) {\n    <p class=\"hint\">Sign in to see the issue board.</p>\n  } @else if (store.loadError() && !store.issues().length) {\n    <div class=\"load-error\" role=\"alert\">\n      <p>Could not load issues.</p>\n      <button type=\"button\" (click)=\"store.reload()\">Try again</button>\n    </div>\n  } @else if (store.loading() && !store.issues().length) {\n    <div class=\"skeleton-list\" aria-hidden=\"true\">\n      @for (s of [1, 2, 3, 4, 5]; track s) {\n        <div class=\"skel-row\"></div>\n      }\n    </div>\n  } @else if (!store.issues().length) {\n    <p class=\"empty\">\n      No issues match.\n      @if (search() || status()) {\n        <a routerLink=\".\" [queryParams]=\"{ q: null, status: null, page: null }\" queryParamsHandling=\"merge\">Clear filters</a>\n      }\n    </p>\n  } @else {\n    @defer (on viewport) {\n      <cdk-virtual-scroll-viewport class=\"vs ltr-scroll\" [itemSize]=\"56\" [class.stale]=\"store.loading()\">\n        <tf-issue-row\n          *cdkVirtualFor=\"let issue of store.issues(); trackBy: trackId\"\n          [issue]=\"issue\"\n          (statusChange)=\"changeStatus(issue, $event)\"\n        />\n      </cdk-virtual-scroll-viewport>\n    } @placeholder {\n      <div class=\"skeleton-list\" aria-hidden=\"true\">\n        @for (s of [1, 2, 3, 4, 5]; track s) {\n          <div class=\"skel-row\"></div>\n        }\n      </div>\n    }\n\n    <footer class=\"pager\">\n      <button type=\"button\" [disabled]=\"page() <= 1\" (click)=\"goToPage(page() - 1)\">Previous</button>\n      <span class=\"pager-info\">Page {{ page() }} of {{ store.totalPages() }} — {{ store.total() }} issues</span>\n      <button type=\"button\" [disabled]=\"page() >= store.totalPages()\" (click)=\"goToPage(page() + 1)\">Next</button>\n    </footer>\n  }\n</section>\n",
+          "status": "unchanged",
+          "regions": {
+            "step-13.7b": {
+              "start": 2,
+              "end": 36
+            },
+            "step-13.9": {
+              "start": 38,
+              "end": 82
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/issues/issue-board.scss": {
+          "content": ":host {\n  display: block;\n  margin-block-start: var(--sp-3);\n  container: issue-board / inline-size;\n}\n\n.toolbar {\n  // intrinsic grid: המסננים מקבלים את התוכן שלהם, החיפוש סופג את המקום,\n  // וה-sort נשאר fit-content. אין כאן breakpoint שמנחש את רוחב החלון.\n  display: grid;\n  grid-template-columns: fit-content(100%) minmax(min(100%, 18rem), 1fr) fit-content(16rem);\n  align-items: center;\n  gap: var(--sp-2);\n  margin-block-end: var(--sp-3);\n  padding: var(--sp-2);\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: color-mix(in srgb, var(--sur) 88%, transparent);\n  transition:\n    border-color var(--dur-2) var(--ease-out),\n    box-shadow var(--dur-2) var(--ease-out);\n}\n\n@container issue-board (max-width: 46rem) {\n  .toolbar {\n    grid-template-columns: minmax(0, 1fr);\n  }\n\n  .sort,\n  .sort select {\n    inline-size: 100%;\n  }\n}\n\n.toolbar:has(.search:focus-visible) {\n  border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n  box-shadow: var(--ring);\n}\n\n.empty:has(a) {\n  border: 1px dashed color-mix(in srgb, var(--ember) 45%, var(--bdr));\n  border-radius: var(--rad);\n  padding: var(--sp-3);\n}\n\n.filters {\n  display: flex;\n  gap: var(--sp-1);\n  overflow-x: auto;\n  scrollbar-width: thin;\n\n  a {\n    flex: 0 0 auto;\n    padding: var(--sp-1) var(--sp-2);\n    border-radius: var(--rad-full);\n    border: 1px solid var(--bdr);\n    color: var(--txt2);\n    text-decoration: none;\n    font-size: var(--fs-small);\n    transition:\n      background-color var(--dur-1) var(--ease-out),\n      border-color var(--dur-1) var(--ease-out),\n      color var(--dur-1) var(--ease-out);\n\n    &.on {\n      border-color: var(--ember);\n      color: var(--ember);\n      background: color-mix(in srgb, var(--ember) 12%, transparent);\n    }\n  }\n}\n\n.search {\n  inline-size: 100%;\n  min-inline-size: 0;\n  background: var(--sur2);\n  color: var(--txt1);\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  padding: var(--sp-1) var(--sp-2);\n}\n\n.sort {\n  display: inline-flex;\n  align-items: center;\n  justify-self: end;\n  gap: var(--sp-1);\n  font-size: var(--fs-small);\n  color: var(--txt3);\n\n  select {\n    background: var(--sur2);\n    color: var(--txt1);\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    padding: var(--sp-1) var(--sp-2);\n  }\n}\n\n// גובה קבוע הוא חוזה של virtual scroll: בלי גובה ל-viewport\n// אין למחזר השורות שום דבר לחשב מולו.\n.vs {\n  height: clamp(20rem, 52vh, 28.75rem);\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur2);\n  padding: var(--sp-2);\n  overflow: clip auto;\n\n  &.stale {\n    opacity: 0.6;\n  }\n\n  tf-issue-row {\n    display: block;\n    padding-block-end: var(--sp-1);\n  }\n}\n\n@supports (animation-timeline: view()) {\n  .vs tf-issue-row {\n    animation: issue-row-reveal both;\n    animation-timeline: view(block);\n    animation-range: entry 0% cover 24%;\n  }\n}\n\n@keyframes issue-row-reveal {\n  from {\n    opacity: 0;\n    transform: translateY(8px);\n  }\n}\n\n.skeleton-list {\n  display: grid;\n  gap: var(--sp-2);\n\n  .skel-row {\n    height: 52px;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    animation: skel-pulse 1.1s ease-in-out infinite alternate;\n  }\n}\n\n@keyframes skel-pulse {\n  from {\n    opacity: 0.45;\n  }\n  to {\n    opacity: 1;\n  }\n}\n\n.load-error {\n  border: 1px solid color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  background: color-mix(in srgb, var(--danger) 10%, var(--sur));\n  border-radius: var(--rad);\n  padding: var(--sp-3);\n\n  p {\n    margin: 0 0 var(--sp-2);\n  }\n\n  button {\n    border: 1px solid var(--bdr);\n    background: var(--sur);\n    color: var(--txt1);\n    border-radius: var(--rad-sm);\n    padding: var(--sp-1) var(--sp-3);\n  }\n}\n\n.hint,\n.empty {\n  color: var(--txt3);\n\n  a {\n    color: var(--ember);\n  }\n}\n\n.pager {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: var(--sp-3);\n  margin-block-start: var(--sp-2);\n\n  button {\n    border: 1px solid var(--bdr);\n    background: var(--sur);\n    color: var(--txt1);\n    border-radius: var(--rad-sm);\n    padding: var(--sp-1) var(--sp-3);\n\n    &:disabled {\n      opacity: 0.45;\n    }\n  }\n\n  .pager-info {\n    font-size: var(--fs-small);\n    color: var(--txt3);\n  }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .skeleton-list .skel-row,\n  .vs tf-issue-row {\n    animation: none;\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-15.5": {
+              "start": 8,
+              "end": 11
+            },
+            "step-15.6": {
+              "start": 24,
+              "end": 33
+            },
+            "step-15.8": {
+              "start": 35,
+              "end": 44
+            },
+            "step-15.10": {
+              "start": 120,
+              "end": 133
+            },
+            "step-13.9b": {
+              "start": 1,
+              "end": 215
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/issues/issue-board.ts": {
+          "content": "import { Component, DestroyRef, computed, effect, inject, input, numberAttribute } from '@angular/core';\nimport { ActivatedRoute, Router, RouterLink } from '@angular/router';\nimport { ScrollingModule } from '@angular/cdk/scrolling';\nimport { TokenStore } from '../../core/auth/token.store';\nimport { IssuesStore } from '../../core/state/issues.store';\nimport { Issue, IssueListQuery, IssueSort, IssueStatus } from '../../core/models/issue.model';\nimport { IssueRow } from './issue-row';\n\n/** עמוד אחד גדול: מספיק כדי ש-virtual scroll יהיה מורגש, עדיין דף אחד ברשת */\nconst PAGE_SIZE = 50;\n\nconst SORTS: IssueSort[] = ['-created', 'created', 'title', 'priority'];\nconst STATUSES: IssueStatus[] = ['Open', 'InProgress', 'Done'];\n\n// הרכיב החכם של הלוח. ה-state שלו לא גר כאן — הוא גר ב-URL:\n// status / q / sort / page מגיעים כ-inputs מ-ProjectBoard (שקיבל אותם\n// מהראוטר), מנורמלים ל-IssueListQuery, ונכתבים ל-store. כל פעולה של\n// המשתמש לא משנה שום signal מקומי — היא מנווטת, וה-URL מנווט את הנתונים.\n@Component({\n  selector: 'tf-issue-board',\n  imports: [RouterLink, ScrollingModule, IssueRow],\n  templateUrl: './issue-board.html',\n  styleUrl: './issue-board.scss',\n})\nexport class IssueBoard {\n  private readonly router = inject(Router);\n  private readonly route = inject(ActivatedRoute);\n  private readonly destroyRef = inject(DestroyRef);\n\n  protected readonly store = inject(IssuesStore);\n  protected readonly tokenStore = inject(TokenStore);\n\n  readonly projectId = input.required({ transform: numberAttribute });\n  readonly status = input<string>();\n  readonly search = input<string>();\n  readonly sort = input<string>();\n  readonly page = input(1, { transform: numberAttribute });\n\n  protected readonly statuses = STATUSES;\n  protected readonly sorts = SORTS;\n\n  /** ‏URL פתוח לכולם — ולכן כל ערך עובר נורמליזציה לפני שהוא הופך לבקשה */\n  private readonly query = computed<IssueListQuery>(() => ({\n    projectId: this.projectId(),\n    status: STATUSES.includes(this.status() as IssueStatus)\n      ? (this.status() as IssueStatus)\n      : null,\n    search: this.search()?.trim() || null,\n    sort: SORTS.includes(this.sort() as IssueSort) ? (this.sort() as IssueSort) : '-created',\n    page: Number.isFinite(this.page()) && this.page() > 0 ? Math.trunc(this.page()) : 1,\n    pageSize: PAGE_SIZE,\n  }));\n\n  constructor() {\n    effect(() => this.store.setQuery(this.query()));\n    this.destroyRef.onDestroy(() => {\n      clearTimeout(this.searchTimer);\n      this.store.clearQuery();\n    });\n  }\n\n  // כל שינוי מסנן = ניווט. merge משאיר את שאר הפרמטרים במקומם,\n  // ו-null מוחק מפתח — שינוי מסנן תמיד חוזר לעמוד הראשון.\n  private patchUrl(patch: Record<string, string | number | null>): void {\n    this.router.navigate([], {\n      relativeTo: this.route,\n      queryParams: patch,\n      queryParamsHandling: 'merge',\n    });\n  }\n\n  private searchTimer: ReturnType<typeof setTimeout> | undefined;\n\n  /** debounce הוא דאגה של UI — ה-store וה-URL נשארים פשוטים */\n  protected onSearch(value: string): void {\n    clearTimeout(this.searchTimer);\n    this.searchTimer = setTimeout(() => {\n      this.patchUrl({ q: value.trim() || null, page: null });\n    }, 250);\n  }\n\n  protected onSort(value: string): void {\n    this.patchUrl({ sort: value === '-created' ? null : value, page: null });\n  }\n\n  protected goToPage(page: number): void {\n    this.patchUrl({ page: page > 1 ? page : null });\n  }\n\n  // הפקודה האופטימית: הרכיב רק מעביר הלאה. ה-store מצייר, שולח, ומתחרט אם צריך.\n  protected changeStatus(issue: Issue, status: IssueStatus): void {\n    void this.store.setStatus(issue, status);\n  }\n\n  protected trackId(_: number, issue: Issue): number {\n    return issue.id;\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-13.6": {
+              "start": 15,
+              "end": 60
+            },
+            "step-13.7": {
+              "start": 62,
+              "end": 88
+            },
+            "step-13.8": {
+              "start": 90,
+              "end": 97
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/issues/issue-detail.html": {
+          "content": "<section class=\"detail\">\n  <a class=\"back\" [routerLink]=\"['/projects', projectId()]\" [queryParamsHandling]=\"'preserve'\">\n    Back to {{ project().name }}\n  </a>\n\n  @if (!issue()) {\n    @if (store.loading()) {\n      <p class=\"hint\">Loading issue...</p>\n    } @else if (store.loadError()) {\n      <div class=\"load-error\" role=\"alert\">\n        <p>Could not load this issue.</p>\n        <button type=\"button\" tf-button (click)=\"store.reload()\">Try again</button>\n      </div>\n    } @else {\n      <p class=\"hint\">Sign in to load the issue.</p>\n    }\n  } @else {\n    <header class=\"detail-head\">\n      <div>\n        <p class=\"eyebrow\">Issue #{{ issue()!.id }}</p>\n        <h2 [style.view-transition-name]=\"'issue-' + issue()!.id\">{{ issue()!.title }}</h2>\n      </div>\n      <tf-badge [tone]=\"toneOf(issue()!.status)\">{{ issue()!.status }}</tf-badge>\n    </header>\n\n    <!-- שתי עמודות: ראשית (טופס + תגובות) וצדדית (קבצים + ציר זמן פעילות).\n         auto-fit + minmax מתקפל לעמודה אחת במסך צר, בלי media query. -->\n    <div class=\"detail-grid\">\n      <div class=\"detail-main\">\n        <form class=\"issue-form\" (submit)=\"saveIssue(); $event.preventDefault()\">\n          <label class=\"field\">\n            <span>Title</span>\n            <input [formField]=\"issueForm.title\" />\n            @if (issueForm.title().pending()) {\n              <small>Checking title...</small>\n            } @else if (firstError(issueForm.title().errors()); as error) {\n              <small class=\"error\">{{ error }}</small>\n            }\n          </label>\n\n          <label class=\"field\">\n            <span>Description</span>\n            <tf-markdown-editor\n              [formField]=\"issueForm.description\"\n              [mentionCandidates]=\"store.memberNames()\"\n              [rows]=\"5\"\n              placeholder=\"Markdown נתמך — **מודגש**, `קוד`, וקישורים\"\n            />\n            @if (firstError(issueForm.description().errors()); as error) {\n              <small class=\"error\">{{ error }}</small>\n            }\n          </label>\n\n          <div class=\"form-grid\">\n            <label class=\"field\">\n              <span>Status</span>\n              <select [formField]=\"issueForm.status\">\n                <option value=\"Open\">Open</option>\n                <option value=\"InProgress\">In progress</option>\n                <option value=\"Done\">Done</option>\n              </select>\n            </label>\n\n            <label class=\"field\">\n              <span>Priority</span>\n              <tf-priority-picker [formField]=\"issueForm.priority\" />\n            </label>\n          </div>\n\n          <div class=\"actions\">\n            <button\n              type=\"submit\"\n              tf-button\n              [disabled]=\"savingIssue() || issueForm().invalid() || issueForm().pending()\"\n            >\n              {{ savingIssue() ? 'Saving...' : 'Save issue' }}\n            </button>\n          </div>\n        </form>\n\n        <section class=\"comments\">\n          <header>\n            <h3>Comments</h3>\n            <span>{{ comments().length }}</span>\n          </header>\n\n          <ol class=\"comment-list\">\n            @for (comment of comments(); track comment.id) {\n              <li [class.pending]=\"isPending(comment)\">\n                <div class=\"comment-meta\">\n                  <strong>{{ comment.authorName }}</strong>\n                  <time>{{ formattedDate(comment.createdAtUtc) }}</time>\n                </div>\n                <div class=\"comment-body\" [innerHTML]=\"commentHtml(comment)\"></div>\n              </li>\n            } @empty {\n              <li class=\"empty\">No comments yet.</li>\n            }\n          </ol>\n\n          @if (store.pendingComment()) {\n            <div class=\"undo-bar\" role=\"status\">\n              <span>התגובה נשלחת…</span>\n              <button type=\"button\" (click)=\"undoComment()\">בטל</button>\n            </div>\n          }\n\n          <form class=\"comment-form\" (submit)=\"addComment(); $event.preventDefault()\">\n            <label class=\"field\">\n              <span>Add comment</span>\n              <tf-markdown-editor\n                [formField]=\"commentForm.body\"\n                [mentionCandidates]=\"store.memberNames()\"\n                [rows]=\"3\"\n                placeholder=\"הקלידו @ כדי להזכיר חבר\"\n              />\n              @if (firstError(commentForm.body().errors()); as error) {\n                <small class=\"error\">{{ error }}</small>\n              }\n            </label>\n\n            <button type=\"submit\" tf-button [disabled]=\"commentForm().invalid() || commentForm().pending()\">\n              Post comment\n            </button>\n          </form>\n        </section>\n      </div>\n\n      <aside class=\"detail-side\">\n        <section class=\"attachments\">\n          <header>\n            <h3>קבצים מצורפים</h3>\n            <span>{{ store.attachments().length }}</span>\n          </header>\n\n          <label class=\"upload\">\n            <input type=\"file\" (change)=\"onFileSelected($event)\" [disabled]=\"uploading()\" />\n            <span>{{ uploading() ? 'מעלה…' : 'צרף קובץ (עד 5MB)' }}</span>\n          </label>\n\n          <ul class=\"attach-list\" role=\"list\">\n            @for (att of store.attachments(); track att.id) {\n              <li>\n                <button type=\"button\" class=\"attach-name\" (click)=\"download(att)\">{{ att.fileName }}</button>\n                <span class=\"attach-meta\">{{ prettySize(att.sizeBytes) }} · {{ att.uploadedByName }}</span>\n              </li>\n            } @empty {\n              <li class=\"empty\">אין קבצים עדיין.</li>\n            }\n          </ul>\n        </section>\n\n        <section class=\"timeline\">\n          <header><h3>פעילות</h3></header>\n          <ol class=\"timeline-list\">\n            @for (event of store.activity(); track trackActivity($index, event)) {\n              <li>\n                <span class=\"t-icon\" aria-hidden=\"true\">{{ activityIcon(event.type) }}</span>\n                <span class=\"t-body\">\n                  <span class=\"t-summary\"><strong>{{ event.actorName }}</strong> {{ event.summary }}</span>\n                  <time class=\"t-time\" [attr.datetime]=\"event.createdAtUtc\">{{ formattedDate(event.createdAtUtc) }}</time>\n                </span>\n              </li>\n            } @empty {\n              <li class=\"empty\">אין פעילות עדיין.</li>\n            }\n          </ol>\n        </section>\n      </aside>\n    </div>\n  }\n</section>\n",
+          "status": "modified",
+          "regions": {
+            "step-19.23": {
+              "start": 81,
+              "end": 126
+            },
+            "step-19.24": {
+              "start": 129,
+              "end": 169
+            },
+            "step-19.22": {
+              "start": 26,
+              "end": 170
+            }
+          },
+          "changedLines": [
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            64,
+            65,
+            66,
+            67,
+            68,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            81,
+            82,
+            83,
+            84,
+            85,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            101,
+            102,
+            103,
+            104,
+            105,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170
+          ]
+        },
+        "client/src/app/features/issues/issue-detail.scss": {
+          "content": ":host {\n  display: block;\n}\n\n.detail {\n  display: grid;\n  gap: var(--sp-4);\n  max-width: 1100px;\n}\n\n.back {\n  color: var(--txt2);\n  font-size: var(--fs-small);\n}\n\n.detail-head {\n  display: flex;\n  align-items: start;\n  justify-content: space-between;\n  gap: var(--sp-3);\n\n  h2 {\n    margin: var(--sp-1) 0 0;\n    font-size: 28px;\n    line-height: 1.12;\n  }\n}\n\n.eyebrow {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n// שתי עמודות: ראשית גמישה + צדדית צרה. מתקפל לעמודה אחת מתחת ל-860px.\n.detail-grid {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) minmax(260px, 22rem);\n  gap: var(--sp-4);\n  align-items: start;\n}\n\n.detail-main,\n.detail-side {\n  display: grid;\n  gap: var(--sp-4);\n  min-width: 0;\n}\n\n@media (max-width: 860px) {\n  .detail-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n}\n\n.issue-form,\n.comments {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-4);\n}\n\n.issue-form,\n.comment-form {\n  display: grid;\n  gap: var(--sp-3);\n}\n\n.field {\n  display: grid;\n  gap: var(--sp-1);\n\n  > span {\n    font-size: var(--fs-small);\n    color: var(--txt2);\n  }\n\n  input,\n  select,\n  textarea {\n    width: 100%;\n    min-width: 0;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding: 10px 12px;\n    font: inherit;\n  }\n\n  textarea {\n    resize: vertical;\n  }\n\n  small {\n    color: var(--txt3);\n  }\n\n  .error {\n    color: var(--danger);\n  }\n}\n\n.form-grid {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);\n  gap: var(--sp-3);\n}\n\n.actions {\n  display: flex;\n  justify-content: flex-end;\n}\n\n.comments {\n  display: grid;\n  gap: var(--sp-3);\n\n  header {\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n\n    h3 {\n      margin: 0;\n    }\n\n    span {\n      color: var(--txt3);\n      font-size: var(--fs-small);\n    }\n  }\n}\n\n.comment-list {\n  display: grid;\n  gap: var(--sp-2);\n  margin: 0;\n  padding: 0;\n  list-style: none;\n\n  li {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    padding: var(--sp-3);\n\n    // התגובה הזמנית (אופטימית) — עמומה מעט עד שהשרת מאשר\n    &.pending {\n      opacity: 0.6;\n      border-style: dashed;\n    }\n  }\n\n  .empty {\n    color: var(--txt3);\n  }\n}\n\n.comment-meta {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--sp-2);\n  color: var(--txt3);\n  font-size: var(--fs-small);\n\n  strong {\n    color: var(--txt1);\n  }\n}\n\n// תוכן Markdown מרונדר: כללי תצוגה לתגיות הבטוחות שה-renderer מפיק\n.comment-body {\n  margin: var(--sp-2) 0 0;\n  color: var(--txt2);\n  line-height: var(--lh-normal);\n  overflow-wrap: anywhere;\n\n  code {\n    font-family: ui-monospace, monospace;\n    background: var(--sur3);\n    padding: 0 4px;\n    border-radius: 4px;\n    font-size: 0.9em;\n  }\n\n  a {\n    color: var(--accent);\n  }\n\n  .mention {\n    color: var(--accent);\n    font-weight: var(--fw-semibold);\n  }\n}\n\n// בר ה-Undo: מופיע בזמן חלון הביטול של תגובה אופטימית\n.undo-bar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-2);\n  padding: var(--sp-2) var(--sp-3);\n  border: 1px solid var(--accent);\n  border-radius: var(--rad-sm);\n  background: var(--accent-subtle);\n  font-size: var(--fs-small);\n  color: var(--txt1);\n\n  button {\n    border: 0;\n    background: transparent;\n    color: var(--accent);\n    font-weight: var(--fw-semibold);\n    cursor: pointer;\n  }\n}\n\n// העמודה הצדדית: קבצים וציר זמן, כרטיסים תואמים לשפת העיצוב\n.attachments,\n.timeline {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3);\n  display: grid;\n  gap: var(--sp-2);\n\n  header {\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n\n    h3 {\n      margin: 0;\n      font-size: var(--fs-base);\n    }\n\n    span {\n      color: var(--txt3);\n      font-size: var(--fs-small);\n    }\n  }\n}\n\n.upload {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-2);\n  font-size: var(--fs-small);\n  color: var(--txt2);\n  cursor: pointer;\n}\n\n.attach-list,\n.timeline-list {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n  display: grid;\n  gap: var(--sp-2);\n}\n\n.attach-list li {\n  display: grid;\n  gap: 2px;\n}\n\n.attach-name {\n  justify-self: start;\n  border: 0;\n  background: transparent;\n  color: var(--accent);\n  font: inherit;\n  text-align: start;\n  cursor: pointer;\n  overflow-wrap: anywhere;\n}\n\n.attach-meta,\n.t-time,\n.empty {\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.timeline-list li {\n  display: flex;\n  align-items: start;\n  gap: var(--sp-2);\n}\n\n.t-icon {\n  flex: 0 0 auto;\n  width: 1.3rem;\n  text-align: center;\n}\n\n.t-body {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  min-width: 0;\n}\n\n.t-summary {\n  font-size: var(--fs-small);\n  color: var(--txt2);\n\n  strong {\n    color: var(--txt1);\n  }\n}\n\n.load-error,\n.hint {\n  color: var(--txt2);\n}\n\n@media (max-width: 720px) {\n  .detail-head,\n  .form-grid {\n    grid-template-columns: 1fr;\n  }\n\n  .detail-head {\n    display: grid;\n  }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.25": {
+              "start": 35,
+              "end": 54
+            },
+            "step-19.26": {
+              "start": 149,
+              "end": 153
+            },
+            "step-19.27": {
+              "start": 173,
+              "end": 218
+            },
+            "step-19.28": {
+              "start": 220,
+              "end": 314
+            }
+          },
+          "changedLines": [
+            8,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            149,
+            150,
+            151,
+            152,
+            153,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188,
+            189,
+            190,
+            191,
+            192,
+            193,
+            194,
+            195,
+            196,
+            197,
+            198,
+            199,
+            200,
+            201,
+            202,
+            203,
+            204,
+            205,
+            206,
+            207,
+            208,
+            209,
+            210,
+            211,
+            212,
+            213,
+            214,
+            215,
+            216,
+            217,
+            218,
+            219,
+            220,
+            221,
+            222,
+            223,
+            224,
+            225,
+            226,
+            227,
+            228,
+            229,
+            230,
+            231,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            238,
+            239,
+            240,
+            241,
+            242,
+            243,
+            244,
+            245,
+            246,
+            247,
+            248,
+            249,
+            250,
+            251,
+            252,
+            253,
+            254,
+            255,
+            256,
+            257,
+            258,
+            259,
+            260,
+            261,
+            262,
+            263,
+            264,
+            265,
+            266,
+            267,
+            268,
+            269,
+            270,
+            271,
+            272,
+            273,
+            274,
+            275,
+            276,
+            277,
+            278,
+            279,
+            280,
+            281,
+            282,
+            283,
+            284,
+            285,
+            286,
+            287,
+            288,
+            289,
+            290,
+            291,
+            292,
+            293,
+            294,
+            295,
+            296,
+            297,
+            298,
+            299,
+            300,
+            301,
+            302,
+            303,
+            304,
+            305,
+            306,
+            307,
+            308,
+            309,
+            310,
+            311,
+            312,
+            313,
+            314,
+            315
+          ]
+        },
+        "client/src/app/features/issues/issue-detail.ts": {
+          "content": "import { Component, DestroyRef, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';\nimport { RouterLink } from '@angular/router';\nimport {\n  FormField,\n  debounce,\n  form,\n  maxLength,\n  minLength,\n  required,\n  submit,\n  validateHttp,\n} from '@angular/forms/signals';\nimport { API_BASE } from '../../core/api/api';\nimport { Comment } from '../../core/models/comment.model';\nimport { ActivityEvent, ActivityType } from '../../core/models/dashboard.model';\nimport { Attachment } from '../../core/models/attachment.model';\nimport {\n  Issue,\n  IssuePriority,\n  IssueStatus,\n  TitleAvailabilityResponse,\n} from '../../core/models/issue.model';\nimport { ProjectSummary } from '../../core/models/project.model';\nimport { IssueDetailStore } from '../../core/state/issue-detail.store';\nimport { renderMarkdown } from '../../core/markdown/markdown';\nimport { TfBadge } from '../../shared/ui/badge/badge';\nimport { TfButton } from '../../shared/ui/button/button';\nimport { PriorityPicker } from './priority-picker';\nimport { MarkdownEditor } from '../../shared/ui/markdown-editor/markdown-editor';\n\ntype IssueFormModel = {\n  title: string;\n  description: string;\n  status: IssueStatus;\n  priority: IssuePriority;\n};\n\nconst ACTIVITY_ICON: Record<ActivityType, string> = {\n  IssueCreated: '✚',\n  IssueMoved: '↻',\n  CommentAdded: '💬',\n  AttachmentAdded: '📎',\n};\n\n@Component({\n  selector: 'tf-issue-detail',\n  imports: [RouterLink, FormField, TfBadge, TfButton, PriorityPicker, MarkdownEditor],\n  templateUrl: './issue-detail.html',\n  styleUrl: './issue-detail.scss',\n})\nexport class IssueDetail {\n  private readonly destroyRef = inject(DestroyRef);\n  protected readonly store = inject(IssueDetailStore);\n\n  readonly projectId = input.required({ transform: numberAttribute });\n  readonly issueId = input.required({ transform: numberAttribute });\n  readonly project = input.required<ProjectSummary>();\n\n  protected readonly savingIssue = signal(false);\n  protected readonly uploading = signal(false);\n  private readonly loadedIssueId = signal<number | null>(null);\n  private readonly originalTitle = signal('');\n\n  protected readonly issueModel = signal<IssueFormModel>({\n    title: '',\n    description: '',\n    status: 'Open',\n    priority: 'Medium',\n  });\n\n  protected readonly commentModel = signal({ body: '' });\n\n  protected readonly issueForm = form(this.issueModel, (s) => {\n    required(s.title, { message: 'Title is required' });\n    minLength(s.title, 3, { message: 'Use at least 3 characters' });\n    maxLength(s.title, 200, { message: 'Keep the title under 200 characters' });\n    maxLength(s.description, 4000, { message: 'Keep the description under 4000 characters' });\n    debounce(s.title, 300);\n\n    validateHttp<string, TitleAvailabilityResponse>(s.title, {\n      debounce: 300,\n      request: ({ value }) => {\n        const title = value().trim();\n        if (title.length < 3 || title === this.originalTitle()) return undefined;\n\n        const params = new URLSearchParams({\n          title,\n          excludeIssueId: String(this.issueId()),\n        });\n        return `${API_BASE}/projects/${this.projectId()}/issues/title-available?${params}`;\n      },\n      onSuccess: (result) =>\n        result.available\n          ? undefined\n          : { kind: 'titleTaken', message: 'An issue with this title already exists' },\n      onError: () => ({ kind: 'titleCheckFailed', message: 'Could not verify this title' }),\n    });\n  });\n\n  protected readonly commentForm = form(this.commentModel, (s) => {\n    required(s.body, { message: 'Comment is required' });\n    minLength(s.body, 2, { message: 'Use at least 2 characters' });\n    maxLength(s.body, 1200, { message: 'Keep comments under 1200 characters' });\n  });\n\n  protected readonly issue = computed(() => this.store.issue());\n  protected readonly comments = computed(() => this.store.comments());\n\n  constructor() {\n    effect(() => this.store.setIssueId(this.issueId()));\n\n    effect(() => {\n      const issue = this.store.issue();\n      if (!issue || this.loadedIssueId() === issue.id) return;\n      this.loadedIssueId.set(issue.id);\n      this.originalTitle.set(issue.title);\n      this.issueModel.set({\n        title: issue.title,\n        description: issue.description ?? '',\n        status: issue.status,\n        priority: issue.priority,\n      });\n    });\n\n    this.destroyRef.onDestroy(() => this.store.clear());\n  }\n\n  protected async saveIssue(): Promise<void> {\n    const ok = await submit(this.issueForm, async () => {\n      const model = this.issueModel();\n      this.savingIssue.set(true);\n      try {\n        await this.store.saveIssue(this.issueId(), {\n          title: model.title.trim(),\n          description: model.description.trim() || null,\n          status: model.status,\n          priority: model.priority,\n        });\n        this.originalTitle.set(model.title.trim());\n      } finally {\n        this.savingIssue.set(false);\n      }\n    });\n\n    if (ok) {\n      this.loadedIssueId.set(null);\n    }\n  }\n\n  // התגובה נשלחת אופטימית עם חלון Undo — אין await ואין ספינר; היא מופיעה מיד\n  // והשרת מתעדכן ברקע אחרי החלון. ה-form מתאפס מיד כדי שאפשר להמשיך לכתוב.\n  protected async addComment(): Promise<void> {\n    const ok = await submit(this.commentForm, async () => {\n      this.store.postCommentWithUndo(this.issueId(), this.commentModel().body.trim());\n    });\n    if (ok) {\n      this.commentModel.set({ body: '' });\n    }\n  }\n\n  protected undoComment(): void {\n    this.store.undoPendingComment();\n  }\n\n  protected isPending(comment: Comment): boolean {\n    return comment.id < 0;\n  }\n\n  protected async onFileSelected(event: Event): Promise<void> {\n    const input = event.target as HTMLInputElement;\n    const file = input.files?.[0];\n    if (!file) return;\n\n    this.uploading.set(true);\n    try {\n      await this.store.addAttachment(this.issueId(), file);\n    } finally {\n      this.uploading.set(false);\n      input.value = ''; // מאפשר לבחור שוב את אותו קובץ\n    }\n  }\n\n  protected download(attachment: Attachment): void {\n    void this.store.download(attachment);\n  }\n\n  protected prettySize(bytes: number): string {\n    if (bytes < 1024) return `${bytes} B`;\n    if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;\n    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;\n  }\n\n  protected activityIcon(type: ActivityType): string {\n    return ACTIVITY_ICON[type];\n  }\n\n  protected commentHtml(comment: Comment): string {\n    return renderMarkdown(comment.body);\n  }\n\n  protected firstError(errors: readonly { message?: string; kind: string }[]): string | null {\n    return errors[0]?.message ?? errors[0]?.kind ?? null;\n  }\n\n  protected toneOf(status: IssueStatus): 'open' | 'progress' | 'done' {\n    return status === 'Open' ? 'open' : status === 'InProgress' ? 'progress' : 'done';\n  }\n\n  protected formattedDate(value: string): string {\n    return new Intl.DateTimeFormat('en', {\n      month: 'short',\n      day: '2-digit',\n      hour: '2-digit',\n      minute: '2-digit',\n    }).format(new Date(value));\n  }\n\n  protected trackActivity(_: number, event: ActivityEvent): number {\n    return event.id;\n  }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-14.14": {
+              "start": 80,
+              "end": 97
+            },
+            "step-19.19": {
+              "start": 45,
+              "end": 126
+            },
+            "step-14.16": {
+              "start": 128,
+              "end": 148
+            },
+            "step-19.20": {
+              "start": 150,
+              "end": 167
+            },
+            "step-19.21": {
+              "start": 169,
+              "end": 195
+            }
+          },
+          "changedLines": [
+            15,
+            16,
+            25,
+            29,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            47,
+            60,
+            150,
+            151,
+            154,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188,
+            189,
+            190,
+            191,
+            192,
+            193,
+            194,
+            195,
+            196,
+            197,
+            198,
+            199,
+            200,
+            209,
+            215,
+            217,
+            218,
+            219,
+            220
+          ]
+        },
+        "client/src/app/features/issues/issue-row.html": {
+          "content": "<div class=\"row\" [class.row--done]=\"issue().status === 'Done'\">\n  <div class=\"row-main\">\n    <a\n      class=\"title title-link\"\n      [routerLink]=\"['issues', issue().id]\"\n      [style.view-transition-name]=\"'issue-' + issue().id\"\n    >\n      {{ issue().title }}\n    </a>\n    <span class=\"meta\">\n      <span class=\"prio prio--{{ issue().priority.toLowerCase() }}\">{{ issue().priority }}</span>\n      @for (label of issue().labels; track label.id) {\n        <span class=\"label\">{{ label.name }}</span>\n      }\n    </span>\n  </div>\n\n  <tf-badge [tone]=\"toneOf(issue().status)\">{{ issue().status }}</tf-badge>\n\n  <label class=\"status-pick\">\n    <span class=\"visually-hidden\">Change status of {{ issue().title }}</span>\n    <select\n      [name]=\"'issue-status-' + issue().id\"\n      [value]=\"issue().status\"\n      (change)=\"onSelect($any($event.target).value)\"\n    >\n      @for (s of statuses; track s) {\n        <option [value]=\"s\">{{ s }}</option>\n      }\n    </select>\n  </label>\n</div>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/features/issues/issue-row.scss": {
+          "content": ":host {\n  display: block;\n}\n\n.row {\n  display: flex;\n  align-items: center;\n  gap: var(--sp-2);\n  padding: var(--sp-2) var(--sp-3);\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur);\n\n  &.row--done .title {\n    color: var(--txt3);\n    text-decoration: line-through;\n  }\n}\n\n.row-main {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  min-width: 0;\n  margin-inline-end: auto;\n\n  .title {\n    font-weight: 600;\n    overflow: hidden;\n    text-overflow: ellipsis;\n    white-space: nowrap;\n  }\n\n  .title-link {\n    color: var(--txt1);\n    text-decoration: none;\n\n    &:hover {\n      color: var(--ember);\n    }\n  }\n\n  .meta {\n    display: flex;\n    align-items: center;\n    gap: var(--sp-1);\n    font-size: var(--fs-small);\n  }\n}\n\n.prio {\n  font-weight: 700;\n\n  &.prio--critical {\n    color: var(--danger);\n  }\n  &.prio--high {\n    color: color-mix(in srgb, var(--danger) 65%, var(--txt2));\n  }\n  &.prio--medium {\n    color: var(--ember);\n  }\n  &.prio--low {\n    color: var(--txt3);\n  }\n}\n\n.label {\n  color: var(--txt3);\n  border: 1px solid var(--bdr);\n  border-radius: 999px;\n  padding: 0 var(--sp-2);\n}\n\n.status-pick {\n  flex: 0 0 auto;\n\n  select {\n    background: var(--sur2);\n    color: var(--txt1);\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    padding: var(--sp-1) var(--sp-2);\n    font-size: var(--fs-small);\n  }\n}\n\n.visually-hidden {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  overflow: hidden;\n  clip-path: inset(50%);\n  white-space: nowrap;\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-13.10b": {
+              "start": 1,
+              "end": 95
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/issues/issue-row.ts": {
+          "content": "import { Component, input, output } from '@angular/core';\nimport { RouterLink } from '@angular/router';\nimport { Issue, IssueStatus } from '../../core/models/issue.model';\nimport { TfBadge } from '../../shared/ui/badge/badge';\n\n// השורה עדיין טיפשה מבחינת state: issue נכנס, שינוי סטטוס יוצא כאירוע.\n// בפרק 14 היא מקבלת RouterLink רק כדי להפוך את הכותרת לקישור detail;\n// ה-store, האופטימיות וההרשאות עדיין נשארים מחוץ לרכיב.\n@Component({\n  selector: 'tf-issue-row',\n  imports: [RouterLink, TfBadge],\n  templateUrl: './issue-row.html',\n  styleUrl: './issue-row.scss',\n})\nexport class IssueRow {\n  readonly issue = input.required<Issue>();\n\n  readonly statusChange = output<IssueStatus>();\n\n  protected readonly statuses: IssueStatus[] = ['Open', 'InProgress', 'Done'];\n\n  protected toneOf(status: IssueStatus): 'open' | 'progress' | 'done' {\n    return status === 'Open' ? 'open' : status === 'InProgress' ? 'progress' : 'done';\n  }\n\n  protected onSelect(value: string): void {\n    if (value !== this.issue().status) this.statusChange.emit(value as IssueStatus);\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-14.11": {
+              "start": 6,
+              "end": 29
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/issues/kanban-board.html": {
+          "content": "<!-- שלוש עמודות status בתוך cdkDropListGroup — CDK מחבר אותן אוטומטית כך\n     שאפשר לגרור ביניהן. כל קלף הוא cdkDrag (עכבר) וגם פוקוסבילי עם\n     מטפל keydown משלו (מקלדת). אזור ה-aria-live בתחתית מקריא כל הזזה. -->\n<section class=\"kanban\" aria-label=\"לוח Kanban\">\n  @if (!tokenStore.isLoggedIn()) {\n    <p class=\"hint\">התחברו כדי לראות את הלוח.</p>\n  } @else if (store.loadError() && !store.issues().length) {\n    <div class=\"load-error\" role=\"alert\">\n      <p>טעינת הלוח נכשלה.</p>\n      <button type=\"button\" (click)=\"store.reload()\">נסו שוב</button>\n    </div>\n  } @else if (store.loading() && !store.issues().length) {\n    <div class=\"cols\">\n      @for (s of statuses; track s) {\n        <div class=\"col\" aria-hidden=\"true\">\n          <div class=\"skel-card\"></div>\n          <div class=\"skel-card\"></div>\n        </div>\n      }\n    </div>\n  } @else {\n    <div class=\"cols\" cdkDropListGroup>\n      @for (col of columns(); track col.status) {\n        <section class=\"col\">\n          <header class=\"col-head\">\n            <h3>{{ col.label }}</h3>\n            <tf-badge tone=\"count\">{{ col.issues.length }}</tf-badge>\n          </header>\n\n          <ul\n            class=\"cards\"\n            role=\"list\"\n            cdkDropList\n            [cdkDropListData]=\"col.status\"\n            (cdkDropListDropped)=\"onDrop($event, col.status)\"\n          >\n            @for (issue of col.issues; track issue.id) {\n              <li\n                class=\"card\"\n                cdkDrag\n                [cdkDragData]=\"issue\"\n                [attr.data-issue-id]=\"issue.id\"\n                [class.card--grabbed]=\"grabbedId() === issue.id\"\n                [class.card--done]=\"issue.status === 'Done'\"\n                tabindex=\"0\"\n                role=\"button\"\n                aria-roledescription=\"כרטיס הניתן לגרירה\"\n                [attr.aria-pressed]=\"grabbedId() === issue.id\"\n                [attr.aria-label]=\"issue.title + ', ' + col.label\"\n                (keydown)=\"onCardKey($event, issue)\"\n              >\n                <span class=\"card-title\">{{ issue.title }}</span>\n                <span class=\"card-meta\">\n                  <span class=\"prio\" [class]=\"priorityClass(issue)\">{{ issue.priority }}</span>\n                  @for (label of issue.labels; track label.id) {\n                    <span class=\"label\">{{ label.name }}</span>\n                  }\n                </span>\n                <span class=\"card-handle\" aria-hidden=\"true\">⋮⋮</span>\n\n                <span class=\"card-placeholder\" *cdkDragPlaceholder aria-hidden=\"true\"></span>\n              </li>\n            } @empty {\n              <li class=\"empty-col\" aria-hidden=\"true\">גררו כרטיס לכאן</li>\n            }\n          </ul>\n        </section>\n      }\n    </div>\n  }\n\n  <!-- assertive: הזזה היא פעולה יזומה, ראוי שתקטע את ההקראה הנוכחית -->\n  <p class=\"sr-only\" role=\"status\" aria-live=\"assertive\">{{ announcement() }}</p>\n</section>\n",
+          "status": "unchanged",
+          "regions": {
+            "step-17.17": {
+              "start": 1,
+              "end": 74
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/issues/kanban-board.scss": {
+          "content": ":host {\n  display: block;\n}\n\n.kanban {\n  display: block;\n}\n\n// העמודות: grid אינטרינזי שמתקפל מעצמו. בכל רוחב כל עמודה היא לפחות 240px,\n// וכשאין מקום הן יורדות לעמודה אחת — בלי media query, רק auto-fit + minmax.\n.cols {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: var(--sp-3);\n  align-items: start;\n}\n\n.col {\n  display: flex;\n  flex-direction: column;\n  gap: var(--sp-2);\n  padding: var(--sp-2);\n  background: var(--sur);\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  // container query: העמודה היא ההקשר, כך שצפיפות הכרטיסים מגיבה לרוחב\n  // העמודה עצמה ולא לרוחב המסך.\n  container-type: inline-size;\n}\n\n.col-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-2);\n  padding: var(--sp-1) var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-small);\n    font-weight: var(--fw-semibold);\n    color: var(--txt2);\n    text-transform: uppercase;\n    letter-spacing: var(--tracking-tight);\n  }\n}\n\n.cards {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n  display: flex;\n  flex-direction: column;\n  gap: var(--sp-2);\n  min-height: var(--sp-5);\n\n  // :has() — כשגוררים מעל העמודה הזו, CDK מסמן את ה-list הפעיל; נדגיש אותה.\n  &:has(.cdk-drag-placeholder) {\n    outline: 2px dashed var(--accent);\n    outline-offset: 4px;\n    border-radius: var(--rad-sm);\n  }\n}\n\n.card {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  gap: var(--sp-1);\n  padding: var(--sp-2) var(--sp-3);\n  background: var(--sur2);\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  cursor: grab;\n  box-shadow: var(--shadow-1);\n  transition:\n    box-shadow var(--dur-2) var(--ease-out),\n    transform var(--dur-2) var(--ease-out),\n    border-color var(--dur-1) var(--ease-out);\n\n  &:focus-visible {\n    outline: none;\n    box-shadow: var(--ring);\n  }\n\n  &.card--grabbed {\n    cursor: grabbing;\n    border-color: var(--accent);\n    box-shadow: var(--shadow-3);\n    transform: scale(1.02);\n  }\n\n  &.card--done .card-title {\n    color: var(--txt3);\n    text-decoration: line-through;\n  }\n}\n\n.card-title {\n  font-weight: var(--fw-medium);\n  color: var(--txt1);\n  min-width: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.card-meta {\n  display: flex;\n  align-items: center;\n  gap: var(--sp-1);\n  font-size: var(--fs-small);\n}\n\n.card-handle {\n  position: absolute;\n  inset-inline-end: var(--sp-2);\n  inset-block-start: var(--sp-2);\n  color: var(--txt4);\n  letter-spacing: -2px;\n}\n\n.prio {\n  font-weight: var(--fw-bold);\n\n  &.prio--critical {\n    color: var(--danger);\n  }\n  &.prio--high {\n    color: color-mix(in srgb, var(--danger) 65%, var(--txt2));\n  }\n  &.prio--medium {\n    color: var(--ember);\n  }\n  &.prio--low {\n    color: var(--txt3);\n  }\n}\n\n.label {\n  color: var(--txt3);\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-full);\n  padding: 0 var(--sp-2);\n}\n\n.empty-col {\n  list-style: none;\n  padding: var(--sp-3);\n  text-align: center;\n  color: var(--txt4);\n  font-size: var(--fs-small);\n  border: 1px dashed var(--bdr2);\n  border-radius: var(--rad-sm);\n}\n\n// כרטיסים מצטמצמים בעמודה צרה — container query על העמודה, לא על המסך\n@container (max-width: 200px) {\n  .card {\n    padding: var(--sp-1) var(--sp-2);\n  }\n  .card-handle {\n    display: none;\n  }\n}\n\n// המראה של ה-DnD מסופק ע\"י CDK דרך מחלקות שהיא מוסיפה בזמן ריצה:\n// ‏.cdk-drag-preview = השיבוט הצף; ‏.cdk-drag-placeholder = החלל שנשאר;\n// ‏.cdk-drag-animating = המעבר החלק כשמשחררים.\n.cdk-drag-preview {\n  box-shadow: var(--shadow-3);\n  border-radius: var(--rad-sm);\n  background: var(--sur3);\n  opacity: 0.95;\n}\n\n.cdk-drag-placeholder {\n  opacity: 0.4;\n  border: 1px dashed var(--accent);\n  background: var(--accent-subtle);\n}\n\n.cdk-drag-animating {\n  transition: transform var(--dur-3) var(--ease-out);\n}\n\n.cards.cdk-drop-list-dragging .card:not(.cdk-drag-placeholder) {\n  transition: transform var(--dur-2) var(--ease-out);\n}\n\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  margin: -1px;\n  padding: 0;\n  overflow: hidden;\n  clip-path: inset(50%);\n  white-space: nowrap;\n  border: 0;\n}\n\n.hint,\n.empty-col {\n  color: var(--txt3);\n}\n\n.load-error {\n  padding: var(--sp-3);\n  color: var(--danger);\n\n  button {\n    margin-block-start: var(--sp-2);\n  }\n}\n\n.skel-card {\n  height: 52px;\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  margin-block-end: var(--sp-2);\n}\n\n// reduced-motion: בלי אנימציות transform/box-shadow על הרמה וריחוף\n@media (prefers-reduced-motion: reduce) {\n  .card,\n  .cdk-drag-animating,\n  .cards.cdk-drop-list-dragging .card:not(.cdk-drag-placeholder) {\n    transition: none;\n  }\n  .card.card--grabbed {\n    transform: none;\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-17.18": {
+              "start": 1,
+              "end": 164
+            },
+            "step-17.19": {
+              "start": 166,
+              "end": 233
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/issues/kanban-board.ts": {
+          "content": "import {\n  Component,\n  DestroyRef,\n  ElementRef,\n  computed,\n  effect,\n  inject,\n  input,\n  numberAttribute,\n  signal,\n} from '@angular/core';\nimport { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';\nimport { TokenStore } from '../../core/auth/token.store';\nimport { IssuesStore } from '../../core/state/issues.store';\nimport { Issue, IssueListQuery, IssueStatus } from '../../core/models/issue.model';\nimport { TfBadge } from '../../shared/ui/badge/badge';\n\n// שלוש העמודות של הלוח, בסדר זרימת העבודה. התוויות בעברית הן ל-UI בלבד —\n// הערך ששוכב ב-issue.status נשאר השם המקורי של ה-enum מהשרת.\nconst STATUSES: IssueStatus[] = ['Open', 'InProgress', 'Done'];\nconst STATUS_LABELS: Record<IssueStatus, string> = {\n  Open: 'פתוח',\n  InProgress: 'בעבודה',\n  Done: 'הושלם',\n};\n\n// הלוח טוען עמוד אחד גדול ככל שמותר — אין pager בלוח. השרת מגביל pageSize\n// ל-100 (Range מפרק 04), ולכן זו התקרה; לוח עם יותר מ-100 issues יזדקק\n// לדפדוף או virtual scroll, אבל לנתוני הדמו 100 מציג את כל הפרויקט.\nconst BOARD_PAGE_SIZE = 100;\n/** מרווח ה-rank ההתחלתי בקצה עמודה (תואם את ה-gap של ה-seed בשרת) */\nconst RANK_GAP = 1024;\n\ninterface Column {\n  status: IssueStatus;\n  label: string;\n  issues: Issue[];\n}\n\n// הרכיב החכם של הלוח. הוא חולק את אותו IssuesStore עם תצוגת הרשימה (פרק 13),\n// אבל מבקש ממנו מיון 'rank' ועמוד אחד גדול, וגוזר ממנו עמודות לפי סטטוס.\n// כל DnD — עכבר ומקלדת כאחד — מסתכם בפעולה אחת: store.reorder אופטימי.\n@Component({\n  selector: 'tf-kanban-board',\n  imports: [DragDropModule, TfBadge],\n  templateUrl: './kanban-board.html',\n  styleUrl: './kanban-board.scss',\n})\nexport class KanbanBoard {\n  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);\n  private readonly destroyRef = inject(DestroyRef);\n\n  protected readonly store = inject(IssuesStore);\n  protected readonly tokenStore = inject(TokenStore);\n\n  readonly projectId = input.required({ transform: numberAttribute });\n\n  protected readonly statuses = STATUSES;\n\n  // הלוח מבקש מה-store מיון rank, בלי סינון, בעמוד אחד גדול. אותו חוזה\n  // ציבורי של ה-store משרת גם את הרשימה וגם את הלוח — רק ה-query שונה.\n  private readonly query = computed<IssueListQuery>(() => ({\n    projectId: this.projectId(),\n    status: null,\n    search: null,\n    sort: 'rank',\n    page: 1,\n    pageSize: BOARD_PAGE_SIZE,\n  }));\n\n  constructor() {\n    effect(() => this.store.setQuery(this.query()));\n    this.destroyRef.onDestroy(() => {\n      clearTimeout(this.focusTimer);\n      this.store.clearQuery();\n    });\n  }\n\n  // קיבוץ נגזר: כל עמודה היא ה-issues של אותו סטטוס, ממוינים לפי rank.\n  // השרת כבר החזיר ממוין, אבל ממיינים שוב מקומית — כי עדכון אופטימי משנה\n  // rank במפה בלי לטעון מחדש, וכך הקלף קופץ למיקום הנכון באותו רגע.\n  readonly columns = computed<Column[]>(() => {\n    const all = this.store.issues();\n    return STATUSES.map((status) => ({\n      status,\n      label: STATUS_LABELS[status],\n      issues: all.filter((i) => i.status === status).sort((a, b) => a.rank - b.rank),\n    }));\n  });\n\n  /** הודעת aria-live — קוראי מסך מקריאים כל שינוי שלה */\n  protected readonly announcement = signal('');\n  /** ה-id של הקלף ש\"הורם\" במקלדת, או null כשאף אחד לא מורם */\n  protected readonly grabbedId = signal<number | null>(null);\n\n  // הטריק המרכזי של הסידור: rank חדש = נקודת אמצע בין שני השכנים. אין renumber\n  // של שורות — רק double אחד משתנה. זו גם המגבלה: אחרי מספיק חצאים רצופים נגמרת\n  // הדיוק של double (~52 ביט מנטיסה). LexoRank פותר זאת עם מחרוזות; כאן בוחרים\n  // בפשטות ומלמדים את הגבול.\n  private midpoint(prev: number | undefined, next: number | undefined): number {\n    if (prev == null && next == null) return RANK_GAP; // עמודה ריקה\n    if (prev == null) return next! / 2; // ראש העמודה\n    if (next == null) return prev + RANK_GAP; // סוף העמודה\n    return (prev + next) / 2; // בין שני שכנים\n  }\n\n  // נקודת המפגש של עכבר ומקלדת: finalArr הוא איך העמודה תיראה *אחרי* ההזזה,\n  // כשהקלף שזז כבר נמצא במקומו. ה-rank נגזר מהשכנים שלו שם, וה-reorder\n  // האופטימי מצייר → שולח → מתחרט. ההכרזה מתארת את התוצאה לקורא מסך.\n  private commitMove(issue: Issue, target: IssueStatus, finalArr: Issue[]): void {\n    const pos = finalArr.findIndex((i) => i.id === issue.id);\n    const rank = this.midpoint(finalArr[pos - 1]?.rank, finalArr[pos + 1]?.rank);\n\n    // אחרי ה-re-render האופטימי הפוקוס יכול ללכת לאיבוד (מעבר עמודה מוחק DOM) —\n    // אם הקלף מורם במקלדת, נחזיר אליו את הפוקוס כדי שאפשר יהיה להמשיך לזוז.\n    if (this.grabbedId() === issue.id) this.refocusAfterRender(issue.id);\n\n    void this.store.reorder(issue, target, rank).then((ok) => {\n      this.announce(\n        ok\n          ? `${issue.title}: ${STATUS_LABELS[target]}, ${pos + 1} מתוך ${finalArr.length}`\n          : `העברת ${issue.title} נכשלה והוחזרה`,\n      );\n      if (!ok) this.grabbedId.set(null);\n    });\n  }\n\n  // נתיב העכבר: CDK נותן את עמודת היעד ואת ה-index הסופי. בונים את הרשימה\n  // הסופית באותו אופן ש-CDK יצייר אותה (אותה עמודה → moveItemInArray; עמודה\n  // אחרת → splice), וממנה commitMove גוזר rank. דרופ ללא תזוזה מתעלמים ממנו.\n  protected onDrop(event: CdkDragDrop<IssueStatus>, target: IssueStatus): void {\n    if (event.previousContainer === event.container && event.previousIndex === event.currentIndex) {\n      return;\n    }\n\n    const issue = event.item.data as Issue;\n    const column = this.columns().find((c) => c.status === target)!;\n\n    let finalArr: Issue[];\n    if (event.previousContainer === event.container) {\n      finalArr = [...column.issues];\n      moveItemInArray(finalArr, event.previousIndex, event.currentIndex);\n    } else {\n      finalArr = column.issues.filter((i) => i.id !== issue.id);\n      finalArr.splice(Math.min(event.currentIndex, finalArr.length), 0, issue);\n    }\n\n    this.commitMove(issue, target, finalArr);\n  }\n\n  // נתיב המקלדת — הדרישה הקשה בקורס. רווח/Enter \"מרים\" ו\"מניח\" קלף; כשהוא\n  // מורם, החיצים מזיזים אותו (מעלה/מטה בעמודה, שמאל/ימין בין עמודות) ו-Esc\n  // מבטל. כל הזזה מכריזה את המיקום החדש דרך אזור ה-aria-live.\n  protected onCardKey(event: KeyboardEvent, issue: Issue): void {\n    const key = event.key;\n\n    if (key === ' ' || key === 'Enter') {\n      event.preventDefault();\n      if (this.grabbedId() === issue.id) {\n        this.grabbedId.set(null);\n        this.announce(`${issue.title} הונח`);\n      } else {\n        this.grabbedId.set(issue.id);\n        this.announce(\n          `${issue.title} הורם. חיצים מעלה/מטה להזזה בעמודה, שמאל/ימין למעבר עמודה, רווח להנחה, Esc לביטול`,\n        );\n      }\n      return;\n    }\n\n    if (key === 'Escape' && this.grabbedId() === issue.id) {\n      event.preventDefault();\n      this.grabbedId.set(null);\n      this.announce(`הזזת ${issue.title} בוטלה`);\n      return;\n    }\n\n    // החיצים פועלים רק על הקלף המורם — אחרת Tab/חיצים מנווטים כרגיל\n    if (this.grabbedId() !== issue.id) return;\n    if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) return;\n    event.preventDefault();\n    this.moveByKey(issue, key);\n  }\n\n  private moveByKey(issue: Issue, key: string): void {\n    const cols = this.columns();\n    const colIndex = cols.findIndex((c) => c.status === issue.status);\n    const column = cols[colIndex];\n    const pos = column.issues.findIndex((i) => i.id === issue.id);\n\n    if (key === 'ArrowUp' || key === 'ArrowDown') {\n      const targetPos = pos + (key === 'ArrowUp' ? -1 : 1);\n      if (targetPos < 0 || targetPos >= column.issues.length) return; // קצה העמודה\n      const finalArr = [...column.issues];\n      moveItemInArray(finalArr, pos, targetPos);\n      this.commitMove(issue, issue.status, finalArr);\n      return;\n    }\n\n    // RTL: חץ ימינה = העמודה הקודמת, חץ שמאלה = העמודה הבאה\n    const targetIndex = colIndex + (key === 'ArrowRight' ? -1 : 1);\n    if (targetIndex < 0 || targetIndex >= cols.length) return; // קצה הלוח\n    const targetCol = cols[targetIndex];\n    const finalArr = [...targetCol.issues, issue]; // נכנס לתחתית עמודת היעד\n    this.commitMove(issue, targetCol.status, finalArr);\n  }\n\n  private focusTimer: ReturnType<typeof setTimeout> | undefined;\n\n  private refocusAfterRender(id: number): void {\n    clearTimeout(this.focusTimer);\n    this.focusTimer = setTimeout(() => {\n      this.host.nativeElement\n        .querySelector<HTMLElement>(`[data-issue-id=\"${id}\"]`)\n        ?.focus();\n    });\n  }\n\n  private announce(message: string): void {\n    this.announcement.set(message);\n  }\n\n  protected priorityClass(issue: Issue): string {\n    return `prio--${issue.priority.toLowerCase()}`;\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-17.11": {
+              "start": 40,
+              "end": 77
+            },
+            "step-17.12": {
+              "start": 79,
+              "end": 89
+            },
+            "step-17.13": {
+              "start": 96,
+              "end": 105
+            },
+            "step-17.14": {
+              "start": 107,
+              "end": 126
+            },
+            "step-17.15": {
+              "start": 128,
+              "end": 149
+            },
+            "step-17.16": {
+              "start": 151,
+              "end": 206
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/issues/priority-picker.html": {
+          "content": "<div class=\"priority-picker\" role=\"radiogroup\" aria-label=\"Priority\">\n  @for (priority of priorities; track priority) {\n    <button\n      type=\"button\"\n      role=\"radio\"\n      [class.on]=\"value() === priority\"\n      [attr.aria-checked]=\"value() === priority\"\n      [disabled]=\"disabled()\"\n      (click)=\"choose(priority)\"\n    >\n      {{ priority }}\n    </button>\n  }\n</div>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/features/issues/priority-picker.scss": {
+          "content": ".priority-picker {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 8px;\n}\n\nbutton {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding: 8px 10px;\n  font: inherit;\n  cursor: pointer;\n\n  &.on {\n    border-color: var(--ember);\n    background: color-mix(in srgb, var(--ember) 14%, var(--sur2));\n  }\n\n  &:disabled {\n    cursor: not-allowed;\n    opacity: 0.55;\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/features/issues/priority-picker.ts": {
+          "content": "import { Component, input, model } from '@angular/core';\nimport { FormValueControl } from '@angular/forms/signals';\nimport { IssuePriority } from '../../core/models/issue.model';\n\nconst PRIORITIES: IssuePriority[] = ['Low', 'Medium', 'High', 'Critical'];\n\n@Component({\n  selector: 'tf-priority-picker',\n  templateUrl: './priority-picker.html',\n  styleUrl: './priority-picker.scss',\n})\nexport class PriorityPicker implements FormValueControl<IssuePriority> {\n  readonly value = model<IssuePriority>('Medium');\n  readonly disabled = input(false);\n\n  protected readonly priorities = PRIORITIES;\n\n  protected choose(priority: IssuePriority): void {\n    if (!this.disabled()) {\n      this.value.set(priority);\n    }\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-14.15": {
+              "start": 7,
+              "end": 23
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project-board.html": {
+          "content": "<section class=\"board\">\n  <header class=\"board-head\">\n    <a routerLink=\"/\" class=\"back\">Back to projects</a>\n    <h2>\n      {{ project().name }}\n      <tf-badge tone=\"count\">{{ project().openIssues }} open</tf-badge>\n    </h2>\n    @if (project().description; as desc) {\n      <p class=\"desc\">{{ desc }}</p>\n    }\n    <!-- קישור לדשבורד הפרויקט — מסך נפרד (לא תצוגה של הלוח), ולכן קישור ניווט -->\n    <a [routerLink]=\"['/projects', projectId(), 'dashboard']\" class=\"back dash-link\">דשבורד הפרויקט ←</a>\n  </header>\n\n  <!-- מתג התצוגה: שני קישורים שכותבים ?view ל-URL (merge שומר את שאר\n       הפרמטרים). list מוחק את המפתח (ברירת מחדל), kanban מוסיף אותו. -->\n  <nav class=\"filters view-toggle\" aria-label=\"תצוגת הלוח\">\n    <a\n      routerLink=\".\"\n      [queryParams]=\"{ view: null }\"\n      queryParamsHandling=\"merge\"\n      [class.on]=\"!isKanban()\"\n      [attr.aria-current]=\"!isKanban() ? 'page' : null\"\n      >רשימה</a\n    >\n    <a\n      routerLink=\".\"\n      [queryParams]=\"{ view: 'kanban' }\"\n      queryParamsHandling=\"merge\"\n      [class.on]=\"isKanban()\"\n      [attr.aria-current]=\"isKanban() ? 'page' : null\"\n      >לוח Kanban</a\n    >\n  </nav>\n\n  @if (isKanban()) {\n    <tf-kanban-board [projectId]=\"projectId()\" />\n  } @else {\n    <!-- הלוח האמיתי הגיע: מסנני הסטטוס מפרק 10 עברו לתוך ה-toolbar שלו,\n         וה-placeholder נמחק. אותם inputs, אותו חוזה URL — יותר מסך. -->\n    <tf-issue-board\n      [projectId]=\"projectId()\"\n      [status]=\"status()\"\n      [search]=\"q()\"\n      [sort]=\"sort()\"\n      [page]=\"page() ?? 1\"\n    />\n  }\n\n  <tf-project-members [projectId]=\"projectId()\" />\n</section>\n",
+          "status": "unchanged",
+          "regions": {
+            "step-18.23": {
+              "start": 11,
+              "end": 12
+            },
+            "step-17.20b": {
+              "start": 15,
+              "end": 48
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project-board.scss": {
+          "content": ".board-head {\n  margin-block-end: var(--sp-4);\n\n  .back {\n    font-size: var(--fs-small);\n    color: var(--txt2);\n  }\n\n  h2 {\n    display: flex;\n    align-items: center;\n    gap: var(--sp-2);\n    margin-block: var(--sp-2) 0;\n  }\n\n  .desc {\n    margin-block: var(--sp-1) 0;\n    color: var(--txt2);\n  }\n}\n\n.filters {\n  display: flex;\n  gap: var(--sp-2);\n  margin-block-end: var(--sp-4);\n\n  a {\n    padding: 4px 12px;\n    border: 1px solid var(--bdr);\n    border-radius: 999px;\n    font-size: var(--fs-small);\n    color: var(--txt2);\n    text-decoration: none;\n\n    &.on {\n      border-color: var(--ember);\n      color: var(--ember);\n      background: color-mix(in srgb, var(--ember) 10%, transparent);\n    }\n  }\n}\n\n.placeholder {\n  color: var(--txt2);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project-board.ts": {
+          "content": "import { Component, computed, input, numberAttribute } from '@angular/core';\nimport { RouterLink } from '@angular/router';\nimport { ProjectSummary } from '../../core/models/project.model';\nimport { TfBadge } from '../../shared/ui/badge/badge';\nimport { ProjectMembers } from './project-members';\nimport { IssueBoard } from '../issues/issue-board';\nimport { KanbanBoard } from '../issues/kanban-board';\n\n// ה-route component הוא הבעלים של חוזה ה-URL: כל פרמטר שהלוח צריך\n// מוצהר כאן כ-input (הראוטר קושר לפי שם, ולכן החיפוש נקרא q כמו ב-URL),\n// וזורם הלאה כ-signal רגיל. IssueBoard קורא ערכים רק מכאן —\n// את הראוטר הוא מזריק רק כדי לנווט החוצה, לא כדי לקרוא state.\n@Component({\n  selector: 'tf-project-board',\n  imports: [RouterLink, TfBadge, ProjectMembers, IssueBoard, KanbanBoard],\n  templateUrl: './project-board.html',\n  styleUrl: './project-board.scss',\n})\nexport class ProjectBoard {\n  readonly projectId = input.required({ transform: numberAttribute });\n\n  readonly project = input.required<ProjectSummary>();\n\n  /** ?status=Open — מסנן שחי ב-URL: רענון, שיתוף קישור וכפתור אחורה עובדים בחינם */\n  readonly status = input<string>();\n\n  /** ?q=login — חיפוש; alias כי בשם של פרמטר URL עדיף קצר */\n  readonly q = input<string>();\n\n  /** ?sort=priority — סדר; ברירת המחדל -created לא מופיעה ב-URL */\n  readonly sort = input<string>();\n\n  /** ?page=2 — דפדוף */\n  readonly page = input<string>();\n\n  // ?view=kanban — בחירת התצוגה חיה ב-URL בדיוק כמו המסננים. ברירת המחדל\n  // היא הרשימה (פרק 13), כך שקישורים קיימים לא משתנים; רק view=kanban מחליף\n  // לתצוגת הלוח. רק תצוגה אחת מצוירת בכל רגע — שתיהן חולקות את אותו IssuesStore.\n  readonly view = input<string>();\n\n  protected readonly isKanban = computed(() => this.view() === 'kanban');\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-17.20": {
+              "start": 36,
+              "end": 41
+            },
+            "step-13.11": {
+              "start": 9,
+              "end": 42
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project-card.html": {
+          "content": "<article class=\"card\">\n  <header>\n    <h3>{{ project().name }}</h3>\n    <tf-badge tone=\"count\">{{ project().openIssues }} open</tf-badge>\n  </header>\n\n  <p class=\"desc\">{{ project().description ?? 'No description yet' }}</p>\n\n  <button tf-button variant=\"ghost\" (click)=\"open.emit(project().id)\">Open board</button>\n</article>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project-card.scss": {
+          "content": "// הכרטיס מגיב לרוחב של עצמו, לא של החלון: container query.\n// אותו רכיב בדיוק יכול לחיות ב-sidebar צר וברשת רחבה — בלי props.\n:host {\n  display: block;\n  container-type: inline-size;\n}\n\n.card {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3) var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  box-shadow: var(--shadow-1);\n  transition:\n    border-color var(--dur-2) var(--ease-out),\n    box-shadow var(--dur-2) var(--ease-out),\n    transform var(--dur-2) var(--ease-out);\n\n  &:hover {\n    border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n    box-shadow: var(--shadow-2);\n    transform: translateY(-2px);\n  }\n}\n\n@container (min-width: 340px) {\n  .card {\n    grid-template-columns: 1fr auto;\n    align-items: center;\n\n    header,\n    .desc {\n      grid-column: 1;\n    }\n\n    button {\n      grid-column: 2;\n      grid-row: 1 / span 2;\n    }\n  }\n}\n\n.card header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n// תג הספירה עבר ל-tf-badge — אין כאן יותר עיצוב של .count\n\n.card .desc {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.card button {\n  justify-self: start;\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-8.10": {
+              "start": 1,
+              "end": 43
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project-card.ts": {
+          "content": "import { Component, input, output } from '@angular/core';\nimport { ProjectSummary } from '../../core/models/project.model';\nimport { TfBadge } from '../../shared/ui/badge/badge';\nimport { TfButton } from '../../shared/ui/button/button';\n\n// קומפוננטה \"טיפשה\": כל מה שהיא יודעת נכנס דרך input,\n// כל מה שיש לה לומר יוצא דרך output. אפס הזרקות, אפס ידע על העולם.\n// מפרק 09 היא צורכת את הערכה המשותפת — אבל החוזה שלה לא השתנה.\n@Component({\n  selector: 'tf-project-card',\n  imports: [TfBadge, TfButton],\n  templateUrl: './project-card.html',\n  styleUrl: './project-card.scss',\n})\nexport class ProjectCard {\n  /** required: בלי project אין כרטיס — המהדר אוכף את זה על כל שימוש */\n  readonly project = input.required<ProjectSummary>();\n\n  /** הכרטיס לא מנווט בעצמו — הוא מודיע, וההורה מחליט */\n  readonly open = output<number>();\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-7.10": {
+              "start": 6,
+              "end": 21
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project-list.html": {
+          "content": "<section class=\"projects\">\n  <h2>\n    Projects <span class=\"total\">{{ store.totalOpenIssues() }} open issues</span>\n    <button tf-button class=\"new-btn\" (click)=\"newProjectOpen.set(true)\">New project</button>\n  </h2>\n\n  <!-- מכונת מצבים, לא ערימת ifים: טוען-בלי-נתונים → שלד; שגיאה-בלי-נתונים →\n       כרטיס שגיאה עם Retry; אחרת — הנתונים (גם אם רענון ברקע נכשל, הישנים נשארים). -->\n  @if (store.loading() && !store.projects().length) {\n    @for (s of [1, 2, 3]; track s) {\n      <div class=\"skeleton\" aria-hidden=\"true\">\n        <div class=\"sk-line sk-title\"></div>\n        <div class=\"sk-line\"></div>\n        <div class=\"sk-line sk-short\"></div>\n      </div>\n    }\n  } @else if (store.loadError() && !store.projects().length) {\n    <div class=\"load-error\" role=\"alert\">\n      <p>Couldn't load your projects — the server may be down.</p>\n      <button tf-button variant=\"ghost\" (click)=\"store.reload()\">Try again</button>\n    </div>\n  } @else {\n    @for (p of store.projects(); track p.id) {\n      <tf-project-card [project]=\"p\" (open)=\"onOpen($event)\" />\n    } @empty {\n      <div class=\"empty-state\">\n        <p class=\"empty-title\">No projects yet</p>\n        <p class=\"empty-hint\">Create your first project — you'll become its owner.</p>\n        <button tf-button (click)=\"newProjectOpen.set(true)\">Create a project</button>\n      </div>\n    }\n  }\n</section>\n\n<tf-dialog heading=\"New project\" [(open)]=\"newProjectOpen\">\n  <tf-field label=\"Project name\" hint=\"Visible to the whole team\">\n    <input #nameInput id=\"project-name\" name=\"project-name\" type=\"text\" placeholder=\"e.g. Mobile App v2\" />\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" (click)=\"newProjectOpen.set(false)\">Cancel</button>\n    <button\n      tf-button\n      [disabled]=\"pending()\"\n      (click)=\"create(nameInput.value); nameInput.value = ''\"\n    >\n      {{ pending() ? 'Creating…' : 'Create' }}\n    </button>\n  </footer>\n</tf-dialog>\n",
+          "status": "unchanged",
+          "regions": {
+            "step-12.10b": {
+              "start": 7,
+              "end": 32
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project-list.scss": {
+          "content": ".projects {\n  display: grid;\n  gap: clamp(var(--sp-2), 2cqi, var(--sp-4));\n  container: project-list / inline-size;\n  // auto-fit יוצר מספר עמודות לפי המקום הפנוי; minmax(min(...)) מונע overflow\n  // גם כשה-container צר יותר מהרוחב האידיאלי של כרטיס.\n  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));\n\n  h2 {\n    grid-column: 1 / -1;\n    margin: 0;\n    display: flex;\n    align-items: center;\n    gap: var(--sp-2);\n\n    .total {\n      color: var(--txt3);\n      font-size: var(--fs-small);\n      font-weight: 400;\n    }\n\n    .new-btn {\n      margin-inline-start: auto;\n    }\n  }\n}\n\n// subgrid מיישר את שורת הכותרת למסילות הכרטיסים בלי להעתיק את נוסחת ה-grid.\n// הדפדפן שלא תומך בזה נשאר על ה-flex fallback שמוגדר למעלה.\n@supports (grid-template-columns: subgrid) {\n  .projects h2 {\n    display: grid;\n    grid-template-columns: subgrid;\n    align-items: baseline;\n\n    .total {\n      justify-self: start;\n    }\n\n    .new-btn {\n      grid-column: -2 / -1;\n      justify-self: end;\n      margin-inline-start: 0;\n    }\n  }\n}\n\n// ה-breakpoint שייך לרכיב, לא לחלון: אותה רשימה יכולה להופיע באזור צר או רחב.\n@container project-list (max-width: 34rem) {\n  .projects h2 {\n    align-items: stretch;\n    grid-template-columns: 1fr;\n\n    .total,\n    .new-btn {\n      justify-self: stretch;\n    }\n\n    .new-btn {\n      inline-size: 100%;\n    }\n  }\n}\n\n// שלד בגודל כרטיס אמיתי: ה-grid לא קופץ כשהנתונים מגיעים.\n// האנימציה על opacity בלבד — זול ל-compositor, ושקט ויזואלית.\n.skeleton {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3);\n  display: grid;\n  gap: var(--sp-2);\n  aspect-ratio: 1.8 / 1;\n  animation: sk-pulse var(--dur-4) var(--ease-in-out) infinite;\n\n  .sk-line {\n    height: 0.9em;\n    border-radius: 4px;\n    background: var(--sur2);\n  }\n\n  .sk-title {\n    width: 55%;\n    height: 1.2em;\n  }\n\n  .sk-short {\n    width: 35%;\n  }\n}\n\n@keyframes sk-pulse {\n  50% {\n    opacity: 0.55;\n  }\n}\n\n.load-error {\n  grid-column: 1 / -1;\n  // אין טוקן \"אדום שקוף\" — וזה בכוונה: color-mix גוזר אותו מ-danger,\n  // כמו שהקיט עושה ב-badge. טוקן חדש נולד רק כשיש לו שלושה צרכנים.\n  border: 1px solid color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  border-radius: var(--rad);\n  background: color-mix(in srgb, var(--danger) 10%, var(--sur));\n  padding: var(--sp-3);\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-2);\n  flex-wrap: wrap;\n\n  p {\n    margin: 0;\n  }\n}\n\n.empty-state {\n  grid-column: 1 / -1;\n  border: 1px dashed var(--bdr);\n  border-radius: var(--rad);\n  padding: var(--sp-5) var(--sp-3);\n  text-align: center;\n  display: grid;\n  gap: var(--sp-2);\n  justify-items: center;\n\n  .empty-title {\n    margin: 0;\n    font-weight: 600;\n  }\n\n  .empty-hint {\n    margin: 0;\n    color: var(--txt3);\n  }\n}\n\n// :has() נותן ל-parent להגיב למצב פנימי בלי signal, class, או HostBinding.\n.load-error:has(button:focus-visible),\n.empty-state:has(button:focus-visible) {\n  border-color: color-mix(in srgb, var(--ember) 55%, var(--bdr));\n  box-shadow: var(--ring);\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .skeleton {\n    animation: none;\n  }\n}\n\n.dlg-actions {\n  display: flex;\n  justify-content: flex-end;\n  gap: var(--sp-2);\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-15.2": {
+              "start": 5,
+              "end": 7
+            },
+            "step-15.3": {
+              "start": 28,
+              "end": 46
+            },
+            "step-15.4": {
+              "start": 48,
+              "end": 63
+            },
+            "step-12.10c": {
+              "start": 65,
+              "end": 137
+            },
+            "step-15.8": {
+              "start": 139,
+              "end": 150
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project-list.ts": {
+          "content": "import { Component, inject, signal } from '@angular/core';\nimport { Router } from '@angular/router';\nimport { ProjectsStore } from '../../core/state/projects.store';\nimport { ProjectCard } from './project-card';\nimport { TfButton } from '../../shared/ui/button/button';\nimport { TfDialog } from '../../shared/ui/dialog/dialog';\nimport { TfField } from '../../shared/ui/field/field';\nimport { ToastService } from '../../shared/ui/toast/toast.service';\n\n// קומפוננטה \"חכמה\": יודעת מאיפה הנתונים מגיעים (ה-store),\n// ולא יודעת כלום על איך כרטיס נראה. החיבור לעולם קורה רק כאן.\n@Component({\n  selector: 'tf-project-list',\n  imports: [ProjectCard, TfButton, TfDialog, TfField],\n  templateUrl: './project-list.html',\n  styleUrl: './project-list.scss',\n})\nexport class ProjectList {\n  protected readonly store = inject(ProjectsStore);\n  private readonly toastSvc = inject(ToastService);\n  private readonly router = inject(Router);\n\n  protected readonly newProjectOpen = signal(false);\n\n  // ה-console.log מפרק 07 משלם את חובו: ניווט אמיתי. הכרטיס הטיפש\n  // עדיין רק פולט מספר — מי שמחליט לאן הולכים הוא החכם.\n  protected onOpen(projectId: number): void {\n    this.router.navigate(['/projects', projectId]);\n  }\n\n  // pending הוא state של הפקודה, לא של הנתונים — ולכן הוא גר כאן,\n  // ברכיב, ולא ב-store. הצלחה = ניווט ישר ללוח של הפרויקט החדש:\n  // ה-id חזר מהשרת ב-201, לא נוחש בקליינט.\n  protected readonly pending = signal(false);\n\n  protected async create(name: string): Promise<void> {\n    const trimmed = name.trim();\n    if (!trimmed) {\n      this.toastSvc.show('Project name is required', 'danger');\n      return;\n    }\n\n    this.pending.set(true);\n    try {\n      const id = await this.store.addProject(trimmed);\n      this.toastSvc.show(`Project \"${trimmed}\" created`, 'success');\n      this.newProjectOpen.set(false);\n      this.router.navigate(['/projects', id]);\n    } catch {\n      // הדיאלוג נשאר פתוח — המשתמש מתחבר ומנסה שוב\n    } finally {\n      this.pending.set(false);\n    }\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-10.10": {
+              "start": 25,
+              "end": 29
+            },
+            "step-12.11b": {
+              "start": 31,
+              "end": 54
+            },
+            "step-7.9": {
+              "start": 10,
+              "end": 55
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project-members.html": {
+          "content": "<section class=\"members\">\n  <header class=\"members-head\">\n    <h3>Members</h3>\n    @if (isOwner()) {\n      <button tf-button variant=\"ghost\" (click)=\"addOpen.set(true)\">Add member</button>\n    }\n  </header>\n\n  @if (!tokenStore.isLoggedIn()) {\n    <p class=\"hint\">Sign in to see who's on this project.</p>\n  } @else if (forbidden()) {\n    <p class=\"hint\">Members are visible to project members only.</p>\n  } @else if (members.isLoading() && !list().length) {\n    <p class=\"hint\">Loading members…</p>\n  } @else {\n    <ul class=\"member-list\">\n      @for (m of list(); track m.userId) {\n        <li>\n          <span class=\"avatar\" aria-hidden=\"true\">{{ m.displayName.charAt(0).toUpperCase() }}</span>\n          <span class=\"who\">\n            <span class=\"name\">{{ m.displayName }}</span>\n            <span class=\"email\">{{ m.email }}</span>\n          </span>\n          <tf-badge [tone]=\"m.role === 'Owner' ? 'open' : 'count'\">{{ m.role }}</tf-badge>\n        </li>\n      }\n    </ul>\n  }\n</section>\n\n<tf-dialog heading=\"Add member\" [(open)]=\"addOpen\">\n  <tf-field label=\"Email\" hint=\"Must already have a TaskForge account\">\n    <input #email id=\"member-email\" name=\"member-email\" type=\"email\" placeholder=\"teammate@example.com\" />\n  </tf-field>\n\n  <tf-field label=\"Role\" hint=\"Owners can add members and manage the project\">\n    <select #role id=\"member-role\" name=\"member-role\">\n      <option value=\"Member\" selected>Member</option>\n      <option value=\"Owner\">Owner</option>\n    </select>\n  </tf-field>\n\n  <footer class=\"dlg-actions\">\n    <button tf-button variant=\"ghost\" (click)=\"addOpen.set(false)\">Cancel</button>\n    <button tf-button [disabled]=\"pending()\" (click)=\"addFromInput(email, role.value)\">\n      {{ pending() ? 'Adding…' : 'Add member' }}\n    </button>\n  </footer>\n</tf-dialog>\n",
+          "status": "unchanged",
+          "regions": {
+            "step-12.12c": {
+              "start": 1,
+              "end": 29
+            },
+            "step-12.13b": {
+              "start": 31,
+              "end": 49
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project-members.scss": {
+          "content": ":host {\n  display: block;\n  margin-block-start: var(--sp-4);\n}\n\n.members {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3);\n}\n\n.members-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-2);\n  margin-bottom: var(--sp-2);\n\n  h3 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.hint {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.member-list {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n  display: grid;\n  gap: var(--sp-2);\n\n  li {\n    display: flex;\n    align-items: center;\n    gap: var(--sp-2);\n  }\n\n  .avatar {\n    flex: 0 0 auto;\n    width: 32px;\n    height: 32px;\n    border-radius: 50%;\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n    background: color-mix(in srgb, var(--ember) 20%, var(--sur2));\n    color: var(--ember);\n    font-weight: 700;\n  }\n\n  .who {\n    display: flex;\n    flex-direction: column;\n    min-width: 0;\n    margin-inline-end: auto;\n\n    .name {\n      font-weight: 600;\n    }\n\n    .email {\n      color: var(--txt3);\n      font-size: var(--fs-small);\n      overflow: hidden;\n      text-overflow: ellipsis;\n      white-space: nowrap;\n    }\n  }\n}\n\n.dlg-actions {\n  display: flex;\n  justify-content: flex-end;\n  gap: var(--sp-2);\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-12.12d": {
+              "start": 1,
+              "end": 76
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project-members.ts": {
+          "content": "import { Component, computed, inject, input, signal } from '@angular/core';\nimport { HttpClient, HttpErrorResponse, httpResource } from '@angular/common/http';\nimport { firstValueFrom } from 'rxjs';\nimport { API_BASE } from '../../core/api/api';\nimport { TokenStore } from '../../core/auth/token.store';\nimport { ProjectMember, ProjectRole } from '../../core/models/member.model';\nimport { TfBadge } from '../../shared/ui/badge/badge';\nimport { TfButton } from '../../shared/ui/button/button';\nimport { TfDialog } from '../../shared/ui/dialog/dialog';\nimport { TfField } from '../../shared/ui/field/field';\nimport { ToastService } from '../../shared/ui/toast/toast.service';\n\n// httpResource עם URL ריאקטיבי: הפונקציה תלויה גם ב-projectId וגם\n// במצב ההתחברות. החזרת undefined = \"אל תשלח בקשה\" — אורח לא מפעיל\n// 401 מיותר, ומעבר בין פרויקטים מרענן את הרשימה מעצמו.\n@Component({\n  selector: 'tf-project-members',\n  imports: [TfBadge, TfButton, TfDialog, TfField],\n  templateUrl: './project-members.html',\n  styleUrl: './project-members.scss',\n})\nexport class ProjectMembers {\n  private readonly http = inject(HttpClient);\n  private readonly toastSvc = inject(ToastService);\n  protected readonly tokenStore = inject(TokenStore);\n\n  readonly projectId = input.required<number>();\n\n  protected readonly members = httpResource<ProjectMember[]>(() =>\n    this.tokenStore.isLoggedIn()\n      ? `${API_BASE}/projects/${this.projectId()}/members`\n      : undefined,\n  );\n\n  protected readonly list = computed<ProjectMember[]>(() =>\n    this.members.hasValue() ? this.members.value() : [],\n  );\n\n  // ההרשאה נגזרת מהנתונים, לא מנוחשת: אני Owner אם השרת אומר שאני Owner.\n  protected readonly myRole = computed<ProjectRole | null>(() => {\n    const me = this.tokenStore.user();\n    if (!me) return null;\n    return this.list().find((m) => m.userId === me.id)?.role ?? null;\n  });\n\n  protected readonly isOwner = computed(() => this.myRole() === 'Owner');\n\n  // 403 הוא state לגיטימי של המסך — לא רק toast חולף:\n  // המשתמש מחובר אבל אינו חבר בפרויקט הזה.\n  protected readonly forbidden = computed(() => {\n    const err = this.members.error();\n    return err instanceof HttpErrorResponse && err.status === 403;\n  });\n\n  // הפקודה: POST של אימייל + תפקיד, ואז reload — הרשימה תמיד משקפת\n  // את השרת. שגיאות (404 משתמש, 403 לא-Owner, 409 כבר חבר) כבר\n  // מתורגמות ל-toast ב-interceptor; כאן רק מנהלים את הדיאלוג.\n  protected readonly addOpen = signal(false);\n  protected readonly pending = signal(false);\n\n  protected async addFromInput(emailInput: HTMLInputElement, role: string): Promise<void> {\n    const added = await this.add(emailInput.value, role);\n    if (added) {\n      emailInput.value = '';\n    }\n  }\n\n  protected async add(email: string, role: string): Promise<boolean> {\n    const trimmed = email.trim();\n    if (!trimmed) {\n      this.toastSvc.show('Email is required', 'danger');\n      return false;\n    }\n\n    this.pending.set(true);\n    try {\n      await firstValueFrom(\n        this.http.post(`${API_BASE}/projects/${this.projectId()}/members`, {\n          email: trimmed,\n          role,\n        }),\n      );\n      this.toastSvc.show(`${trimmed} added to the project`, 'success');\n      this.addOpen.set(false);\n      this.members.reload();\n      return true;\n    } catch {\n      // הדיאלוג נשאר פתוח — אפשר לתקן את האימייל ולנסות שוב\n      return false;\n    } finally {\n      this.pending.set(false);\n    }\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-12.12b": {
+              "start": 13,
+              "end": 53
+            },
+            "step-12.13": {
+              "start": 55,
+              "end": 93
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project.guard.ts": {
+          "content": "import { inject } from '@angular/core';\nimport { CanActivateFn, Router } from '@angular/router';\nimport { ProjectsStore } from '../../core/state/projects.store';\n\n// בפרק 10 ה-guard בדק מערך בזיכרון. עכשיו הרשימה מגיעה מהרשת,\n// לכן ה-guard מחכה ל-API לפני שהוא מחליט אם לטעון את הלוח.\nexport const projectExistsGuard: CanActivateFn = async (route) => {\n  const store = inject(ProjectsStore);\n  const router = inject(Router);\n\n  const id = Number(route.paramMap.get('projectId'));\n  const project = await store.findProject(id);\n\n  return project ? true : router.createUrlTree(['/']);\n};\n",
+          "status": "unchanged",
+          "regions": {
+            "step-11.7": {
+              "start": 5,
+              "end": 15
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/features/projects/project.resolver.ts": {
+          "content": "import { inject } from '@angular/core';\nimport { ResolveFn } from '@angular/router';\nimport { ProjectSummary } from '../../core/models/project.model';\nimport { ProjectsStore } from '../../core/state/projects.store';\n\n// ה-resolver נשאר באותה חתימה ציבורית, אבל עכשיו הוא אסינכרוני.\n// ProjectBoard ממשיך לקבל input בשם project, בלי לדעת אם הנתון בא ממוק או HTTP.\nexport const projectResolver: ResolveFn<ProjectSummary> = async (route) => {\n  const store = inject(ProjectsStore);\n  const id = Number(route.paramMap.get('projectId'));\n\n  const project = await store.findProject(id);\n  if (!project) throw new Error(`Project ${id} was not found after guard passed`);\n  return project;\n};\n",
+          "status": "unchanged",
+          "regions": {
+            "step-11.8": {
+              "start": 6,
+              "end": 15
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/badge/badge.scss": {
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  min-block-size: var(--control-h-sm);\n  border-radius: var(--rad-full);\n  padding-block: 0;\n  padding-inline: var(--sp-2);\n  font-size: var(--fs-small);\n  font-weight: var(--fw-semibold);\n  white-space: nowrap;\n}\n\n:host(.tf-badge--count) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--open) {\n  background: color-mix(in srgb, var(--teal) 16%, transparent);\n  color: var(--teal);\n}\n\n:host(.tf-badge--progress) {\n  background: color-mix(in srgb, var(--ember) 16%, transparent);\n  color: var(--ember);\n}\n\n:host(.tf-badge--done) {\n  background: color-mix(in srgb, var(--txt3) 18%, transparent);\n  color: var(--txt3);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/badge/badge.ts": {
+          "content": "import { Component, input } from '@angular/core';\n\n// תג סטטוס טיפש לחלוטין: tone נכנס, צבע יוצא. הצבעים נגזרים\n// מהטוקנים של פרק 08 עם color-mix — אין כאן אף צבע קשיח.\n@Component({\n  selector: 'tf-badge',\n  template: `<ng-content />`,\n  styleUrl: './badge.scss',\n  host: {\n    class: 'tf-badge',\n    '[class.tf-badge--open]': \"tone() === 'open'\",\n    '[class.tf-badge--progress]': \"tone() === 'progress'\",\n    '[class.tf-badge--done]': \"tone() === 'done'\",\n    '[class.tf-badge--count]': \"tone() === 'count'\",\n  },\n})\nexport class TfBadge {\n  readonly tone = input<'open' | 'progress' | 'done' | 'count'>('count');\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/button/button.scss": {
+          "content": ":host {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-1);\n  border-radius: var(--rad-sm);\n  padding-block: var(--sp-1);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  font-weight: 600;\n  border: 1px solid var(--bdr);\n  background: var(--sur2);\n  color: var(--txt1);\n  cursor: pointer;\n  transition:\n    border-color var(--dur-1) var(--ease-out),\n    background-color var(--dur-1) var(--ease-out),\n    color var(--dur-1) var(--ease-out),\n    box-shadow var(--dur-1) var(--ease-out),\n    transform var(--dur-1) var(--ease-out);\n\n  &:focus-visible {\n    outline: 2px solid var(--ember);\n    outline-offset: 2px;\n  }\n\n  &:active:not(:disabled) {\n    transform: translateY(1px);\n  }\n\n  &:disabled {\n    opacity: 0.5;\n    cursor: not-allowed;\n  }\n}\n\n:host(.tf-btn--primary) {\n  background: var(--ember);\n  border-color: var(--ember);\n  color: #1a1208;\n  box-shadow: var(--shadow-1);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--ember) 85%, white);\n  }\n}\n\n:host(.tf-btn--ghost) {\n  background: transparent;\n\n  &:hover:not(:disabled) {\n    border-color: var(--ember);\n    color: var(--ember);\n  }\n}\n\n:host(.tf-btn--danger) {\n  background: transparent;\n  border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n  color: var(--danger);\n\n  &:hover:not(:disabled) {\n    background: color-mix(in srgb, var(--danger) 12%, transparent);\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/button/button.ts": {
+          "content": "import { Component, input } from '@angular/core';\n\n// selector של attribute, לא של element: הכפתור נשאר <button> אמיתי —\n// מקלדת, פוקוס, form submit ו-screen readers מקבלים הכול בחינם.\n// הרכיב רק מוסיף זהות ויזואלית.\n@Component({\n  selector: 'button[tf-button], a[tf-button]',\n  template: `<ng-content />`,\n  styleUrl: './button.scss',\n  host: {\n    class: 'tf-btn',\n    '[class.tf-btn--primary]': \"variant() === 'primary'\",\n    '[class.tf-btn--ghost]': \"variant() === 'ghost'\",\n    '[class.tf-btn--danger]': \"variant() === 'danger'\",\n  },\n})\nexport class TfButton {\n  readonly variant = input<'primary' | 'ghost' | 'danger'>('primary');\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-9.3": {
+              "start": 3,
+              "end": 19
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/dialog/dialog.html": {
+          "content": "<dialog #dlg class=\"tf-dialog\" (close)=\"onNativeClose()\">\n  <header class=\"tf-dialog-head\">\n    <h2>{{ heading() }}</h2>\n    <button type=\"button\" class=\"tf-dialog-x\" (click)=\"open.set(false)\" aria-label=\"Close\">\n      ✕\n    </button>\n  </header>\n\n  <div class=\"tf-dialog-body\">\n    <ng-content />\n  </div>\n</dialog>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/dialog/dialog.scss": {
+          "content": ".tf-dialog {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  color: var(--txt1);\n  padding: 0;\n  min-inline-size: min(92vw, 420px);\n  box-shadow: var(--shadow-3);\n\n  &[open] {\n    animation: tf-dialog-in var(--dur-3) var(--ease-out);\n  }\n\n  &::backdrop {\n    background: rgb(0 0 0 / 0.55);\n    backdrop-filter: blur(2px);\n  }\n}\n\n@keyframes tf-dialog-in {\n  from {\n    opacity: 0;\n    transform: translateY(8px) scale(0.98);\n  }\n}\n\n.tf-dialog-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-3);\n  padding-block: var(--sp-3);\n  padding-inline: var(--sp-4);\n  border-block-end: 1px solid var(--bdr);\n\n  h2 {\n    margin: 0;\n    font-size: var(--fs-h2);\n  }\n}\n\n.tf-dialog-x {\n  border: none;\n  background: transparent;\n  color: var(--txt3);\n  font-size: 15px;\n  padding: var(--sp-1);\n  cursor: pointer;\n\n  &:hover {\n    color: var(--danger);\n  }\n}\n\n.tf-dialog-body {\n  padding-block: var(--sp-4);\n  padding-inline: var(--sp-4);\n  display: grid;\n  gap: var(--sp-3);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/dialog/dialog.ts": {
+          "content": "import { Component, ElementRef, effect, input, model, viewChild } from '@angular/core';\n\n// עטיפה דקה ל-<dialog> המקורי של הפלטפורמה: showModal נותן בחינם\n// פוקוס כלוא, Escape, ו-backdrop. אנחנו רק מגשרים בין עולם ה-signals\n// לעולם ה-DOM הציווי — לכל כיוון.\n@Component({\n  selector: 'tf-dialog',\n  templateUrl: './dialog.html',\n  styleUrl: './dialog.scss',\n})\nexport class TfDialog {\n  /** two-way: ההורה כותב true כדי לפתוח; הדיאלוג כותב false כשנסגר */\n  readonly open = model(false);\n\n  readonly heading = input.required<string>();\n\n  // לא required: ההרצה הראשונה של effect עלולה לקרות לפני שה-query התיישב,\n  // והגנה שקטה עדיפה על NG0951 בזמן ריצה.\n  private readonly dlg = viewChild<ElementRef<HTMLDialogElement>>('dlg');\n\n  constructor() {\n    // signal משתנה ואז DOM מצווה — effect הוא בדיוק הגשר הזה\n    effect(() => {\n      const el = this.dlg()?.nativeElement;\n      if (!el) return;\n      if (this.open() && !el.open) el.showModal();\n      if (!this.open() && el.open) el.close();\n    });\n  }\n\n  // המשתמש סגר עם Escape או שהדפדפן סגר — מסנכרנים חזרה את ה-model\n  protected onNativeClose(): void {\n    this.open.set(false);\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-9.8": {
+              "start": 3,
+              "end": 35
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/field/field.html": {
+          "content": "<label class=\"tf-field\">\n  <span class=\"tf-field-label\">{{ label() }}</span>\n  <ng-content />\n  @if (error(); as e) {\n    <span class=\"tf-field-error\" role=\"alert\">{{ e }}</span>\n  } @else if (hint(); as h) {\n    <span class=\"tf-field-hint\">{{ h }}</span>\n  }\n</label>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/field/field.scss": {
+          "content": ".tf-field {\n  display: grid;\n  gap: var(--sp-1);\n\n  .tf-field-label {\n    font-size: var(--fs-small);\n    font-weight: 600;\n    color: var(--txt2);\n  }\n\n  ::ng-deep input,\n  ::ng-deep select,\n  ::ng-deep textarea {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-2);\n    font-size: var(--fs-body);\n    transition:\n      border-color var(--dur-1) var(--ease-out),\n      box-shadow var(--dur-1) var(--ease-out);\n\n    &:focus-visible {\n      outline: 2px solid var(--ember);\n      outline-offset: 1px;\n    }\n\n    &:focus {\n      border-color: var(--ember);\n    }\n  }\n\n  .tf-field-error {\n    color: var(--danger);\n    font-size: var(--fs-small);\n  }\n\n  .tf-field-hint {\n    color: var(--txt3);\n    font-size: var(--fs-small);\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/field/field.ts": {
+          "content": "import { AfterContentInit, Component, ElementRef, inject, input } from '@angular/core';\n\n// העטיפה מספקת label, שגיאה ורמז — והשליטה עצמה (input, select, textarea)\n// מוקרנת פנימה עם ng-content. הכול בתוך <label> אחד, כך שלחיצה על הטקסט\n// ממקדת את השדה — אסוציאציה מובנית, בלי לנהל ידנית id ו-for.\n@Component({\n  selector: 'tf-field',\n  templateUrl: './field.html',\n  styleUrl: './field.scss',\n})\nexport class TfField implements AfterContentInit {\n  private static nextId = 0;\n  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);\n\n  readonly label = input.required<string>();\n  readonly error = input<string | null>(null);\n  readonly hint = input<string | null>(null);\n\n  ngAfterContentInit(): void {\n    const control = this.host.nativeElement.querySelector<\n      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement\n    >('input, select, textarea');\n    if (!control) return;\n\n    const base = this.label()\n      .toLowerCase()\n      .replace(/[^a-z0-9]+/g, '-')\n      .replace(/^-|-$/g, '');\n    const generated = `tf-${base || 'field'}-${++TfField.nextId}`;\n\n    if (!control.id) control.id = generated;\n    if (!control.name) control.name = control.id;\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-9.6": {
+              "start": 3,
+              "end": 34
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/markdown-editor/markdown-editor.html": {
+          "content": "<div class=\"md-editor\">\n  <div class=\"md-tabs\" role=\"tablist\">\n    <button\n      type=\"button\"\n      role=\"tab\"\n      [class.on]=\"!preview()\"\n      [attr.aria-selected]=\"!preview()\"\n      (click)=\"preview.set(false)\"\n    >\n      כתיבה\n    </button>\n    <button\n      type=\"button\"\n      role=\"tab\"\n      [class.on]=\"preview()\"\n      [attr.aria-selected]=\"preview()\"\n      (click)=\"preview.set(true)\"\n    >\n      תצוגה מקדימה\n    </button>\n  </div>\n\n  @if (!preview()) {\n    <div class=\"md-input\">\n      <textarea\n        #ta\n        [rows]=\"rows()\"\n        [value]=\"value()\"\n        [disabled]=\"disabled()\"\n        [attr.placeholder]=\"placeholder()\"\n        (input)=\"onInput($event)\"\n        (keydown)=\"onKeydown($event)\"\n      ></textarea>\n\n      @if (mentionMatches().length) {\n        <ul class=\"md-mentions\" role=\"listbox\" aria-label=\"הזכרת חבר\">\n          @for (name of mentionMatches(); track name; let i = $index) {\n            <li\n              role=\"option\"\n              [class.active]=\"i === activeMention()\"\n              [attr.aria-selected]=\"i === activeMention()\"\n              (mousedown)=\"$event.preventDefault(); choose(name)\"\n            >\n              {{ name }}\n            </li>\n          }\n        </ul>\n      }\n    </div>\n  } @else {\n    @if (value().trim()) {\n      <div class=\"md-preview\" [innerHTML]=\"rendered()\"></div>\n    } @else {\n      <p class=\"md-empty\">אין מה להציג עדיין.</p>\n    }\n  }\n</div>\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58
+          ]
+        },
+        "client/src/app/shared/ui/markdown-editor/markdown-editor.scss": {
+          "content": ":host {\n  display: block;\n}\n\n.md-editor {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur);\n  overflow: clip;\n}\n\n.md-tabs {\n  display: flex;\n  gap: var(--sp-1);\n  padding: var(--sp-1);\n  border-block-end: 1px solid var(--bdr);\n  background: var(--sur2);\n\n  button {\n    padding: var(--sp-1) var(--sp-3);\n    border: 1px solid transparent;\n    border-radius: var(--rad-sm);\n    background: transparent;\n    color: var(--txt2);\n    font-size: var(--fs-small);\n    cursor: pointer;\n\n    &.on {\n      background: var(--sur);\n      border-color: var(--bdr);\n      color: var(--txt1);\n    }\n  }\n}\n\n// עוטף יחסי כדי לעגן אליו את ה-popover של ה-@mention\n.md-input {\n  position: relative;\n\n  textarea {\n    display: block;\n    width: 100%;\n    border: 0;\n    background: var(--sur);\n    color: var(--txt1);\n    padding: var(--sp-2) var(--sp-3);\n    font: inherit;\n    resize: vertical;\n\n    &:focus-visible {\n      outline: none;\n      box-shadow: inset 0 0 0 2px var(--accent);\n    }\n  }\n}\n\n// ה-popover של ההזכרות: מתחת לאזור הקלט, מעל שאר הדף\n.md-mentions {\n  position: absolute;\n  inset-inline-start: var(--sp-3);\n  inset-block-start: 100%;\n  z-index: 20;\n  min-width: 180px;\n  margin: 0;\n  padding: var(--sp-1);\n  list-style: none;\n  background: var(--sur);\n  border: 1px solid var(--bdr2);\n  border-radius: var(--rad-sm);\n  box-shadow: var(--shadow-3);\n\n  li {\n    padding: var(--sp-1) var(--sp-2);\n    border-radius: var(--rad-sm);\n    font-size: var(--fs-small);\n    color: var(--txt2);\n    cursor: pointer;\n\n    &.active,\n    &:hover {\n      background: var(--accent-subtle);\n      color: var(--txt1);\n    }\n  }\n}\n\n.md-preview {\n  padding: var(--sp-2) var(--sp-3);\n  color: var(--txt1);\n  min-height: 3rem;\n  line-height: var(--lh-normal);\n\n  code {\n    font-family: ui-monospace, monospace;\n    background: var(--sur3);\n    padding: 0 4px;\n    border-radius: 4px;\n    font-size: 0.9em;\n  }\n\n  a {\n    color: var(--accent);\n  }\n\n  .mention {\n    color: var(--accent);\n    font-weight: var(--fw-semibold);\n  }\n}\n\n.md-empty {\n  padding: var(--sp-2) var(--sp-3);\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.15": {
+              "start": 1,
+              "end": 116
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117
+          ]
+        },
+        "client/src/app/shared/ui/markdown-editor/markdown-editor.ts": {
+          "content": "import {\n  Component,\n  ElementRef,\n  computed,\n  input,\n  model,\n  signal,\n  viewChild,\n} from '@angular/core';\nimport { FormValueControl } from '@angular/forms/signals';\nimport { renderMarkdown } from '../../../core/markdown/markdown';\n\n// עורך Markdown כ-custom form control (ממשיך את priority-picker מפרק 14):\n// מממש FormValueControl<string>, ולכן עובד עם [formField] כמו כל input רגיל.\n// שלושה דברים: textarea, מתג תצוגה מקדימה (Markdown מרונדר ובטוח), ו-@mention\n// autocomplete שצץ כשמקלידים @ — רשימת חברים מסוננת, בחירה מזריקה את השם.\n@Component({\n  selector: 'tf-markdown-editor',\n  templateUrl: './markdown-editor.html',\n  styleUrl: './markdown-editor.scss',\n})\nexport class MarkdownEditor implements FormValueControl<string> {\n  readonly value = model<string>('');\n  readonly disabled = input(false);\n  readonly rows = input(4);\n  readonly placeholder = input('');\n  /** שמות החברים שאפשר להזכיר ב-@ */\n  readonly mentionCandidates = input<string[]>([]);\n\n  private readonly textarea = viewChild.required<ElementRef<HTMLTextAreaElement>>('ta');\n\n  protected readonly preview = signal(false);\n  protected readonly rendered = computed(() => renderMarkdown(this.value() || ''));\n\n  // ה-query של ה-@mention: null = אין הזכרה פעילה כרגע\n  protected readonly mentionQuery = signal<string | null>(null);\n  protected readonly activeMention = signal(0);\n\n  protected readonly mentionMatches = computed<string[]>(() => {\n    const query = this.mentionQuery();\n    if (query === null) return [];\n    const lower = query.toLowerCase();\n    return this.mentionCandidates()\n      .filter((name) => name.toLowerCase().includes(lower))\n      .slice(0, 5);\n  });\n\n  protected onInput(event: Event): void {\n    const ta = event.target as HTMLTextAreaElement;\n    this.value.set(ta.value);\n    this.detectMention(ta);\n  }\n\n  // מזהים @word שמסתיים בדיוק בסמן — זו ההזכרה שעורכים עכשיו\n  private detectMention(ta: HTMLTextAreaElement): void {\n    const caret = ta.selectionStart ?? ta.value.length;\n    const before = ta.value.slice(0, caret);\n    const match = /@([\\w.-]*)$/.exec(before);\n    this.mentionQuery.set(match ? match[1] : null);\n    this.activeMention.set(0);\n  }\n\n  protected onKeydown(event: KeyboardEvent): void {\n    const matches = this.mentionMatches();\n    if (!matches.length) return;\n\n    if (event.key === 'ArrowDown') {\n      event.preventDefault();\n      this.activeMention.update((i) => (i + 1) % matches.length);\n    } else if (event.key === 'ArrowUp') {\n      event.preventDefault();\n      this.activeMention.update((i) => (i - 1 + matches.length) % matches.length);\n    } else if (event.key === 'Enter' || event.key === 'Tab') {\n      event.preventDefault();\n      this.choose(matches[this.activeMention()]);\n    } else if (event.key === 'Escape') {\n      this.mentionQuery.set(null);\n    }\n  }\n\n  // בחירת חבר: מחליפים את ה-@word שלפני הסמן בשם המלא, וסוגרים את ה-popover\n  protected choose(name: string): void {\n    const ta = this.textarea().nativeElement;\n    const caret = ta.selectionStart ?? ta.value.length;\n    const before = ta.value.slice(0, caret).replace(/@([\\w.-]*)$/, `@${name} `);\n    const after = ta.value.slice(caret);\n    const next = before + after;\n\n    this.value.set(next);\n    this.mentionQuery.set(null);\n\n    // מחזירים פוקוס וסמן אחרי ההזרקה\n    queueMicrotask(() => {\n      ta.value = next;\n      ta.focus();\n      ta.setSelectionRange(before.length, before.length);\n    });\n  }\n\n  protected togglePreview(): void {\n    this.preview.update((p) => !p);\n  }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.14": {
+              "start": 13,
+              "end": 103
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104
+          ]
+        },
+        "client/src/app/shared/ui/toast/toast-container.html": {
+          "content": "<div class=\"tf-toasts\" aria-live=\"polite\">\n  @for (t of toastSvc.toasts(); track t.id) {\n    <button\n      type=\"button\"\n      class=\"tf-toast\"\n      [class.tf-toast--success]=\"t.tone === 'success'\"\n      [class.tf-toast--danger]=\"t.tone === 'danger'\"\n      (click)=\"toastSvc.dismiss(t.id)\"\n      title=\"Dismiss\"\n    >\n      {{ t.text }}\n    </button>\n  }\n</div>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/toast/toast-container.scss": {
+          "content": ".tf-toasts {\n  position: fixed;\n  inset-block-end: var(--sp-4);\n  inset-inline-end: var(--sp-4);\n  display: grid;\n  gap: var(--sp-2);\n  z-index: 50;\n}\n\n.tf-toast {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur2);\n  color: var(--txt1);\n  padding-block: var(--sp-2);\n  padding-inline: var(--sp-3);\n  font-size: var(--fs-small);\n  text-align: start;\n  cursor: pointer;\n  box-shadow: var(--shadow-2);\n  animation: tf-toast-in var(--dur-3) var(--ease-spring);\n\n  &--success {\n    border-color: color-mix(in srgb, var(--teal) 55%, var(--bdr));\n    color: var(--teal);\n  }\n\n  &--danger {\n    border-color: color-mix(in srgb, var(--danger) 55%, var(--bdr));\n    color: var(--danger);\n  }\n}\n\n@keyframes tf-toast-in {\n  from {\n    opacity: 0;\n    transform: translateY(10px);\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/toast/toast-container.ts": {
+          "content": "import { Component, inject } from '@angular/core';\nimport { ToastService } from './toast.service';\n\n// המכולה חיה פעם אחת בשלד. aria-live=\"polite\" מקריא הודעות חדשות\n// לקוראי מסך בלי לקטוע את מה שבאמצע.\n@Component({\n  selector: 'tf-toast-container',\n  templateUrl: './toast-container.html',\n  styleUrl: './toast-container.scss',\n})\nexport class ToastContainer {\n  protected readonly toastSvc = inject(ToastService);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/app/shared/ui/toast/toast.service.ts": {
+          "content": "import { Injectable, signal } from '@angular/core';\n\nexport interface Toast {\n  id: number;\n  text: string;\n  tone: 'info' | 'success' | 'danger';\n}\n\n// אותו דפוס store מפרק 07, בקטן: signal פרטי, asReadonly החוצה,\n// שינוי רק דרך מתודות. כל toast מסלק את עצמו אחרי 4 שניות.\n@Injectable({ providedIn: 'root' })\nexport class ToastService {\n  private readonly _toasts = signal<Toast[]>([]);\n\n  readonly toasts = this._toasts.asReadonly();\n\n  private nextId = 1;\n\n  show(text: string, tone: Toast['tone'] = 'info'): void {\n    const id = this.nextId++;\n    this._toasts.update((list) => [...list, { id, text, tone }]);\n    setTimeout(() => this.dismiss(id), 4000);\n  }\n\n  dismiss(id: number): void {\n    this._toasts.update((list) => list.filter((t) => t.id !== id));\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-9.10": {
+              "start": 9,
+              "end": 28
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/index.html": {
+          "content": "<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>TaskForge</title>\n  <base href=\"/\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <link rel=\"icon\" href=\"data:,\">\n</head>\n<body>\n  <app-root></app-root>\n</body>\n</html>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/main.ts": {
+          "content": "import { bootstrapApplication } from '@angular/platform-browser';\nimport { appConfig } from './app/app.config';\nimport { App } from './app/app';\n\nbootstrapApplication(App, appConfig)\n  .catch((err) => console.error(err));\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/styles.scss": {
+          "content": "// סדר הטעינה הוא סדר הפלט: layers קודם (הכרזת סדר השכבות),\n// ואז כל שכבה ממלאת את עצמה. Sass פולט כל מודול במקום ה-@use הראשון שלו.\n@use './styles/layers';\n@use './styles/reset';\n@use './styles/tokens';\n@use './styles/base';\n\n// סטיילים של קומפוננטות (scss של כל רכיב) חיים מחוץ לשכבות —\n// ולכן גוברים על base בלי שום טריק. זו ברירת המחדל הנכונה.\n\n@keyframes vt-fade-in {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n}\n\n@keyframes vt-fade-out {\n  to {\n    opacity: 0;\n    transform: translateY(-4px);\n  }\n}\n\n::view-transition-old(root) {\n  animation: 120ms ease-out both vt-fade-out;\n}\n\n::view-transition-new(root) {\n  animation: 180ms ease-out 40ms both vt-fade-in;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  ::view-transition-old(root),\n  ::view-transition-new(root) {\n    animation-duration: 1ms;\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-8.2": {
+              "start": 1,
+              "end": 6
+            },
+            "step-14.11b": {
+              "start": 11,
+              "end": 38
+            }
+          },
+          "changedLines": []
+        },
+        "client/src/styles/_base.scss": {
+          "content": "// בסיס: אלמנטים גולמיים מקבלים את הטוקנים. רק logical properties —\n// inline/block במקום left/right/top/bottom, כדי שהשכבה תשרוד כל כיוון.\n\n@layer base {\n  body {\n    background: var(--bg);\n    color: var(--txt1);\n    font-family: Inter, 'Segoe UI', sans-serif;\n    font-size: var(--fs-body);\n    transition:\n      background-color var(--dur-3) var(--ease-out),\n      color var(--dur-3) var(--ease-out);\n  }\n\n  // פוקוס נראה אחיד בכל האפליקציה — נגזר מצבע ה-accent, ידידותי למקלדת\n  :focus-visible {\n    outline: 2px solid var(--accent);\n    outline-offset: 2px;\n    border-radius: var(--rad-sm);\n  }\n\n  ::selection {\n    background: var(--accent-subtle);\n  }\n\n  // כיבוד העדפת תנועה מופחתת — חובה לכל מערכת תנועה\n  @media (prefers-reduced-motion: reduce) {\n    *,\n    *::before,\n    *::after {\n      animation-duration: 0.01ms !important;\n      animation-iteration-count: 1 !important;\n      transition-duration: 0.01ms !important;\n    }\n  }\n\n  h1 {\n    font-size: var(--fs-h1);\n    line-height: 1.2;\n  }\n\n  h2 {\n    font-size: var(--fs-h2);\n    line-height: 1.25;\n  }\n\n  p {\n    margin-block-end: var(--sp-2);\n  }\n\n  button {\n    cursor: pointer;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding-block: var(--sp-1);\n    padding-inline: var(--sp-3);\n\n    &:hover {\n      border-color: var(--ember);\n      color: var(--ember);\n    }\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/styles/_layers.scss": {
+          "content": "// סדר השכבות מוכרז פעם אחת, לפני כל שאר ה-CSS — והוא מנצח כל מלחמת\n// specificity: שכבה מאוחרת ברשימה גוברת, לא הסלקטור הארוך יותר.\n// (הקובץ חי לבד כי Sass דורש ש-@use יבוא לפני כל חוקה אחרת —\n// אז ההכרזה גרה במודול שנטען ראשון.)\n@layer reset, tokens, base, components;\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/styles/_reset.scss": {
+          "content": "// reset מודרני וקטן — רק מה שצריך, בשכבה הכי חלשה.\n\n@layer reset {\n  *,\n  *::before,\n  *::after {\n    box-sizing: border-box;\n  }\n\n  * {\n    margin: 0;\n  }\n\n  html {\n    -webkit-text-size-adjust: 100%;\n  }\n\n  body {\n    min-height: 100dvh;\n    line-height: 1.55;\n    -webkit-font-smoothing: antialiased;\n  }\n\n  img,\n  svg {\n    display: block;\n    max-inline-size: 100%;\n  }\n\n  button,\n  input,\n  select,\n  textarea {\n    font: inherit;\n    color: inherit;\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/src/styles/_tokens.scss": {
+          "content": "// design tokens — מקור האמת היחיד לצבע, ריווח וטיפוגרפיה.\n// custom properties (ולא משתני SCSS!) כי ערכת נושא מתחלפת בזמן ריצה.\n\n@layer tokens {\n  :root {\n    // forge dark — ברירת המחדל\n    --bg: #0f1217;\n    --sur: #161a21;\n    --sur2: #1c212b;\n    --sur3: #232834;\n    --bdr: #2a2f3a;\n    --bdr2: #353b48;\n    --bdr3: #434a5a;\n    --txt1: #e8ebf2;\n    --txt2: #aeb6c8;\n    --txt3: #8a93a5;\n    --txt4: #5c6373;\n\n    --ember: #ff8a3d;\n    --teal: #2dd4bf;\n    --danger: #f87171;\n\n    --rad: 12px;\n    --rad-sm: 8px;\n\n    --sp-1: 4px;\n    --sp-2: 8px;\n    --sp-3: 14px;\n    --sp-4: 22px;\n    --sp-5: 34px;\n  }\n\n  // \"נייר חם\" — ערכת האור נטענת תמיד, ומנצחת רק כשה-attribute קיים\n  [data-theme='light'] {\n    --bg: #f5f1ea;\n    --sur: #fffdf9;\n    --sur2: #f1ece2;\n    --sur3: #e8e2d6;\n    --bdr: #ddd5c7;\n    --bdr2: #cbc2b0;\n    --bdr3: #b3a892;\n    --txt1: #252a33;\n    --txt2: #4a5263;\n    --txt3: #6f7787;\n    --txt4: #9aa0ad;\n\n    --ember: #e06616;\n    --teal: #0f9e87;\n    --danger: #d23f3f;\n  }\n\n  // שכבת ה\"מערכת\": דגש יחיד נגזר, סולם הגבהה (elevation), ותנועה כטוקנים.\n  // הכול נגזר מהסמנטיקה למעלה — שינוי ערכת נושא מעדכן גם את אלה.\n  :root {\n    // דגש יחיד: ember הוא הצבע הראשי. teal יורד לתפקיד סטטוס/מידע בלבד.\n    --accent: var(--ember);\n    --accent-strong: #ff7a1f;\n    --accent-subtle: color-mix(in srgb, var(--ember) 15%, transparent);\n    --accent-contrast: #1a0e04; // טקסט/אייקון על רקע accent\n\n    // elevation — צללים מדורגים, קלים ושכבתיים (לא drop-shadow כבד)\n    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 1px rgb(0 0 0 / 0.18);\n    --shadow-2: 0 4px 14px rgb(0 0 0 / 0.36), 0 2px 5px rgb(0 0 0 / 0.2);\n    --shadow-3: 0 14px 40px rgb(0 0 0 / 0.46), 0 5px 12px rgb(0 0 0 / 0.26);\n    --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);\n\n    // radius נוסף\n    --rad-lg: 16px;\n    --rad-full: 999px;\n\n    // תנועה כטוקנים: משכים ועקומות האצה אחידים בכל האפליקציה\n    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);\n    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);\n    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);\n    --dur-1: 120ms;\n    --dur-2: 160ms;\n    --dur-3: 240ms;\n    --dur-4: 360ms;\n\n    // density — גובה פקדים אחיד; מצב compact דורס דרך attribute\n    --control-h: 36px;\n    --control-h-sm: 28px;\n  }\n\n  [data-theme='light'] {\n    --accent-strong: #c95a10;\n    --accent-contrast: #fffdf9;\n    --shadow-1: 0 1px 2px rgb(35 30 20 / 0.08), 0 1px 1px rgb(35 30 20 / 0.05);\n    --shadow-2: 0 4px 14px rgb(35 30 20 / 0.12), 0 2px 5px rgb(35 30 20 / 0.08);\n    --shadow-3: 0 14px 40px rgb(35 30 20 / 0.16), 0 5px 12px rgb(35 30 20 / 0.1);\n  }\n\n  [data-density='compact'] {\n    --control-h: 30px;\n    --control-h-sm: 24px;\n    --sp-3: 10px;\n    --sp-4: 16px;\n  }\n\n  :root {\n    // טיפוגרפיה נוזלית: גבול תחתון, שיפוע יחסי ל-viewport, גבול עליון.\n    // אין media queries — clamp עושה את האינטרפולציה לבד.\n    --fs-body: clamp(14px, 13.2px + 0.25vw, 16px);\n    --fs-h1: clamp(20px, 17px + 1vw, 28px);\n    --fs-h2: clamp(17px, 15.5px + 0.5vw, 21px);\n    --fs-small: clamp(12px, 11.5px + 0.15vw, 13px);\n  }\n\n  // סולם טיפוגרפיה מלא + משקלים וגבהי-שורה כטוקנים — שמות נוחים לרכיבים חדשים.\n  // השמות הישנים נשמרים כ-alias כדי שאף רכיב קיים לא יישבר.\n  :root {\n    --fs-xs: clamp(11px, 10.6px + 0.12vw, 12px);\n    --fs-sm: var(--fs-small);\n    --fs-base: var(--fs-body);\n    --fs-lg: clamp(16px, 15px + 0.4vw, 18px);\n    --fs-xl: var(--fs-h2);\n    --fs-2xl: var(--fs-h1);\n\n    --lh-tight: 1.2;\n    --lh-snug: 1.4;\n    --lh-normal: 1.6;\n\n    --fw-regular: 400;\n    --fw-medium: 550;\n    --fw-semibold: 650;\n    --fw-bold: 750;\n\n    --tracking-tight: -0.01em;\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-8.3": {
+              "start": 5,
+              "end": 50
+            },
+            "step-8.3b": {
+              "start": 52,
+              "end": 98
+            },
+            "step-8.5": {
+              "start": 100,
+              "end": 107
+            },
+            "step-8.5b": {
+              "start": 109,
+              "end": 129
+            }
+          },
+          "changedLines": []
+        },
+        "client/tsconfig.app.json": {
+          "content": "/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */\n/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */\n{\n  \"extends\": \"./tsconfig.json\",\n  \"compilerOptions\": {\n    \"outDir\": \"./out-tsc/app\",\n    \"types\": []\n  },\n  \"include\": [\n    \"src/**/*.ts\"\n  ],\n  \"exclude\": [\n    \"src/**/*.spec.ts\"\n  ]\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/tsconfig.json": {
+          "content": "/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */\n/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */\n{\n  \"compileOnSave\": false,\n  \"compilerOptions\": {\n    \"noImplicitOverride\": true,\n    \"noPropertyAccessFromIndexSignature\": true,\n    \"noImplicitReturns\": true,\n    \"noFallthroughCasesInSwitch\": true,\n    \"skipLibCheck\": true,\n    \"isolatedModules\": true,\n    \"experimentalDecorators\": true,\n    \"importHelpers\": true,\n    \"target\": \"ES2022\",\n    \"module\": \"preserve\"\n  },\n  \"angularCompilerOptions\": {\n    \"enableI18nLegacyMessageIdFormat\": false,\n    \"strictInjectionParameters\": true,\n    \"strictInputAccessModifiers\": true\n  },\n  \"files\": [],\n  \"references\": [\n    {\n      \"path\": \"./tsconfig.app.json\"\n    },\n    {\n      \"path\": \"./tsconfig.spec.json\"\n    }\n  ]\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "client/tsconfig.spec.json": {
+          "content": "/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */\n/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */\n{\n  \"extends\": \"./tsconfig.json\",\n  \"compilerOptions\": {\n    \"outDir\": \"./out-tsc/spec\",\n    \"types\": [\n      \"vitest/globals\"\n    ]\n  },\n  \"include\": [\n    \"src/**/*.d.ts\",\n    \"src/**/*.spec.ts\"\n  ]\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/.config/dotnet-tools.json": {
+          "content": "{\n  \"version\": 1,\n  \"isRoot\": true,\n  \"tools\": {\n    \"dotnet-ef\": {\n      \"version\": \"10.0.9\",\n      \"commands\": [\"dotnet-ef\"]\n    }\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/appsettings.Development.json": {
+          "content": "{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Information\"\n    }\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/appsettings.json": {
+          "content": "{\n  \"ConnectionStrings\": {\n    \"Default\": \"Data Source=taskforge.db\"\n  },\n  \"Jwt\": {\n    \"Issuer\": \"TaskForge\",\n    \"Audience\": \"TaskForge.Client\",\n    \"Key\": \"dev-only-signing-key-CHANGE-IN-PRODUCTION-7f3a9c1e5b8d2046\",\n    \"AccessTokenMinutes\": 15,\n    \"RefreshTokenDays\": 7\n  },\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Warning\"\n    }\n  },\n  \"AllowedHosts\": \"*\"\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Auth/CurrentUserExtensions.cs": {
+          "content": "using System.Security.Claims;\n\nnamespace TaskForge.Api.Auth;\n\npublic static class CurrentUserExtensions\n{\n    // ה-claim ‏sub מהטוקן מגיע לכאן כ-NameIdentifier (מיפוי ברירת המחדל של ה-handler).\n    // אם אין משתמש מאומת — זו שגיאת תכנות (endpoint בלי RequireAuthorization), ולכן זורקים.\n    public static int GetUserId(this ClaimsPrincipal user)\n    {\n        var raw = user.FindFirstValue(ClaimTypes.NameIdentifier)\n            ?? throw new InvalidOperationException(\n                \"No user id claim — is this endpoint missing RequireAuthorization()?\");\n        return int.Parse(raw);\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Contracts/AttachmentContracts.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\n// תשובת המטא-דאטה של קובץ — בלי ה-bytes. זה מה שרשימת הקבצים מציגה,\n// ומה ש-201 מחזיר אחרי העלאה. ההורדה עצמה היא endpoint נפרד שמחזיר את הקובץ.\npublic sealed record AttachmentResponse(\n    int Id,\n    int IssueId,\n    string FileName,\n    string ContentType,\n    long SizeBytes,\n    string UploadedByName,\n    DateTime CreatedAtUtc)\n{\n    public static AttachmentResponse FromEntity(Attachment a) => new(\n        a.Id,\n        a.IssueId,\n        a.FileName,\n        a.ContentType,\n        a.SizeBytes,\n        a.UploadedBy?.DisplayName ?? \"Unknown\",\n        a.CreatedAtUtc);\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.4": {
+              "start": 5,
+              "end": 24
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25
+          ]
+        },
+        "server/TaskForge.Api/Contracts/AuthContracts.cs": {
+          "content": "using System.ComponentModel.DataAnnotations;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\npublic sealed record RegisterRequest(\n    [property: Required, EmailAddress, StringLength(254)] string Email,\n    [property: Required, StringLength(60, MinimumLength = 2)] string DisplayName,\n    [property: Required, StringLength(100, MinimumLength = 8)] string Password);\n\npublic sealed record LoginRequest(\n    [property: Required, EmailAddress] string Email,\n    [property: Required] string Password);\n\npublic sealed record RefreshRequest(\n    [property: Required] string RefreshToken);\n\npublic sealed record UserResponse(int Id, string Email, string DisplayName, UserRole Role)\n{\n    public static UserResponse FromEntity(User user) =>\n        new(user.Id, user.Email, user.DisplayName, user.Role);\n}\n\n// הזוג המלא: access קצר-חיים לבקשות, refresh ארוך-חיים לחידוש —\n// והקליינט יודע בדיוק מתי ה-access יפוג.\npublic sealed record AuthResponse(\n    string AccessToken,\n    string RefreshToken,\n    DateTime ExpiresAtUtc,\n    UserResponse User);\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Contracts/CommentContracts.cs": {
+          "content": "using System.ComponentModel.DataAnnotations;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\npublic sealed record CreateCommentRequest(\n    [property: Required, StringLength(1200, MinimumLength = 2)] string Body);\n\npublic sealed record CommentResponse(\n    int Id,\n    int IssueId,\n    string Body,\n    int AuthorUserId,\n    string AuthorName,\n    DateTime CreatedAtUtc)\n{\n    public static CommentResponse FromEntity(Comment comment) => new(\n        comment.Id,\n        comment.IssueId,\n        comment.Body,\n        comment.AuthorUserId,\n        comment.Author?.DisplayName ?? \"Unknown user\",\n        comment.CreatedAtUtc);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Contracts/DashboardContracts.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\n// תשובת ה-feed: אירוע משוטח עם שם המבצע. הישות ActivityEvent מחזיקה FK\n// ל-User; כאן משטחים אותו ל-ActorName אחד, בדיוק מה שהפיד מציג.\n// (תשובת ה-stats היא ProjectStats מ-Core/Common ישירות — POCO חוצה-שכבות.)\npublic sealed record ActivityResponse(\n    int Id,\n    ActivityType Type,\n    string Summary,\n    int? IssueId,\n    string ActorName,\n    DateTime CreatedAtUtc)\n{\n    public static ActivityResponse FromEntity(ActivityEvent e) => new(\n        e.Id,\n        e.Type,\n        e.Summary,\n        e.IssueId,\n        e.Actor?.DisplayName ?? \"Unknown\",\n        e.CreatedAtUtc);\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-18.7": {
+              "start": 5,
+              "end": 23
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Contracts/IssueContracts.cs": {
+          "content": "using System.ComponentModel.DataAnnotations;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\n// חוזה ה-HTTP של Issues. ‏records: ‏immutable, שוויון לפי ערך, ושורה אחת לכל טיפוס.\n// הישות היא פנים-המערכת; ה-DTOs האלה הם מה שעובר על הקו — בכוונה בנפרד.\n\npublic sealed record CreateIssueRequest(\n    [property: Required, StringLength(200, MinimumLength = 3)] string Title,\n    [property: StringLength(4000)] string? Description,\n    IssuePriority Priority = IssuePriority.Medium);\n\npublic sealed record UpdateIssueRequest(\n    [property: Required, StringLength(200, MinimumLength = 3)] string Title,\n    [property: StringLength(4000)] string? Description,\n    IssueStatus Status,\n    IssuePriority Priority);\n\n// פקודת הסידור-מחדש: סטטוס היעד (לאיזו עמודה גררו) ו-Rank חדש (נקודת אמצע\n// שהקליינט חישב בין שני השכנים). מינימלי בכוונה — שינוי מיקום, לא עריכת issue.\npublic sealed record ReorderIssueRequest(IssueStatus Status, double Rank);\n\npublic sealed record TitleAvailabilityResponse(bool Available);\n\npublic sealed record LabelResponse(int Id, string Name, string? Color);\n\npublic sealed record IssueResponse(\n    int Id,\n    string Title,\n    string? Description,\n    IssueStatus Status,\n    IssuePriority Priority,\n    int ProjectId,\n    DateTime CreatedAtUtc,\n    double Rank,\n    IReadOnlyList<LabelResponse> Labels)\n{\n    public static IssueResponse FromEntity(Issue issue) => new(\n        issue.Id,\n        issue.Title,\n        issue.Description,\n        issue.Status,\n        issue.Priority,\n        issue.ProjectId,\n        issue.CreatedAtUtc,\n        issue.Rank,\n        issue.Labels.Select(l => new LabelResponse(l.Id, l.Name, l.Color)).ToList());\n}\n\n// [AsParameters]: כל ה-query string נקשר לאובייקט אחד במקום שישה פרמטרים.\n// הוולידציה של .NET 10 רצה גם כאן — pageSize=999 ייפסל לפני ה-handler.\npublic sealed record IssueListParams(\n    IssueStatus? Status,\n    IssuePriority? Priority,\n    [property: StringLength(100)] string? Search,\n    string Sort = \"-created\",\n    [property: Range(1, int.MaxValue)] int Page = 1,\n    [property: Range(1, 100)] int PageSize = 20)\n{\n    public IssueQuery ToQuery(int projectId) =>\n        new(projectId, Status, Priority, Search, Sort, Page, PageSize);\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-17.2": {
+              "start": 21,
+              "end": 23
+            },
+            "step-17.2b": {
+              "start": 37,
+              "end": 37
+            },
+            "step-4.8": {
+              "start": 52,
+              "end": 64
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Contracts/MemberContracts.cs": {
+          "content": "using System.ComponentModel.DataAnnotations;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\n// הצירוף הוא לפי אימייל — זה מה שהבעלים יודע להקליד. השרת מתרגם\n// אימייל ל-UserId; הקליינט לא מנחש מזהים פנימיים לעולם.\npublic sealed record AddMemberRequest(\n    [property: Required, EmailAddress] string Email,\n    ProjectRole Role = ProjectRole.Member);\n\npublic sealed record MemberResponse(\n    int UserId,\n    string DisplayName,\n    string Email,\n    ProjectRole Role)\n{\n    public static MemberResponse FromInfo(ProjectMemberInfo info) =>\n        new(info.UserId, info.DisplayName, info.Email, info.Role);\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-12.5": {
+              "start": 7,
+              "end": 21
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Contracts/ProjectContracts.cs": {
+          "content": "using System.ComponentModel.DataAnnotations;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\npublic sealed record CreateProjectRequest(\n    [property: Required, StringLength(120, MinimumLength = 2)] string Name,\n    [property: StringLength(2000)] string? Description);\n\npublic sealed record ProjectResponse(\n    int Id,\n    string Name,\n    string? Description,\n    DateTime CreatedAtUtc)\n{\n    public static ProjectResponse FromEntity(Project project) =>\n        new(project.Id, project.Name, project.Description, project.CreatedAtUtc);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Endpoints/AttachmentEndpoints.cs": {
+          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class AttachmentEndpoints\n{\n    // קובץ עד 5MB — מגבלה פשוטה שמונעת העלאות ענק ל-DB בפיתוח\n    private const long MaxBytes = 5 * 1024 * 1024;\n\n    public static IEndpointRouteBuilder MapAttachmentEndpoints(this IEndpointRouteBuilder app)\n    {\n        var perIssue = app.MapGroup(\"/api/issues/{issueId:int}/attachments\")\n            .WithTags(\"Attachments\")\n            .RequireAuthorization();\n\n        perIssue.MapGet(\"/\", ListAttachments);\n        // DisableAntiforgery: ה-SPA שולח Bearer, לא קוקי — אין סיכון CSRF, ולכן\n        // מוותרים על דרישת ה-antiforgery token שמינimal API מבקש כברירת מחדל ל-multipart.\n        perIssue.MapPost(\"/\", UploadAttachment).DisableAntiforgery();\n\n        var byId = app.MapGroup(\"/api/attachments\")\n            .WithTags(\"Attachments\")\n            .RequireAuthorization();\n\n        byId.MapGet(\"/{id:int}\", DownloadAttachment);\n\n        return app;\n    }\n\n    private static async Task<Results<Ok<IReadOnlyList<AttachmentResponse>>, NotFound, ForbidHttpResult>> ListAttachments(\n        int issueId,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        IAttachmentRepository attachments,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.GetByIdAsync(issueId, cancellationToken);\n        if (issue is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(issue.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var mapped = (await attachments.GetMetadataByIssueAsync(issueId, cancellationToken))\n            .Select(AttachmentResponse.FromEntity)\n            .ToList();\n\n        return TypedResults.Ok<IReadOnlyList<AttachmentResponse>>(mapped);\n    }\n\n    // multipart: ה-IFormFile נקשר אוטומטית מה-form. בודקים גודל לפני שקוראים\n    // את כל הזרם לזיכרון, ורושמים אירוע פעילות ליד ההעלאה.\n    private static async Task<Results<Created<AttachmentResponse>, NotFound, ForbidHttpResult, BadRequest<string>>> UploadAttachment(\n        int issueId,\n        IFormFile file,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        IAttachmentRepository attachments,\n        IActivityRepository activity,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.GetByIdAsync(issueId, cancellationToken);\n        if (issue is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(issue.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        if (file.Length == 0)\n        {\n            return TypedResults.BadRequest(\"הקובץ ריק\");\n        }\n\n        if (file.Length > MaxBytes)\n        {\n            return TypedResults.BadRequest(\"הקובץ גדול מ-5MB\");\n        }\n\n        using var stream = new MemoryStream();\n        await file.CopyToAsync(stream, cancellationToken);\n\n        var saved = await attachments.AddAsync(new Attachment\n        {\n            IssueId = issueId,\n            FileName = Path.GetFileName(file.FileName),\n            ContentType = string.IsNullOrWhiteSpace(file.ContentType) ? \"application/octet-stream\" : file.ContentType,\n            SizeBytes = file.Length,\n            Bytes = stream.ToArray(),\n            UploadedByUserId = user.GetUserId(),\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        await activity.LogAsync(new ActivityEvent\n        {\n            ProjectId = issue.ProjectId,\n            IssueId = issueId,\n            ActorUserId = user.GetUserId(),\n            Type = ActivityType.AttachmentAdded,\n            Summary = $\"צירף/ה קובץ \\\"{saved.FileName}\\\"\",\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        // ה-entity שחזר מ-AddAsync לא טוען את ה-nav של UploadedBy, אז משלימים\n        // את שם המעלה מה-claim \"name\" שבטוקן — כך ה-201 כבר מציג את השם הנכון.\n        var uploaderName = user.FindFirstValue(\"name\") ?? \"Unknown\";\n        return TypedResults.Created(\n            $\"/api/attachments/{saved.Id}\",\n            AttachmentResponse.FromEntity(saved) with { UploadedByName = uploaderName });\n    }\n\n    // ההורדה: שולפים כולל bytes, מאמתים חברות דרך ה-issue, ומחזירים File\n    // עם ה-content-type המקורי כדי שהדפדפן ידע מה לעשות עם הקובץ.\n    private static async Task<Results<FileContentHttpResult, NotFound, ForbidHttpResult>> DownloadAttachment(\n        int id,\n        ClaimsPrincipal user,\n        IAttachmentRepository attachments,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        var attachment = await attachments.GetByIdAsync(id, cancellationToken);\n        if (attachment is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        var issue = await issues.GetByIdAsync(attachment.IssueId, cancellationToken);\n        if (issue is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(issue.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        return TypedResults.File(attachment.Bytes, attachment.ContentType, attachment.FileName);\n    }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.5": {
+              "start": 15,
+              "end": 33
+            },
+            "step-19.6": {
+              "start": 35,
+              "end": 154
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156
+          ]
+        },
+        "server/TaskForge.Api/Endpoints/AuthEndpoints.cs": {
+          "content": "using Microsoft.AspNetCore.Http.HttpResults;\nusing Microsoft.Extensions.Options;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\nusing System.Security.Claims;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class AuthEndpoints\n{\n    public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api/auth\").WithTags(\"Auth\");\n\n        group.MapPost(\"/register\", Register);\n        group.MapPost(\"/login\", Login);\n        group.MapPost(\"/refresh\", Refresh);\n\n        // היחיד בקבוצה שדורש טוקן: \"מי אני\" לפי ה-claims המאומתים\n        group.MapGet(\"/me\", Me).RequireAuthorization();\n\n        return app;\n    }\n\n    private static async Task<Results<Created<AuthResponse>, Conflict<string>>> Register(\n        RegisterRequest request,\n        IUserRepository users,\n        IPasswordHasher hasher,\n        ITokenService tokens,\n        IRefreshTokenRepository refreshTokens,\n        IOptions<JwtOptions> jwt,\n        CancellationToken cancellationToken)\n    {\n        if (await users.EmailExistsAsync(request.Email, cancellationToken))\n        {\n            // 409: הבקשה תקינה, אבל מתנגשת במצב הקיים\n            return TypedResults.Conflict(\"Email is already registered.\");\n        }\n\n        var user = await users.AddAsync(new User\n        {\n            Email = request.Email,\n            DisplayName = request.DisplayName,\n            PasswordHash = hasher.Hash(request.Password),\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        var auth = await IssueTokensAsync(user, tokens, refreshTokens, jwt.Value, cancellationToken);\n        return TypedResults.Created(\"/api/auth/me\", auth);\n    }\n\n    private static async Task<Results<Ok<AuthResponse>, UnauthorizedHttpResult>> Login(\n        LoginRequest request,\n        IUserRepository users,\n        IPasswordHasher hasher,\n        ITokenService tokens,\n        IRefreshTokenRepository refreshTokens,\n        IOptions<JwtOptions> jwt,\n        CancellationToken cancellationToken)\n    {\n        var user = await users.GetByEmailAsync(request.Email, cancellationToken);\n\n        // תשובה אחידה לשני הכישלונות — לא מסגירים אם האימייל קיים\n        if (user is null || !hasher.Verify(request.Password, user.PasswordHash))\n        {\n            return TypedResults.Unauthorized();\n        }\n\n        var auth = await IssueTokensAsync(user, tokens, refreshTokens, jwt.Value, cancellationToken);\n        return TypedResults.Ok(auth);\n    }\n\n    // Rotation: כל refresh שורף את הטוקן הישן ומנפיק זוג חדש.\n    // טוקן גנוב שמנוסה שוב — כבר מבוטל, והגניבה נחשפת.\n    private static async Task<Results<Ok<AuthResponse>, UnauthorizedHttpResult>> Refresh(\n        RefreshRequest request,\n        IRefreshTokenRepository refreshTokens,\n        ITokenService tokens,\n        IOptions<JwtOptions> jwt,\n        CancellationToken cancellationToken)\n    {\n        var existing = await refreshTokens.GetActiveAsync(request.RefreshToken, cancellationToken);\n        if (existing?.User is null)\n        {\n            return TypedResults.Unauthorized();\n        }\n\n        await refreshTokens.RevokeAsync(existing, cancellationToken);\n\n        var auth = await IssueTokensAsync(existing.User, tokens, refreshTokens, jwt.Value, cancellationToken);\n        return TypedResults.Ok(auth);\n    }\n\n    private static async Task<Results<Ok<UserResponse>, NotFound>> Me(\n        ClaimsPrincipal principal,\n        IUserRepository users,\n        CancellationToken cancellationToken)\n    {\n        var user = await users.GetByIdAsync(principal.GetUserId(), cancellationToken);\n        return user is null\n            ? TypedResults.NotFound()\n            : TypedResults.Ok(UserResponse.FromEntity(user));\n    }\n\n    // מסלול אחד להנפקה — register, login ו-refresh חולקים אותו\n    private static async Task<AuthResponse> IssueTokensAsync(\n        User user,\n        ITokenService tokens,\n        IRefreshTokenRepository refreshTokens,\n        JwtOptions jwt,\n        CancellationToken cancellationToken)\n    {\n        var refresh = new RefreshToken\n        {\n            Token = tokens.CreateRefreshToken(),\n            UserId = user.Id,\n            CreatedAtUtc = DateTime.UtcNow,\n            ExpiresAtUtc = DateTime.UtcNow.AddDays(jwt.RefreshTokenDays),\n        };\n        await refreshTokens.AddAsync(refresh, cancellationToken);\n\n        return new AuthResponse(\n            tokens.CreateAccessToken(user),\n            refresh.Token,\n            DateTime.UtcNow.AddMinutes(jwt.AccessTokenMinutes),\n            UserResponse.FromEntity(user));\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-5.11": {
+              "start": 14,
+              "end": 26
+            },
+            "step-5.12": {
+              "start": 28,
+              "end": 74
+            },
+            "step-5.13": {
+              "start": 76,
+              "end": 95
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Endpoints/CommentEndpoints.cs": {
+          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class CommentEndpoints\n{\n    public static IEndpointRouteBuilder MapCommentEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app\n            .MapGroup(\"/api/issues/{issueId:int}/comments\")\n            .WithTags(\"Comments\")\n            .RequireAuthorization();\n\n        group.MapGet(\"/\", GetComments);\n        group.MapPost(\"/\", AddComment);\n\n        return app;\n    }\n\n    private static async Task<Results<Ok<IReadOnlyList<CommentResponse>>, NotFound, ForbidHttpResult>> GetComments(\n        int issueId,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        ICommentRepository comments,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.GetByIdAsync(issueId, cancellationToken);\n        if (issue is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(issue.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var mapped = (await comments.GetByIssueAsync(issueId, cancellationToken))\n            .Select(CommentResponse.FromEntity)\n            .ToList();\n\n        return TypedResults.Ok<IReadOnlyList<CommentResponse>>(mapped);\n    }\n\n    private static async Task<Results<Created<CommentResponse>, NotFound, ForbidHttpResult>> AddComment(\n        int issueId,\n        CreateCommentRequest request,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        ICommentRepository comments,\n        // פרק 18: תגובה היא פעילות — היומן מוזרק כדי לרשום אותה לפיד\n        IActivityRepository activity,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.GetByIdAsync(issueId, cancellationToken);\n        if (issue is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(issue.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var comment = await comments.AddAsync(new Comment\n        {\n            IssueId = issueId,\n            AuthorUserId = user.GetUserId(),\n            Body = request.Body.Trim(),\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        await activity.LogAsync(new ActivityEvent\n        {\n            ProjectId = issue.ProjectId,\n            IssueId = issueId,\n            ActorUserId = user.GetUserId(),\n            Type = ActivityType.CommentAdded,\n            Summary = $\"הגיב/ה על \\\"{issue.Title}\\\"\",\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        return TypedResults.Created(\n            $\"/api/issues/{issueId}/comments/{comment.Id}\",\n            CommentResponse.FromEntity(comment));\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-18.12e": {
+              "start": 58,
+              "end": 59
+            },
+            "step-18.12f": {
+              "start": 81,
+              "end": 89
+            },
+            "step-14.5": {
+              "start": 12,
+              "end": 94
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Endpoints/DashboardEndpoints.cs": {
+          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Api.Filters;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class DashboardEndpoints\n{\n    // endpoints קריאה לדשבורד: סיכום (אגרגציה), פיד פעילות של הפרויקט,\n    // ופרק 19 מוסיף פיד פעילות מסונן ל-issue אחד. אותו דפוס קבוצה כמו השאר.\n    public static IEndpointRouteBuilder MapDashboardEndpoints(this IEndpointRouteBuilder app)\n    {\n        var project = app.MapGroup(\"/api/projects/{projectId:int}\")\n            .WithTags(\"Dashboard\")\n            .AddEndpointFilter<HandlerTimingFilter>()\n            .RequireAuthorization();\n\n        project.MapGet(\"/stats\", GetStats);\n        project.MapGet(\"/activity\", GetActivity);\n\n        var issue = app.MapGroup(\"/api/issues/{issueId:int}\")\n            .WithTags(\"Dashboard\")\n            .AddEndpointFilter<HandlerTimingFilter>()\n            .RequireAuthorization();\n\n        issue.MapGet(\"/activity\", GetIssueActivity);\n\n        return app;\n    }\n\n    // ‏stats: 404 אם הפרויקט לא קיים, 403 אם המשתמש אינו חבר — אותה הרשאה\n    // מבוססת-משאב כמו בלוח. ה-DB עושה את האגרגציה; כאן רק מחזירים אותה.\n    private static async Task<Results<Ok<ProjectStats>, NotFound, ForbidHttpResult>> GetStats(\n        int projectId,\n        ClaimsPrincipal user,\n        IStatsRepository stats,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(projectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        return TypedResults.Ok(await stats.GetForProjectAsync(projectId, cancellationToken));\n    }\n\n    // ‏activity: ה-feed האחרון. take מוגבל ל-1..50 כדי לא לשאוב יומן שלם.\n    private static async Task<Results<Ok<IReadOnlyList<ActivityResponse>>, NotFound, ForbidHttpResult>> GetActivity(\n        int projectId,\n        int? take,\n        ClaimsPrincipal user,\n        IActivityRepository activity,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(projectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var limit = Math.Clamp(take ?? 10, 1, 50);\n        var events = await activity.GetRecentForProjectAsync(projectId, limit, cancellationToken);\n        var mapped = events.Select(ActivityResponse.FromEntity).ToList();\n\n        return TypedResults.Ok<IReadOnlyList<ActivityResponse>>(mapped);\n    }\n\n    // פיד הפעילות של issue יחיד — ה-timeline במסך הפרטים. ההרשאה עוברת דרך\n    // ה-issue: 404 אם אינו קיים, 403 אם המשתמש אינו חבר בפרויקט שלו.\n    private static async Task<Results<Ok<IReadOnlyList<ActivityResponse>>, NotFound, ForbidHttpResult>> GetIssueActivity(\n        int issueId,\n        int? take,\n        ClaimsPrincipal user,\n        IActivityRepository activity,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.GetByIdAsync(issueId, cancellationToken);\n        if (issue is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(issue.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var limit = Math.Clamp(take ?? 20, 1, 50);\n        var events = await activity.GetRecentForIssueAsync(issueId, limit, cancellationToken);\n        var mapped = events.Select(ActivityResponse.FromEntity).ToList();\n\n        return TypedResults.Ok<IReadOnlyList<ActivityResponse>>(mapped);\n    }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.9": {
+              "start": 25,
+              "end": 30
+            },
+            "step-18.8": {
+              "start": 13,
+              "end": 55
+            },
+            "step-18.8b": {
+              "start": 57,
+              "end": 81
+            },
+            "step-19.9b": {
+              "start": 83,
+              "end": 110
+            }
+          },
+          "changedLines": [
+            13,
+            14,
+            17,
+            22,
+            23,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110
+          ]
+        },
+        "server/TaskForge.Api/Endpoints/IssueEndpoints.cs": {
+          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Api.Filters;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class IssueEndpoints\n{\n    // קבוצה אחת לכל ה-Issues: prefix משותף, תג OpenAPI משותף, ופילטר משותף.\n    // מפרק 05: כל הקבוצה דורשת משתמש מאומת — שורה אחת מגינה על הכול.\n    public static IEndpointRouteBuilder MapIssueEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api\")\n            .WithTags(\"Issues\")\n            .AddEndpointFilter<HandlerTimingFilter>()\n            .RequireAuthorization();\n\n        group.MapGet(\"/projects/{projectId:int}/issues\", GetIssues);\n        group.MapPost(\"/projects/{projectId:int}/issues\", CreateIssue);\n        group.MapGet(\"/projects/{projectId:int}/issues/title-available\", TitleAvailable);\n\n        group.MapGet(\"/issues/{id:int}\", GetIssueById).WithName(\"GetIssueById\");\n        group.MapPut(\"/issues/{id:int}\", UpdateIssue);\n        // סידור-מחדש בלוח: פעולה ממוקדת (PATCH) לשינוי סטטוס + Rank בלבד\n        group.MapPatch(\"/issues/{id:int}/rank\", ReorderIssue);\n        group.MapDelete(\"/issues/{id:int}\", DeleteIssue);\n\n        return app;\n    }\n\n    // handlers עם שמות + Results<...>: החתימה עצמה היא תיעוד —\n    // המהדר אוכף שכל מסלול יציאה מוצהר, ו-OpenAPI קורא הכול לבד.\n    private static async Task<Results<Ok<PagedResult<IssueResponse>>, NotFound, ForbidHttpResult>> GetIssues(\n        int projectId,\n        [AsParameters] IssueListParams query,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        // פרק 13 מציג לוח חי, ולכן גם קריאה לרשימה חייבת להיות הרשאה מבוססת-משאב:\n        // 404 אם הפרויקט לא קיים, 403 אם הוא קיים אבל המשתמש אינו חבר בו.\n        if (!await projects.IsMemberAsync(projectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var page = await issues.GetPagedAsync(query.ToQuery(projectId), cancellationToken);\n\n        var mapped = new PagedResult<IssueResponse>(\n            page.Items.Select(IssueResponse.FromEntity).ToList(),\n            page.Total,\n            page.Page,\n            page.PageSize);\n\n        return TypedResults.Ok(mapped);\n    }\n\n    private static async Task<Results<Ok<TitleAvailabilityResponse>, NotFound, ForbidHttpResult>> TitleAvailable(\n        int projectId,\n        string title,\n        int? excludeIssueId,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(projectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var exists = await issues.TitleExistsAsync(\n            projectId,\n            title.Trim(),\n            excludeIssueId,\n            cancellationToken);\n\n        return TypedResults.Ok(new TitleAvailabilityResponse(!exists));\n    }\n\n    private static async Task<Results<CreatedAtRoute<IssueResponse>, NotFound, ForbidHttpResult>> CreateIssue(\n        int projectId,\n        CreateIssueRequest request,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        // פרק 18: יומן הפעילות מוזרק לכאן כדי לרשום אירוע ליד יצירת ה-issue\n        IActivityRepository activity,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        // הרשאה מבוססת-משאב: מאומת זה לא מספיק — צריך להיות חבר בפרויקט.\n        // ‏401 = מי אתה בכלל; ‏403 = אני יודע מי אתה, ואסור לך.\n        if (!await projects.IsMemberAsync(projectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var issue = await issues.AddAsync(new Issue\n        {\n            Title = request.Title,\n            Description = request.Description,\n            Priority = request.Priority,\n            ProjectId = projectId,\n            CreatedAtUtc = DateTime.UtcNow,\n            // issue חדש נכנס לתחתית העמודה: Rank גדול ויחיד. ticks מונוטוני\n            // לאורך זמן — שני issues שנוצרים בשניות שונות מקבלים Rank שונה.\n            Rank = DateTime.UtcNow.Ticks,\n        }, cancellationToken);\n\n        // רושמים אירוע ליד הפעולה: הפיד יראה \"X יצר issue\" מיד.\n        await activity.LogAsync(new ActivityEvent\n        {\n            ProjectId = projectId,\n            IssueId = issue.Id,\n            ActorUserId = user.GetUserId(),\n            Type = ActivityType.IssueCreated,\n            Summary = $\"יצר/ה את \\\"{issue.Title}\\\"\",\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        // 201 + כותרת Location שמצביעה על ה-endpoint בעל השם — בלי לשרשר URL ביד\n        return TypedResults.CreatedAtRoute(\n            IssueResponse.FromEntity(issue),\n            \"GetIssueById\",\n            new { id = issue.Id });\n    }\n\n    private static async Task<Results<Ok<IssueResponse>, NotFound, ForbidHttpResult>> GetIssueById(\n        int id,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.GetByIdAsync(id, cancellationToken);\n        if (issue is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(issue.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        return TypedResults.Ok(IssueResponse.FromEntity(issue));\n    }\n\n    private static async Task<Results<Ok<IssueResponse>, NotFound, ForbidHttpResult>> UpdateIssue(\n        int id,\n        UpdateIssueRequest request,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        var existing = await issues.GetByIdAsync(id, cancellationToken);\n        if (existing is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(existing.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var issue = await issues.UpdateAsync(id, i =>\n        {\n            i.Title = request.Title;\n            i.Description = request.Description;\n            i.Status = request.Status;\n            i.Priority = request.Priority;\n        }, cancellationToken);\n\n        return TypedResults.Ok(IssueResponse.FromEntity(issue!));\n    }\n\n    // ReorderIssue: משנה רק Status ו-Rank, דרך אותו UpdateAsync(id, apply) מפרק 04.\n    // אין repo method חדש — הסידור-מחדש הוא פשוט שינוי שתי עמודות.\n    private static async Task<Results<Ok<IssueResponse>, NotFound, ForbidHttpResult>> ReorderIssue(\n        int id,\n        ReorderIssueRequest request,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        IActivityRepository activity,\n        CancellationToken cancellationToken)\n    {\n        var existing = await issues.GetByIdAsync(id, cancellationToken);\n        if (existing is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(existing.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        // אירוע \"הזזה\" נרשם רק כשהעמודה (הסטטוס) באמת השתנתה — סידור-מחדש\n        // בתוך אותה עמודה הוא רעש, לא פעילות שכדאי להציג בפיד.\n        var statusChanged = existing.Status != request.Status;\n\n        var issue = await issues.UpdateAsync(id, i =>\n        {\n            i.Status = request.Status;\n            i.Rank = request.Rank;\n        }, cancellationToken);\n\n        if (statusChanged)\n        {\n            await activity.LogAsync(new ActivityEvent\n            {\n                ProjectId = issue!.ProjectId,\n                IssueId = issue.Id,\n                ActorUserId = user.GetUserId(),\n                Type = ActivityType.IssueMoved,\n                Summary = $\"העביר/ה את \\\"{issue.Title}\\\" ל-{request.Status}\",\n                CreatedAtUtc = DateTime.UtcNow,\n            }, cancellationToken);\n        }\n\n        return TypedResults.Ok(IssueResponse.FromEntity(issue!));\n    }\n\n    private static async Task<Results<NoContent, NotFound, ForbidHttpResult>> DeleteIssue(\n        int id,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        var existing = await issues.GetByIdAsync(id, cancellationToken);\n        if (existing is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(existing.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        await issues.DeleteAsync(id, cancellationToken);\n        return TypedResults.NoContent();\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-17.4": {
+              "start": 29,
+              "end": 30
+            },
+            "step-4.11": {
+              "start": 14,
+              "end": 34
+            },
+            "step-13.security": {
+              "start": 51,
+              "end": 56
+            },
+            "step-14.7": {
+              "start": 69,
+              "end": 95
+            },
+            "step-18.12": {
+              "start": 103,
+              "end": 104
+            },
+            "step-5.15": {
+              "start": 112,
+              "end": 117
+            },
+            "step-17.4b": {
+              "start": 126,
+              "end": 128
+            },
+            "step-18.12b": {
+              "start": 131,
+              "end": 140
+            },
+            "step-18.12c": {
+              "start": 208,
+              "end": 208
+            },
+            "step-18.12d": {
+              "start": 222,
+              "end": 224
+            },
+            "step-17.4c": {
+              "start": 200,
+              "end": 246
+            },
+            "step-4.12": {
+              "start": 36,
+              "end": 268
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Endpoints/MemberEndpoints.cs": {
+          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class MemberEndpoints\n{\n    // הרשאה מבוססת-משאב: RequireAuthorization עונה על \"מי אתה?\",\n    // אבל \"מותר לך *בפרויקט הזה*?\" תלוי בנתונים — ולכן נבדק בתוך ה-handler,\n    // מול ה-repository. roles גלובליים לא מספיקים כאן.\n    public static IEndpointRouteBuilder MapMemberEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app\n            .MapGroup(\"/api/projects/{projectId:int}/members\")\n            .WithTags(\"Members\")\n            .RequireAuthorization();\n\n        group.MapGet(\"/\", GetMembers);\n        group.MapPost(\"/\", AddMember);\n\n        return app;\n    }\n\n    // קריאה: כל חבר רואה את רשימת החברים. מי שאינו חבר מקבל 403 —\n    // לא 404 — כי הפרויקט קיים; פשוט אסור לו להציץ פנימה.\n    private static async Task<Results<Ok<IReadOnlyList<MemberResponse>>, NotFound, ForbidHttpResult>> GetMembers(\n        int projectId,\n        ClaimsPrincipal user,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        var role = await projects.GetRoleAsync(projectId, user.GetUserId(), cancellationToken);\n        if (role is null)\n        {\n            return TypedResults.Forbid();\n        }\n\n        var members = await projects.GetMembersAsync(projectId, cancellationToken);\n        IReadOnlyList<MemberResponse> mapped = members.Select(MemberResponse.FromInfo).ToList();\n        return TypedResults.Ok(mapped);\n    }\n\n    // פקודה: רק Owner מצרף חברים. כל מסלול יציאה מוצהר בחתימה —\n    // 200 עם הרשימה המעודכנת, 404 (פרויקט/משתמש), 403 (לא Owner),\n    // 409 (כבר חבר). המהדר לא נותן לשכוח אף אחד מהם.\n    private static async Task<Results<Ok<IReadOnlyList<MemberResponse>>, NotFound, ForbidHttpResult, Conflict<string>>> AddMember(\n        int projectId,\n        AddMemberRequest request,\n        ClaimsPrincipal user,\n        IProjectRepository projects,\n        IUserRepository users,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        var callerRole = await projects.GetRoleAsync(projectId, user.GetUserId(), cancellationToken);\n        if (callerRole is not ProjectRole.Owner)\n        {\n            return TypedResults.Forbid();\n        }\n\n        var invited = await users.GetByEmailAsync(request.Email, cancellationToken);\n        if (invited is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        var added = await projects.AddMemberAsync(projectId, invited.Id, request.Role, cancellationToken);\n        if (!added)\n        {\n            return TypedResults.Conflict($\"{request.Email} is already a member of this project\");\n        }\n\n        var members = await projects.GetMembersAsync(projectId, cancellationToken);\n        IReadOnlyList<MemberResponse> mapped = members.Select(MemberResponse.FromInfo).ToList();\n        return TypedResults.Ok(mapped);\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-12.6": {
+              "start": 12,
+              "end": 50
+            },
+            "step-12.7": {
+              "start": 52,
+              "end": 89
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Endpoints/ProjectEndpoints.cs": {
+          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class ProjectEndpoints\n{\n    public static IEndpointRouteBuilder MapProjectEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api/projects\").WithTags(\"Projects\");\n\n        // קריאות פתוחות (יוגבלו לחברות בפרק 12); יצירה — רק למאומתים\n        group.MapGet(\"/\", GetProjects);\n        group.MapGet(\"/{id:int}\", GetProjectById).WithName(\"GetProjectById\");\n        group.MapPost(\"/\", CreateProject).RequireAuthorization();\n\n        return app;\n    }\n\n    private static async Task<Ok<IReadOnlyList<ProjectSummary>>> GetProjects(\n        IProjectRepository projects,\n        CancellationToken cancellationToken) =>\n        TypedResults.Ok(await projects.GetSummariesAsync(cancellationToken));\n\n    private static async Task<Results<Ok<ProjectResponse>, NotFound>> GetProjectById(\n        int id,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        var project = await projects.GetByIdAsync(id, cancellationToken);\n        return project is null\n            ? TypedResults.NotFound()\n            : TypedResults.Ok(ProjectResponse.FromEntity(project));\n    }\n\n    private static async Task<CreatedAtRoute<ProjectResponse>> CreateProject(\n        CreateProjectRequest request,\n        ClaimsPrincipal user,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        // היוצר הופך אוטומטית ל-Owner — בתוך אותה טרנזקציה\n        var project = await projects.AddAsync(new Project\n        {\n            Name = request.Name,\n            Description = request.Description,\n            CreatedAtUtc = DateTime.UtcNow,\n        }, user.GetUserId(), cancellationToken);\n\n        return TypedResults.CreatedAtRoute(\n            ProjectResponse.FromEntity(project),\n            \"GetProjectById\",\n            new { id = project.Id });\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Endpoints/SearchEndpoints.cs": {
+          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Filters;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class SearchEndpoints\n{\n    // אותו דפוס כמו שאר הקבוצות: prefix /api, תג OpenAPI, פילטר תזמון,\n    // והכול דורש אימות. שורה אחת ב-Program מחברת.\n    public static IEndpointRouteBuilder MapSearchEndpoints(this IEndpointRouteBuilder app)\n    {\n        var group = app.MapGroup(\"/api\")\n            .WithTags(\"Search\")\n            .AddEndpointFilter<HandlerTimingFilter>()\n            .RequireAuthorization();\n\n        group.MapGet(\"/search\", Search);\n\n        return app;\n    }\n\n    // query קצר מדי = תוצאה ריקה (בלי לפגוע ב-DB על תו אחד).\n    // ההרשאה נאכפת בתוך ה-repository: רק מה שהמשתמש חבר בו חוזר.\n    private static async Task<Ok<SearchResults>> Search(\n        string? q,\n        ClaimsPrincipal user,\n        ISearchRepository search,\n        CancellationToken cancellationToken)\n    {\n        var term = (q ?? string.Empty).Trim();\n        if (term.Length < 2)\n        {\n            return TypedResults.Ok(new SearchResults([], []));\n        }\n\n        var results = await search.SearchForMemberAsync(user.GetUserId(), term, 5, cancellationToken);\n        return TypedResults.Ok(results);\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.12": {
+              "start": 12,
+              "end": 42
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Filters/HandlerTimingFilter.cs": {
+          "content": "using System.Diagnostics;\n\nnamespace TaskForge.Api.Filters;\n\n// Endpoint filter: עוטף את ה-handler בלבד — לא את כל הצינור כמו middleware.\n// ההשוואה בין X-Handler-Ms לבין X-Elapsed-Ms (מפרק 01) מספרת\n// כמה זמן נבלע ב-middleware, ב-routing וב-binding מסביב ל-handler עצמו.\npublic sealed class HandlerTimingFilter : IEndpointFilter\n{\n    public async ValueTask<object?> InvokeAsync(\n        EndpointFilterInvocationContext context,\n        EndpointFilterDelegate next)\n    {\n        var stopwatch = Stopwatch.StartNew();\n\n        var result = await next(context); // ה-handler (או הפילטר הבא בשרשרת)\n\n        stopwatch.Stop();\n        context.HttpContext.Response.Headers.Append(\"X-Handler-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n\n        return result;\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/Program.cs": {
+          "content": "using System.Text;\nusing System.Text.Json.Serialization;\nusing Microsoft.AspNetCore.Authentication.JwtBearer;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.IdentityModel.Tokens;\nusing TaskForge.Api.Endpoints;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Infrastructure.Auth;\nusing TaskForge.Infrastructure.Data;\nusing TaskForge.Infrastructure.Repositories;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// enums נכנסים ויוצאים כטקסט (\"Open\") בכל ה-API — הגדרה אחת, לכולם\nbuilder.Services.ConfigureHttpJsonOptions(options =>\n    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));\n\n// הקליינט חי ב-origin אחר (4500 מול 5080) — הדפדפן יחסום כל בקשה\n// עד שהשרת יצהיר במפורש שה-origin הזה רצוי. זו לא \"תקלה לעקוף\",\n// זו הצהרת אמון: רק האפליקציה שלנו, רק הכותרות והמתודות שביקשנו.\nconst string ClientCors = \"taskforge-client\";\n\nbuilder.Services.AddCors(options =>\n    options.AddPolicy(ClientCors, policy => policy\n        .WithOrigins(\"http://localhost:4500\")\n        .AllowAnyHeader()\n        .AllowAnyMethod()));\n\n// ה-DbContext נרשם Scoped מעצם הגדרתו: יחידת עבודה אחת לכל בקשה.\n// מחרוזת החיבור מגיעה מהקונפיגורציה — לא מקובעת בקוד.\nbuilder.Services.AddDbContext<TaskForgeDbContext>(options =>\n    options.UseSqlite(builder.Configuration.GetConnectionString(\"Default\")));\n\n// ה-seams של הדומיין: חוזה מה-Core, מימוש מה-Infrastructure\nbuilder.Services.AddScoped<IProjectRepository, EfProjectRepository>();\nbuilder.Services.AddScoped<IIssueRepository, EfIssueRepository>();\nbuilder.Services.AddScoped<ICommentRepository, EfCommentRepository>();\nbuilder.Services.AddScoped<IUserRepository, EfUserRepository>();\nbuilder.Services.AddScoped<IRefreshTokenRepository, EfRefreshTokenRepository>();\n// פרק 16: seam החיפוש מצטרף לאותו דפוס רישום\nbuilder.Services.AddScoped<ISearchRepository, EfSearchRepository>();\n// פרק 18: seam האגרגציה ו-seam יומן הפעילות\nbuilder.Services.AddScoped<IStatsRepository, EfStatsRepository>();\nbuilder.Services.AddScoped<IActivityRepository, EfActivityRepository>();\n// פרק 19: seam הקבצים המצורפים\nbuilder.Services.AddScoped<IAttachmentRepository, EfAttachmentRepository>();\n\n// שירותי auth חסרי-state — ‏Singleton בלב שלם\nbuilder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();\nbuilder.Services.AddSingleton<ITokenService, TokenService>();\n\n// קושרים את סקציית \"Jwt\" מהקונפיגורציה אל ה-options — מקור אמת אחד\nbuilder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));\nvar jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()\n    ?? throw new InvalidOperationException(\"Missing Jwt configuration section\");\n\n// צד האימות: ה-handler של Bearer מצרף לכל בקשה את ה-ClaimsPrincipal\n// אם הטוקן חתום נכון, בתוקף, ומגיע מהמנפיק ולקהל הנכונים.\nbuilder.Services\n    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)\n    .AddJwtBearer(options =>\n    {\n        options.TokenValidationParameters = new TokenValidationParameters\n        {\n            ValidateIssuer = true,\n            ValidIssuer = jwt.Issuer,\n            ValidateAudience = true,\n            ValidAudience = jwt.Audience,\n            ValidateIssuerSigningKey = true,\n            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),\n            ValidateLifetime = true,\n            // ברירת המחדל היא 5 דקות חסד — נצמיד לשעון אמיתי\n            ClockSkew = TimeSpan.FromSeconds(30),\n        };\n    });\n\nbuilder.Services.AddAuthorization();\n\n// הוולידציה המובנית של .NET 10: כל DTO מסומן ב-DataAnnotations נבדק\n// אוטומטית לפני ה-handler; כישלון מחזיר 400 ValidationProblem אחיד.\nbuilder.Services.AddValidation();\n\n// ProblemDetails (RFC 7807) כברירת מחדל לכל שגיאה וסטטוס ללא גוף\nbuilder.Services.AddProblemDetails();\n\nbuilder.Services.AddOpenApi();\n\nvar app = builder.Build();\n\n// בעליית האפליקציה: מיישמים מיגרציות שחסרות ומזריעים DB ריק.\n// CreateScope חובה — DbContext הוא Scoped, ומחוץ לבקשה אין scope.\nusing (var scope = app.Services.CreateScope())\n{\n    var db = scope.ServiceProvider.GetRequiredService<TaskForgeDbContext>();\n    await db.Database.MigrateAsync();\n    await DbSeeder.SeedAsync(db);\n}\n\n// העוטפים החיצוניים: חריגה לא מטופלת הופכת ל-500 ProblemDetails,\n// וכל תשובת סטטוס בלי גוף (כמו 404 של routing) מקבלת גוף אחיד.\napp.UseExceptionHandler();\napp.UseStatusCodePages();\n\n// מוקדם ב-pipeline: גם preflight ‏(OPTIONS) וגם תשובות שגיאה\n// צריכים לשאת את כותרות ה-CORS, אחרת הדפדפן יסתיר אותן מהקליינט.\napp.UseCors(ClientCors);\n\n// ── ה-pipeline המוכר מפרק 01: לוגים ומדידת זמן ──\n\napp.Use(async (context, next) =>\n{\n    app.Logger.LogInformation(\"{Method} {Path} started\",\n        context.Request.Method, context.Request.Path);\n\n    await next(context);\n\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\n});\n\napp.Use(async (context, next) =>\n{\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\n\n    context.Response.OnStarting(() =>\n    {\n        stopwatch.Stop();\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n        return Task.CompletedTask;\n    });\n\n    await next(context);\n});\n\n// קודם מזהים (מי אתה?), אחר כך מחליטים (מותר לך?) — הסדר קשיח\napp.UseAuthentication();\napp.UseAuthorization();\n\n// תיאור ה-API נוצר מהקוד עצמו — בסביבת פיתוח בלבד\nif (app.Environment.IsDevelopment())\n{\n    app.MapOpenApi(); // GET /openapi/v1.json\n}\n\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\n\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\n\n// כל ה-API העסקי — מאורגן בקבצים לפי פיצ׳ר\napp.MapAuthEndpoints();\napp.MapProjectEndpoints();\napp.MapIssueEndpoints();\napp.MapCommentEndpoints();\n\n// קבוצת ה-members מצטרפת לאותו דפוס: קובץ לפי פיצ׳ר, שורה אחת כאן\napp.MapMemberEndpoints();\n\n// פרק 16: endpoint החיפוש שמזין את ה-command palette\napp.MapSearchEndpoints();\n\n// פרק 18: endpoints הדשבורד — סיכום ופיד פעילות\napp.MapDashboardEndpoints();\n\n// פרק 19: endpoints הקבצים המצורפים\napp.MapAttachmentEndpoints();\n\napp.Run();\n",
+          "status": "modified",
+          "regions": {
+            "step-4.2": {
+              "start": 15,
+              "end": 17
+            },
+            "step-11.2": {
+              "start": 19,
+              "end": 28
+            },
+            "step-3.7": {
+              "start": 30,
+              "end": 33
+            },
+            "step-16.13": {
+              "start": 41,
+              "end": 42
+            },
+            "step-18.11": {
+              "start": 43,
+              "end": 45
+            },
+            "step-19.11": {
+              "start": 46,
+              "end": 47
+            },
+            "step-4.4": {
+              "start": 35,
+              "end": 47
+            },
+            "step-5.8": {
+              "start": 49,
+              "end": 56
+            },
+            "step-5.9": {
+              "start": 58,
+              "end": 78
+            },
+            "step-4.9": {
+              "start": 80,
+              "end": 82
+            },
+            "step-3.11": {
+              "start": 91,
+              "end": 98
+            },
+            "step-4.10": {
+              "start": 100,
+              "end": 103
+            },
+            "step-11.2b": {
+              "start": 105,
+              "end": 107
+            },
+            "step-1.10": {
+              "start": 109,
+              "end": 135
+            },
+            "step-5.10": {
+              "start": 137,
+              "end": 139
+            },
+            "step-4.17": {
+              "start": 141,
+              "end": 145
+            },
+            "step-14.5b": {
+              "start": 155,
+              "end": 155
+            },
+            "step-4.16": {
+              "start": 147,
+              "end": 155
+            },
+            "step-12.6b": {
+              "start": 157,
+              "end": 158
+            },
+            "step-16.13b": {
+              "start": 160,
+              "end": 161
+            },
+            "step-18.11b": {
+              "start": 163,
+              "end": 164
+            },
+            "step-19.11b": {
+              "start": 166,
+              "end": 167
+            }
+          },
+          "changedLines": [
+            46,
+            47,
+            166,
+            167,
+            168
+          ]
+        },
+        "server/TaskForge.Api/Properties/launchSettings.json": {
+          "content": "{\n  \"$schema\": \"https://json.schemastore.org/launchsettings.json\",\n  \"profiles\": {\n    \"http\": {\n      \"commandName\": \"Project\",\n      \"dotnetRunMessages\": true,\n      \"launchBrowser\": false,\n      \"applicationUrl\": \"http://localhost:5080\",\n      \"environmentVariables\": {\n        \"ASPNETCORE_ENVIRONMENT\": \"Development\"\n      }\n    }\n  }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/requests.http": {
+          "content": "@host = http://localhost:5080\n\n### Hello — האם השרת חי?\nGET {{host}}/\n\n### Health check\nGET {{host}}/healthz\n\n### ─────────── Auth ───────────\n\n### התחברות עם משתמש הדמו — העתיקו accessToken ו-refreshToken מהתשובה\n# @name login\nPOST {{host}}/api/auth/login\nContent-Type: application/json\n\n{\n  \"email\": \"demo@taskforge.dev\",\n  \"password\": \"Passw0rd!\"\n}\n\n### משתני עזר — REST Client שולף אותם מתשובת ה-login האחרונה\n@accessToken = {{login.response.body.accessToken}}\n@refreshToken = {{login.response.body.refreshToken}}\n\n### מי אני? — דורש Bearer token\nGET {{host}}/api/auth/me\nAuthorization: Bearer {{accessToken}}\n\n### בלי טוקן — 401 עוד לפני שה-handler רץ\nGET {{host}}/api/auth/me\n\n### הרשמה — 201 + זוג טוקנים (התחברות אוטומטית)\nPOST {{host}}/api/auth/register\nContent-Type: application/json\n\n{\n  \"email\": \"oleg@taskforge.dev\",\n  \"displayName\": \"Oleg\",\n  \"password\": \"S3curePass!\"\n}\n\n### הרשמה עם אימייל תפוס — 409 Conflict\nPOST {{host}}/api/auth/register\nContent-Type: application/json\n\n{\n  \"email\": \"demo@taskforge.dev\",\n  \"displayName\": \"Imposter\",\n  \"password\": \"S3curePass!\"\n}\n\n### סיסמה שגויה — 401, אותה תשובה כמו אימייל לא קיים (לא מסגירים כלום)\nPOST {{host}}/api/auth/login\nContent-Type: application/json\n\n{\n  \"email\": \"demo@taskforge.dev\",\n  \"password\": \"wrong-password\"\n}\n\n### Refresh — מנפיק זוג חדש ושורף את הישן (rotation)\nPOST {{host}}/api/auth/refresh\nContent-Type: application/json\n\n{\n  \"refreshToken\": \"{{refreshToken}}\"\n}\n\n### אותו refresh פעם שנייה — 401: הטוקן כבר בוטל. ככה נחשפת גניבה.\nPOST {{host}}/api/auth/refresh\nContent-Type: application/json\n\n{\n  \"refreshToken\": \"{{refreshToken}}\"\n}\n\n### ─────────── Projects (קריאה פתוחה, יצירה למאומתים) ───────────\n\n### רשימת פרויקטים — עדיין פתוח לכולם\nGET {{host}}/api/projects\n\n### יצירת פרויקט — היוצר הופך ל-Owner אוטומטית\nPOST {{host}}/api/projects\nAuthorization: Bearer {{accessToken}}\nContent-Type: application/json\n\n{\n  \"name\": \"API Hardening\",\n  \"description\": \"Rate limits, caching, observability\"\n}\n\n### ─────────── Issues (הכול דורש אימות) ───────────\n\n### הלוח — עכשיו עם Bearer\nGET {{host}}/api/projects/1/issues?status=Open\nAuthorization: Bearer {{accessToken}}\n\n### בלי טוקן — 401\nGET {{host}}/api/projects/1/issues\n\n### יצירת Issue — דורש גם חברות בפרויקט (אחרת 403)\nPOST {{host}}/api/projects/1/issues\nAuthorization: Bearer {{accessToken}}\nContent-Type: application/json\n\n{\n  \"title\": \"Add dark mode toggle\",\n  \"priority\": \"High\"\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Api/TaskForge.Api.csproj": {
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n  <ItemGroup>\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\n    <ProjectReference Include=\"..\\TaskForge.Infrastructure\\TaskForge.Infrastructure.csproj\" />\n  </ItemGroup>\n\n  <ItemGroup>\n    <!-- design-time בלבד: מאפשר ל-dotnet ef להריץ מיגרציות דרך הפרויקט הזה -->\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Design\" Version=\"10.0.9\">\n      <PrivateAssets>all</PrivateAssets>\n      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>\n    </PackageReference>\n    <PackageReference Include=\"Microsoft.AspNetCore.OpenApi\" Version=\"10.0.9\" />\n    <!-- אימות Bearer tokens בצד השרת -->\n    <PackageReference Include=\"Microsoft.AspNetCore.Authentication.JwtBearer\" Version=\"10.0.9\" />\n  </ItemGroup>\n\n</Project>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/IActivityRepository.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// יומן הפעילות הוא read+write: כותבים אירוע ליד הפעולה, וקוראים את האחרונים\n// כ-feed. שתי השיטות חיות מאחורי seam אחד, כמו שאר ה-repositories.\npublic interface IActivityRepository\n{\n    Task LogAsync(ActivityEvent activityEvent, CancellationToken cancellationToken = default);\n\n    Task<IReadOnlyList<ActivityEvent>> GetRecentForProjectAsync(\n        int projectId,\n        int take,\n        CancellationToken cancellationToken = default);\n\n    // פרק 19: אותו יומן, מסונן ל-issue אחד — מזין את ה-timeline במסך הפרטים.\n    Task<IReadOnlyList<ActivityEvent>> GetRecentForIssueAsync(\n        int issueId,\n        int take,\n        CancellationToken cancellationToken = default);\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.8": {
+              "start": 16,
+              "end": 20
+            },
+            "step-18.5": {
+              "start": 5,
+              "end": 21
+            }
+          },
+          "changedLines": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20
+          ]
+        },
+        "server/TaskForge.Core/Abstractions/IAttachmentRepository.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// seam הקבצים. שימו לב לשתי קריאות שונות: GetMetadataByIssueAsync לרשימה\n// (בלי ה-bytes — רק שם/גודל/סוג), ו-GetByIdAsync להורדה (כולל ה-bytes).\n// כך רשימת הקבצים זולה ולא שולפת מגה-בייטים לזיכרון סתם.\npublic interface IAttachmentRepository\n{\n    Task<Attachment> AddAsync(Attachment attachment, CancellationToken cancellationToken = default);\n\n    Task<IReadOnlyList<Attachment>> GetMetadataByIssueAsync(int issueId, CancellationToken cancellationToken = default);\n\n    Task<Attachment?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.2": {
+              "start": 5,
+              "end": 15
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ]
+        },
+        "server/TaskForge.Core/Abstractions/ICommentRepository.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\npublic interface ICommentRepository\n{\n    Task<IReadOnlyList<Comment>> GetByIssueAsync(int issueId, CancellationToken cancellationToken = default);\n\n    Task<Comment> AddAsync(Comment comment, CancellationToken cancellationToken = default);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/IIssueRepository.cs": {
+          "content": "using TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// שאילתת הלוח כחוזה: כל מה שאפשר לסנן, למיין ולדפדף בו —\n// במקום חמישה פרמטרים בודדים שמתרבים עם כל פיצ׳ר.\npublic sealed record IssueQuery(\n    int ProjectId,\n    IssueStatus? Status = null,\n    IssuePriority? Priority = null,\n    string? Search = null,\n    string Sort = \"-created\",\n    int Page = 1,\n    int PageSize = 20);\n\npublic interface IIssueRepository\n{\n    Task<PagedResult<Issue>> GetPagedAsync(IssueQuery query, CancellationToken cancellationToken = default);\n\n    Task<Issue?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n\n    Task<bool> TitleExistsAsync(\n        int projectId,\n        string title,\n        int? excludeIssueId = null,\n        CancellationToken cancellationToken = default);\n\n    Task<Issue> AddAsync(Issue issue, CancellationToken cancellationToken = default);\n\n    /// <summary>טוען ישות במעקב, מפעיל עליה את השינוי, ושומר. null אם לא נמצאה.</summary>\n    Task<Issue?> UpdateAsync(int id, Action<Issue> apply, CancellationToken cancellationToken = default);\n\n    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/IPasswordHasher.cs": {
+          "content": "namespace TaskForge.Core.Abstractions;\n\n// הדומיין מגדיר את הצורך (\"לגבב ולאמת סיסמאות\"); הקריפטוגרפיה\n// עצמה היא פרט מימוש של ה-Infrastructure. אותו חוק תלות, שוב.\npublic interface IPasswordHasher\n{\n    string Hash(string password);\n\n    bool Verify(string password, string passwordHash);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/IProjectRepository.cs": {
+          "content": "using TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// החוזה מוגדר בדומיין: \"ככה ניגשים לפרויקטים\".\n// מי שמממש אותו ואיך — לא עניינו של ה-Core. זה חוק התלות בפעולה.\npublic interface IProjectRepository\n{\n    Task<IReadOnlyList<ProjectSummary>> GetSummariesAsync(CancellationToken cancellationToken = default);\n\n    Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n\n    /// <summary>יוצר פרויקט ומצרף את היוצר כ-Owner — פעולה אטומית אחת.</summary>\n    Task<Project> AddAsync(Project project, int ownerUserId, CancellationToken cancellationToken = default);\n\n    Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default);\n\n    /// <summary>הרשאה מבוססת-משאב: האם המשתמש חבר בפרויקט הזה?</summary>\n    Task<bool> IsMemberAsync(int projectId, int userId, CancellationToken cancellationToken = default);\n\n    /// <summary>התפקיד של המשתמש בפרויקט — null אם אינו חבר כלל.</summary>\n    Task<ProjectRole?> GetRoleAsync(int projectId, int userId, CancellationToken cancellationToken = default);\n\n    /// <summary>כל חברי הפרויקט, כהקרנה רזה לתצוגה.</summary>\n    Task<IReadOnlyList<ProjectMemberInfo>> GetMembersAsync(int projectId, CancellationToken cancellationToken = default);\n\n    /// <summary>צירוף חבר קיים במערכת לפרויקט. מחזיר false אם כבר חבר.</summary>\n    Task<bool> AddMemberAsync(int projectId, int userId, ProjectRole role, CancellationToken cancellationToken = default);\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-12.3": {
+              "start": 22,
+              "end": 29
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/IRefreshTokenRepository.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\npublic interface IRefreshTokenRepository\n{\n    Task AddAsync(RefreshToken token, CancellationToken cancellationToken = default);\n\n    /// <summary>מחזיר את הטוקן (כולל המשתמש) רק אם הוא קיים, בתוקף ולא בוטל.</summary>\n    Task<RefreshToken?> GetActiveAsync(string token, CancellationToken cancellationToken = default);\n\n    /// <summary>מסמן טוקן כמבוטל — הצעד הראשון בכל rotation.</summary>\n    Task RevokeAsync(RefreshToken token, CancellationToken cancellationToken = default);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/ISearchRepository.cs": {
+          "content": "using TaskForge.Core.Common;\n\nnamespace TaskForge.Core.Abstractions;\n\n// חיפוש חי כ-seam נפרד: הוא חוצה ישויות (פרויקטים + issues), ולכן מקבל\n// חוזה משלו במקום להעמיס על repo קיים. הפלטה צורכת אותו, לא יודעת על EF.\npublic interface ISearchRepository\n{\n    /// <summary>חיפוש מוגבל-הרשאה: רק פרויקטים ו-issues שהמשתמש חבר בהם.</summary>\n    Task<SearchResults> SearchForMemberAsync(\n        int userId,\n        string term,\n        int take,\n        CancellationToken cancellationToken = default);\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.11": {
+              "start": 5,
+              "end": 15
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/IStatsRepository.cs": {
+          "content": "using TaskForge.Core.Common;\n\nnamespace TaskForge.Core.Abstractions;\n\n// seam האגרגציה: \"ככה שואלים את ה-DB סיכום של פרויקט\". המימוש (GROUP BY)\n// חי ב-Infrastructure; ה-Core רק מצהיר על הצורה. אותו חוק תלות כמו שאר ה-repos.\npublic interface IStatsRepository\n{\n    Task<ProjectStats> GetForProjectAsync(int projectId, CancellationToken cancellationToken = default);\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-18.3": {
+              "start": 5,
+              "end": 10
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/ITokenService.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\npublic interface ITokenService\n{\n    /// <summary>JWT חתום עם זהות המשתמש והתפקיד — תקף לדקות ספורות.</summary>\n    string CreateAccessToken(User user);\n\n    /// <summary>מחרוזת אקראית קריפטוגרפית — נשמרת ב-DB דרך IRefreshTokenRepository.</summary>\n    string CreateRefreshToken();\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Abstractions/IUserRepository.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\npublic interface IUserRepository\n{\n    Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);\n\n    Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n\n    Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default);\n\n    Task<User> AddAsync(User user, CancellationToken cancellationToken = default);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Common/JwtOptions.cs": {
+          "content": "namespace TaskForge.Core.Common;\n\n// אופציות ה-JWT כ-POCO נקי: גם מנפיק הטוקנים (Infrastructure) וגם\n// מאמת הטוקנים (Api) קוראים מאותה הגדרה אחת — שמגיעה מהקונפיגורציה.\npublic sealed class JwtOptions\n{\n    public const string SectionName = \"Jwt\";\n\n    public string Issuer { get; set; } = \"\";\n\n    public string Audience { get; set; } = \"\";\n\n    // המפתח הסימטרי לחתימה. בפיתוח: appsettings; בפרודקשן: משתנה סביבה בלבד.\n    public string Key { get; set; } = \"\";\n\n    public int AccessTokenMinutes { get; set; } = 15;\n\n    public int RefreshTokenDays { get; set; } = 7;\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Common/PagedResult.cs": {
+          "content": "namespace TaskForge.Core.Common;\n\n// חוזה הדפדוף של כל רשימה ב-TaskForge: הפריטים של העמוד הנוכחי\n// לצד המספרים שהקליינט צריך כדי לצייר ניווט עמודים.\npublic sealed record PagedResult<T>(\n    IReadOnlyList<T> Items,\n    int Total,\n    int Page,\n    int PageSize)\n{\n    public int TotalPages => (int)Math.Ceiling((double)Total / PageSize);\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Common/ProjectMemberInfo.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Common;\n\n// אותו עיקרון כמו ProjectSummary מפרק 04: לא הישות על הקו — הקרנה.\n// המסך צריך שם, אימייל ותפקיד; ה-PasswordHash לא עוזב את השרת לעולם.\npublic sealed record ProjectMemberInfo(\n    int UserId,\n    string DisplayName,\n    string Email,\n    ProjectRole Role);\n",
+          "status": "unchanged",
+          "regions": {
+            "step-12.2": {
+              "start": 5,
+              "end": 11
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Common/ProjectStats.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Common;\n\n// הקרנות אגרגציה — בדיוק מה שהדשבורד צריך כדי לצייר. חיות ב-Core/Common\n// כמו ProjectSummary ו-SearchResults: POCO חוצי-שכבות, לא ישויות. כל ספירה\n// היא תוצאה של GROUP BY בצד ה-DB, לא לולאה בזיכרון.\npublic sealed record StatusCount(IssueStatus Status, int Count);\n\npublic sealed record PriorityCount(IssuePriority Priority, int Count);\n\n// CreatedPerDay: סדרת מגמה לגרף ה-sparkline. Day הוא תאריך בלבד (ללא שעה).\npublic sealed record DayCount(DateOnly Day, int Count);\n\npublic sealed record ProjectStats(\n    int Total,\n    int Open,\n    int InProgress,\n    int Done,\n    IReadOnlyList<StatusCount> ByStatus,\n    IReadOnlyList<PriorityCount> ByPriority,\n    IReadOnlyList<DayCount> CreatedPerDay);\n",
+          "status": "unchanged",
+          "regions": {
+            "step-18.2": {
+              "start": 5,
+              "end": 22
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Common/ProjectSummary.cs": {
+          "content": "namespace TaskForge.Core.Common;\n\n// הקרנה לקריאה: בדיוק מה שמסך רשימת הפרויקטים צריך, כולל ספירה\n// שמחושבת ב-SQL — בלי לטעון את ה-Issues עצמם לזיכרון.\npublic sealed record ProjectSummary(\n    int Id,\n    string Name,\n    string? Description,\n    int OpenIssues);\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Common/SearchResults.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Common;\n\n// תוצאות חיפוש כהקרנות רזות — בדיוק מה שה-palette צריך כדי לקפוץ ליעד.\n// חיים ב-Core/Common כמו ProjectSummary: POCO חוצה-שכבות, לא ישות מלאה.\npublic sealed record ProjectHit(int Id, string Name);\n\npublic sealed record IssueHit(int Id, int ProjectId, string Title, IssueStatus Status);\n\npublic sealed record SearchResults(\n    IReadOnlyList<ProjectHit> Projects,\n    IReadOnlyList<IssueHit> Issues);\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.11": {
+              "start": 5,
+              "end": 13
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Entities/ActivityEvent.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\n// סוג האירוע כ-enum: סט סגור שהמהדר אוכף, נשמר כטקסט ב-DB (כמו Status/Priority).\n// מתווסף ערך רק כשנולד סוג פעילות חדש — לא string חופשי שאפשר לאיית לא נכון.\npublic enum ActivityType\n{\n    IssueCreated,\n    IssueMoved,\n    CommentAdded,\n    // פרק 19: צירוף קובץ הוא פעילות. הוספת ערך ל-enum שנשמר כטקסט לא דורשת\n    // מיגרציה — העמודה היא TEXT, וערך חדש הוא פשוט מחרוזת חדשה.\n    AttachmentAdded,\n}\n\n// יומן הפעילות: שורה אחת לכל דבר שקרה בפרויקט. הוא append-only — נכתב ליד\n// הפעולה עצמה (יצירת issue, הזזה בלוח, תגובה) ונקרא כ-feed בדשבורד.\n// IssueId הוא nullable: אירוע ברמת הפרויקט לא חייב issue.\npublic sealed class ActivityEvent\n{\n    public int Id { get; set; }\n\n    public int ProjectId { get; set; }\n    public Project? Project { get; set; }\n\n    public int? IssueId { get; set; }\n\n    public int ActorUserId { get; set; }\n    public User? Actor { get; set; }\n\n    public ActivityType Type { get; set; }\n\n    public required string Summary { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.7": {
+              "start": 10,
+              "end": 12
+            },
+            "step-18.1": {
+              "start": 3,
+              "end": 35
+            }
+          },
+          "changedLines": [
+            10,
+            11,
+            12
+          ]
+        },
+        "server/TaskForge.Core/Entities/Attachment.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\n// קובץ מצורף ל-issue. בפיתוח אנחנו שומרים את ה-bytes ישירות ב-DB (BLOB) —\n// פשוט, אטומי, ועובד בלי תלות בדיסק או באחסון ענן. בפרודקשן הטרייד-אוף הפוך:\n// קבצים גדולים תופחים את ה-DB והגיבויים, ולכן שם מאחסנים ב-blob storage\n// ושומרים כאן רק מצביע (StoragePath). את הטרייד-אוף הזה הפרק מלמד.\npublic sealed class Attachment\n{\n    public int Id { get; set; }\n\n    public int IssueId { get; set; }\n    public Issue? Issue { get; set; }\n\n    public required string FileName { get; set; }\n\n    public required string ContentType { get; set; }\n\n    public long SizeBytes { get; set; }\n\n    // ה-BLOB עצמו. לא נטען בשאילתת הרשימה — רק בהורדה.\n    public required byte[] Bytes { get; set; }\n\n    public int UploadedByUserId { get; set; }\n    public User? UploadedBy { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.1": {
+              "start": 3,
+              "end": 27
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        },
+        "server/TaskForge.Core/Entities/Comment.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\npublic sealed class Comment\n{\n    public int Id { get; set; }\n\n    public required string Body { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    public int IssueId { get; set; }\n    public Issue? Issue { get; set; }\n\n    public int AuthorUserId { get; set; }\n    public User? Author { get; set; }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Entities/Issue.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\n// enum = שפת הדומיין: סט ערכים סגור שהמהדר אוכף.\n// \"Open\" שגוי-איות פשוט לא יתקמפל — לעומת string חופשי.\n\npublic enum IssueStatus\n{\n    Open,\n    InProgress,\n    Done,\n}\n\npublic enum IssuePriority\n{\n    Low,\n    Medium,\n    High,\n    Critical,\n}\n\npublic sealed class Issue\n{\n    public int Id { get; set; }\n\n    public required string Title { get; set; }\n\n    public string? Description { get; set; }\n\n    public IssueStatus Status { get; set; } = IssueStatus.Open;\n\n    public IssuePriority Priority { get; set; } = IssuePriority.Medium;\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    // דירוג ידני בתוך עמודת הסטטוס בלוח. double מאפשר \"להכניס באמצע\":\n    // הרנק החדש הוא נקודת האמצע בין שני השכנים — בלי לרנמבר את כל השאר.\n    // המגבלה (precision של double אחרי הרבה החדרות) נלמדת בפרק 17.\n    public double Rank { get; set; }\n\n    // הזוג הקלאסי: מפתח זר + navigation property.\n    // ה-FK הוא העמודה בטבלה; ה-nav הוא הדרך של הקוד \"ללכת\" לפרויקט.\n    public int ProjectId { get; set; }\n    public Project? Project { get; set; }\n\n    // many-to-many: ‏EF יבנה טבלת חיבור לבד (skip navigation)\n    public List<Label> Labels { get; set; } = [];\n\n    // פרק 14: thread של תגובות על ה-issue. מחיקת issue תמחק את תגובותיו.\n    public List<Comment> Comments { get; set; } = [];\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-17.1": {
+              "start": 35,
+              "end": 38
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Entities/Label.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\npublic sealed class Label\n{\n    public int Id { get; set; }\n\n    public required string Name { get; set; }\n\n    // צבע תצוגה הקסדצימלי, למשל \"#f87171\" — אופציונלי\n    public string? Color { get; set; }\n\n    // הצד השני של ה-many-to-many עם Issue\n    public List<Issue> Issues { get; set; } = [];\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Entities/Project.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\n// הישות הראשונה של הדומיין. שימו לב מה אין כאן:\n// אין JSON, אין HTTP, אין SQL — רק העסק עצמו.\npublic sealed class Project\n{\n    public int Id { get; set; }\n\n    // required: אי אפשר לייצר Project בלי שם — המהדר אוכף את זה\n    public required string Name { get; set; }\n\n    // string? — תיאור הוא אופציונלי במפורש\n    public string? Description { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    // צד ה\"אחד\" של אחד-לרבים: לפרויקט יש אוסף Issues\n    public List<Issue> Issues { get; set; } = [];\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Entities/ProjectMember.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\npublic enum ProjectRole\n{\n    Member,\n    Owner,\n}\n\n// טבלת חיבור עם נתונים משלה (תפקיד) — ולכן ישות מפורשת,\n// בניגוד ל-IssueLabel שנשאר skip navigation. המפתח: (ProjectId, UserId).\npublic sealed class ProjectMember\n{\n    public int ProjectId { get; set; }\n    public Project? Project { get; set; }\n\n    public int UserId { get; set; }\n    public User? User { get; set; }\n\n    public ProjectRole Role { get; set; } = ProjectRole.Member;\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Entities/RefreshToken.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\n// access token חי דקות; ההתחברות נשמרת בזכות ה-refresh token —\n// מחרוזת אקראית חד-פעמית שנשמרת ב-DB וניתנת לביטול.\npublic sealed class RefreshToken\n{\n    public int Id { get; set; }\n\n    public required string Token { get; set; }\n\n    public int UserId { get; set; }\n    public User? User { get; set; }\n\n    public DateTime ExpiresAtUtc { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n\n    // null = הטוקן עדיין בתוקף; rotation מציב כאן חותמת זמן\n    public DateTime? RevokedAtUtc { get; set; }\n\n    public bool IsActive => RevokedAtUtc is null && ExpiresAtUtc > DateTime.UtcNow;\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/Entities/User.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\npublic enum UserRole\n{\n    Member,\n    Admin,\n}\n\npublic sealed class User\n{\n    public int Id { get; set; }\n\n    public required string Email { get; set; }\n\n    public required string DisplayName { get; set; }\n\n    // לעולם לא הסיסמה עצמה — רק התוצר של PBKDF2 (צעד 5.4)\n    public required string PasswordHash { get; set; }\n\n    public UserRole Role { get; set; } = UserRole.Member;\n\n    public DateTime CreatedAtUtc { get; set; }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Core/TaskForge.Core.csproj": {
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n</Project>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Auth/PasswordHasher.cs": {
+          "content": "using System.Security.Cryptography;\nusing TaskForge.Core.Abstractions;\n\nnamespace TaskForge.Infrastructure.Auth;\n\n// PBKDF2 טהור מה-BCL — בלי חבילות, בלי קסם.\n// פורמט האחסון: iterations.saltBase64.hashBase64 — הכול נחוץ לאימות עתידי.\npublic sealed class PasswordHasher : IPasswordHasher\n{\n    private const int Iterations = 100_000;\n    private const int SaltSize = 16; // bytes\n    private const int KeySize = 32;  // bytes\n\n    public string Hash(string password)\n    {\n        var salt = RandomNumberGenerator.GetBytes(SaltSize);\n\n        var key = Rfc2898DeriveBytes.Pbkdf2(\n            password, salt, Iterations, HashAlgorithmName.SHA256, KeySize);\n\n        return $\"{Iterations}.{Convert.ToBase64String(salt)}.{Convert.ToBase64String(key)}\";\n    }\n\n    public bool Verify(string password, string passwordHash)\n    {\n        var parts = passwordHash.Split('.');\n        if (parts.Length != 3)\n        {\n            return false;\n        }\n\n        var iterations = int.Parse(parts[0]);\n        var salt = Convert.FromBase64String(parts[1]);\n        var expected = Convert.FromBase64String(parts[2]);\n\n        var actual = Rfc2898DeriveBytes.Pbkdf2(\n            password, salt, iterations, HashAlgorithmName.SHA256, expected.Length);\n\n        // השוואה בזמן קבוע — חוסמת timing attacks על אורך ההתאמה\n        return CryptographicOperations.FixedTimeEquals(actual, expected);\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Auth/TokenService.cs": {
+          "content": "using System.IdentityModel.Tokens.Jwt;\nusing System.Security.Claims;\nusing System.Security.Cryptography;\nusing System.Text;\nusing Microsoft.Extensions.Options;\nusing Microsoft.IdentityModel.Tokens;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Infrastructure.Auth;\n\npublic sealed class TokenService(IOptions<JwtOptions> options) : ITokenService\n{\n    private readonly JwtOptions _jwt = options.Value;\n\n    public string CreateAccessToken(User user)\n    {\n        // claims: העובדות שהשרת חותם עליהן. הקליינט קורא אותן, אבל לא יכול לזייף —\n        // כל שינוי שובר את החתימה.\n        var claims = new[]\n        {\n            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),\n            new Claim(JwtRegisteredClaimNames.Email, user.Email),\n            new Claim(\"name\", user.DisplayName),\n            new Claim(ClaimTypes.Role, user.Role.ToString()),\n        };\n\n        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Key));\n        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);\n\n        var token = new JwtSecurityToken(\n            issuer: _jwt.Issuer,\n            audience: _jwt.Audience,\n            claims: claims,\n            notBefore: DateTime.UtcNow,\n            expires: DateTime.UtcNow.AddMinutes(_jwt.AccessTokenMinutes),\n            signingCredentials: credentials);\n\n        return new JwtSecurityTokenHandler().WriteToken(token);\n    }\n\n    // refresh token הוא לא JWT — סתם אקראיות חזקה. הערך שלו נובע\n    // מהשורה ב-DB שמצביעה עליו, ולכן אפשר לבטל אותו בכל רגע.\n    public string CreateRefreshToken() =>\n        Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Data/DbSeeder.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Auth;\n\nnamespace TaskForge.Infrastructure.Data;\n\n// נתוני פיתוח: רצים פעם אחת, רק על DB ריק.\n// מפרק 05 — כולל משתמש דמו שהוא ה-Owner של כל הפרויקטים.\npublic static class DbSeeder\n{\n    public static async Task SeedAsync(TaskForgeDbContext db)\n    {\n        if (await db.Projects.AnyAsync())\n        {\n            return; // יש כבר נתונים — לא נוגעים\n        }\n\n        // משתמש פיתוח: demo@taskforge.dev / Passw0rd!\n        // הסיסמה עוברת את אותו PBKDF2 כמו בהרשמה אמיתית — אין דלת אחורית.\n        var demo = new User\n        {\n            Email = \"demo@taskforge.dev\",\n            DisplayName = \"Demo User\",\n            PasswordHash = new PasswordHasher().Hash(\"Passw0rd!\"),\n            Role = UserRole.Admin,\n            CreatedAtUtc = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),\n        };\n        db.Users.Add(demo);\n\n        // משתמשת שנייה: maya@taskforge.dev / Passw0rd! — כדי שרשימת\n        // החברים תספר סיפור אמיתי, ויהיה את מי לצרף בדיאלוג Add member.\n        var maya = new User\n        {\n            Email = \"maya@taskforge.dev\",\n            DisplayName = \"Maya Levi\",\n            PasswordHash = new PasswordHasher().Hash(\"Passw0rd!\"),\n            Role = UserRole.Member,\n            CreatedAtUtc = new DateTime(2026, 1, 5, 0, 0, 0, DateTimeKind.Utc),\n        };\n        db.Users.Add(maya);\n\n        var bug = new Label { Name = \"bug\", Color = \"#f87171\" };\n        var feature = new Label { Name = \"feature\", Color = \"#4ade80\" };\n        var design = new Label { Name = \"design\", Color = \"#c084fc\" };\n\n        var website = new Project\n        {\n            Name = \"Website Redesign\",\n            Description = \"Refresh the marketing site end to end\",\n            CreatedAtUtc = new DateTime(2026, 1, 12, 0, 0, 0, DateTimeKind.Utc),\n            Issues =\n            [\n                new Issue\n                {\n                    Title = \"Fix login redirect loop\",\n                    Description = \"Users bounce between /login and /home\",\n                    Status = IssueStatus.InProgress,\n                    Priority = IssuePriority.Critical,\n                    CreatedAtUtc = new DateTime(2026, 1, 14, 9, 0, 0, DateTimeKind.Utc),\n                    Labels = [bug],\n                },\n                new Issue\n                {\n                    Title = \"New hero section\",\n                    Status = IssueStatus.Open,\n                    Priority = IssuePriority.Medium,\n                    CreatedAtUtc = new DateTime(2026, 1, 20, 11, 30, 0, DateTimeKind.Utc),\n                    Labels = [feature, design],\n                },\n            ],\n        };\n\n        // פרק 13 צריך רשימה בגודל אמיתי: מספיק issues כדי שחיפוש, מיון,\n        // דפדוף ו-virtual scroll יהיו מורגשים. הנתונים דטרמיניסטיים —\n        // לולאה עם modulo, לא Random — אותו DB בכל הרצה, אותם צילומי מסך.\n        string[] verbs = [\"Fix\", \"Polish\", \"Refactor\", \"Document\", \"Test\", \"Optimize\"];\n        string[] areas =\n        [\n            \"navbar\", \"footer\", \"pricing page\", \"blog grid\",\n            \"contact form\", \"image pipeline\", \"search box\", \"cookie banner\",\n        ];\n\n        for (var i = 0; i < 58; i++)\n        {\n            website.Issues.Add(new Issue\n            {\n                Title = $\"{verbs[i % verbs.Length]} the {areas[i % areas.Length]} ({i + 1:D2})\",\n                Status = (IssueStatus)(i % 3),\n                Priority = (IssuePriority)(i % 4),\n                CreatedAtUtc = new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc).AddHours(i * 7),\n                Labels = i % 6 == 0 ? [bug] : i % 6 == 3 ? [feature] : [],\n            });\n        }\n\n        var mobile = new Project\n        {\n            Name = \"Mobile App\",\n            Description = \"iOS + Android companion app\",\n            CreatedAtUtc = new DateTime(2026, 2, 3, 0, 0, 0, DateTimeKind.Utc),\n            Issues =\n            [\n                new Issue\n                {\n                    Title = \"Push notifications opt-in\",\n                    Status = IssueStatus.Open,\n                    Priority = IssuePriority.High,\n                    CreatedAtUtc = new DateTime(2026, 2, 10, 8, 15, 0, DateTimeKind.Utc),\n                    Labels = [feature],\n                },\n                new Issue\n                {\n                    Title = \"Crash on cold start (Android 15)\",\n                    Status = IssueStatus.Done,\n                    Priority = IssuePriority.Critical,\n                    CreatedAtUtc = new DateTime(2026, 2, 12, 16, 45, 0, DateTimeKind.Utc),\n                    Labels = [bug],\n                },\n            ],\n        };\n\n        var tools = new Project\n        {\n            Name = \"Internal Tools\",\n            Description = null,\n            CreatedAtUtc = new DateTime(2026, 3, 21, 0, 0, 0, DateTimeKind.Utc),\n        };\n\n        // מוסיפים רק את השורשים — ה-Change Tracker מגלה את כל הגרף\n        // (Issues, ‏Labels וטבלת החיבור) ושומר הכול ב-SaveChanges אחד.\n        db.Projects.AddRange(website, mobile, tools);\n        await db.SaveChangesAsync();\n\n        // דירוג התחלתי ללוח: כל issue מקבל Rank עוקב בתוך הפרויקט שלו, עם\n        // מרווח של 1024. המרווח משאיר מקום \"להכניס באמצע\" בלי לרנמבר אחר כך.\n        // רץ אחרי SaveChanges כי צריך Ids אמיתיים כדי למיין יציב לפי (Project, Id).\n        var ordered = await db.Issues.OrderBy(i => i.ProjectId).ThenBy(i => i.Id).ToListAsync();\n        var nextRank = new Dictionary<int, double>();\n        foreach (var issue in ordered)\n        {\n            var rank = nextRank.TryGetValue(issue.ProjectId, out var current) ? current + 1024 : 1024;\n            issue.Rank = rank;\n            nextRank[issue.ProjectId] = rank;\n        }\n        await db.SaveChangesAsync();\n\n        // תגובות seed: thread קצר על issue אמיתי, עם שני מחברים שונים.\n        // ה-Ids כבר מאוכלסים אחרי SaveChanges, ולכן אפשר לקשור לפי FK.\n        var redirectLoop = website.Issues.First(i => i.Title == \"Fix login redirect loop\");\n        db.Comments.AddRange(\n            new Comment\n            {\n                IssueId = redirectLoop.Id,\n                AuthorUserId = demo.Id,\n                Body = \"I can reproduce this after a refresh on /projects/1.\",\n                CreatedAtUtc = new DateTime(2026, 4, 2, 9, 0, 0, DateTimeKind.Utc),\n            },\n            new Comment\n            {\n                IssueId = redirectLoop.Id,\n                AuthorUserId = maya.Id,\n                Body = \"The guard redirects before the token restore finishes. Checking the resolver path.\",\n                CreatedAtUtc = new DateTime(2026, 4, 2, 9, 18, 0, DateTimeKind.Utc),\n            });\n\n        // חברות: עכשיו יש Ids אמיתיים, אפשר לקשור את המשתמש לפרויקטים\n        db.ProjectMembers.AddRange(\n            new ProjectMember { ProjectId = website.Id, UserId = demo.Id, Role = ProjectRole.Owner },\n            new ProjectMember { ProjectId = mobile.Id, UserId = demo.Id, Role = ProjectRole.Owner },\n            new ProjectMember { ProjectId = tools.Id, UserId = demo.Id, Role = ProjectRole.Owner },\n            // מאיה חברה רגילה ב-Website Redesign — כדי שמסך ה-members\n            // יראה שני תפקידים שונים, ו-Mobile App נשאר פנוי לצירוף בדמו.\n            new ProjectMember { ProjectId = website.Id, UserId = maya.Id, Role = ProjectRole.Member });\n        await db.SaveChangesAsync();\n\n        // יומן פעילות seed: מספיק אירועים כדי שהפיד בדשבורד יספר סיפור.\n        // אותם Ids אמיתיים שכבר נשמרו; תאריכים עולים כך שהאחרון מופיע ראשון.\n        var heroSection = website.Issues.First(i => i.Title == \"New hero section\");\n        var crash = mobile.Issues.First(i => i.Title == \"Crash on cold start (Android 15)\");\n        db.ActivityEvents.AddRange(\n            new ActivityEvent\n            {\n                ProjectId = website.Id,\n                IssueId = redirectLoop.Id,\n                ActorUserId = demo.Id,\n                Type = ActivityType.IssueCreated,\n                Summary = \"יצר/ה את \\\"Fix login redirect loop\\\"\",\n                CreatedAtUtc = new DateTime(2026, 4, 1, 8, 0, 0, DateTimeKind.Utc),\n            },\n            new ActivityEvent\n            {\n                ProjectId = website.Id,\n                IssueId = redirectLoop.Id,\n                ActorUserId = maya.Id,\n                Type = ActivityType.CommentAdded,\n                Summary = \"הגיב/ה על \\\"Fix login redirect loop\\\"\",\n                CreatedAtUtc = new DateTime(2026, 4, 2, 9, 18, 0, DateTimeKind.Utc),\n            },\n            new ActivityEvent\n            {\n                ProjectId = website.Id,\n                IssueId = heroSection.Id,\n                ActorUserId = demo.Id,\n                Type = ActivityType.IssueCreated,\n                Summary = \"יצר/ה את \\\"New hero section\\\"\",\n                CreatedAtUtc = new DateTime(2026, 4, 3, 10, 30, 0, DateTimeKind.Utc),\n            },\n            new ActivityEvent\n            {\n                ProjectId = website.Id,\n                IssueId = redirectLoop.Id,\n                ActorUserId = demo.Id,\n                Type = ActivityType.IssueMoved,\n                Summary = \"העביר/ה את \\\"Fix login redirect loop\\\" ל-InProgress\",\n                CreatedAtUtc = new DateTime(2026, 4, 4, 14, 0, 0, DateTimeKind.Utc),\n            },\n            new ActivityEvent\n            {\n                ProjectId = mobile.Id,\n                IssueId = crash.Id,\n                ActorUserId = demo.Id,\n                Type = ActivityType.IssueMoved,\n                Summary = \"העביר/ה את \\\"Crash on cold start (Android 15)\\\" ל-Done\",\n                CreatedAtUtc = new DateTime(2026, 4, 5, 11, 0, 0, DateTimeKind.Utc),\n            });\n        await db.SaveChangesAsync();\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-5.7": {
+              "start": 18,
+              "end": 28
+            },
+            "step-12.8": {
+              "start": 30,
+              "end": 40
+            },
+            "step-13.1": {
+              "start": 73,
+              "end": 93
+            },
+            "step-17.5": {
+              "start": 133,
+              "end": 144
+            },
+            "step-14.2": {
+              "start": 146,
+              "end": 163
+            },
+            "step-12.8b": {
+              "start": 170,
+              "end": 172
+            },
+            "step-5.7b": {
+              "start": 165,
+              "end": 173
+            },
+            "step-18.10": {
+              "start": 175,
+              "end": 225
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Data/TaskForgeDbContext.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Infrastructure.Data;\n\n// ה-DbContext הוא יחידת העבודה: צוהר אחד ל-DB לכל בקשה,\n// שעוקב אחרי כל ישות שהוא הגיש ויודע לתרגם שינויים ל-SQL.\npublic sealed class TaskForgeDbContext(DbContextOptions<TaskForgeDbContext> options)\n    : DbContext(options)\n{\n    // כל DbSet = טבלה. Set<T>() במקום setter — אין מצב ביניים null.\n    public DbSet<Project> Projects => Set<Project>();\n    public DbSet<Issue> Issues => Set<Issue>();\n    public DbSet<Label> Labels => Set<Label>();\n    public DbSet<User> Users => Set<User>();\n    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();\n    public DbSet<ProjectMember> ProjectMembers => Set<ProjectMember>();\n    public DbSet<Comment> Comments => Set<Comment>();\n    public DbSet<ActivityEvent> ActivityEvents => Set<ActivityEvent>();\n    public DbSet<Attachment> Attachments => Set<Attachment>();\n\n    // Fluent API: כל חוקי המיפוי כאן, והישויות ב-Core נשארות נקיות —\n    // בלי attributes של EF. זה חוק התלות מפרק 02, מיושם על שכבת הנתונים.\n    protected override void OnModelCreating(ModelBuilder modelBuilder)\n    {\n        modelBuilder.Entity<Project>(project =>\n        {\n            project.Property(p => p.Name)\n                   .HasMaxLength(120)\n                   .IsRequired();\n\n            // אחד-לרבים: מחיקת פרויקט גוררת את ה-Issues שלו\n            project.HasMany(p => p.Issues)\n                   .WithOne(i => i.Project!)\n                   .HasForeignKey(i => i.ProjectId)\n                   .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<Issue>(issue =>\n        {\n            issue.Property(i => i.Title)\n                 .HasMaxLength(200)\n                 .IsRequired();\n\n            // enum נשמר כטקסט קריא ב-DB (\"Open\"), לא כמספר קסם (0)\n            issue.Property(i => i.Status)\n                 .HasConversion<string>()\n                 .HasMaxLength(20);\n\n            issue.Property(i => i.Priority)\n                 .HasConversion<string>()\n                 .HasMaxLength(20);\n\n            // האינדקס של שאילתת הלוח: \"כל ה-Issues הפתוחים בפרויקט X\"\n            issue.HasIndex(i => new { i.ProjectId, i.Status });\n\n            // many-to-many: ‏EF מסיק טבלת חיבור IssueLabel לבד\n            issue.HasMany(i => i.Labels)\n                 .WithMany(l => l.Issues);\n\n            // תגובות הן חלק מחיי ה-issue: מחיקת issue מוחקת את ה-thread שלו.\n            issue.HasMany(i => i.Comments)\n                 .WithOne(c => c.Issue!)\n                 .HasForeignKey(c => c.IssueId)\n                 .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<Label>(label =>\n        {\n            label.Property(l => l.Name)\n                 .HasMaxLength(40)\n                 .IsRequired();\n\n            // אין שתי תוויות באותו שם\n            label.HasIndex(l => l.Name).IsUnique();\n        });\n\n        modelBuilder.Entity<User>(user =>\n        {\n            user.Property(u => u.Email).HasMaxLength(254).IsRequired();\n            user.Property(u => u.DisplayName).HasMaxLength(60).IsRequired();\n            user.Property(u => u.PasswordHash).HasMaxLength(300).IsRequired();\n            user.Property(u => u.Role).HasConversion<string>().HasMaxLength(20);\n\n            // אימייל הוא הזהות — אין שניים\n            user.HasIndex(u => u.Email).IsUnique();\n        });\n\n        modelBuilder.Entity<RefreshToken>(token =>\n        {\n            token.Property(t => t.Token).HasMaxLength(120).IsRequired();\n\n            // חיפוש הטוקן הוא הנתיב החם של /auth/refresh — אינדקס ייחודי\n            token.HasIndex(t => t.Token).IsUnique();\n\n            // מחיקת משתמש גוררת את הטוקנים שלו\n            token.HasOne(t => t.User)\n                 .WithMany()\n                 .HasForeignKey(t => t.UserId)\n                 .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<ProjectMember>(member =>\n        {\n            // מפתח מורכב: זוג (פרויקט, משתמש) הוא החברות עצמה — בלי Id מלאכותי\n            member.HasKey(m => new { m.ProjectId, m.UserId });\n\n            member.Property(m => m.Role).HasConversion<string>().HasMaxLength(20);\n\n            member.HasOne(m => m.Project)\n                  .WithMany()\n                  .HasForeignKey(m => m.ProjectId)\n                  .OnDelete(DeleteBehavior.Cascade);\n\n            member.HasOne(m => m.User)\n                  .WithMany()\n                  .HasForeignKey(m => m.UserId)\n                  .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<Comment>(comment =>\n        {\n            comment.Property(c => c.Body)\n                   .HasMaxLength(1200)\n                   .IsRequired();\n\n            comment.HasIndex(c => new { c.IssueId, c.CreatedAtUtc });\n\n            comment.HasOne(c => c.Author)\n                   .WithMany()\n                   .HasForeignKey(c => c.AuthorUserId)\n                   .OnDelete(DeleteBehavior.Restrict);\n        });\n\n        modelBuilder.Entity<ActivityEvent>(activity =>\n        {\n            activity.Property(e => e.Type).HasConversion<string>().HasMaxLength(30);\n            activity.Property(e => e.Summary).HasMaxLength(300).IsRequired();\n\n            // הנתיב החם של ה-feed: \"האירועים האחרונים בפרויקט X\"\n            activity.HasIndex(e => new { e.ProjectId, e.CreatedAtUtc });\n\n            // מחיקת פרויקט גוררת את היומן שלו; מחיקת משתמש לא תמחק היסטוריה\n            activity.HasOne(e => e.Project)\n                    .WithMany()\n                    .HasForeignKey(e => e.ProjectId)\n                    .OnDelete(DeleteBehavior.Cascade);\n\n            activity.HasOne(e => e.Actor)\n                    .WithMany()\n                    .HasForeignKey(e => e.ActorUserId)\n                    .OnDelete(DeleteBehavior.Restrict);\n        });\n\n        modelBuilder.Entity<Attachment>(attachment =>\n        {\n            attachment.Property(a => a.FileName).HasMaxLength(260).IsRequired();\n            attachment.Property(a => a.ContentType).HasMaxLength(120).IsRequired();\n            attachment.Property(a => a.Bytes).IsRequired();\n\n            // הנתיב החם: \"כל הקבצים של issue X\"\n            attachment.HasIndex(a => a.IssueId);\n\n            // מחיקת issue גוררת את הקבצים שלו; מחיקת משתמש לא תמחק קבצים\n            attachment.HasOne(a => a.Issue)\n                      .WithMany()\n                      .HasForeignKey(a => a.IssueId)\n                      .OnDelete(DeleteBehavior.Cascade);\n\n            attachment.HasOne(a => a.UploadedBy)\n                      .WithMany()\n                      .HasForeignKey(a => a.UploadedByUserId)\n                      .OnDelete(DeleteBehavior.Restrict);\n        });\n    }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-18.9": {
+              "start": 19,
+              "end": 19
+            },
+            "step-19.10": {
+              "start": 20,
+              "end": 20
+            },
+            "step-5.6": {
+              "start": 78,
+              "end": 119
+            },
+            "step-14.3": {
+              "start": 121,
+              "end": 133
+            },
+            "step-18.9b": {
+              "start": 135,
+              "end": 153
+            },
+            "step-19.10b": {
+              "start": 155,
+              "end": 174
+            },
+            "step-3.6": {
+              "start": 22,
+              "end": 175
+            }
+          },
+          "changedLines": [
+            20,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174
+          ]
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260610091413_InitialCreate.cs": {
+          "content": "﻿using System;\nusing Microsoft.EntityFrameworkCore.Migrations;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    /// <inheritdoc />\n    public partial class InitialCreate : Migration\n    {\n        /// <inheritdoc />\n        protected override void Up(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.CreateTable(\n                name: \"Labels\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    Name = table.Column<string>(type: \"TEXT\", maxLength: 40, nullable: false),\n                    Color = table.Column<string>(type: \"TEXT\", nullable: true)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_Labels\", x => x.Id);\n                });\n\n            migrationBuilder.CreateTable(\n                name: \"Projects\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    Name = table.Column<string>(type: \"TEXT\", maxLength: 120, nullable: false),\n                    Description = table.Column<string>(type: \"TEXT\", nullable: true),\n                    CreatedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_Projects\", x => x.Id);\n                });\n\n            migrationBuilder.CreateTable(\n                name: \"Issues\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    Title = table.Column<string>(type: \"TEXT\", maxLength: 200, nullable: false),\n                    Description = table.Column<string>(type: \"TEXT\", nullable: true),\n                    Status = table.Column<string>(type: \"TEXT\", maxLength: 20, nullable: false),\n                    Priority = table.Column<string>(type: \"TEXT\", maxLength: 20, nullable: false),\n                    CreatedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false),\n                    ProjectId = table.Column<int>(type: \"INTEGER\", nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_Issues\", x => x.Id);\n                    table.ForeignKey(\n                        name: \"FK_Issues_Projects_ProjectId\",\n                        column: x => x.ProjectId,\n                        principalTable: \"Projects\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                });\n\n            migrationBuilder.CreateTable(\n                name: \"IssueLabel\",\n                columns: table => new\n                {\n                    IssuesId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    LabelsId = table.Column<int>(type: \"INTEGER\", nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_IssueLabel\", x => new { x.IssuesId, x.LabelsId });\n                    table.ForeignKey(\n                        name: \"FK_IssueLabel_Issues_IssuesId\",\n                        column: x => x.IssuesId,\n                        principalTable: \"Issues\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                    table.ForeignKey(\n                        name: \"FK_IssueLabel_Labels_LabelsId\",\n                        column: x => x.LabelsId,\n                        principalTable: \"Labels\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                });\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_IssueLabel_LabelsId\",\n                table: \"IssueLabel\",\n                column: \"LabelsId\");\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_Issues_ProjectId_Status\",\n                table: \"Issues\",\n                columns: new[] { \"ProjectId\", \"Status\" });\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_Labels_Name\",\n                table: \"Labels\",\n                column: \"Name\",\n                unique: true);\n        }\n\n        /// <inheritdoc />\n        protected override void Down(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.DropTable(\n                name: \"IssueLabel\");\n\n            migrationBuilder.DropTable(\n                name: \"Issues\");\n\n            migrationBuilder.DropTable(\n                name: \"Labels\");\n\n            migrationBuilder.DropTable(\n                name: \"Projects\");\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260610091413_InitialCreate.Designer.cs": {
+          "content": "﻿// <auto-generated />\nusing System;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.EntityFrameworkCore.Infrastructure;\nusing Microsoft.EntityFrameworkCore.Migrations;\nusing Microsoft.EntityFrameworkCore.Storage.ValueConversion;\nusing TaskForge.Infrastructure.Data;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    [DbContext(typeof(TaskForgeDbContext))]\n    [Migration(\"20260610091413_InitialCreate\")]\n    partial class InitialCreate\n    {\n        /// <inheritdoc />\n        protected override void BuildTargetModel(ModelBuilder modelBuilder)\n        {\n#pragma warning disable 612, 618\n            modelBuilder.HasAnnotation(\"ProductVersion\", \"10.0.9\");\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.Property<int>(\"IssuesId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"LabelsId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"IssuesId\", \"LabelsId\");\n\n                    b.HasIndex(\"LabelsId\");\n\n                    b.ToTable(\"IssueLabel\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Priority\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Status\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Title\")\n                        .IsRequired()\n                        .HasMaxLength(200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ProjectId\", \"Status\");\n\n                    b.ToTable(\"Issues\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Label\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Color\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(40)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Name\")\n                        .IsUnique();\n\n                    b.ToTable(\"Labels\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.ToTable(\"Projects\");\n                });\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", null)\n                        .WithMany()\n                        .HasForeignKey(\"IssuesId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Label\", null)\n                        .WithMany()\n                        .HasForeignKey(\"LabelsId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany(\"Issues\")\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Navigation(\"Issues\");\n                });\n#pragma warning restore 612, 618\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260610153208_AddAuth.cs": {
+          "content": "﻿using System;\nusing Microsoft.EntityFrameworkCore.Migrations;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    /// <inheritdoc />\n    public partial class AddAuth : Migration\n    {\n        /// <inheritdoc />\n        protected override void Up(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.CreateTable(\n                name: \"Users\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    Email = table.Column<string>(type: \"TEXT\", maxLength: 254, nullable: false),\n                    DisplayName = table.Column<string>(type: \"TEXT\", maxLength: 60, nullable: false),\n                    PasswordHash = table.Column<string>(type: \"TEXT\", maxLength: 300, nullable: false),\n                    Role = table.Column<string>(type: \"TEXT\", maxLength: 20, nullable: false),\n                    CreatedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_Users\", x => x.Id);\n                });\n\n            migrationBuilder.CreateTable(\n                name: \"ProjectMembers\",\n                columns: table => new\n                {\n                    ProjectId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    UserId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    Role = table.Column<string>(type: \"TEXT\", maxLength: 20, nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_ProjectMembers\", x => new { x.ProjectId, x.UserId });\n                    table.ForeignKey(\n                        name: \"FK_ProjectMembers_Projects_ProjectId\",\n                        column: x => x.ProjectId,\n                        principalTable: \"Projects\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                    table.ForeignKey(\n                        name: \"FK_ProjectMembers_Users_UserId\",\n                        column: x => x.UserId,\n                        principalTable: \"Users\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                });\n\n            migrationBuilder.CreateTable(\n                name: \"RefreshTokens\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    Token = table.Column<string>(type: \"TEXT\", maxLength: 120, nullable: false),\n                    UserId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    ExpiresAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false),\n                    CreatedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false),\n                    RevokedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: true)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_RefreshTokens\", x => x.Id);\n                    table.ForeignKey(\n                        name: \"FK_RefreshTokens_Users_UserId\",\n                        column: x => x.UserId,\n                        principalTable: \"Users\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                });\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_ProjectMembers_UserId\",\n                table: \"ProjectMembers\",\n                column: \"UserId\");\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_RefreshTokens_Token\",\n                table: \"RefreshTokens\",\n                column: \"Token\",\n                unique: true);\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_RefreshTokens_UserId\",\n                table: \"RefreshTokens\",\n                column: \"UserId\");\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_Users_Email\",\n                table: \"Users\",\n                column: \"Email\",\n                unique: true);\n        }\n\n        /// <inheritdoc />\n        protected override void Down(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.DropTable(\n                name: \"ProjectMembers\");\n\n            migrationBuilder.DropTable(\n                name: \"RefreshTokens\");\n\n            migrationBuilder.DropTable(\n                name: \"Users\");\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260610153208_AddAuth.Designer.cs": {
+          "content": "﻿// <auto-generated />\nusing System;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.EntityFrameworkCore.Infrastructure;\nusing Microsoft.EntityFrameworkCore.Migrations;\nusing Microsoft.EntityFrameworkCore.Storage.ValueConversion;\nusing TaskForge.Infrastructure.Data;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    [DbContext(typeof(TaskForgeDbContext))]\n    [Migration(\"20260610153208_AddAuth\")]\n    partial class AddAuth\n    {\n        /// <inheritdoc />\n        protected override void BuildTargetModel(ModelBuilder modelBuilder)\n        {\n#pragma warning disable 612, 618\n            modelBuilder.HasAnnotation(\"ProductVersion\", \"10.0.9\");\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.Property<int>(\"IssuesId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"LabelsId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"IssuesId\", \"LabelsId\");\n\n                    b.HasIndex(\"LabelsId\");\n\n                    b.ToTable(\"IssueLabel\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Priority\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Status\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Title\")\n                        .IsRequired()\n                        .HasMaxLength(200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ProjectId\", \"Status\");\n\n                    b.ToTable(\"Issues\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Label\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Color\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(40)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Name\")\n                        .IsUnique();\n\n                    b.ToTable(\"Labels\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.ToTable(\"Projects\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"ProjectId\", \"UserId\");\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"ProjectMembers\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"ExpiresAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime?>(\"RevokedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Token\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Token\")\n                        .IsUnique();\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"RefreshTokens\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.User\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"DisplayName\")\n                        .IsRequired()\n                        .HasMaxLength(60)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Email\")\n                        .IsRequired()\n                        .HasMaxLength(254)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"PasswordHash\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Email\")\n                        .IsUnique();\n\n                    b.ToTable(\"Users\");\n                });\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", null)\n                        .WithMany()\n                        .HasForeignKey(\"IssuesId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Label\", null)\n                        .WithMany()\n                        .HasForeignKey(\"LabelsId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany(\"Issues\")\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Navigation(\"Issues\");\n                });\n#pragma warning restore 612, 618\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260613053113_AddComments.cs": {
+          "content": "﻿using System;\nusing Microsoft.EntityFrameworkCore.Migrations;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    /// <inheritdoc />\n    public partial class AddComments : Migration\n    {\n        /// <inheritdoc />\n        protected override void Up(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.CreateTable(\n                name: \"Comments\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    Body = table.Column<string>(type: \"TEXT\", maxLength: 1200, nullable: false),\n                    CreatedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false),\n                    IssueId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    AuthorUserId = table.Column<int>(type: \"INTEGER\", nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_Comments\", x => x.Id);\n                    table.ForeignKey(\n                        name: \"FK_Comments_Issues_IssueId\",\n                        column: x => x.IssueId,\n                        principalTable: \"Issues\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                    table.ForeignKey(\n                        name: \"FK_Comments_Users_AuthorUserId\",\n                        column: x => x.AuthorUserId,\n                        principalTable: \"Users\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Restrict);\n                });\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_Comments_AuthorUserId\",\n                table: \"Comments\",\n                column: \"AuthorUserId\");\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_Comments_IssueId_CreatedAtUtc\",\n                table: \"Comments\",\n                columns: new[] { \"IssueId\", \"CreatedAtUtc\" });\n        }\n\n        /// <inheritdoc />\n        protected override void Down(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.DropTable(\n                name: \"Comments\");\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260613053113_AddComments.Designer.cs": {
+          "content": "﻿// <auto-generated />\nusing System;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.EntityFrameworkCore.Infrastructure;\nusing Microsoft.EntityFrameworkCore.Migrations;\nusing Microsoft.EntityFrameworkCore.Storage.ValueConversion;\nusing TaskForge.Infrastructure.Data;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    [DbContext(typeof(TaskForgeDbContext))]\n    [Migration(\"20260613053113_AddComments\")]\n    partial class AddComments\n    {\n        /// <inheritdoc />\n        protected override void BuildTargetModel(ModelBuilder modelBuilder)\n        {\n#pragma warning disable 612, 618\n            modelBuilder.HasAnnotation(\"ProductVersion\", \"10.0.9\");\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.Property<int>(\"IssuesId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"LabelsId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"IssuesId\", \"LabelsId\");\n\n                    b.HasIndex(\"LabelsId\");\n\n                    b.ToTable(\"IssueLabel\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"AuthorUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Body\")\n                        .IsRequired()\n                        .HasMaxLength(1200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"AuthorUserId\");\n\n                    b.HasIndex(\"IssueId\", \"CreatedAtUtc\");\n\n                    b.ToTable(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Priority\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Status\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Title\")\n                        .IsRequired()\n                        .HasMaxLength(200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ProjectId\", \"Status\");\n\n                    b.ToTable(\"Issues\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Label\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Color\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(40)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Name\")\n                        .IsUnique();\n\n                    b.ToTable(\"Labels\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.ToTable(\"Projects\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"ProjectId\", \"UserId\");\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"ProjectMembers\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"ExpiresAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime?>(\"RevokedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Token\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Token\")\n                        .IsUnique();\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"RefreshTokens\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.User\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"DisplayName\")\n                        .IsRequired()\n                        .HasMaxLength(60)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Email\")\n                        .IsRequired()\n                        .HasMaxLength(254)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"PasswordHash\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Email\")\n                        .IsUnique();\n\n                    b.ToTable(\"Users\");\n                });\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", null)\n                        .WithMany()\n                        .HasForeignKey(\"IssuesId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Label\", null)\n                        .WithMany()\n                        .HasForeignKey(\"LabelsId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"Author\")\n                        .WithMany()\n                        .HasForeignKey(\"AuthorUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", \"Issue\")\n                        .WithMany(\"Comments\")\n                        .HasForeignKey(\"IssueId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Author\");\n\n                    b.Navigation(\"Issue\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany(\"Issues\")\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Navigation(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Navigation(\"Issues\");\n                });\n#pragma warning restore 612, 618\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260614084811_AddIssueRank.cs": {
+          "content": "﻿using Microsoft.EntityFrameworkCore.Migrations;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    /// <inheritdoc />\n    public partial class AddIssueRank : Migration\n    {\n        /// <inheritdoc />\n        protected override void Up(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.AddColumn<double>(\n                name: \"Rank\",\n                table: \"Issues\",\n                type: \"REAL\",\n                nullable: false,\n                defaultValue: 0.0);\n        }\n\n        /// <inheritdoc />\n        protected override void Down(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.DropColumn(\n                name: \"Rank\",\n                table: \"Issues\");\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260614084811_AddIssueRank.Designer.cs": {
+          "content": "﻿// <auto-generated />\nusing System;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.EntityFrameworkCore.Infrastructure;\nusing Microsoft.EntityFrameworkCore.Migrations;\nusing Microsoft.EntityFrameworkCore.Storage.ValueConversion;\nusing TaskForge.Infrastructure.Data;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    [DbContext(typeof(TaskForgeDbContext))]\n    [Migration(\"20260614084811_AddIssueRank\")]\n    partial class AddIssueRank\n    {\n        /// <inheritdoc />\n        protected override void BuildTargetModel(ModelBuilder modelBuilder)\n        {\n#pragma warning disable 612, 618\n            modelBuilder.HasAnnotation(\"ProductVersion\", \"10.0.9\");\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.Property<int>(\"IssuesId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"LabelsId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"IssuesId\", \"LabelsId\");\n\n                    b.HasIndex(\"LabelsId\");\n\n                    b.ToTable(\"IssueLabel\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"AuthorUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Body\")\n                        .IsRequired()\n                        .HasMaxLength(1200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"AuthorUserId\");\n\n                    b.HasIndex(\"IssueId\", \"CreatedAtUtc\");\n\n                    b.ToTable(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Priority\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<double>(\"Rank\")\n                        .HasColumnType(\"REAL\");\n\n                    b.Property<string>(\"Status\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Title\")\n                        .IsRequired()\n                        .HasMaxLength(200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ProjectId\", \"Status\");\n\n                    b.ToTable(\"Issues\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Label\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Color\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(40)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Name\")\n                        .IsUnique();\n\n                    b.ToTable(\"Labels\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.ToTable(\"Projects\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"ProjectId\", \"UserId\");\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"ProjectMembers\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"ExpiresAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime?>(\"RevokedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Token\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Token\")\n                        .IsUnique();\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"RefreshTokens\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.User\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"DisplayName\")\n                        .IsRequired()\n                        .HasMaxLength(60)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Email\")\n                        .IsRequired()\n                        .HasMaxLength(254)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"PasswordHash\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Email\")\n                        .IsUnique();\n\n                    b.ToTable(\"Users\");\n                });\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", null)\n                        .WithMany()\n                        .HasForeignKey(\"IssuesId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Label\", null)\n                        .WithMany()\n                        .HasForeignKey(\"LabelsId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"Author\")\n                        .WithMany()\n                        .HasForeignKey(\"AuthorUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", \"Issue\")\n                        .WithMany(\"Comments\")\n                        .HasForeignKey(\"IssueId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Author\");\n\n                    b.Navigation(\"Issue\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany(\"Issues\")\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Navigation(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Navigation(\"Issues\");\n                });\n#pragma warning restore 612, 618\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260614142615_AddActivityLog.cs": {
+          "content": "﻿using System;\nusing Microsoft.EntityFrameworkCore.Migrations;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    /// <inheritdoc />\n    public partial class AddActivityLog : Migration\n    {\n        /// <inheritdoc />\n        protected override void Up(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.CreateTable(\n                name: \"ActivityEvents\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    ProjectId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    IssueId = table.Column<int>(type: \"INTEGER\", nullable: true),\n                    ActorUserId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    Type = table.Column<string>(type: \"TEXT\", maxLength: 30, nullable: false),\n                    Summary = table.Column<string>(type: \"TEXT\", maxLength: 300, nullable: false),\n                    CreatedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_ActivityEvents\", x => x.Id);\n                    table.ForeignKey(\n                        name: \"FK_ActivityEvents_Projects_ProjectId\",\n                        column: x => x.ProjectId,\n                        principalTable: \"Projects\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                    table.ForeignKey(\n                        name: \"FK_ActivityEvents_Users_ActorUserId\",\n                        column: x => x.ActorUserId,\n                        principalTable: \"Users\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Restrict);\n                });\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_ActivityEvents_ActorUserId\",\n                table: \"ActivityEvents\",\n                column: \"ActorUserId\");\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_ActivityEvents_ProjectId_CreatedAtUtc\",\n                table: \"ActivityEvents\",\n                columns: new[] { \"ProjectId\", \"CreatedAtUtc\" });\n        }\n\n        /// <inheritdoc />\n        protected override void Down(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.DropTable(\n                name: \"ActivityEvents\");\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260614142615_AddActivityLog.Designer.cs": {
+          "content": "﻿// <auto-generated />\nusing System;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.EntityFrameworkCore.Infrastructure;\nusing Microsoft.EntityFrameworkCore.Migrations;\nusing Microsoft.EntityFrameworkCore.Storage.ValueConversion;\nusing TaskForge.Infrastructure.Data;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    [DbContext(typeof(TaskForgeDbContext))]\n    [Migration(\"20260614142615_AddActivityLog\")]\n    partial class AddActivityLog\n    {\n        /// <inheritdoc />\n        protected override void BuildTargetModel(ModelBuilder modelBuilder)\n        {\n#pragma warning disable 612, 618\n            modelBuilder.HasAnnotation(\"ProductVersion\", \"10.0.9\");\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.Property<int>(\"IssuesId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"LabelsId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"IssuesId\", \"LabelsId\");\n\n                    b.HasIndex(\"LabelsId\");\n\n                    b.ToTable(\"IssueLabel\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ActivityEvent\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"ActorUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int?>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Summary\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Type\")\n                        .IsRequired()\n                        .HasMaxLength(30)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ActorUserId\");\n\n                    b.HasIndex(\"ProjectId\", \"CreatedAtUtc\");\n\n                    b.ToTable(\"ActivityEvents\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"AuthorUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Body\")\n                        .IsRequired()\n                        .HasMaxLength(1200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"AuthorUserId\");\n\n                    b.HasIndex(\"IssueId\", \"CreatedAtUtc\");\n\n                    b.ToTable(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Priority\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<double>(\"Rank\")\n                        .HasColumnType(\"REAL\");\n\n                    b.Property<string>(\"Status\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Title\")\n                        .IsRequired()\n                        .HasMaxLength(200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ProjectId\", \"Status\");\n\n                    b.ToTable(\"Issues\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Label\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Color\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(40)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Name\")\n                        .IsUnique();\n\n                    b.ToTable(\"Labels\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.ToTable(\"Projects\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"ProjectId\", \"UserId\");\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"ProjectMembers\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"ExpiresAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime?>(\"RevokedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Token\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Token\")\n                        .IsUnique();\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"RefreshTokens\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.User\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"DisplayName\")\n                        .IsRequired()\n                        .HasMaxLength(60)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Email\")\n                        .IsRequired()\n                        .HasMaxLength(254)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"PasswordHash\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Email\")\n                        .IsUnique();\n\n                    b.ToTable(\"Users\");\n                });\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", null)\n                        .WithMany()\n                        .HasForeignKey(\"IssuesId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Label\", null)\n                        .WithMany()\n                        .HasForeignKey(\"LabelsId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ActivityEvent\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"Actor\")\n                        .WithMany()\n                        .HasForeignKey(\"ActorUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Actor\");\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"Author\")\n                        .WithMany()\n                        .HasForeignKey(\"AuthorUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", \"Issue\")\n                        .WithMany(\"Comments\")\n                        .HasForeignKey(\"IssueId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Author\");\n\n                    b.Navigation(\"Issue\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany(\"Issues\")\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Navigation(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Navigation(\"Issues\");\n                });\n#pragma warning restore 612, 618\n        }\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260615142517_AddAttachments.cs": {
+          "content": "﻿using System;\nusing Microsoft.EntityFrameworkCore.Migrations;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    /// <inheritdoc />\n    public partial class AddAttachments : Migration\n    {\n        /// <inheritdoc />\n        protected override void Up(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.CreateTable(\n                name: \"Attachments\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    IssueId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    FileName = table.Column<string>(type: \"TEXT\", maxLength: 260, nullable: false),\n                    ContentType = table.Column<string>(type: \"TEXT\", maxLength: 120, nullable: false),\n                    SizeBytes = table.Column<long>(type: \"INTEGER\", nullable: false),\n                    Bytes = table.Column<byte[]>(type: \"BLOB\", nullable: false),\n                    UploadedByUserId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    CreatedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_Attachments\", x => x.Id);\n                    table.ForeignKey(\n                        name: \"FK_Attachments_Issues_IssueId\",\n                        column: x => x.IssueId,\n                        principalTable: \"Issues\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                    table.ForeignKey(\n                        name: \"FK_Attachments_Users_UploadedByUserId\",\n                        column: x => x.UploadedByUserId,\n                        principalTable: \"Users\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Restrict);\n                });\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_Attachments_IssueId\",\n                table: \"Attachments\",\n                column: \"IssueId\");\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_Attachments_UploadedByUserId\",\n                table: \"Attachments\",\n                column: \"UploadedByUserId\");\n        }\n\n        /// <inheritdoc />\n        protected override void Down(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.DropTable(\n                name: \"Attachments\");\n        }\n    }\n}\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64
+          ]
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260615142517_AddAttachments.Designer.cs": {
+          "content": "﻿// <auto-generated />\nusing System;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.EntityFrameworkCore.Infrastructure;\nusing Microsoft.EntityFrameworkCore.Migrations;\nusing Microsoft.EntityFrameworkCore.Storage.ValueConversion;\nusing TaskForge.Infrastructure.Data;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    [DbContext(typeof(TaskForgeDbContext))]\n    [Migration(\"20260615142517_AddAttachments\")]\n    partial class AddAttachments\n    {\n        /// <inheritdoc />\n        protected override void BuildTargetModel(ModelBuilder modelBuilder)\n        {\n#pragma warning disable 612, 618\n            modelBuilder.HasAnnotation(\"ProductVersion\", \"10.0.9\");\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.Property<int>(\"IssuesId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"LabelsId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"IssuesId\", \"LabelsId\");\n\n                    b.HasIndex(\"LabelsId\");\n\n                    b.ToTable(\"IssueLabel\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ActivityEvent\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"ActorUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int?>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Summary\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Type\")\n                        .IsRequired()\n                        .HasMaxLength(30)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ActorUserId\");\n\n                    b.HasIndex(\"ProjectId\", \"CreatedAtUtc\");\n\n                    b.ToTable(\"ActivityEvents\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Attachment\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<byte[]>(\"Bytes\")\n                        .IsRequired()\n                        .HasColumnType(\"BLOB\");\n\n                    b.Property<string>(\"ContentType\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"FileName\")\n                        .IsRequired()\n                        .HasMaxLength(260)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<long>(\"SizeBytes\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UploadedByUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"IssueId\");\n\n                    b.HasIndex(\"UploadedByUserId\");\n\n                    b.ToTable(\"Attachments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"AuthorUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Body\")\n                        .IsRequired()\n                        .HasMaxLength(1200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"AuthorUserId\");\n\n                    b.HasIndex(\"IssueId\", \"CreatedAtUtc\");\n\n                    b.ToTable(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Priority\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<double>(\"Rank\")\n                        .HasColumnType(\"REAL\");\n\n                    b.Property<string>(\"Status\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Title\")\n                        .IsRequired()\n                        .HasMaxLength(200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ProjectId\", \"Status\");\n\n                    b.ToTable(\"Issues\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Label\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Color\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(40)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Name\")\n                        .IsUnique();\n\n                    b.ToTable(\"Labels\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.ToTable(\"Projects\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"ProjectId\", \"UserId\");\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"ProjectMembers\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"ExpiresAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime?>(\"RevokedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Token\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Token\")\n                        .IsUnique();\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"RefreshTokens\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.User\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"DisplayName\")\n                        .IsRequired()\n                        .HasMaxLength(60)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Email\")\n                        .IsRequired()\n                        .HasMaxLength(254)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"PasswordHash\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Email\")\n                        .IsUnique();\n\n                    b.ToTable(\"Users\");\n                });\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", null)\n                        .WithMany()\n                        .HasForeignKey(\"IssuesId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Label\", null)\n                        .WithMany()\n                        .HasForeignKey(\"LabelsId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ActivityEvent\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"Actor\")\n                        .WithMany()\n                        .HasForeignKey(\"ActorUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Actor\");\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Attachment\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", \"Issue\")\n                        .WithMany()\n                        .HasForeignKey(\"IssueId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"UploadedBy\")\n                        .WithMany()\n                        .HasForeignKey(\"UploadedByUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.Navigation(\"Issue\");\n\n                    b.Navigation(\"UploadedBy\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"Author\")\n                        .WithMany()\n                        .HasForeignKey(\"AuthorUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", \"Issue\")\n                        .WithMany(\"Comments\")\n                        .HasForeignKey(\"IssueId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Author\");\n\n                    b.Navigation(\"Issue\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany(\"Issues\")\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Navigation(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Navigation(\"Issues\");\n                });\n#pragma warning restore 612, 618\n        }\n    }\n}\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188,
+            189,
+            190,
+            191,
+            192,
+            193,
+            194,
+            195,
+            196,
+            197,
+            198,
+            199,
+            200,
+            201,
+            202,
+            203,
+            204,
+            205,
+            206,
+            207,
+            208,
+            209,
+            210,
+            211,
+            212,
+            213,
+            214,
+            215,
+            216,
+            217,
+            218,
+            219,
+            220,
+            221,
+            222,
+            223,
+            224,
+            225,
+            226,
+            227,
+            228,
+            229,
+            230,
+            231,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            238,
+            239,
+            240,
+            241,
+            242,
+            243,
+            244,
+            245,
+            246,
+            247,
+            248,
+            249,
+            250,
+            251,
+            252,
+            253,
+            254,
+            255,
+            256,
+            257,
+            258,
+            259,
+            260,
+            261,
+            262,
+            263,
+            264,
+            265,
+            266,
+            267,
+            268,
+            269,
+            270,
+            271,
+            272,
+            273,
+            274,
+            275,
+            276,
+            277,
+            278,
+            279,
+            280,
+            281,
+            282,
+            283,
+            284,
+            285,
+            286,
+            287,
+            288,
+            289,
+            290,
+            291,
+            292,
+            293,
+            294,
+            295,
+            296,
+            297,
+            298,
+            299,
+            300,
+            301,
+            302,
+            303,
+            304,
+            305,
+            306,
+            307,
+            308,
+            309,
+            310,
+            311,
+            312,
+            313,
+            314,
+            315,
+            316,
+            317,
+            318,
+            319,
+            320,
+            321,
+            322,
+            323,
+            324,
+            325,
+            326,
+            327,
+            328,
+            329,
+            330,
+            331,
+            332,
+            333,
+            334,
+            335,
+            336,
+            337,
+            338,
+            339,
+            340,
+            341,
+            342,
+            343,
+            344,
+            345,
+            346,
+            347,
+            348,
+            349,
+            350,
+            351,
+            352,
+            353,
+            354,
+            355,
+            356,
+            357,
+            358,
+            359,
+            360,
+            361,
+            362,
+            363,
+            364,
+            365,
+            366,
+            367,
+            368,
+            369,
+            370,
+            371,
+            372,
+            373,
+            374,
+            375,
+            376,
+            377,
+            378,
+            379,
+            380,
+            381,
+            382,
+            383,
+            384,
+            385,
+            386,
+            387,
+            388,
+            389,
+            390,
+            391,
+            392,
+            393,
+            394,
+            395,
+            396,
+            397,
+            398,
+            399,
+            400,
+            401,
+            402,
+            403,
+            404,
+            405,
+            406,
+            407,
+            408,
+            409,
+            410,
+            411,
+            412,
+            413,
+            414,
+            415,
+            416,
+            417,
+            418,
+            419,
+            420,
+            421,
+            422,
+            423,
+            424,
+            425,
+            426,
+            427,
+            428,
+            429,
+            430,
+            431,
+            432,
+            433,
+            434,
+            435,
+            436,
+            437,
+            438,
+            439,
+            440,
+            441,
+            442,
+            443,
+            444,
+            445
+          ]
+        },
+        "server/TaskForge.Infrastructure/Migrations/TaskForgeDbContextModelSnapshot.cs": {
+          "content": "﻿// <auto-generated />\nusing System;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.EntityFrameworkCore.Infrastructure;\nusing Microsoft.EntityFrameworkCore.Storage.ValueConversion;\nusing TaskForge.Infrastructure.Data;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    [DbContext(typeof(TaskForgeDbContext))]\n    partial class TaskForgeDbContextModelSnapshot : ModelSnapshot\n    {\n        protected override void BuildModel(ModelBuilder modelBuilder)\n        {\n#pragma warning disable 612, 618\n            modelBuilder.HasAnnotation(\"ProductVersion\", \"10.0.9\");\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.Property<int>(\"IssuesId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"LabelsId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"IssuesId\", \"LabelsId\");\n\n                    b.HasIndex(\"LabelsId\");\n\n                    b.ToTable(\"IssueLabel\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ActivityEvent\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"ActorUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int?>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Summary\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Type\")\n                        .IsRequired()\n                        .HasMaxLength(30)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ActorUserId\");\n\n                    b.HasIndex(\"ProjectId\", \"CreatedAtUtc\");\n\n                    b.ToTable(\"ActivityEvents\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Attachment\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<byte[]>(\"Bytes\")\n                        .IsRequired()\n                        .HasColumnType(\"BLOB\");\n\n                    b.Property<string>(\"ContentType\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"FileName\")\n                        .IsRequired()\n                        .HasMaxLength(260)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<long>(\"SizeBytes\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UploadedByUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"IssueId\");\n\n                    b.HasIndex(\"UploadedByUserId\");\n\n                    b.ToTable(\"Attachments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"AuthorUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Body\")\n                        .IsRequired()\n                        .HasMaxLength(1200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"AuthorUserId\");\n\n                    b.HasIndex(\"IssueId\", \"CreatedAtUtc\");\n\n                    b.ToTable(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Priority\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<double>(\"Rank\")\n                        .HasColumnType(\"REAL\");\n\n                    b.Property<string>(\"Status\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Title\")\n                        .IsRequired()\n                        .HasMaxLength(200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ProjectId\", \"Status\");\n\n                    b.ToTable(\"Issues\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Label\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Color\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(40)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Name\")\n                        .IsUnique();\n\n                    b.ToTable(\"Labels\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.ToTable(\"Projects\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"ProjectId\", \"UserId\");\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"ProjectMembers\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"ExpiresAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime?>(\"RevokedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Token\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Token\")\n                        .IsUnique();\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"RefreshTokens\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.User\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"DisplayName\")\n                        .IsRequired()\n                        .HasMaxLength(60)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Email\")\n                        .IsRequired()\n                        .HasMaxLength(254)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"PasswordHash\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Email\")\n                        .IsUnique();\n\n                    b.ToTable(\"Users\");\n                });\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", null)\n                        .WithMany()\n                        .HasForeignKey(\"IssuesId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Label\", null)\n                        .WithMany()\n                        .HasForeignKey(\"LabelsId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ActivityEvent\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"Actor\")\n                        .WithMany()\n                        .HasForeignKey(\"ActorUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Actor\");\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Attachment\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", \"Issue\")\n                        .WithMany()\n                        .HasForeignKey(\"IssueId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"UploadedBy\")\n                        .WithMany()\n                        .HasForeignKey(\"UploadedByUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.Navigation(\"Issue\");\n\n                    b.Navigation(\"UploadedBy\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"Author\")\n                        .WithMany()\n                        .HasForeignKey(\"AuthorUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", \"Issue\")\n                        .WithMany(\"Comments\")\n                        .HasForeignKey(\"IssueId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Author\");\n\n                    b.Navigation(\"Issue\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany(\"Issues\")\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Navigation(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Navigation(\"Issues\");\n                });\n#pragma warning restore 612, 618\n        }\n    }\n}\n",
+          "status": "modified",
+          "regions": {},
+          "changedLines": [
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            350,
+            351,
+            352,
+            353,
+            354,
+            355,
+            356,
+            357,
+            358,
+            359,
+            360,
+            361,
+            362,
+            363,
+            364,
+            365,
+            366,
+            367,
+            368
+          ]
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfActivityRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\n// כתיבה: מוסיפים שורת אירוע ושומרים — append-only, בלי מעקב/עדכון.\n// קריאה: ה-feed האחרון, ‏Include של ה-Actor כדי להציג שם, ‏Take מגביל עלות.\npublic sealed class EfActivityRepository(TaskForgeDbContext db) : IActivityRepository\n{\n    public async Task LogAsync(ActivityEvent activityEvent, CancellationToken cancellationToken = default)\n    {\n        db.ActivityEvents.Add(activityEvent);\n        await db.SaveChangesAsync(cancellationToken);\n    }\n\n    public async Task<IReadOnlyList<ActivityEvent>> GetRecentForProjectAsync(\n        int projectId,\n        int take,\n        CancellationToken cancellationToken = default) =>\n        await db.ActivityEvents\n            .AsNoTracking()\n            .Where(e => e.ProjectId == projectId)\n            .Include(e => e.Actor)\n            .OrderByDescending(e => e.CreatedAtUtc)\n            .ThenByDescending(e => e.Id)\n            .Take(take)\n            .ToListAsync(cancellationToken);\n\n    // אותה שאילתה בדיוק, רק מסוננת ל-issueId — ה-timeline של מסך הפרטים.\n    public async Task<IReadOnlyList<ActivityEvent>> GetRecentForIssueAsync(\n        int issueId,\n        int take,\n        CancellationToken cancellationToken = default) =>\n        await db.ActivityEvents\n            .AsNoTracking()\n            .Where(e => e.IssueId == issueId)\n            .Include(e => e.Actor)\n            .OrderByDescending(e => e.CreatedAtUtc)\n            .ThenByDescending(e => e.Id)\n            .Take(take)\n            .ToListAsync(cancellationToken);\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.8b": {
+              "start": 31,
+              "end": 43
+            },
+            "step-18.6": {
+              "start": 8,
+              "end": 44
+            }
+          },
+          "changedLines": [
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43
+          ]
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfAttachmentRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfAttachmentRepository(TaskForgeDbContext db) : IAttachmentRepository\n{\n    public async Task<Attachment> AddAsync(Attachment attachment, CancellationToken cancellationToken = default)\n    {\n        db.Attachments.Add(attachment);\n        await db.SaveChangesAsync(cancellationToken);\n        return attachment;\n    }\n\n    // הרשימה: הקרנה שמשמיטה את ה-Bytes בכוונה. EF מתרגם את ה-Select ל-SQL\n    // ששולף רק את העמודות שביקשנו — ה-BLOB הכבד לא יוצא מה-DB.\n    public async Task<IReadOnlyList<Attachment>> GetMetadataByIssueAsync(\n        int issueId,\n        CancellationToken cancellationToken = default) =>\n        await db.Attachments\n            .AsNoTracking()\n            .Where(a => a.IssueId == issueId)\n            .Include(a => a.UploadedBy)\n            .OrderByDescending(a => a.CreatedAtUtc)\n            .ThenByDescending(a => a.Id)\n            .Select(a => new Attachment\n            {\n                Id = a.Id,\n                IssueId = a.IssueId,\n                FileName = a.FileName,\n                ContentType = a.ContentType,\n                SizeBytes = a.SizeBytes,\n                Bytes = Array.Empty<byte>(), // לא שולפים את ה-BLOB ברשימה\n                UploadedByUserId = a.UploadedByUserId,\n                UploadedBy = a.UploadedBy,\n                CreatedAtUtc = a.CreatedAtUtc,\n            })\n            .ToListAsync(cancellationToken);\n\n    // ההורדה: כאן כן צריך את ה-bytes\n    public Task<Attachment?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Attachments\n            .AsNoTracking()\n            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.3": {
+              "start": 8,
+              "end": 47
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48
+          ]
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfCommentRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfCommentRepository(TaskForgeDbContext db) : ICommentRepository\n{\n    public async Task<IReadOnlyList<Comment>> GetByIssueAsync(\n        int issueId,\n        CancellationToken cancellationToken = default) =>\n        await db.Comments\n            .AsNoTracking()\n            .Include(c => c.Author)\n            .Where(c => c.IssueId == issueId)\n            .OrderBy(c => c.CreatedAtUtc)\n            .ToListAsync(cancellationToken);\n\n    public async Task<Comment> AddAsync(Comment comment, CancellationToken cancellationToken = default)\n    {\n        db.Comments.Add(comment);\n        await db.SaveChangesAsync(cancellationToken);\n\n        return await db.Comments\n            .AsNoTracking()\n            .Include(c => c.Author)\n            .SingleAsync(c => c.Id == comment.Id, cancellationToken);\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfIssueRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfIssueRepository(TaskForgeDbContext db) : IIssueRepository\n{\n    // שאילתה דינמית: בונים IQueryable שלב-שלב, ושום SQL לא רץ\n    // עד CountAsync / ToListAsync. ה-DB מקבל בדיוק שאילתה אחת לכל קריאה.\n    public async Task<PagedResult<Issue>> GetPagedAsync(IssueQuery query, CancellationToken cancellationToken = default)\n    {\n        var issues = db.Issues\n            .AsNoTracking()\n            .Where(i => i.ProjectId == query.ProjectId);\n\n        // כל סינון מצטרף רק אם נתבקש — composition של ביטויים, לא SQL בידיים\n        if (query.Status is { } status)\n        {\n            issues = issues.Where(i => i.Status == status);\n        }\n\n        if (query.Priority is { } priority)\n        {\n            issues = issues.Where(i => i.Priority == priority);\n        }\n\n        if (!string.IsNullOrWhiteSpace(query.Search))\n        {\n            issues = issues.Where(i => EF.Functions.Like(i.Title, $\"%{query.Search}%\"));\n        }\n\n        issues = query.Sort switch\n        {\n            \"created\" => issues.OrderBy(i => i.CreatedAtUtc),\n            \"title\" => issues.OrderBy(i => i.Title),\n            \"priority\" => issues.OrderByDescending(i => i.Priority).ThenBy(i => i.CreatedAtUtc),\n            // \"rank\": סדר הלוח הידני. ThenBy(Id) שובר תיקו ושומר על סדר יציב\n            // גם אם שני issues חולקים אותו Rank (קצה שלא אמור לקרות).\n            \"rank\" => issues.OrderBy(i => i.Rank).ThenBy(i => i.Id),\n            _ => issues.OrderByDescending(i => i.CreatedAtUtc), // \"-created\", ברירת המחדל\n        };\n\n        // קודם סופרים (שאילתת COUNT רזה), ואז שולפים עמוד אחד בלבד\n        var total = await issues.CountAsync(cancellationToken);\n\n        var items = await issues\n            .Skip((query.Page - 1) * query.PageSize)\n            .Take(query.PageSize)\n            .Include(i => i.Labels)\n            .ToListAsync(cancellationToken);\n\n        return new PagedResult<Issue>(items, total, query.Page, query.PageSize);\n    }\n\n    public Task<Issue?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Issues\n            .AsNoTracking()\n            .Include(i => i.Labels)\n            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);\n\n    public Task<bool> TitleExistsAsync(\n        int projectId,\n        string title,\n        int? excludeIssueId = null,\n        CancellationToken cancellationToken = default)\n    {\n        var normalized = title.Trim();\n        return db.Issues\n            .AsNoTracking()\n            .Where(i => i.ProjectId == projectId)\n            .Where(i => excludeIssueId == null || i.Id != excludeIssueId)\n            .AnyAsync(i => i.Title == normalized, cancellationToken);\n    }\n\n    public async Task<Issue> AddAsync(Issue issue, CancellationToken cancellationToken = default)\n    {\n        db.Issues.Add(issue);\n        await db.SaveChangesAsync(cancellationToken);\n        return issue; // ה-Id כבר מאוכלס — EF קרא אותו חזרה מה-DB\n    }\n\n    // עדכון בסגנון tracked: טוענים עם מעקב, נותנים לקורא לשנות, ושומרים.\n    // ה-Change Tracker (פרק 03) מזהה בדיוק אילו עמודות השתנו.\n    public async Task<Issue?> UpdateAsync(int id, Action<Issue> apply, CancellationToken cancellationToken = default)\n    {\n        var issue = await db.Issues\n            .Include(i => i.Labels)\n            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);\n\n        if (issue is null)\n        {\n            return null;\n        }\n\n        apply(issue);\n        await db.SaveChangesAsync(cancellationToken);\n        return issue;\n    }\n\n    // מחיקה בלי לטעון: ExecuteDelete שולח DELETE ישיר ומחזיר כמה שורות נמחקו\n    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default) =>\n        await db.Issues\n            .Where(i => i.Id == id)\n            .ExecuteDeleteAsync(cancellationToken) > 0;\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-17.3": {
+              "start": 40,
+              "end": 42
+            },
+            "step-4.5": {
+              "start": 11,
+              "end": 56
+            },
+            "step-4.6": {
+              "start": 78,
+              "end": 107
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfProjectRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfProjectRepository(TaskForgeDbContext db) : IProjectRepository\n{\n    // הקרנה (projection): ‏Select לתוך record. ‏EF מתרגם את הכול —\n    // כולל ספירת ה-Issues הפתוחים — לשאילתת SQL אחת עם COUNT מקונן.\n    // ה-Issues עצמם לא נטענים לזיכרון לעולם.\n    public async Task<IReadOnlyList<ProjectSummary>> GetSummariesAsync(CancellationToken cancellationToken = default) =>\n        await db.Projects\n            .AsNoTracking()\n            .OrderBy(p => p.Id)\n            .Select(p => new ProjectSummary(\n                p.Id,\n                p.Name,\n                p.Description,\n                p.Issues.Count(i => i.Status != IssueStatus.Done)))\n            .ToListAsync(cancellationToken);\n\n    public Task<Project?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Projects\n            .AsNoTracking()\n            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);\n\n    // הפרויקט והחברות נכנסים באותו SaveChanges — טרנזקציה אחת.\n    // אין רגע שבו קיים פרויקט בלי Owner.\n    public async Task<Project> AddAsync(Project project, int ownerUserId, CancellationToken cancellationToken = default)\n    {\n        db.Projects.Add(project);\n        db.ProjectMembers.Add(new ProjectMember\n        {\n            Project = project,\n            UserId = ownerUserId,\n            Role = ProjectRole.Owner,\n        });\n        await db.SaveChangesAsync(cancellationToken);\n        return project;\n    }\n\n    // בדיקת קיום רזה: ‏EXISTS ב-SQL, בלי לטעון את הישות\n    public Task<bool> ExistsAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Projects.AnyAsync(p => p.Id == id, cancellationToken);\n\n    public Task<bool> IsMemberAsync(int projectId, int userId, CancellationToken cancellationToken = default) =>\n        db.ProjectMembers.AnyAsync(\n            m => m.ProjectId == projectId && m.UserId == userId, cancellationToken);\n\n    // התפקיד כשאילתה רזה: עמודה אחת חוזרת, ו-null מבדיל \"לא חבר\" מ-\"חבר רגיל\".\n    public async Task<ProjectRole?> GetRoleAsync(int projectId, int userId, CancellationToken cancellationToken = default)\n    {\n        var roles = await db.ProjectMembers\n            .Where(m => m.ProjectId == projectId && m.UserId == userId)\n            .Select(m => m.Role)\n            .ToListAsync(cancellationToken);\n        return roles.Count > 0 ? roles[0] : null;\n    }\n\n    // אותו דפוס Select-לתוך-record מ-step-4.14 — הפעם דרך ניווט ל-User.\n    // Owners קודם, ואז לפי שם — סדר יציב שהקליינט לא צריך למיין בעצמו.\n    public async Task<IReadOnlyList<ProjectMemberInfo>> GetMembersAsync(int projectId, CancellationToken cancellationToken = default) =>\n        await db.ProjectMembers\n            .AsNoTracking()\n            .Where(m => m.ProjectId == projectId)\n            .OrderByDescending(m => m.Role)\n            .ThenBy(m => m.User!.DisplayName)\n            .Select(m => new ProjectMemberInfo(\n                m.UserId,\n                m.User!.DisplayName,\n                m.User!.Email,\n                m.Role))\n            .ToListAsync(cancellationToken);\n\n    // צירוף אידמפוטנטי-ידידותי: \"כבר חבר\" אינו חריגה — זו תשובה (false),\n    // וה-endpoint מתרגם אותה ל-409 Conflict עם הסבר.\n    public async Task<bool> AddMemberAsync(int projectId, int userId, ProjectRole role, CancellationToken cancellationToken = default)\n    {\n        var exists = await db.ProjectMembers.AnyAsync(\n            m => m.ProjectId == projectId && m.UserId == userId, cancellationToken);\n        if (exists) return false;\n\n        db.ProjectMembers.Add(new ProjectMember\n        {\n            ProjectId = projectId,\n            UserId = userId,\n            Role = role,\n        });\n        await db.SaveChangesAsync(cancellationToken);\n        return true;\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-4.14": {
+              "start": 11,
+              "end": 23
+            },
+            "step-5.14": {
+              "start": 30,
+              "end": 43
+            },
+            "step-12.4": {
+              "start": 53,
+              "end": 94
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfRefreshTokenRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfRefreshTokenRepository(TaskForgeDbContext db) : IRefreshTokenRepository\n{\n    public async Task AddAsync(RefreshToken token, CancellationToken cancellationToken = default)\n    {\n        db.RefreshTokens.Add(token);\n        await db.SaveChangesAsync(cancellationToken);\n    }\n\n    public Task<RefreshToken?> GetActiveAsync(string token, CancellationToken cancellationToken = default) =>\n        db.RefreshTokens\n            .Include(t => t.User)\n            .FirstOrDefaultAsync(\n                t => t.Token == token && t.RevokedAtUtc == null && t.ExpiresAtUtc > DateTime.UtcNow,\n                cancellationToken);\n\n    public async Task RevokeAsync(RefreshToken token, CancellationToken cancellationToken = default)\n    {\n        token.RevokedAtUtc = DateTime.UtcNow;\n        await db.SaveChangesAsync(cancellationToken);\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfSearchRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\n// שתי שאילתות רזות, שתיהן מסוננות-הרשאה דרך טבלת ה-membership:\n// רק פרויקטים/issues שהמשתמש חבר בהם חוזרים. Take מגביל את העלות —\n// palette צריך כמה תוצאות מובילות, לא את הכול.\npublic sealed class EfSearchRepository(TaskForgeDbContext db) : ISearchRepository\n{\n    public async Task<SearchResults> SearchForMemberAsync(\n        int userId,\n        string term,\n        int take,\n        CancellationToken cancellationToken = default)\n    {\n        var like = $\"%{term}%\";\n\n        var projects = await db.Projects\n            .AsNoTracking()\n            .Where(p =>\n                EF.Functions.Like(p.Name, like) &&\n                db.ProjectMembers.Any(m => m.ProjectId == p.Id && m.UserId == userId))\n            .OrderBy(p => p.Name)\n            .Take(take)\n            .Select(p => new ProjectHit(p.Id, p.Name))\n            .ToListAsync(cancellationToken);\n\n        var issues = await db.Issues\n            .AsNoTracking()\n            .Where(i =>\n                EF.Functions.Like(i.Title, like) &&\n                db.ProjectMembers.Any(m => m.ProjectId == i.ProjectId && m.UserId == userId))\n            .OrderByDescending(i => i.CreatedAtUtc)\n            .Take(take)\n            .Select(i => new IssueHit(i.Id, i.ProjectId, i.Title, i.Status))\n            .ToListAsync(cancellationToken);\n\n        return new SearchResults(projects, issues);\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-16.11b": {
+              "start": 8,
+              "end": 43
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfStatsRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\n// אגרגציה בצד ה-DB: כל ספירה היא GROUP BY שמחזיר שורות מעטות, לא את כל\n// ה-issues לזיכרון. AsNoTracking כי זו קריאה בלבד. ה-DB עושה את העבודה הכבדה.\npublic sealed class EfStatsRepository(TaskForgeDbContext db) : IStatsRepository\n{\n    public async Task<ProjectStats> GetForProjectAsync(int projectId, CancellationToken cancellationToken = default)\n    {\n        var issues = db.Issues.AsNoTracking().Where(i => i.ProjectId == projectId);\n\n        // GROUP BY Status → שורה לכל סטטוס עם הספירה שלו\n        var byStatus = await issues\n            .GroupBy(i => i.Status)\n            .Select(g => new StatusCount(g.Key, g.Count()))\n            .ToListAsync(cancellationToken);\n\n        var byPriority = await issues\n            .GroupBy(i => i.Priority)\n            .Select(g => new PriorityCount(g.Key, g.Count()))\n            .ToListAsync(cancellationToken);\n\n        // מגמה: ספירה ליום. מקבצים לפי התאריך (ללא שעה) בצד ה-DB,\n        // וממירים ל-DateOnly בזיכרון אחרי שהשורות חזרו.\n        var perDay = await issues\n            .GroupBy(i => i.CreatedAtUtc.Date)\n            .Select(g => new { Day = g.Key, Count = g.Count() })\n            .OrderBy(x => x.Day)\n            .ToListAsync(cancellationToken);\n\n        var createdPerDay = perDay\n            .Select(x => new DayCount(DateOnly.FromDateTime(x.Day), x.Count))\n            .ToList();\n\n        int CountOf(IssueStatus status) =>\n            byStatus.FirstOrDefault(s => s.Status == status)?.Count ?? 0;\n\n        return new ProjectStats(\n            byStatus.Sum(s => s.Count),\n            CountOf(IssueStatus.Open),\n            CountOf(IssueStatus.InProgress),\n            CountOf(IssueStatus.Done),\n            byStatus,\n            byPriority,\n            createdPerDay);\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {
+            "step-18.4": {
+              "start": 9,
+              "end": 52
+            }
+          },
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfUserRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfUserRepository(TaskForgeDbContext db) : IUserRepository\n{\n    public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default) =>\n        db.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);\n\n    public Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id, cancellationToken);\n\n    public Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default) =>\n        db.Users.AnyAsync(u => u.Email == email, cancellationToken);\n\n    public async Task<User> AddAsync(User user, CancellationToken cancellationToken = default)\n    {\n        db.Users.Add(user);\n        await db.SaveChangesAsync(cancellationToken);\n        return user;\n    }\n}\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.Infrastructure/TaskForge.Infrastructure.csproj": {
+          "content": "<Project Sdk=\"Microsoft.NET.Sdk\">\n\n  <PropertyGroup>\n    <TargetFramework>net10.0</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n  </PropertyGroup>\n\n  <ItemGroup>\n    <ProjectReference Include=\"..\\TaskForge.Core\\TaskForge.Core.csproj\" />\n  </ItemGroup>\n\n  <ItemGroup>\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Sqlite\" Version=\"10.0.9\" />\n    <!-- יצירת JWT (חתימה) — האימות בצד ה-Api משתמש בחבילת ה-Bearer -->\n    <PackageReference Include=\"System.IdentityModel.Tokens.Jwt\" Version=\"8.19.1\" />\n  </ItemGroup>\n\n</Project>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        },
+        "server/TaskForge.slnx": {
+          "content": "<Solution>\n  <Project Path=\"TaskForge.Api/TaskForge.Api.csproj\" />\n  <Project Path=\"TaskForge.Core/TaskForge.Core.csproj\" />\n  <Project Path=\"TaskForge.Infrastructure/TaskForge.Infrastructure.csproj\" />\n</Solution>\n",
+          "status": "unchanged",
+          "regions": {},
+          "changedLines": []
+        }
+      },
+      "changes": {
+        "client/src/app/core/markdown/markdown.ts": {
+          "content": "// Markdown מינימלי ובטוח. הכלל הזהב: בורחים מ-HTML *קודם*, ורק אז מוסיפים\n// תגיות בטוחות. כך טקסט כמו \"<script>alert(1)</script>\" שמישהו מדביק בתגובה\n// הופך לטקסט מוצג, לא לקוד שרץ — הגנת ה-XSS היא בסדר הפעולות, לא בסינון בדיעבד.\n\nconst ESCAPE: Record<string, string> = {\n  '&': '&amp;',\n  '<': '&lt;',\n  '>': '&gt;',\n  '\"': '&quot;',\n  \"'\": '&#39;',\n};\n\nfunction escapeHtml(text: string): string {\n  return text.replace(/[&<>\"']/g, (ch) => ESCAPE[ch]);\n}\n\n// רק סכימות בטוחות לקישורים — חוסם javascript:, data:, וכו'.\n// ה-url כבר עבר escape, ולכן בודקים את התחילית בלבד.\nfunction isSafeUrl(url: string): boolean {\n  return /^(https?:\\/\\/|\\/)/i.test(url);\n}\n\n/**\n * ממיר Markdown מצומצם ל-HTML בטוח: `code`, **bold**, *italic*,\n * [text](url) (סכימות בטוחות בלבד), ‎@mention, ושבירת שורות.\n * הקלט עובר escape מלא לפני כל טרנספורם — מה שלא בתבנית נשאר טקסט.\n */\nexport function renderMarkdown(source: string): string {\n  let html = escapeHtml(source);\n\n  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');\n  html = html.replace(/\\*\\*([^*]+)\\*\\*/g, '<strong>$1</strong>');\n  html = html.replace(/\\*([^*]+)\\*/g, '<em>$1</em>');\n\n  html = html.replace(/\\[([^\\]]+)\\]\\(([^)\\s]+)\\)/g, (_match, text: string, url: string) =>\n    isSafeUrl(url) ? `<a href=\"${url}\" target=\"_blank\" rel=\"noopener noreferrer\">${text}</a>` : text,\n  );\n\n  // ‏@mention — הוזכר חבר. ה-‎@ נשאר טקסט; רק עוטפים אותו לעיצוב.\n  html = html.replace(/(^|\\s)@([\\w.-]+)/g, '$1<span class=\"mention\">@$2</span>');\n\n  html = html.replace(/\\n/g, '<br>');\n\n  return html;\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.12": {
+              "start": 1,
+              "end": 45
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46
+          ]
+        },
+        "client/src/app/core/models/attachment.model.ts": {
+          "content": "// המראה של AttachmentResponse על הקו — מטא-דאטה בלבד, בלי ה-bytes.\n// ההורדה היא GET /api/attachments/{id} שמחזיר את הקובץ עצמו.\nexport interface Attachment {\n  id: number;\n  issueId: number;\n  fileName: string;\n  contentType: string;\n  sizeBytes: number;\n  uploadedByName: string;\n  createdAtUtc: string;\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.13": {
+              "start": 1,
+              "end": 11
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        },
+        "client/src/app/core/models/dashboard.model.ts": {
+          "content": "import { IssuePriority, IssueStatus } from './issue.model';\n\n// המראה של חוזי הדשבורד על הקו. ProjectStats מקביל ל-Core/Common/ProjectStats,\n// ו-ActivityEvent ל-ActivityResponse. ה-DateOnly של השרת מגיע כמחרוזת ISO\n// ('2026-01-14'); enums מגיעים כמחרוזות (JsonStringEnumConverter מפרק 04).\nexport interface StatusCount {\n  status: IssueStatus;\n  count: number;\n}\n\nexport interface PriorityCount {\n  priority: IssuePriority;\n  count: number;\n}\n\nexport interface DayCount {\n  day: string; // 'YYYY-MM-DD'\n  count: number;\n}\n\nexport interface ProjectStats {\n  total: number;\n  open: number;\n  inProgress: number;\n  done: number;\n  byStatus: StatusCount[];\n  byPriority: PriorityCount[];\n  createdPerDay: DayCount[];\n}\n\n// פרק 19 מוסיף 'AttachmentAdded' ל-union — מקביל לערך החדש ב-enum ActivityType\n// בשרת. ה-timeline של מסך הפרטים מציג גם אירועי צירוף קובץ.\nexport type ActivityType = 'IssueCreated' | 'IssueMoved' | 'CommentAdded' | 'AttachmentAdded';\n\nexport interface ActivityEvent {\n  id: number;\n  type: ActivityType;\n  summary: string;\n  issueId: number | null;\n  actorName: string;\n  createdAtUtc: string;\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.13b": {
+              "start": 31,
+              "end": 33
+            },
+            "step-18.13": {
+              "start": 3,
+              "end": 42
+            }
+          },
+          "changedLines": [
+            31,
+            32,
+            33
+          ]
+        },
+        "client/src/app/core/state/issue-detail.store.ts": {
+          "content": "import { Injectable, computed, inject, signal } from '@angular/core';\nimport { HttpClient, httpResource } from '@angular/common/http';\nimport { firstValueFrom } from 'rxjs';\nimport { API_BASE } from '../api/api';\nimport { TokenStore } from '../auth/token.store';\nimport { Comment } from '../models/comment.model';\nimport { Issue, UpdateIssueRequest } from '../models/issue.model';\nimport { Attachment } from '../models/attachment.model';\nimport { ActivityEvent } from '../models/dashboard.model';\nimport { ProjectMember } from '../models/member.model';\n\n// חלון ה-Undo: התגובה נשלחת רק אחרי השהייה זו, כדי שאפשר לבטל לפני שהשרת ראה אותה\nconst COMMENT_UNDO_MS = 4000;\n\n@Injectable({ providedIn: 'root' })\nexport class IssueDetailStore {\n  private readonly http = inject(HttpClient);\n  private readonly tokenStore = inject(TokenStore);\n  private readonly issueId = signal<number | null>(null);\n\n  setIssueId(issueId: number): void {\n    this.issueId.set(issueId);\n  }\n\n  clear(): void {\n    this.cancelPending();\n    this.issueId.set(null);\n  }\n\n  private readonly issueResource = httpResource<Issue>(() => {\n    const id = this.issueId();\n    return id && this.tokenStore.isLoggedIn() ? `${API_BASE}/issues/${id}` : undefined;\n  });\n\n  private readonly commentsResource = httpResource<Comment[]>(() => {\n    const id = this.issueId();\n    return id && this.tokenStore.isLoggedIn() ? `${API_BASE}/issues/${id}/comments` : undefined;\n  });\n\n  readonly issue = computed(() => (this.issueResource.hasValue() ? this.issueResource.value() : null));\n  readonly loading = computed(() => this.issueResource.isLoading());\n  readonly loadError = computed(() => this.issueResource.error() || this.commentsResource.error());\n\n  reload(): void {\n    this.issueResource.reload();\n    this.commentsResource.reload();\n  }\n\n  // פרק 19: שלושה resources נוספים מפתח לפי אותו issueId — קבצים, פיד פעילות,\n  // וחברי הפרויקט (לרשימת ה-@mention, מפתח לפי projectId של ה-issue שנטען).\n  private readonly attachmentsResource = httpResource<Attachment[]>(() => {\n    const id = this.issueId();\n    return id && this.tokenStore.isLoggedIn() ? `${API_BASE}/issues/${id}/attachments` : undefined;\n  });\n\n  private readonly activityResource = httpResource<ActivityEvent[]>(() => {\n    const id = this.issueId();\n    return id && this.tokenStore.isLoggedIn() ? `${API_BASE}/issues/${id}/activity` : undefined;\n  });\n\n  private readonly membersResource = httpResource<ProjectMember[]>(() => {\n    const issue = this.issueResource.hasValue() ? this.issueResource.value() : null;\n    return issue && this.tokenStore.isLoggedIn()\n      ? `${API_BASE}/projects/${issue.projectId}/members`\n      : undefined;\n  });\n\n  readonly attachments = computed(() =>\n    this.attachmentsResource.hasValue() ? this.attachmentsResource.value() : [],\n  );\n  readonly activity = computed(() =>\n    this.activityResource.hasValue() ? this.activityResource.value() : [],\n  );\n  readonly memberNames = computed(() =>\n    (this.membersResource.hasValue() ? this.membersResource.value() : []).map((m) => m.displayName),\n  );\n\n  // תגובות אופטימיות עם Undo: מציירים תגובה זמנית מיד, פותחים חלון Undo, ורק\n  // כשהחלון נסגר באמת שולחים POST. ביטול בתוך החלון מסיר את התגובה — בלי בקשה.\n  // כישלון בשליחה מסיר את הזמנית (ה-toast כבר הוצג ע\"י ה-interceptor מפרק 11).\n  private readonly pending = signal<Comment | null>(null);\n  private undoTimer: ReturnType<typeof setTimeout> | undefined;\n\n  readonly pendingComment = computed(() => this.pending());\n\n  // ה-comments הציבורי כולל את הזמנית, כך שהיא מופיעה בתהליך בלי קוד מיוחד בתבנית\n  readonly comments = computed<Comment[]>(() => {\n    const base = this.commentsResource.hasValue() ? this.commentsResource.value() : [];\n    const optimistic = this.pending();\n    return optimistic ? [...base, optimistic] : base;\n  });\n\n  postCommentWithUndo(issueId: number, body: string): void {\n    this.cancelPending();\n    const user = this.tokenStore.user();\n    const temp: Comment = {\n      id: -Date.now(), // מזהה זמני שלילי — לא יתנגש ב-ids אמיתיים\n      issueId,\n      body,\n      authorUserId: user?.id ?? 0,\n      authorName: user?.displayName ?? 'אני',\n      createdAtUtc: new Date().toISOString(),\n    };\n    this.pending.set(temp);\n    this.undoTimer = setTimeout(() => void this.commitPending(issueId, body), COMMENT_UNDO_MS);\n  }\n\n  undoPendingComment(): void {\n    this.cancelPending();\n  }\n\n  private cancelPending(): void {\n    clearTimeout(this.undoTimer);\n    this.undoTimer = undefined;\n    this.pending.set(null);\n  }\n\n  private async commitPending(issueId: number, body: string): Promise<void> {\n    this.undoTimer = undefined;\n    try {\n      await firstValueFrom(this.http.post(`${API_BASE}/issues/${issueId}/comments`, { body }));\n      this.pending.set(null);\n      this.commentsResource.reload();\n      this.activityResource.reload();\n    } catch {\n      this.pending.set(null); // מסירים את הזמנית; ה-interceptor כבר הציג שגיאה\n    }\n  }\n\n  async saveIssue(issueId: number, request: UpdateIssueRequest): Promise<void> {\n    await firstValueFrom(this.http.put(`${API_BASE}/issues/${issueId}`, request));\n    this.reload();\n  }\n\n  // העלאת קובץ: multipart דרך FormData. הצלחה → רענון רשימת הקבצים והפעילות.\n  async addAttachment(issueId: number, file: File): Promise<boolean> {\n    const data = new FormData();\n    data.append('file', file);\n    try {\n      await firstValueFrom(this.http.post(`${API_BASE}/issues/${issueId}/attachments`, data));\n      this.attachmentsResource.reload();\n      this.activityResource.reload();\n      return true;\n    } catch {\n      return false;\n    }\n  }\n\n  // הורדה: שולפים blob עם ה-Bearer (ה-interceptor מצרף אותו), ומפעילים הורדת דפדפן.\n  async download(attachment: Attachment): Promise<void> {\n    const blob = await firstValueFrom(\n      this.http.get(`${API_BASE}/attachments/${attachment.id}`, { responseType: 'blob' }),\n    );\n    const url = URL.createObjectURL(blob);\n    const link = document.createElement('a');\n    link.href = url;\n    link.download = attachment.fileName;\n    link.click();\n    URL.revokeObjectURL(url);\n  }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-14.9": {
+              "start": 21,
+              "end": 47
+            },
+            "step-19.16": {
+              "start": 49,
+              "end": 76
+            },
+            "step-19.17": {
+              "start": 78,
+              "end": 128
+            },
+            "step-14.16": {
+              "start": 130,
+              "end": 133
+            },
+            "step-19.18": {
+              "start": 135,
+              "end": 160
+            }
+          },
+          "changedLines": [
+            6,
+            8,
+            9,
+            10,
+            12,
+            13,
+            14,
+            26,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160
+          ]
+        },
+        "client/src/app/features/dashboard/dashboard.ts": {
+          "content": "import { Component, DestroyRef, effect, inject, input, numberAttribute } from '@angular/core';\nimport { DatePipe } from '@angular/common';\nimport { RouterLink } from '@angular/router';\nimport { ProjectSummary } from '../../core/models/project.model';\nimport { DashboardStore } from '../../core/state/dashboard.store';\nimport { ActivityType } from '../../core/models/dashboard.model';\nimport { DonutChart } from './charts/donut-chart';\nimport { BarChart } from './charts/bar-chart';\nimport { Sparkline } from './charts/sparkline';\n\n// אייקון קצר לכל סוג אירוע בפיד — ויזואלי בלבד, aria-hidden.\n// פרק 19 הוסיף AttachmentAdded ל-union, אז הפיד מכיר גם אותו.\nconst ACTIVITY_ICON: Record<ActivityType, string> = {\n  IssueCreated: '✚',\n  IssueMoved: '↻',\n  CommentAdded: '💬',\n  AttachmentAdded: '📎',\n};\n\n// הרכיב החכם של הדשבורד: מזריק את ה-DashboardStore, מספר לו את ה-projectId\n// (מה-route), וצורך selectors נגזרים. הוא לא מחשב כלום בעצמו — רק מחבר\n// מודלי-תצוגה מה-store לרכיבי הגרפים הטיפשים ולפיד.\n@Component({\n  selector: 'tf-dashboard',\n  imports: [RouterLink, DatePipe, DonutChart, BarChart, Sparkline],\n  templateUrl: './dashboard.html',\n  styleUrl: './dashboard.scss',\n})\nexport class Dashboard {\n  private readonly destroyRef = inject(DestroyRef);\n  protected readonly store = inject(DashboardStore);\n\n  readonly projectId = input.required({ transform: numberAttribute });\n  readonly project = input.required<ProjectSummary>();\n\n  constructor() {\n    effect(() => this.store.setProject(this.projectId()));\n    this.destroyRef.onDestroy(() => this.store.clear());\n  }\n\n  protected iconFor(type: ActivityType): string {\n    return ACTIVITY_ICON[type];\n  }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.13c": {
+              "start": 17,
+              "end": 17
+            },
+            "step-18.19": {
+              "start": 20,
+              "end": 43
+            }
+          },
+          "changedLines": [
+            11,
+            12,
+            17
+          ]
+        },
+        "client/src/app/features/issues/issue-detail.html": {
+          "content": "<section class=\"detail\">\n  <a class=\"back\" [routerLink]=\"['/projects', projectId()]\" [queryParamsHandling]=\"'preserve'\">\n    Back to {{ project().name }}\n  </a>\n\n  @if (!issue()) {\n    @if (store.loading()) {\n      <p class=\"hint\">Loading issue...</p>\n    } @else if (store.loadError()) {\n      <div class=\"load-error\" role=\"alert\">\n        <p>Could not load this issue.</p>\n        <button type=\"button\" tf-button (click)=\"store.reload()\">Try again</button>\n      </div>\n    } @else {\n      <p class=\"hint\">Sign in to load the issue.</p>\n    }\n  } @else {\n    <header class=\"detail-head\">\n      <div>\n        <p class=\"eyebrow\">Issue #{{ issue()!.id }}</p>\n        <h2 [style.view-transition-name]=\"'issue-' + issue()!.id\">{{ issue()!.title }}</h2>\n      </div>\n      <tf-badge [tone]=\"toneOf(issue()!.status)\">{{ issue()!.status }}</tf-badge>\n    </header>\n\n    <!-- שתי עמודות: ראשית (טופס + תגובות) וצדדית (קבצים + ציר זמן פעילות).\n         auto-fit + minmax מתקפל לעמודה אחת במסך צר, בלי media query. -->\n    <div class=\"detail-grid\">\n      <div class=\"detail-main\">\n        <form class=\"issue-form\" (submit)=\"saveIssue(); $event.preventDefault()\">\n          <label class=\"field\">\n            <span>Title</span>\n            <input [formField]=\"issueForm.title\" />\n            @if (issueForm.title().pending()) {\n              <small>Checking title...</small>\n            } @else if (firstError(issueForm.title().errors()); as error) {\n              <small class=\"error\">{{ error }}</small>\n            }\n          </label>\n\n          <label class=\"field\">\n            <span>Description</span>\n            <tf-markdown-editor\n              [formField]=\"issueForm.description\"\n              [mentionCandidates]=\"store.memberNames()\"\n              [rows]=\"5\"\n              placeholder=\"Markdown נתמך — **מודגש**, `קוד`, וקישורים\"\n            />\n            @if (firstError(issueForm.description().errors()); as error) {\n              <small class=\"error\">{{ error }}</small>\n            }\n          </label>\n\n          <div class=\"form-grid\">\n            <label class=\"field\">\n              <span>Status</span>\n              <select [formField]=\"issueForm.status\">\n                <option value=\"Open\">Open</option>\n                <option value=\"InProgress\">In progress</option>\n                <option value=\"Done\">Done</option>\n              </select>\n            </label>\n\n            <label class=\"field\">\n              <span>Priority</span>\n              <tf-priority-picker [formField]=\"issueForm.priority\" />\n            </label>\n          </div>\n\n          <div class=\"actions\">\n            <button\n              type=\"submit\"\n              tf-button\n              [disabled]=\"savingIssue() || issueForm().invalid() || issueForm().pending()\"\n            >\n              {{ savingIssue() ? 'Saving...' : 'Save issue' }}\n            </button>\n          </div>\n        </form>\n\n        <section class=\"comments\">\n          <header>\n            <h3>Comments</h3>\n            <span>{{ comments().length }}</span>\n          </header>\n\n          <ol class=\"comment-list\">\n            @for (comment of comments(); track comment.id) {\n              <li [class.pending]=\"isPending(comment)\">\n                <div class=\"comment-meta\">\n                  <strong>{{ comment.authorName }}</strong>\n                  <time>{{ formattedDate(comment.createdAtUtc) }}</time>\n                </div>\n                <div class=\"comment-body\" [innerHTML]=\"commentHtml(comment)\"></div>\n              </li>\n            } @empty {\n              <li class=\"empty\">No comments yet.</li>\n            }\n          </ol>\n\n          @if (store.pendingComment()) {\n            <div class=\"undo-bar\" role=\"status\">\n              <span>התגובה נשלחת…</span>\n              <button type=\"button\" (click)=\"undoComment()\">בטל</button>\n            </div>\n          }\n\n          <form class=\"comment-form\" (submit)=\"addComment(); $event.preventDefault()\">\n            <label class=\"field\">\n              <span>Add comment</span>\n              <tf-markdown-editor\n                [formField]=\"commentForm.body\"\n                [mentionCandidates]=\"store.memberNames()\"\n                [rows]=\"3\"\n                placeholder=\"הקלידו @ כדי להזכיר חבר\"\n              />\n              @if (firstError(commentForm.body().errors()); as error) {\n                <small class=\"error\">{{ error }}</small>\n              }\n            </label>\n\n            <button type=\"submit\" tf-button [disabled]=\"commentForm().invalid() || commentForm().pending()\">\n              Post comment\n            </button>\n          </form>\n        </section>\n      </div>\n\n      <aside class=\"detail-side\">\n        <section class=\"attachments\">\n          <header>\n            <h3>קבצים מצורפים</h3>\n            <span>{{ store.attachments().length }}</span>\n          </header>\n\n          <label class=\"upload\">\n            <input type=\"file\" (change)=\"onFileSelected($event)\" [disabled]=\"uploading()\" />\n            <span>{{ uploading() ? 'מעלה…' : 'צרף קובץ (עד 5MB)' }}</span>\n          </label>\n\n          <ul class=\"attach-list\" role=\"list\">\n            @for (att of store.attachments(); track att.id) {\n              <li>\n                <button type=\"button\" class=\"attach-name\" (click)=\"download(att)\">{{ att.fileName }}</button>\n                <span class=\"attach-meta\">{{ prettySize(att.sizeBytes) }} · {{ att.uploadedByName }}</span>\n              </li>\n            } @empty {\n              <li class=\"empty\">אין קבצים עדיין.</li>\n            }\n          </ul>\n        </section>\n\n        <section class=\"timeline\">\n          <header><h3>פעילות</h3></header>\n          <ol class=\"timeline-list\">\n            @for (event of store.activity(); track trackActivity($index, event)) {\n              <li>\n                <span class=\"t-icon\" aria-hidden=\"true\">{{ activityIcon(event.type) }}</span>\n                <span class=\"t-body\">\n                  <span class=\"t-summary\"><strong>{{ event.actorName }}</strong> {{ event.summary }}</span>\n                  <time class=\"t-time\" [attr.datetime]=\"event.createdAtUtc\">{{ formattedDate(event.createdAtUtc) }}</time>\n                </span>\n              </li>\n            } @empty {\n              <li class=\"empty\">אין פעילות עדיין.</li>\n            }\n          </ol>\n        </section>\n      </aside>\n    </div>\n  }\n</section>\n",
+          "status": "modified",
+          "regions": {
+            "step-19.23": {
+              "start": 81,
+              "end": 126
+            },
+            "step-19.24": {
+              "start": 129,
+              "end": 169
+            },
+            "step-19.22": {
+              "start": 26,
+              "end": 170
+            }
+          },
+          "changedLines": [
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            64,
+            65,
+            66,
+            67,
+            68,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            81,
+            82,
+            83,
+            84,
+            85,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            101,
+            102,
+            103,
+            104,
+            105,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170
+          ]
+        },
+        "client/src/app/features/issues/issue-detail.scss": {
+          "content": ":host {\n  display: block;\n}\n\n.detail {\n  display: grid;\n  gap: var(--sp-4);\n  max-width: 1100px;\n}\n\n.back {\n  color: var(--txt2);\n  font-size: var(--fs-small);\n}\n\n.detail-head {\n  display: flex;\n  align-items: start;\n  justify-content: space-between;\n  gap: var(--sp-3);\n\n  h2 {\n    margin: var(--sp-1) 0 0;\n    font-size: 28px;\n    line-height: 1.12;\n  }\n}\n\n.eyebrow {\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n// שתי עמודות: ראשית גמישה + צדדית צרה. מתקפל לעמודה אחת מתחת ל-860px.\n.detail-grid {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) minmax(260px, 22rem);\n  gap: var(--sp-4);\n  align-items: start;\n}\n\n.detail-main,\n.detail-side {\n  display: grid;\n  gap: var(--sp-4);\n  min-width: 0;\n}\n\n@media (max-width: 860px) {\n  .detail-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n}\n\n.issue-form,\n.comments {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-4);\n}\n\n.issue-form,\n.comment-form {\n  display: grid;\n  gap: var(--sp-3);\n}\n\n.field {\n  display: grid;\n  gap: var(--sp-1);\n\n  > span {\n    font-size: var(--fs-small);\n    color: var(--txt2);\n  }\n\n  input,\n  select,\n  textarea {\n    width: 100%;\n    min-width: 0;\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    color: var(--txt1);\n    padding: 10px 12px;\n    font: inherit;\n  }\n\n  textarea {\n    resize: vertical;\n  }\n\n  small {\n    color: var(--txt3);\n  }\n\n  .error {\n    color: var(--danger);\n  }\n}\n\n.form-grid {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);\n  gap: var(--sp-3);\n}\n\n.actions {\n  display: flex;\n  justify-content: flex-end;\n}\n\n.comments {\n  display: grid;\n  gap: var(--sp-3);\n\n  header {\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n\n    h3 {\n      margin: 0;\n    }\n\n    span {\n      color: var(--txt3);\n      font-size: var(--fs-small);\n    }\n  }\n}\n\n.comment-list {\n  display: grid;\n  gap: var(--sp-2);\n  margin: 0;\n  padding: 0;\n  list-style: none;\n\n  li {\n    border: 1px solid var(--bdr);\n    border-radius: var(--rad-sm);\n    background: var(--sur2);\n    padding: var(--sp-3);\n\n    // התגובה הזמנית (אופטימית) — עמומה מעט עד שהשרת מאשר\n    &.pending {\n      opacity: 0.6;\n      border-style: dashed;\n    }\n  }\n\n  .empty {\n    color: var(--txt3);\n  }\n}\n\n.comment-meta {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--sp-2);\n  color: var(--txt3);\n  font-size: var(--fs-small);\n\n  strong {\n    color: var(--txt1);\n  }\n}\n\n// תוכן Markdown מרונדר: כללי תצוגה לתגיות הבטוחות שה-renderer מפיק\n.comment-body {\n  margin: var(--sp-2) 0 0;\n  color: var(--txt2);\n  line-height: var(--lh-normal);\n  overflow-wrap: anywhere;\n\n  code {\n    font-family: ui-monospace, monospace;\n    background: var(--sur3);\n    padding: 0 4px;\n    border-radius: 4px;\n    font-size: 0.9em;\n  }\n\n  a {\n    color: var(--accent);\n  }\n\n  .mention {\n    color: var(--accent);\n    font-weight: var(--fw-semibold);\n  }\n}\n\n// בר ה-Undo: מופיע בזמן חלון הביטול של תגובה אופטימית\n.undo-bar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: var(--sp-2);\n  padding: var(--sp-2) var(--sp-3);\n  border: 1px solid var(--accent);\n  border-radius: var(--rad-sm);\n  background: var(--accent-subtle);\n  font-size: var(--fs-small);\n  color: var(--txt1);\n\n  button {\n    border: 0;\n    background: transparent;\n    color: var(--accent);\n    font-weight: var(--fw-semibold);\n    cursor: pointer;\n  }\n}\n\n// העמודה הצדדית: קבצים וציר זמן, כרטיסים תואמים לשפת העיצוב\n.attachments,\n.timeline {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad);\n  background: var(--sur);\n  padding: var(--sp-3);\n  display: grid;\n  gap: var(--sp-2);\n\n  header {\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n\n    h3 {\n      margin: 0;\n      font-size: var(--fs-base);\n    }\n\n    span {\n      color: var(--txt3);\n      font-size: var(--fs-small);\n    }\n  }\n}\n\n.upload {\n  display: inline-flex;\n  align-items: center;\n  gap: var(--sp-2);\n  font-size: var(--fs-small);\n  color: var(--txt2);\n  cursor: pointer;\n}\n\n.attach-list,\n.timeline-list {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n  display: grid;\n  gap: var(--sp-2);\n}\n\n.attach-list li {\n  display: grid;\n  gap: 2px;\n}\n\n.attach-name {\n  justify-self: start;\n  border: 0;\n  background: transparent;\n  color: var(--accent);\n  font: inherit;\n  text-align: start;\n  cursor: pointer;\n  overflow-wrap: anywhere;\n}\n\n.attach-meta,\n.t-time,\n.empty {\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n\n.timeline-list li {\n  display: flex;\n  align-items: start;\n  gap: var(--sp-2);\n}\n\n.t-icon {\n  flex: 0 0 auto;\n  width: 1.3rem;\n  text-align: center;\n}\n\n.t-body {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  min-width: 0;\n}\n\n.t-summary {\n  font-size: var(--fs-small);\n  color: var(--txt2);\n\n  strong {\n    color: var(--txt1);\n  }\n}\n\n.load-error,\n.hint {\n  color: var(--txt2);\n}\n\n@media (max-width: 720px) {\n  .detail-head,\n  .form-grid {\n    grid-template-columns: 1fr;\n  }\n\n  .detail-head {\n    display: grid;\n  }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.25": {
+              "start": 35,
+              "end": 54
+            },
+            "step-19.26": {
+              "start": 149,
+              "end": 153
+            },
+            "step-19.27": {
+              "start": 173,
+              "end": 218
+            },
+            "step-19.28": {
+              "start": 220,
+              "end": 314
+            }
+          },
+          "changedLines": [
+            8,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            149,
+            150,
+            151,
+            152,
+            153,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188,
+            189,
+            190,
+            191,
+            192,
+            193,
+            194,
+            195,
+            196,
+            197,
+            198,
+            199,
+            200,
+            201,
+            202,
+            203,
+            204,
+            205,
+            206,
+            207,
+            208,
+            209,
+            210,
+            211,
+            212,
+            213,
+            214,
+            215,
+            216,
+            217,
+            218,
+            219,
+            220,
+            221,
+            222,
+            223,
+            224,
+            225,
+            226,
+            227,
+            228,
+            229,
+            230,
+            231,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            238,
+            239,
+            240,
+            241,
+            242,
+            243,
+            244,
+            245,
+            246,
+            247,
+            248,
+            249,
+            250,
+            251,
+            252,
+            253,
+            254,
+            255,
+            256,
+            257,
+            258,
+            259,
+            260,
+            261,
+            262,
+            263,
+            264,
+            265,
+            266,
+            267,
+            268,
+            269,
+            270,
+            271,
+            272,
+            273,
+            274,
+            275,
+            276,
+            277,
+            278,
+            279,
+            280,
+            281,
+            282,
+            283,
+            284,
+            285,
+            286,
+            287,
+            288,
+            289,
+            290,
+            291,
+            292,
+            293,
+            294,
+            295,
+            296,
+            297,
+            298,
+            299,
+            300,
+            301,
+            302,
+            303,
+            304,
+            305,
+            306,
+            307,
+            308,
+            309,
+            310,
+            311,
+            312,
+            313,
+            314,
+            315
+          ]
+        },
+        "client/src/app/features/issues/issue-detail.ts": {
+          "content": "import { Component, DestroyRef, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';\nimport { RouterLink } from '@angular/router';\nimport {\n  FormField,\n  debounce,\n  form,\n  maxLength,\n  minLength,\n  required,\n  submit,\n  validateHttp,\n} from '@angular/forms/signals';\nimport { API_BASE } from '../../core/api/api';\nimport { Comment } from '../../core/models/comment.model';\nimport { ActivityEvent, ActivityType } from '../../core/models/dashboard.model';\nimport { Attachment } from '../../core/models/attachment.model';\nimport {\n  Issue,\n  IssuePriority,\n  IssueStatus,\n  TitleAvailabilityResponse,\n} from '../../core/models/issue.model';\nimport { ProjectSummary } from '../../core/models/project.model';\nimport { IssueDetailStore } from '../../core/state/issue-detail.store';\nimport { renderMarkdown } from '../../core/markdown/markdown';\nimport { TfBadge } from '../../shared/ui/badge/badge';\nimport { TfButton } from '../../shared/ui/button/button';\nimport { PriorityPicker } from './priority-picker';\nimport { MarkdownEditor } from '../../shared/ui/markdown-editor/markdown-editor';\n\ntype IssueFormModel = {\n  title: string;\n  description: string;\n  status: IssueStatus;\n  priority: IssuePriority;\n};\n\nconst ACTIVITY_ICON: Record<ActivityType, string> = {\n  IssueCreated: '✚',\n  IssueMoved: '↻',\n  CommentAdded: '💬',\n  AttachmentAdded: '📎',\n};\n\n@Component({\n  selector: 'tf-issue-detail',\n  imports: [RouterLink, FormField, TfBadge, TfButton, PriorityPicker, MarkdownEditor],\n  templateUrl: './issue-detail.html',\n  styleUrl: './issue-detail.scss',\n})\nexport class IssueDetail {\n  private readonly destroyRef = inject(DestroyRef);\n  protected readonly store = inject(IssueDetailStore);\n\n  readonly projectId = input.required({ transform: numberAttribute });\n  readonly issueId = input.required({ transform: numberAttribute });\n  readonly project = input.required<ProjectSummary>();\n\n  protected readonly savingIssue = signal(false);\n  protected readonly uploading = signal(false);\n  private readonly loadedIssueId = signal<number | null>(null);\n  private readonly originalTitle = signal('');\n\n  protected readonly issueModel = signal<IssueFormModel>({\n    title: '',\n    description: '',\n    status: 'Open',\n    priority: 'Medium',\n  });\n\n  protected readonly commentModel = signal({ body: '' });\n\n  protected readonly issueForm = form(this.issueModel, (s) => {\n    required(s.title, { message: 'Title is required' });\n    minLength(s.title, 3, { message: 'Use at least 3 characters' });\n    maxLength(s.title, 200, { message: 'Keep the title under 200 characters' });\n    maxLength(s.description, 4000, { message: 'Keep the description under 4000 characters' });\n    debounce(s.title, 300);\n\n    validateHttp<string, TitleAvailabilityResponse>(s.title, {\n      debounce: 300,\n      request: ({ value }) => {\n        const title = value().trim();\n        if (title.length < 3 || title === this.originalTitle()) return undefined;\n\n        const params = new URLSearchParams({\n          title,\n          excludeIssueId: String(this.issueId()),\n        });\n        return `${API_BASE}/projects/${this.projectId()}/issues/title-available?${params}`;\n      },\n      onSuccess: (result) =>\n        result.available\n          ? undefined\n          : { kind: 'titleTaken', message: 'An issue with this title already exists' },\n      onError: () => ({ kind: 'titleCheckFailed', message: 'Could not verify this title' }),\n    });\n  });\n\n  protected readonly commentForm = form(this.commentModel, (s) => {\n    required(s.body, { message: 'Comment is required' });\n    minLength(s.body, 2, { message: 'Use at least 2 characters' });\n    maxLength(s.body, 1200, { message: 'Keep comments under 1200 characters' });\n  });\n\n  protected readonly issue = computed(() => this.store.issue());\n  protected readonly comments = computed(() => this.store.comments());\n\n  constructor() {\n    effect(() => this.store.setIssueId(this.issueId()));\n\n    effect(() => {\n      const issue = this.store.issue();\n      if (!issue || this.loadedIssueId() === issue.id) return;\n      this.loadedIssueId.set(issue.id);\n      this.originalTitle.set(issue.title);\n      this.issueModel.set({\n        title: issue.title,\n        description: issue.description ?? '',\n        status: issue.status,\n        priority: issue.priority,\n      });\n    });\n\n    this.destroyRef.onDestroy(() => this.store.clear());\n  }\n\n  protected async saveIssue(): Promise<void> {\n    const ok = await submit(this.issueForm, async () => {\n      const model = this.issueModel();\n      this.savingIssue.set(true);\n      try {\n        await this.store.saveIssue(this.issueId(), {\n          title: model.title.trim(),\n          description: model.description.trim() || null,\n          status: model.status,\n          priority: model.priority,\n        });\n        this.originalTitle.set(model.title.trim());\n      } finally {\n        this.savingIssue.set(false);\n      }\n    });\n\n    if (ok) {\n      this.loadedIssueId.set(null);\n    }\n  }\n\n  // התגובה נשלחת אופטימית עם חלון Undo — אין await ואין ספינר; היא מופיעה מיד\n  // והשרת מתעדכן ברקע אחרי החלון. ה-form מתאפס מיד כדי שאפשר להמשיך לכתוב.\n  protected async addComment(): Promise<void> {\n    const ok = await submit(this.commentForm, async () => {\n      this.store.postCommentWithUndo(this.issueId(), this.commentModel().body.trim());\n    });\n    if (ok) {\n      this.commentModel.set({ body: '' });\n    }\n  }\n\n  protected undoComment(): void {\n    this.store.undoPendingComment();\n  }\n\n  protected isPending(comment: Comment): boolean {\n    return comment.id < 0;\n  }\n\n  protected async onFileSelected(event: Event): Promise<void> {\n    const input = event.target as HTMLInputElement;\n    const file = input.files?.[0];\n    if (!file) return;\n\n    this.uploading.set(true);\n    try {\n      await this.store.addAttachment(this.issueId(), file);\n    } finally {\n      this.uploading.set(false);\n      input.value = ''; // מאפשר לבחור שוב את אותו קובץ\n    }\n  }\n\n  protected download(attachment: Attachment): void {\n    void this.store.download(attachment);\n  }\n\n  protected prettySize(bytes: number): string {\n    if (bytes < 1024) return `${bytes} B`;\n    if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;\n    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;\n  }\n\n  protected activityIcon(type: ActivityType): string {\n    return ACTIVITY_ICON[type];\n  }\n\n  protected commentHtml(comment: Comment): string {\n    return renderMarkdown(comment.body);\n  }\n\n  protected firstError(errors: readonly { message?: string; kind: string }[]): string | null {\n    return errors[0]?.message ?? errors[0]?.kind ?? null;\n  }\n\n  protected toneOf(status: IssueStatus): 'open' | 'progress' | 'done' {\n    return status === 'Open' ? 'open' : status === 'InProgress' ? 'progress' : 'done';\n  }\n\n  protected formattedDate(value: string): string {\n    return new Intl.DateTimeFormat('en', {\n      month: 'short',\n      day: '2-digit',\n      hour: '2-digit',\n      minute: '2-digit',\n    }).format(new Date(value));\n  }\n\n  protected trackActivity(_: number, event: ActivityEvent): number {\n    return event.id;\n  }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-14.14": {
+              "start": 80,
+              "end": 97
+            },
+            "step-19.19": {
+              "start": 45,
+              "end": 126
+            },
+            "step-14.16": {
+              "start": 128,
+              "end": 148
+            },
+            "step-19.20": {
+              "start": 150,
+              "end": 167
+            },
+            "step-19.21": {
+              "start": 169,
+              "end": 195
+            }
+          },
+          "changedLines": [
+            15,
+            16,
+            25,
+            29,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            47,
+            60,
+            150,
+            151,
+            154,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188,
+            189,
+            190,
+            191,
+            192,
+            193,
+            194,
+            195,
+            196,
+            197,
+            198,
+            199,
+            200,
+            209,
+            215,
+            217,
+            218,
+            219,
+            220
+          ]
+        },
+        "client/src/app/shared/ui/markdown-editor/markdown-editor.html": {
+          "content": "<div class=\"md-editor\">\n  <div class=\"md-tabs\" role=\"tablist\">\n    <button\n      type=\"button\"\n      role=\"tab\"\n      [class.on]=\"!preview()\"\n      [attr.aria-selected]=\"!preview()\"\n      (click)=\"preview.set(false)\"\n    >\n      כתיבה\n    </button>\n    <button\n      type=\"button\"\n      role=\"tab\"\n      [class.on]=\"preview()\"\n      [attr.aria-selected]=\"preview()\"\n      (click)=\"preview.set(true)\"\n    >\n      תצוגה מקדימה\n    </button>\n  </div>\n\n  @if (!preview()) {\n    <div class=\"md-input\">\n      <textarea\n        #ta\n        [rows]=\"rows()\"\n        [value]=\"value()\"\n        [disabled]=\"disabled()\"\n        [attr.placeholder]=\"placeholder()\"\n        (input)=\"onInput($event)\"\n        (keydown)=\"onKeydown($event)\"\n      ></textarea>\n\n      @if (mentionMatches().length) {\n        <ul class=\"md-mentions\" role=\"listbox\" aria-label=\"הזכרת חבר\">\n          @for (name of mentionMatches(); track name; let i = $index) {\n            <li\n              role=\"option\"\n              [class.active]=\"i === activeMention()\"\n              [attr.aria-selected]=\"i === activeMention()\"\n              (mousedown)=\"$event.preventDefault(); choose(name)\"\n            >\n              {{ name }}\n            </li>\n          }\n        </ul>\n      }\n    </div>\n  } @else {\n    @if (value().trim()) {\n      <div class=\"md-preview\" [innerHTML]=\"rendered()\"></div>\n    } @else {\n      <p class=\"md-empty\">אין מה להציג עדיין.</p>\n    }\n  }\n</div>\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58
+          ]
+        },
+        "client/src/app/shared/ui/markdown-editor/markdown-editor.scss": {
+          "content": ":host {\n  display: block;\n}\n\n.md-editor {\n  border: 1px solid var(--bdr);\n  border-radius: var(--rad-sm);\n  background: var(--sur);\n  overflow: clip;\n}\n\n.md-tabs {\n  display: flex;\n  gap: var(--sp-1);\n  padding: var(--sp-1);\n  border-block-end: 1px solid var(--bdr);\n  background: var(--sur2);\n\n  button {\n    padding: var(--sp-1) var(--sp-3);\n    border: 1px solid transparent;\n    border-radius: var(--rad-sm);\n    background: transparent;\n    color: var(--txt2);\n    font-size: var(--fs-small);\n    cursor: pointer;\n\n    &.on {\n      background: var(--sur);\n      border-color: var(--bdr);\n      color: var(--txt1);\n    }\n  }\n}\n\n// עוטף יחסי כדי לעגן אליו את ה-popover של ה-@mention\n.md-input {\n  position: relative;\n\n  textarea {\n    display: block;\n    width: 100%;\n    border: 0;\n    background: var(--sur);\n    color: var(--txt1);\n    padding: var(--sp-2) var(--sp-3);\n    font: inherit;\n    resize: vertical;\n\n    &:focus-visible {\n      outline: none;\n      box-shadow: inset 0 0 0 2px var(--accent);\n    }\n  }\n}\n\n// ה-popover של ההזכרות: מתחת לאזור הקלט, מעל שאר הדף\n.md-mentions {\n  position: absolute;\n  inset-inline-start: var(--sp-3);\n  inset-block-start: 100%;\n  z-index: 20;\n  min-width: 180px;\n  margin: 0;\n  padding: var(--sp-1);\n  list-style: none;\n  background: var(--sur);\n  border: 1px solid var(--bdr2);\n  border-radius: var(--rad-sm);\n  box-shadow: var(--shadow-3);\n\n  li {\n    padding: var(--sp-1) var(--sp-2);\n    border-radius: var(--rad-sm);\n    font-size: var(--fs-small);\n    color: var(--txt2);\n    cursor: pointer;\n\n    &.active,\n    &:hover {\n      background: var(--accent-subtle);\n      color: var(--txt1);\n    }\n  }\n}\n\n.md-preview {\n  padding: var(--sp-2) var(--sp-3);\n  color: var(--txt1);\n  min-height: 3rem;\n  line-height: var(--lh-normal);\n\n  code {\n    font-family: ui-monospace, monospace;\n    background: var(--sur3);\n    padding: 0 4px;\n    border-radius: 4px;\n    font-size: 0.9em;\n  }\n\n  a {\n    color: var(--accent);\n  }\n\n  .mention {\n    color: var(--accent);\n    font-weight: var(--fw-semibold);\n  }\n}\n\n.md-empty {\n  padding: var(--sp-2) var(--sp-3);\n  margin: 0;\n  color: var(--txt3);\n  font-size: var(--fs-small);\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.15": {
+              "start": 1,
+              "end": 116
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117
+          ]
+        },
+        "client/src/app/shared/ui/markdown-editor/markdown-editor.ts": {
+          "content": "import {\n  Component,\n  ElementRef,\n  computed,\n  input,\n  model,\n  signal,\n  viewChild,\n} from '@angular/core';\nimport { FormValueControl } from '@angular/forms/signals';\nimport { renderMarkdown } from '../../../core/markdown/markdown';\n\n// עורך Markdown כ-custom form control (ממשיך את priority-picker מפרק 14):\n// מממש FormValueControl<string>, ולכן עובד עם [formField] כמו כל input רגיל.\n// שלושה דברים: textarea, מתג תצוגה מקדימה (Markdown מרונדר ובטוח), ו-@mention\n// autocomplete שצץ כשמקלידים @ — רשימת חברים מסוננת, בחירה מזריקה את השם.\n@Component({\n  selector: 'tf-markdown-editor',\n  templateUrl: './markdown-editor.html',\n  styleUrl: './markdown-editor.scss',\n})\nexport class MarkdownEditor implements FormValueControl<string> {\n  readonly value = model<string>('');\n  readonly disabled = input(false);\n  readonly rows = input(4);\n  readonly placeholder = input('');\n  /** שמות החברים שאפשר להזכיר ב-@ */\n  readonly mentionCandidates = input<string[]>([]);\n\n  private readonly textarea = viewChild.required<ElementRef<HTMLTextAreaElement>>('ta');\n\n  protected readonly preview = signal(false);\n  protected readonly rendered = computed(() => renderMarkdown(this.value() || ''));\n\n  // ה-query של ה-@mention: null = אין הזכרה פעילה כרגע\n  protected readonly mentionQuery = signal<string | null>(null);\n  protected readonly activeMention = signal(0);\n\n  protected readonly mentionMatches = computed<string[]>(() => {\n    const query = this.mentionQuery();\n    if (query === null) return [];\n    const lower = query.toLowerCase();\n    return this.mentionCandidates()\n      .filter((name) => name.toLowerCase().includes(lower))\n      .slice(0, 5);\n  });\n\n  protected onInput(event: Event): void {\n    const ta = event.target as HTMLTextAreaElement;\n    this.value.set(ta.value);\n    this.detectMention(ta);\n  }\n\n  // מזהים @word שמסתיים בדיוק בסמן — זו ההזכרה שעורכים עכשיו\n  private detectMention(ta: HTMLTextAreaElement): void {\n    const caret = ta.selectionStart ?? ta.value.length;\n    const before = ta.value.slice(0, caret);\n    const match = /@([\\w.-]*)$/.exec(before);\n    this.mentionQuery.set(match ? match[1] : null);\n    this.activeMention.set(0);\n  }\n\n  protected onKeydown(event: KeyboardEvent): void {\n    const matches = this.mentionMatches();\n    if (!matches.length) return;\n\n    if (event.key === 'ArrowDown') {\n      event.preventDefault();\n      this.activeMention.update((i) => (i + 1) % matches.length);\n    } else if (event.key === 'ArrowUp') {\n      event.preventDefault();\n      this.activeMention.update((i) => (i - 1 + matches.length) % matches.length);\n    } else if (event.key === 'Enter' || event.key === 'Tab') {\n      event.preventDefault();\n      this.choose(matches[this.activeMention()]);\n    } else if (event.key === 'Escape') {\n      this.mentionQuery.set(null);\n    }\n  }\n\n  // בחירת חבר: מחליפים את ה-@word שלפני הסמן בשם המלא, וסוגרים את ה-popover\n  protected choose(name: string): void {\n    const ta = this.textarea().nativeElement;\n    const caret = ta.selectionStart ?? ta.value.length;\n    const before = ta.value.slice(0, caret).replace(/@([\\w.-]*)$/, `@${name} `);\n    const after = ta.value.slice(caret);\n    const next = before + after;\n\n    this.value.set(next);\n    this.mentionQuery.set(null);\n\n    // מחזירים פוקוס וסמן אחרי ההזרקה\n    queueMicrotask(() => {\n      ta.value = next;\n      ta.focus();\n      ta.setSelectionRange(before.length, before.length);\n    });\n  }\n\n  protected togglePreview(): void {\n    this.preview.update((p) => !p);\n  }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.14": {
+              "start": 13,
+              "end": 103
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104
+          ]
+        },
+        "server/TaskForge.Api/Contracts/AttachmentContracts.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Contracts;\n\n// תשובת המטא-דאטה של קובץ — בלי ה-bytes. זה מה שרשימת הקבצים מציגה,\n// ומה ש-201 מחזיר אחרי העלאה. ההורדה עצמה היא endpoint נפרד שמחזיר את הקובץ.\npublic sealed record AttachmentResponse(\n    int Id,\n    int IssueId,\n    string FileName,\n    string ContentType,\n    long SizeBytes,\n    string UploadedByName,\n    DateTime CreatedAtUtc)\n{\n    public static AttachmentResponse FromEntity(Attachment a) => new(\n        a.Id,\n        a.IssueId,\n        a.FileName,\n        a.ContentType,\n        a.SizeBytes,\n        a.UploadedBy?.DisplayName ?? \"Unknown\",\n        a.CreatedAtUtc);\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.4": {
+              "start": 5,
+              "end": 24
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25
+          ]
+        },
+        "server/TaskForge.Api/Endpoints/AttachmentEndpoints.cs": {
+          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class AttachmentEndpoints\n{\n    // קובץ עד 5MB — מגבלה פשוטה שמונעת העלאות ענק ל-DB בפיתוח\n    private const long MaxBytes = 5 * 1024 * 1024;\n\n    public static IEndpointRouteBuilder MapAttachmentEndpoints(this IEndpointRouteBuilder app)\n    {\n        var perIssue = app.MapGroup(\"/api/issues/{issueId:int}/attachments\")\n            .WithTags(\"Attachments\")\n            .RequireAuthorization();\n\n        perIssue.MapGet(\"/\", ListAttachments);\n        // DisableAntiforgery: ה-SPA שולח Bearer, לא קוקי — אין סיכון CSRF, ולכן\n        // מוותרים על דרישת ה-antiforgery token שמינimal API מבקש כברירת מחדל ל-multipart.\n        perIssue.MapPost(\"/\", UploadAttachment).DisableAntiforgery();\n\n        var byId = app.MapGroup(\"/api/attachments\")\n            .WithTags(\"Attachments\")\n            .RequireAuthorization();\n\n        byId.MapGet(\"/{id:int}\", DownloadAttachment);\n\n        return app;\n    }\n\n    private static async Task<Results<Ok<IReadOnlyList<AttachmentResponse>>, NotFound, ForbidHttpResult>> ListAttachments(\n        int issueId,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        IAttachmentRepository attachments,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.GetByIdAsync(issueId, cancellationToken);\n        if (issue is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(issue.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var mapped = (await attachments.GetMetadataByIssueAsync(issueId, cancellationToken))\n            .Select(AttachmentResponse.FromEntity)\n            .ToList();\n\n        return TypedResults.Ok<IReadOnlyList<AttachmentResponse>>(mapped);\n    }\n\n    // multipart: ה-IFormFile נקשר אוטומטית מה-form. בודקים גודל לפני שקוראים\n    // את כל הזרם לזיכרון, ורושמים אירוע פעילות ליד ההעלאה.\n    private static async Task<Results<Created<AttachmentResponse>, NotFound, ForbidHttpResult, BadRequest<string>>> UploadAttachment(\n        int issueId,\n        IFormFile file,\n        ClaimsPrincipal user,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        IAttachmentRepository attachments,\n        IActivityRepository activity,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.GetByIdAsync(issueId, cancellationToken);\n        if (issue is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(issue.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        if (file.Length == 0)\n        {\n            return TypedResults.BadRequest(\"הקובץ ריק\");\n        }\n\n        if (file.Length > MaxBytes)\n        {\n            return TypedResults.BadRequest(\"הקובץ גדול מ-5MB\");\n        }\n\n        using var stream = new MemoryStream();\n        await file.CopyToAsync(stream, cancellationToken);\n\n        var saved = await attachments.AddAsync(new Attachment\n        {\n            IssueId = issueId,\n            FileName = Path.GetFileName(file.FileName),\n            ContentType = string.IsNullOrWhiteSpace(file.ContentType) ? \"application/octet-stream\" : file.ContentType,\n            SizeBytes = file.Length,\n            Bytes = stream.ToArray(),\n            UploadedByUserId = user.GetUserId(),\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        await activity.LogAsync(new ActivityEvent\n        {\n            ProjectId = issue.ProjectId,\n            IssueId = issueId,\n            ActorUserId = user.GetUserId(),\n            Type = ActivityType.AttachmentAdded,\n            Summary = $\"צירף/ה קובץ \\\"{saved.FileName}\\\"\",\n            CreatedAtUtc = DateTime.UtcNow,\n        }, cancellationToken);\n\n        // ה-entity שחזר מ-AddAsync לא טוען את ה-nav של UploadedBy, אז משלימים\n        // את שם המעלה מה-claim \"name\" שבטוקן — כך ה-201 כבר מציג את השם הנכון.\n        var uploaderName = user.FindFirstValue(\"name\") ?? \"Unknown\";\n        return TypedResults.Created(\n            $\"/api/attachments/{saved.Id}\",\n            AttachmentResponse.FromEntity(saved) with { UploadedByName = uploaderName });\n    }\n\n    // ההורדה: שולפים כולל bytes, מאמתים חברות דרך ה-issue, ומחזירים File\n    // עם ה-content-type המקורי כדי שהדפדפן ידע מה לעשות עם הקובץ.\n    private static async Task<Results<FileContentHttpResult, NotFound, ForbidHttpResult>> DownloadAttachment(\n        int id,\n        ClaimsPrincipal user,\n        IAttachmentRepository attachments,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        var attachment = await attachments.GetByIdAsync(id, cancellationToken);\n        if (attachment is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        var issue = await issues.GetByIdAsync(attachment.IssueId, cancellationToken);\n        if (issue is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(issue.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        return TypedResults.File(attachment.Bytes, attachment.ContentType, attachment.FileName);\n    }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.5": {
+              "start": 15,
+              "end": 33
+            },
+            "step-19.6": {
+              "start": 35,
+              "end": 154
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156
+          ]
+        },
+        "server/TaskForge.Api/Endpoints/DashboardEndpoints.cs": {
+          "content": "using System.Security.Claims;\nusing Microsoft.AspNetCore.Http.HttpResults;\nusing TaskForge.Api.Auth;\nusing TaskForge.Api.Contracts;\nusing TaskForge.Api.Filters;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\n\nnamespace TaskForge.Api.Endpoints;\n\npublic static class DashboardEndpoints\n{\n    // endpoints קריאה לדשבורד: סיכום (אגרגציה), פיד פעילות של הפרויקט,\n    // ופרק 19 מוסיף פיד פעילות מסונן ל-issue אחד. אותו דפוס קבוצה כמו השאר.\n    public static IEndpointRouteBuilder MapDashboardEndpoints(this IEndpointRouteBuilder app)\n    {\n        var project = app.MapGroup(\"/api/projects/{projectId:int}\")\n            .WithTags(\"Dashboard\")\n            .AddEndpointFilter<HandlerTimingFilter>()\n            .RequireAuthorization();\n\n        project.MapGet(\"/stats\", GetStats);\n        project.MapGet(\"/activity\", GetActivity);\n\n        var issue = app.MapGroup(\"/api/issues/{issueId:int}\")\n            .WithTags(\"Dashboard\")\n            .AddEndpointFilter<HandlerTimingFilter>()\n            .RequireAuthorization();\n\n        issue.MapGet(\"/activity\", GetIssueActivity);\n\n        return app;\n    }\n\n    // ‏stats: 404 אם הפרויקט לא קיים, 403 אם המשתמש אינו חבר — אותה הרשאה\n    // מבוססת-משאב כמו בלוח. ה-DB עושה את האגרגציה; כאן רק מחזירים אותה.\n    private static async Task<Results<Ok<ProjectStats>, NotFound, ForbidHttpResult>> GetStats(\n        int projectId,\n        ClaimsPrincipal user,\n        IStatsRepository stats,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(projectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        return TypedResults.Ok(await stats.GetForProjectAsync(projectId, cancellationToken));\n    }\n\n    // ‏activity: ה-feed האחרון. take מוגבל ל-1..50 כדי לא לשאוב יומן שלם.\n    private static async Task<Results<Ok<IReadOnlyList<ActivityResponse>>, NotFound, ForbidHttpResult>> GetActivity(\n        int projectId,\n        int? take,\n        ClaimsPrincipal user,\n        IActivityRepository activity,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        if (!await projects.ExistsAsync(projectId, cancellationToken))\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(projectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var limit = Math.Clamp(take ?? 10, 1, 50);\n        var events = await activity.GetRecentForProjectAsync(projectId, limit, cancellationToken);\n        var mapped = events.Select(ActivityResponse.FromEntity).ToList();\n\n        return TypedResults.Ok<IReadOnlyList<ActivityResponse>>(mapped);\n    }\n\n    // פיד הפעילות של issue יחיד — ה-timeline במסך הפרטים. ההרשאה עוברת דרך\n    // ה-issue: 404 אם אינו קיים, 403 אם המשתמש אינו חבר בפרויקט שלו.\n    private static async Task<Results<Ok<IReadOnlyList<ActivityResponse>>, NotFound, ForbidHttpResult>> GetIssueActivity(\n        int issueId,\n        int? take,\n        ClaimsPrincipal user,\n        IActivityRepository activity,\n        IIssueRepository issues,\n        IProjectRepository projects,\n        CancellationToken cancellationToken)\n    {\n        var issue = await issues.GetByIdAsync(issueId, cancellationToken);\n        if (issue is null)\n        {\n            return TypedResults.NotFound();\n        }\n\n        if (!await projects.IsMemberAsync(issue.ProjectId, user.GetUserId(), cancellationToken))\n        {\n            return TypedResults.Forbid();\n        }\n\n        var limit = Math.Clamp(take ?? 20, 1, 50);\n        var events = await activity.GetRecentForIssueAsync(issueId, limit, cancellationToken);\n        var mapped = events.Select(ActivityResponse.FromEntity).ToList();\n\n        return TypedResults.Ok<IReadOnlyList<ActivityResponse>>(mapped);\n    }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.9": {
+              "start": 25,
+              "end": 30
+            },
+            "step-18.8": {
+              "start": 13,
+              "end": 55
+            },
+            "step-18.8b": {
+              "start": 57,
+              "end": 81
+            },
+            "step-19.9b": {
+              "start": 83,
+              "end": 110
+            }
+          },
+          "changedLines": [
+            13,
+            14,
+            17,
+            22,
+            23,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110
+          ]
+        },
+        "server/TaskForge.Api/Program.cs": {
+          "content": "using System.Text;\nusing System.Text.Json.Serialization;\nusing Microsoft.AspNetCore.Authentication.JwtBearer;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.IdentityModel.Tokens;\nusing TaskForge.Api.Endpoints;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Common;\nusing TaskForge.Infrastructure.Auth;\nusing TaskForge.Infrastructure.Data;\nusing TaskForge.Infrastructure.Repositories;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// enums נכנסים ויוצאים כטקסט (\"Open\") בכל ה-API — הגדרה אחת, לכולם\nbuilder.Services.ConfigureHttpJsonOptions(options =>\n    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));\n\n// הקליינט חי ב-origin אחר (4500 מול 5080) — הדפדפן יחסום כל בקשה\n// עד שהשרת יצהיר במפורש שה-origin הזה רצוי. זו לא \"תקלה לעקוף\",\n// זו הצהרת אמון: רק האפליקציה שלנו, רק הכותרות והמתודות שביקשנו.\nconst string ClientCors = \"taskforge-client\";\n\nbuilder.Services.AddCors(options =>\n    options.AddPolicy(ClientCors, policy => policy\n        .WithOrigins(\"http://localhost:4500\")\n        .AllowAnyHeader()\n        .AllowAnyMethod()));\n\n// ה-DbContext נרשם Scoped מעצם הגדרתו: יחידת עבודה אחת לכל בקשה.\n// מחרוזת החיבור מגיעה מהקונפיגורציה — לא מקובעת בקוד.\nbuilder.Services.AddDbContext<TaskForgeDbContext>(options =>\n    options.UseSqlite(builder.Configuration.GetConnectionString(\"Default\")));\n\n// ה-seams של הדומיין: חוזה מה-Core, מימוש מה-Infrastructure\nbuilder.Services.AddScoped<IProjectRepository, EfProjectRepository>();\nbuilder.Services.AddScoped<IIssueRepository, EfIssueRepository>();\nbuilder.Services.AddScoped<ICommentRepository, EfCommentRepository>();\nbuilder.Services.AddScoped<IUserRepository, EfUserRepository>();\nbuilder.Services.AddScoped<IRefreshTokenRepository, EfRefreshTokenRepository>();\n// פרק 16: seam החיפוש מצטרף לאותו דפוס רישום\nbuilder.Services.AddScoped<ISearchRepository, EfSearchRepository>();\n// פרק 18: seam האגרגציה ו-seam יומן הפעילות\nbuilder.Services.AddScoped<IStatsRepository, EfStatsRepository>();\nbuilder.Services.AddScoped<IActivityRepository, EfActivityRepository>();\n// פרק 19: seam הקבצים המצורפים\nbuilder.Services.AddScoped<IAttachmentRepository, EfAttachmentRepository>();\n\n// שירותי auth חסרי-state — ‏Singleton בלב שלם\nbuilder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();\nbuilder.Services.AddSingleton<ITokenService, TokenService>();\n\n// קושרים את סקציית \"Jwt\" מהקונפיגורציה אל ה-options — מקור אמת אחד\nbuilder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));\nvar jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()\n    ?? throw new InvalidOperationException(\"Missing Jwt configuration section\");\n\n// צד האימות: ה-handler של Bearer מצרף לכל בקשה את ה-ClaimsPrincipal\n// אם הטוקן חתום נכון, בתוקף, ומגיע מהמנפיק ולקהל הנכונים.\nbuilder.Services\n    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)\n    .AddJwtBearer(options =>\n    {\n        options.TokenValidationParameters = new TokenValidationParameters\n        {\n            ValidateIssuer = true,\n            ValidIssuer = jwt.Issuer,\n            ValidateAudience = true,\n            ValidAudience = jwt.Audience,\n            ValidateIssuerSigningKey = true,\n            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),\n            ValidateLifetime = true,\n            // ברירת המחדל היא 5 דקות חסד — נצמיד לשעון אמיתי\n            ClockSkew = TimeSpan.FromSeconds(30),\n        };\n    });\n\nbuilder.Services.AddAuthorization();\n\n// הוולידציה המובנית של .NET 10: כל DTO מסומן ב-DataAnnotations נבדק\n// אוטומטית לפני ה-handler; כישלון מחזיר 400 ValidationProblem אחיד.\nbuilder.Services.AddValidation();\n\n// ProblemDetails (RFC 7807) כברירת מחדל לכל שגיאה וסטטוס ללא גוף\nbuilder.Services.AddProblemDetails();\n\nbuilder.Services.AddOpenApi();\n\nvar app = builder.Build();\n\n// בעליית האפליקציה: מיישמים מיגרציות שחסרות ומזריעים DB ריק.\n// CreateScope חובה — DbContext הוא Scoped, ומחוץ לבקשה אין scope.\nusing (var scope = app.Services.CreateScope())\n{\n    var db = scope.ServiceProvider.GetRequiredService<TaskForgeDbContext>();\n    await db.Database.MigrateAsync();\n    await DbSeeder.SeedAsync(db);\n}\n\n// העוטפים החיצוניים: חריגה לא מטופלת הופכת ל-500 ProblemDetails,\n// וכל תשובת סטטוס בלי גוף (כמו 404 של routing) מקבלת גוף אחיד.\napp.UseExceptionHandler();\napp.UseStatusCodePages();\n\n// מוקדם ב-pipeline: גם preflight ‏(OPTIONS) וגם תשובות שגיאה\n// צריכים לשאת את כותרות ה-CORS, אחרת הדפדפן יסתיר אותן מהקליינט.\napp.UseCors(ClientCors);\n\n// ── ה-pipeline המוכר מפרק 01: לוגים ומדידת זמן ──\n\napp.Use(async (context, next) =>\n{\n    app.Logger.LogInformation(\"{Method} {Path} started\",\n        context.Request.Method, context.Request.Path);\n\n    await next(context);\n\n    app.Logger.LogInformation(\"{Method} {Path} finished with {Status}\",\n        context.Request.Method, context.Request.Path, context.Response.StatusCode);\n});\n\napp.Use(async (context, next) =>\n{\n    var stopwatch = System.Diagnostics.Stopwatch.StartNew();\n\n    context.Response.OnStarting(() =>\n    {\n        stopwatch.Stop();\n        context.Response.Headers.Append(\"X-Elapsed-Ms\",\n            stopwatch.ElapsedMilliseconds.ToString());\n        return Task.CompletedTask;\n    });\n\n    await next(context);\n});\n\n// קודם מזהים (מי אתה?), אחר כך מחליטים (מותר לך?) — הסדר קשיח\napp.UseAuthentication();\napp.UseAuthorization();\n\n// תיאור ה-API נוצר מהקוד עצמו — בסביבת פיתוח בלבד\nif (app.Environment.IsDevelopment())\n{\n    app.MapOpenApi(); // GET /openapi/v1.json\n}\n\napp.MapGet(\"/\", () => \"TaskForge API is alive\");\n\napp.MapGet(\"/healthz\", () => Results.Ok(new { status = \"healthy\" }));\n\n// כל ה-API העסקי — מאורגן בקבצים לפי פיצ׳ר\napp.MapAuthEndpoints();\napp.MapProjectEndpoints();\napp.MapIssueEndpoints();\napp.MapCommentEndpoints();\n\n// קבוצת ה-members מצטרפת לאותו דפוס: קובץ לפי פיצ׳ר, שורה אחת כאן\napp.MapMemberEndpoints();\n\n// פרק 16: endpoint החיפוש שמזין את ה-command palette\napp.MapSearchEndpoints();\n\n// פרק 18: endpoints הדשבורד — סיכום ופיד פעילות\napp.MapDashboardEndpoints();\n\n// פרק 19: endpoints הקבצים המצורפים\napp.MapAttachmentEndpoints();\n\napp.Run();\n",
+          "status": "modified",
+          "regions": {
+            "step-4.2": {
+              "start": 15,
+              "end": 17
+            },
+            "step-11.2": {
+              "start": 19,
+              "end": 28
+            },
+            "step-3.7": {
+              "start": 30,
+              "end": 33
+            },
+            "step-16.13": {
+              "start": 41,
+              "end": 42
+            },
+            "step-18.11": {
+              "start": 43,
+              "end": 45
+            },
+            "step-19.11": {
+              "start": 46,
+              "end": 47
+            },
+            "step-4.4": {
+              "start": 35,
+              "end": 47
+            },
+            "step-5.8": {
+              "start": 49,
+              "end": 56
+            },
+            "step-5.9": {
+              "start": 58,
+              "end": 78
+            },
+            "step-4.9": {
+              "start": 80,
+              "end": 82
+            },
+            "step-3.11": {
+              "start": 91,
+              "end": 98
+            },
+            "step-4.10": {
+              "start": 100,
+              "end": 103
+            },
+            "step-11.2b": {
+              "start": 105,
+              "end": 107
+            },
+            "step-1.10": {
+              "start": 109,
+              "end": 135
+            },
+            "step-5.10": {
+              "start": 137,
+              "end": 139
+            },
+            "step-4.17": {
+              "start": 141,
+              "end": 145
+            },
+            "step-14.5b": {
+              "start": 155,
+              "end": 155
+            },
+            "step-4.16": {
+              "start": 147,
+              "end": 155
+            },
+            "step-12.6b": {
+              "start": 157,
+              "end": 158
+            },
+            "step-16.13b": {
+              "start": 160,
+              "end": 161
+            },
+            "step-18.11b": {
+              "start": 163,
+              "end": 164
+            },
+            "step-19.11b": {
+              "start": 166,
+              "end": 167
+            }
+          },
+          "changedLines": [
+            46,
+            47,
+            166,
+            167,
+            168
+          ]
+        },
+        "server/TaskForge.Core/Abstractions/IActivityRepository.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// יומן הפעילות הוא read+write: כותבים אירוע ליד הפעולה, וקוראים את האחרונים\n// כ-feed. שתי השיטות חיות מאחורי seam אחד, כמו שאר ה-repositories.\npublic interface IActivityRepository\n{\n    Task LogAsync(ActivityEvent activityEvent, CancellationToken cancellationToken = default);\n\n    Task<IReadOnlyList<ActivityEvent>> GetRecentForProjectAsync(\n        int projectId,\n        int take,\n        CancellationToken cancellationToken = default);\n\n    // פרק 19: אותו יומן, מסונן ל-issue אחד — מזין את ה-timeline במסך הפרטים.\n    Task<IReadOnlyList<ActivityEvent>> GetRecentForIssueAsync(\n        int issueId,\n        int take,\n        CancellationToken cancellationToken = default);\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.8": {
+              "start": 16,
+              "end": 20
+            },
+            "step-18.5": {
+              "start": 5,
+              "end": 21
+            }
+          },
+          "changedLines": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20
+          ]
+        },
+        "server/TaskForge.Core/Abstractions/IAttachmentRepository.cs": {
+          "content": "using TaskForge.Core.Entities;\n\nnamespace TaskForge.Core.Abstractions;\n\n// seam הקבצים. שימו לב לשתי קריאות שונות: GetMetadataByIssueAsync לרשימה\n// (בלי ה-bytes — רק שם/גודל/סוג), ו-GetByIdAsync להורדה (כולל ה-bytes).\n// כך רשימת הקבצים זולה ולא שולפת מגה-בייטים לזיכרון סתם.\npublic interface IAttachmentRepository\n{\n    Task<Attachment> AddAsync(Attachment attachment, CancellationToken cancellationToken = default);\n\n    Task<IReadOnlyList<Attachment>> GetMetadataByIssueAsync(int issueId, CancellationToken cancellationToken = default);\n\n    Task<Attachment?> GetByIdAsync(int id, CancellationToken cancellationToken = default);\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.2": {
+              "start": 5,
+              "end": 15
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ]
+        },
+        "server/TaskForge.Core/Entities/ActivityEvent.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\n// סוג האירוע כ-enum: סט סגור שהמהדר אוכף, נשמר כטקסט ב-DB (כמו Status/Priority).\n// מתווסף ערך רק כשנולד סוג פעילות חדש — לא string חופשי שאפשר לאיית לא נכון.\npublic enum ActivityType\n{\n    IssueCreated,\n    IssueMoved,\n    CommentAdded,\n    // פרק 19: צירוף קובץ הוא פעילות. הוספת ערך ל-enum שנשמר כטקסט לא דורשת\n    // מיגרציה — העמודה היא TEXT, וערך חדש הוא פשוט מחרוזת חדשה.\n    AttachmentAdded,\n}\n\n// יומן הפעילות: שורה אחת לכל דבר שקרה בפרויקט. הוא append-only — נכתב ליד\n// הפעולה עצמה (יצירת issue, הזזה בלוח, תגובה) ונקרא כ-feed בדשבורד.\n// IssueId הוא nullable: אירוע ברמת הפרויקט לא חייב issue.\npublic sealed class ActivityEvent\n{\n    public int Id { get; set; }\n\n    public int ProjectId { get; set; }\n    public Project? Project { get; set; }\n\n    public int? IssueId { get; set; }\n\n    public int ActorUserId { get; set; }\n    public User? Actor { get; set; }\n\n    public ActivityType Type { get; set; }\n\n    public required string Summary { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.7": {
+              "start": 10,
+              "end": 12
+            },
+            "step-18.1": {
+              "start": 3,
+              "end": 35
+            }
+          },
+          "changedLines": [
+            10,
+            11,
+            12
+          ]
+        },
+        "server/TaskForge.Core/Entities/Attachment.cs": {
+          "content": "namespace TaskForge.Core.Entities;\n\n// קובץ מצורף ל-issue. בפיתוח אנחנו שומרים את ה-bytes ישירות ב-DB (BLOB) —\n// פשוט, אטומי, ועובד בלי תלות בדיסק או באחסון ענן. בפרודקשן הטרייד-אוף הפוך:\n// קבצים גדולים תופחים את ה-DB והגיבויים, ולכן שם מאחסנים ב-blob storage\n// ושומרים כאן רק מצביע (StoragePath). את הטרייד-אוף הזה הפרק מלמד.\npublic sealed class Attachment\n{\n    public int Id { get; set; }\n\n    public int IssueId { get; set; }\n    public Issue? Issue { get; set; }\n\n    public required string FileName { get; set; }\n\n    public required string ContentType { get; set; }\n\n    public long SizeBytes { get; set; }\n\n    // ה-BLOB עצמו. לא נטען בשאילתת הרשימה — רק בהורדה.\n    public required byte[] Bytes { get; set; }\n\n    public int UploadedByUserId { get; set; }\n    public User? UploadedBy { get; set; }\n\n    public DateTime CreatedAtUtc { get; set; }\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.1": {
+              "start": 3,
+              "end": 27
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        },
+        "server/TaskForge.Infrastructure/Data/TaskForgeDbContext.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Entities;\n\nnamespace TaskForge.Infrastructure.Data;\n\n// ה-DbContext הוא יחידת העבודה: צוהר אחד ל-DB לכל בקשה,\n// שעוקב אחרי כל ישות שהוא הגיש ויודע לתרגם שינויים ל-SQL.\npublic sealed class TaskForgeDbContext(DbContextOptions<TaskForgeDbContext> options)\n    : DbContext(options)\n{\n    // כל DbSet = טבלה. Set<T>() במקום setter — אין מצב ביניים null.\n    public DbSet<Project> Projects => Set<Project>();\n    public DbSet<Issue> Issues => Set<Issue>();\n    public DbSet<Label> Labels => Set<Label>();\n    public DbSet<User> Users => Set<User>();\n    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();\n    public DbSet<ProjectMember> ProjectMembers => Set<ProjectMember>();\n    public DbSet<Comment> Comments => Set<Comment>();\n    public DbSet<ActivityEvent> ActivityEvents => Set<ActivityEvent>();\n    public DbSet<Attachment> Attachments => Set<Attachment>();\n\n    // Fluent API: כל חוקי המיפוי כאן, והישויות ב-Core נשארות נקיות —\n    // בלי attributes של EF. זה חוק התלות מפרק 02, מיושם על שכבת הנתונים.\n    protected override void OnModelCreating(ModelBuilder modelBuilder)\n    {\n        modelBuilder.Entity<Project>(project =>\n        {\n            project.Property(p => p.Name)\n                   .HasMaxLength(120)\n                   .IsRequired();\n\n            // אחד-לרבים: מחיקת פרויקט גוררת את ה-Issues שלו\n            project.HasMany(p => p.Issues)\n                   .WithOne(i => i.Project!)\n                   .HasForeignKey(i => i.ProjectId)\n                   .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<Issue>(issue =>\n        {\n            issue.Property(i => i.Title)\n                 .HasMaxLength(200)\n                 .IsRequired();\n\n            // enum נשמר כטקסט קריא ב-DB (\"Open\"), לא כמספר קסם (0)\n            issue.Property(i => i.Status)\n                 .HasConversion<string>()\n                 .HasMaxLength(20);\n\n            issue.Property(i => i.Priority)\n                 .HasConversion<string>()\n                 .HasMaxLength(20);\n\n            // האינדקס של שאילתת הלוח: \"כל ה-Issues הפתוחים בפרויקט X\"\n            issue.HasIndex(i => new { i.ProjectId, i.Status });\n\n            // many-to-many: ‏EF מסיק טבלת חיבור IssueLabel לבד\n            issue.HasMany(i => i.Labels)\n                 .WithMany(l => l.Issues);\n\n            // תגובות הן חלק מחיי ה-issue: מחיקת issue מוחקת את ה-thread שלו.\n            issue.HasMany(i => i.Comments)\n                 .WithOne(c => c.Issue!)\n                 .HasForeignKey(c => c.IssueId)\n                 .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<Label>(label =>\n        {\n            label.Property(l => l.Name)\n                 .HasMaxLength(40)\n                 .IsRequired();\n\n            // אין שתי תוויות באותו שם\n            label.HasIndex(l => l.Name).IsUnique();\n        });\n\n        modelBuilder.Entity<User>(user =>\n        {\n            user.Property(u => u.Email).HasMaxLength(254).IsRequired();\n            user.Property(u => u.DisplayName).HasMaxLength(60).IsRequired();\n            user.Property(u => u.PasswordHash).HasMaxLength(300).IsRequired();\n            user.Property(u => u.Role).HasConversion<string>().HasMaxLength(20);\n\n            // אימייל הוא הזהות — אין שניים\n            user.HasIndex(u => u.Email).IsUnique();\n        });\n\n        modelBuilder.Entity<RefreshToken>(token =>\n        {\n            token.Property(t => t.Token).HasMaxLength(120).IsRequired();\n\n            // חיפוש הטוקן הוא הנתיב החם של /auth/refresh — אינדקס ייחודי\n            token.HasIndex(t => t.Token).IsUnique();\n\n            // מחיקת משתמש גוררת את הטוקנים שלו\n            token.HasOne(t => t.User)\n                 .WithMany()\n                 .HasForeignKey(t => t.UserId)\n                 .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<ProjectMember>(member =>\n        {\n            // מפתח מורכב: זוג (פרויקט, משתמש) הוא החברות עצמה — בלי Id מלאכותי\n            member.HasKey(m => new { m.ProjectId, m.UserId });\n\n            member.Property(m => m.Role).HasConversion<string>().HasMaxLength(20);\n\n            member.HasOne(m => m.Project)\n                  .WithMany()\n                  .HasForeignKey(m => m.ProjectId)\n                  .OnDelete(DeleteBehavior.Cascade);\n\n            member.HasOne(m => m.User)\n                  .WithMany()\n                  .HasForeignKey(m => m.UserId)\n                  .OnDelete(DeleteBehavior.Cascade);\n        });\n\n        modelBuilder.Entity<Comment>(comment =>\n        {\n            comment.Property(c => c.Body)\n                   .HasMaxLength(1200)\n                   .IsRequired();\n\n            comment.HasIndex(c => new { c.IssueId, c.CreatedAtUtc });\n\n            comment.HasOne(c => c.Author)\n                   .WithMany()\n                   .HasForeignKey(c => c.AuthorUserId)\n                   .OnDelete(DeleteBehavior.Restrict);\n        });\n\n        modelBuilder.Entity<ActivityEvent>(activity =>\n        {\n            activity.Property(e => e.Type).HasConversion<string>().HasMaxLength(30);\n            activity.Property(e => e.Summary).HasMaxLength(300).IsRequired();\n\n            // הנתיב החם של ה-feed: \"האירועים האחרונים בפרויקט X\"\n            activity.HasIndex(e => new { e.ProjectId, e.CreatedAtUtc });\n\n            // מחיקת פרויקט גוררת את היומן שלו; מחיקת משתמש לא תמחק היסטוריה\n            activity.HasOne(e => e.Project)\n                    .WithMany()\n                    .HasForeignKey(e => e.ProjectId)\n                    .OnDelete(DeleteBehavior.Cascade);\n\n            activity.HasOne(e => e.Actor)\n                    .WithMany()\n                    .HasForeignKey(e => e.ActorUserId)\n                    .OnDelete(DeleteBehavior.Restrict);\n        });\n\n        modelBuilder.Entity<Attachment>(attachment =>\n        {\n            attachment.Property(a => a.FileName).HasMaxLength(260).IsRequired();\n            attachment.Property(a => a.ContentType).HasMaxLength(120).IsRequired();\n            attachment.Property(a => a.Bytes).IsRequired();\n\n            // הנתיב החם: \"כל הקבצים של issue X\"\n            attachment.HasIndex(a => a.IssueId);\n\n            // מחיקת issue גוררת את הקבצים שלו; מחיקת משתמש לא תמחק קבצים\n            attachment.HasOne(a => a.Issue)\n                      .WithMany()\n                      .HasForeignKey(a => a.IssueId)\n                      .OnDelete(DeleteBehavior.Cascade);\n\n            attachment.HasOne(a => a.UploadedBy)\n                      .WithMany()\n                      .HasForeignKey(a => a.UploadedByUserId)\n                      .OnDelete(DeleteBehavior.Restrict);\n        });\n    }\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-18.9": {
+              "start": 19,
+              "end": 19
+            },
+            "step-19.10": {
+              "start": 20,
+              "end": 20
+            },
+            "step-5.6": {
+              "start": 78,
+              "end": 119
+            },
+            "step-14.3": {
+              "start": 121,
+              "end": 133
+            },
+            "step-18.9b": {
+              "start": 135,
+              "end": 153
+            },
+            "step-19.10b": {
+              "start": 155,
+              "end": 174
+            },
+            "step-3.6": {
+              "start": 22,
+              "end": 175
+            }
+          },
+          "changedLines": [
+            20,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174
+          ]
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260615142517_AddAttachments.cs": {
+          "content": "﻿using System;\nusing Microsoft.EntityFrameworkCore.Migrations;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    /// <inheritdoc />\n    public partial class AddAttachments : Migration\n    {\n        /// <inheritdoc />\n        protected override void Up(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.CreateTable(\n                name: \"Attachments\",\n                columns: table => new\n                {\n                    Id = table.Column<int>(type: \"INTEGER\", nullable: false)\n                        .Annotation(\"Sqlite:Autoincrement\", true),\n                    IssueId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    FileName = table.Column<string>(type: \"TEXT\", maxLength: 260, nullable: false),\n                    ContentType = table.Column<string>(type: \"TEXT\", maxLength: 120, nullable: false),\n                    SizeBytes = table.Column<long>(type: \"INTEGER\", nullable: false),\n                    Bytes = table.Column<byte[]>(type: \"BLOB\", nullable: false),\n                    UploadedByUserId = table.Column<int>(type: \"INTEGER\", nullable: false),\n                    CreatedAtUtc = table.Column<DateTime>(type: \"TEXT\", nullable: false)\n                },\n                constraints: table =>\n                {\n                    table.PrimaryKey(\"PK_Attachments\", x => x.Id);\n                    table.ForeignKey(\n                        name: \"FK_Attachments_Issues_IssueId\",\n                        column: x => x.IssueId,\n                        principalTable: \"Issues\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Cascade);\n                    table.ForeignKey(\n                        name: \"FK_Attachments_Users_UploadedByUserId\",\n                        column: x => x.UploadedByUserId,\n                        principalTable: \"Users\",\n                        principalColumn: \"Id\",\n                        onDelete: ReferentialAction.Restrict);\n                });\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_Attachments_IssueId\",\n                table: \"Attachments\",\n                column: \"IssueId\");\n\n            migrationBuilder.CreateIndex(\n                name: \"IX_Attachments_UploadedByUserId\",\n                table: \"Attachments\",\n                column: \"UploadedByUserId\");\n        }\n\n        /// <inheritdoc />\n        protected override void Down(MigrationBuilder migrationBuilder)\n        {\n            migrationBuilder.DropTable(\n                name: \"Attachments\");\n        }\n    }\n}\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64
+          ]
+        },
+        "server/TaskForge.Infrastructure/Migrations/20260615142517_AddAttachments.Designer.cs": {
+          "content": "﻿// <auto-generated />\nusing System;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.EntityFrameworkCore.Infrastructure;\nusing Microsoft.EntityFrameworkCore.Migrations;\nusing Microsoft.EntityFrameworkCore.Storage.ValueConversion;\nusing TaskForge.Infrastructure.Data;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    [DbContext(typeof(TaskForgeDbContext))]\n    [Migration(\"20260615142517_AddAttachments\")]\n    partial class AddAttachments\n    {\n        /// <inheritdoc />\n        protected override void BuildTargetModel(ModelBuilder modelBuilder)\n        {\n#pragma warning disable 612, 618\n            modelBuilder.HasAnnotation(\"ProductVersion\", \"10.0.9\");\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.Property<int>(\"IssuesId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"LabelsId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"IssuesId\", \"LabelsId\");\n\n                    b.HasIndex(\"LabelsId\");\n\n                    b.ToTable(\"IssueLabel\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ActivityEvent\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"ActorUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int?>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Summary\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Type\")\n                        .IsRequired()\n                        .HasMaxLength(30)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ActorUserId\");\n\n                    b.HasIndex(\"ProjectId\", \"CreatedAtUtc\");\n\n                    b.ToTable(\"ActivityEvents\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Attachment\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<byte[]>(\"Bytes\")\n                        .IsRequired()\n                        .HasColumnType(\"BLOB\");\n\n                    b.Property<string>(\"ContentType\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"FileName\")\n                        .IsRequired()\n                        .HasMaxLength(260)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<long>(\"SizeBytes\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UploadedByUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"IssueId\");\n\n                    b.HasIndex(\"UploadedByUserId\");\n\n                    b.ToTable(\"Attachments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"AuthorUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Body\")\n                        .IsRequired()\n                        .HasMaxLength(1200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"AuthorUserId\");\n\n                    b.HasIndex(\"IssueId\", \"CreatedAtUtc\");\n\n                    b.ToTable(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Priority\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<double>(\"Rank\")\n                        .HasColumnType(\"REAL\");\n\n                    b.Property<string>(\"Status\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Title\")\n                        .IsRequired()\n                        .HasMaxLength(200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ProjectId\", \"Status\");\n\n                    b.ToTable(\"Issues\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Label\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Color\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(40)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Name\")\n                        .IsUnique();\n\n                    b.ToTable(\"Labels\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.ToTable(\"Projects\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"ProjectId\", \"UserId\");\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"ProjectMembers\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"ExpiresAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime?>(\"RevokedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Token\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Token\")\n                        .IsUnique();\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"RefreshTokens\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.User\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"DisplayName\")\n                        .IsRequired()\n                        .HasMaxLength(60)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Email\")\n                        .IsRequired()\n                        .HasMaxLength(254)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"PasswordHash\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Email\")\n                        .IsUnique();\n\n                    b.ToTable(\"Users\");\n                });\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", null)\n                        .WithMany()\n                        .HasForeignKey(\"IssuesId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Label\", null)\n                        .WithMany()\n                        .HasForeignKey(\"LabelsId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ActivityEvent\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"Actor\")\n                        .WithMany()\n                        .HasForeignKey(\"ActorUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Actor\");\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Attachment\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", \"Issue\")\n                        .WithMany()\n                        .HasForeignKey(\"IssueId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"UploadedBy\")\n                        .WithMany()\n                        .HasForeignKey(\"UploadedByUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.Navigation(\"Issue\");\n\n                    b.Navigation(\"UploadedBy\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"Author\")\n                        .WithMany()\n                        .HasForeignKey(\"AuthorUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", \"Issue\")\n                        .WithMany(\"Comments\")\n                        .HasForeignKey(\"IssueId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Author\");\n\n                    b.Navigation(\"Issue\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany(\"Issues\")\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Navigation(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Navigation(\"Issues\");\n                });\n#pragma warning restore 612, 618\n        }\n    }\n}\n",
+          "status": "added",
+          "regions": {},
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188,
+            189,
+            190,
+            191,
+            192,
+            193,
+            194,
+            195,
+            196,
+            197,
+            198,
+            199,
+            200,
+            201,
+            202,
+            203,
+            204,
+            205,
+            206,
+            207,
+            208,
+            209,
+            210,
+            211,
+            212,
+            213,
+            214,
+            215,
+            216,
+            217,
+            218,
+            219,
+            220,
+            221,
+            222,
+            223,
+            224,
+            225,
+            226,
+            227,
+            228,
+            229,
+            230,
+            231,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            238,
+            239,
+            240,
+            241,
+            242,
+            243,
+            244,
+            245,
+            246,
+            247,
+            248,
+            249,
+            250,
+            251,
+            252,
+            253,
+            254,
+            255,
+            256,
+            257,
+            258,
+            259,
+            260,
+            261,
+            262,
+            263,
+            264,
+            265,
+            266,
+            267,
+            268,
+            269,
+            270,
+            271,
+            272,
+            273,
+            274,
+            275,
+            276,
+            277,
+            278,
+            279,
+            280,
+            281,
+            282,
+            283,
+            284,
+            285,
+            286,
+            287,
+            288,
+            289,
+            290,
+            291,
+            292,
+            293,
+            294,
+            295,
+            296,
+            297,
+            298,
+            299,
+            300,
+            301,
+            302,
+            303,
+            304,
+            305,
+            306,
+            307,
+            308,
+            309,
+            310,
+            311,
+            312,
+            313,
+            314,
+            315,
+            316,
+            317,
+            318,
+            319,
+            320,
+            321,
+            322,
+            323,
+            324,
+            325,
+            326,
+            327,
+            328,
+            329,
+            330,
+            331,
+            332,
+            333,
+            334,
+            335,
+            336,
+            337,
+            338,
+            339,
+            340,
+            341,
+            342,
+            343,
+            344,
+            345,
+            346,
+            347,
+            348,
+            349,
+            350,
+            351,
+            352,
+            353,
+            354,
+            355,
+            356,
+            357,
+            358,
+            359,
+            360,
+            361,
+            362,
+            363,
+            364,
+            365,
+            366,
+            367,
+            368,
+            369,
+            370,
+            371,
+            372,
+            373,
+            374,
+            375,
+            376,
+            377,
+            378,
+            379,
+            380,
+            381,
+            382,
+            383,
+            384,
+            385,
+            386,
+            387,
+            388,
+            389,
+            390,
+            391,
+            392,
+            393,
+            394,
+            395,
+            396,
+            397,
+            398,
+            399,
+            400,
+            401,
+            402,
+            403,
+            404,
+            405,
+            406,
+            407,
+            408,
+            409,
+            410,
+            411,
+            412,
+            413,
+            414,
+            415,
+            416,
+            417,
+            418,
+            419,
+            420,
+            421,
+            422,
+            423,
+            424,
+            425,
+            426,
+            427,
+            428,
+            429,
+            430,
+            431,
+            432,
+            433,
+            434,
+            435,
+            436,
+            437,
+            438,
+            439,
+            440,
+            441,
+            442,
+            443,
+            444,
+            445
+          ]
+        },
+        "server/TaskForge.Infrastructure/Migrations/TaskForgeDbContextModelSnapshot.cs": {
+          "content": "﻿// <auto-generated />\nusing System;\nusing Microsoft.EntityFrameworkCore;\nusing Microsoft.EntityFrameworkCore.Infrastructure;\nusing Microsoft.EntityFrameworkCore.Storage.ValueConversion;\nusing TaskForge.Infrastructure.Data;\n\n#nullable disable\n\nnamespace TaskForge.Infrastructure.Migrations\n{\n    [DbContext(typeof(TaskForgeDbContext))]\n    partial class TaskForgeDbContextModelSnapshot : ModelSnapshot\n    {\n        protected override void BuildModel(ModelBuilder modelBuilder)\n        {\n#pragma warning disable 612, 618\n            modelBuilder.HasAnnotation(\"ProductVersion\", \"10.0.9\");\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.Property<int>(\"IssuesId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"LabelsId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"IssuesId\", \"LabelsId\");\n\n                    b.HasIndex(\"LabelsId\");\n\n                    b.ToTable(\"IssueLabel\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ActivityEvent\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"ActorUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int?>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Summary\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Type\")\n                        .IsRequired()\n                        .HasMaxLength(30)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ActorUserId\");\n\n                    b.HasIndex(\"ProjectId\", \"CreatedAtUtc\");\n\n                    b.ToTable(\"ActivityEvents\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Attachment\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<byte[]>(\"Bytes\")\n                        .IsRequired()\n                        .HasColumnType(\"BLOB\");\n\n                    b.Property<string>(\"ContentType\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"FileName\")\n                        .IsRequired()\n                        .HasMaxLength(260)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<long>(\"SizeBytes\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UploadedByUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"IssueId\");\n\n                    b.HasIndex(\"UploadedByUserId\");\n\n                    b.ToTable(\"Attachments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"AuthorUserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Body\")\n                        .IsRequired()\n                        .HasMaxLength(1200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"IssueId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"AuthorUserId\");\n\n                    b.HasIndex(\"IssueId\", \"CreatedAtUtc\");\n\n                    b.ToTable(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Priority\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<double>(\"Rank\")\n                        .HasColumnType(\"REAL\");\n\n                    b.Property<string>(\"Status\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Title\")\n                        .IsRequired()\n                        .HasMaxLength(200)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"ProjectId\", \"Status\");\n\n                    b.ToTable(\"Issues\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Label\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Color\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(40)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Name\")\n                        .IsUnique();\n\n                    b.ToTable(\"Labels\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Description\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Name\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.ToTable(\"Projects\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.Property<int>(\"ProjectId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"ProjectId\", \"UserId\");\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"ProjectMembers\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime>(\"ExpiresAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<DateTime?>(\"RevokedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Token\")\n                        .IsRequired()\n                        .HasMaxLength(120)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<int>(\"UserId\")\n                        .HasColumnType(\"INTEGER\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Token\")\n                        .IsUnique();\n\n                    b.HasIndex(\"UserId\");\n\n                    b.ToTable(\"RefreshTokens\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.User\", b =>\n                {\n                    b.Property<int>(\"Id\")\n                        .ValueGeneratedOnAdd()\n                        .HasColumnType(\"INTEGER\");\n\n                    b.Property<DateTime>(\"CreatedAtUtc\")\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"DisplayName\")\n                        .IsRequired()\n                        .HasMaxLength(60)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Email\")\n                        .IsRequired()\n                        .HasMaxLength(254)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"PasswordHash\")\n                        .IsRequired()\n                        .HasMaxLength(300)\n                        .HasColumnType(\"TEXT\");\n\n                    b.Property<string>(\"Role\")\n                        .IsRequired()\n                        .HasMaxLength(20)\n                        .HasColumnType(\"TEXT\");\n\n                    b.HasKey(\"Id\");\n\n                    b.HasIndex(\"Email\")\n                        .IsUnique();\n\n                    b.ToTable(\"Users\");\n                });\n\n            modelBuilder.Entity(\"IssueLabel\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", null)\n                        .WithMany()\n                        .HasForeignKey(\"IssuesId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Label\", null)\n                        .WithMany()\n                        .HasForeignKey(\"LabelsId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ActivityEvent\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"Actor\")\n                        .WithMany()\n                        .HasForeignKey(\"ActorUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Actor\");\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Attachment\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", \"Issue\")\n                        .WithMany()\n                        .HasForeignKey(\"IssueId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"UploadedBy\")\n                        .WithMany()\n                        .HasForeignKey(\"UploadedByUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.Navigation(\"Issue\");\n\n                    b.Navigation(\"UploadedBy\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Comment\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"Author\")\n                        .WithMany()\n                        .HasForeignKey(\"AuthorUserId\")\n                        .OnDelete(DeleteBehavior.Restrict)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.Issue\", \"Issue\")\n                        .WithMany(\"Comments\")\n                        .HasForeignKey(\"IssueId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Author\");\n\n                    b.Navigation(\"Issue\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany(\"Issues\")\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.ProjectMember\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.Project\", \"Project\")\n                        .WithMany()\n                        .HasForeignKey(\"ProjectId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"Project\");\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.RefreshToken\", b =>\n                {\n                    b.HasOne(\"TaskForge.Core.Entities.User\", \"User\")\n                        .WithMany()\n                        .HasForeignKey(\"UserId\")\n                        .OnDelete(DeleteBehavior.Cascade)\n                        .IsRequired();\n\n                    b.Navigation(\"User\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Issue\", b =>\n                {\n                    b.Navigation(\"Comments\");\n                });\n\n            modelBuilder.Entity(\"TaskForge.Core.Entities.Project\", b =>\n                {\n                    b.Navigation(\"Issues\");\n                });\n#pragma warning restore 612, 618\n        }\n    }\n}\n",
+          "status": "modified",
+          "regions": {},
+          "changedLines": [
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            350,
+            351,
+            352,
+            353,
+            354,
+            355,
+            356,
+            357,
+            358,
+            359,
+            360,
+            361,
+            362,
+            363,
+            364,
+            365,
+            366,
+            367,
+            368
+          ]
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfActivityRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\n// כתיבה: מוסיפים שורת אירוע ושומרים — append-only, בלי מעקב/עדכון.\n// קריאה: ה-feed האחרון, ‏Include של ה-Actor כדי להציג שם, ‏Take מגביל עלות.\npublic sealed class EfActivityRepository(TaskForgeDbContext db) : IActivityRepository\n{\n    public async Task LogAsync(ActivityEvent activityEvent, CancellationToken cancellationToken = default)\n    {\n        db.ActivityEvents.Add(activityEvent);\n        await db.SaveChangesAsync(cancellationToken);\n    }\n\n    public async Task<IReadOnlyList<ActivityEvent>> GetRecentForProjectAsync(\n        int projectId,\n        int take,\n        CancellationToken cancellationToken = default) =>\n        await db.ActivityEvents\n            .AsNoTracking()\n            .Where(e => e.ProjectId == projectId)\n            .Include(e => e.Actor)\n            .OrderByDescending(e => e.CreatedAtUtc)\n            .ThenByDescending(e => e.Id)\n            .Take(take)\n            .ToListAsync(cancellationToken);\n\n    // אותה שאילתה בדיוק, רק מסוננת ל-issueId — ה-timeline של מסך הפרטים.\n    public async Task<IReadOnlyList<ActivityEvent>> GetRecentForIssueAsync(\n        int issueId,\n        int take,\n        CancellationToken cancellationToken = default) =>\n        await db.ActivityEvents\n            .AsNoTracking()\n            .Where(e => e.IssueId == issueId)\n            .Include(e => e.Actor)\n            .OrderByDescending(e => e.CreatedAtUtc)\n            .ThenByDescending(e => e.Id)\n            .Take(take)\n            .ToListAsync(cancellationToken);\n}\n",
+          "status": "modified",
+          "regions": {
+            "step-19.8b": {
+              "start": 31,
+              "end": 43
+            },
+            "step-18.6": {
+              "start": 8,
+              "end": 44
+            }
+          },
+          "changedLines": [
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43
+          ]
+        },
+        "server/TaskForge.Infrastructure/Repositories/EfAttachmentRepository.cs": {
+          "content": "using Microsoft.EntityFrameworkCore;\nusing TaskForge.Core.Abstractions;\nusing TaskForge.Core.Entities;\nusing TaskForge.Infrastructure.Data;\n\nnamespace TaskForge.Infrastructure.Repositories;\n\npublic sealed class EfAttachmentRepository(TaskForgeDbContext db) : IAttachmentRepository\n{\n    public async Task<Attachment> AddAsync(Attachment attachment, CancellationToken cancellationToken = default)\n    {\n        db.Attachments.Add(attachment);\n        await db.SaveChangesAsync(cancellationToken);\n        return attachment;\n    }\n\n    // הרשימה: הקרנה שמשמיטה את ה-Bytes בכוונה. EF מתרגם את ה-Select ל-SQL\n    // ששולף רק את העמודות שביקשנו — ה-BLOB הכבד לא יוצא מה-DB.\n    public async Task<IReadOnlyList<Attachment>> GetMetadataByIssueAsync(\n        int issueId,\n        CancellationToken cancellationToken = default) =>\n        await db.Attachments\n            .AsNoTracking()\n            .Where(a => a.IssueId == issueId)\n            .Include(a => a.UploadedBy)\n            .OrderByDescending(a => a.CreatedAtUtc)\n            .ThenByDescending(a => a.Id)\n            .Select(a => new Attachment\n            {\n                Id = a.Id,\n                IssueId = a.IssueId,\n                FileName = a.FileName,\n                ContentType = a.ContentType,\n                SizeBytes = a.SizeBytes,\n                Bytes = Array.Empty<byte>(), // לא שולפים את ה-BLOB ברשימה\n                UploadedByUserId = a.UploadedByUserId,\n                UploadedBy = a.UploadedBy,\n                CreatedAtUtc = a.CreatedAtUtc,\n            })\n            .ToListAsync(cancellationToken);\n\n    // ההורדה: כאן כן צריך את ה-bytes\n    public Task<Attachment?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>\n        db.Attachments\n            .AsNoTracking()\n            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);\n}\n",
+          "status": "added",
+          "regions": {
+            "step-19.3": {
+              "start": 8,
+              "end": 47
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48
+          ]
+        }
+      }
     }
   }
 };

@@ -1,0 +1,338 @@
+:host {
+  display: block;
+}
+
+.detail {
+  display: grid;
+  gap: var(--sp-4);
+  max-width: 1100px;
+}
+
+.back {
+  color: var(--txt2);
+  font-size: var(--fs-small);
+}
+
+.detail-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+
+  h2 {
+    margin: var(--sp-1) 0 0;
+    font-size: 28px;
+    line-height: 1.12;
+  }
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--txt3);
+  font-size: var(--fs-small);
+}
+
+// #region step-19.25
+// שתי עמודות: ראשית גמישה + צדדית צרה. מתקפל לעמודה אחת מתחת ל-860px.
+.detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 22rem);
+  gap: var(--sp-4);
+  align-items: start;
+}
+
+.detail-main,
+.detail-side {
+  display: grid;
+  gap: var(--sp-4);
+  min-width: 0;
+}
+
+@media (max-width: 860px) {
+  .detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+// #endregion
+
+.issue-form,
+.comments {
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  background: var(--sur);
+  padding: var(--sp-4);
+}
+
+.issue-form,
+.comment-form {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.field {
+  display: grid;
+  gap: var(--sp-1);
+
+  > span {
+    font-size: var(--fs-small);
+    color: var(--txt2);
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--bdr);
+    border-radius: var(--rad-sm);
+    background: var(--sur2);
+    color: var(--txt1);
+    padding: 10px 12px;
+    font: inherit;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  small {
+    color: var(--txt3);
+  }
+
+  .error {
+    color: var(--danger);
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--sp-3);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.comments {
+  display: grid;
+  gap: var(--sp-3);
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h3 {
+      margin: 0;
+    }
+
+    span {
+      color: var(--txt3);
+      font-size: var(--fs-small);
+    }
+  }
+}
+
+.comment-list {
+  display: grid;
+  gap: var(--sp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    border: 1px solid var(--bdr);
+    border-radius: var(--rad-sm);
+    background: var(--sur2);
+    padding: var(--sp-3);
+
+    // #region step-19.26
+    // התגובה הזמנית (אופטימית) — עמומה מעט עד שהשרת מאשר
+    &.pending {
+      opacity: 0.6;
+      border-style: dashed;
+    }
+    // #endregion
+  }
+
+  .empty {
+    color: var(--txt3);
+  }
+}
+
+.comment-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  color: var(--txt3);
+  font-size: var(--fs-small);
+
+  strong {
+    color: var(--txt1);
+  }
+}
+
+// #region step-19.27
+// תוכן Markdown מרונדר: כללי תצוגה לתגיות הבטוחות שה-renderer מפיק
+.comment-body {
+  margin: var(--sp-2) 0 0;
+  color: var(--txt2);
+  line-height: var(--lh-normal);
+  overflow-wrap: anywhere;
+
+  code {
+    font-family: ui-monospace, monospace;
+    background: var(--sur3);
+    padding: 0 4px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  a {
+    color: var(--accent);
+  }
+
+  .mention {
+    color: var(--accent);
+    font-weight: var(--fw-semibold);
+  }
+}
+
+// בר ה-Undo: מופיע בזמן חלון הביטול של תגובה אופטימית
+.undo-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--accent);
+  border-radius: var(--rad-sm);
+  background: var(--accent-subtle);
+  font-size: var(--fs-small);
+  color: var(--txt1);
+
+  button {
+    border: 0;
+    background: transparent;
+    color: var(--accent);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+  }
+}
+// #endregion
+
+// #region step-19.28
+// העמודה הצדדית: קבצים וציר זמן, כרטיסים תואמים לשפת העיצוב
+.attachments,
+.timeline {
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  background: var(--sur);
+  padding: var(--sp-3);
+  display: grid;
+  gap: var(--sp-2);
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h3 {
+      margin: 0;
+      font-size: var(--fs-base);
+    }
+
+    span {
+      color: var(--txt3);
+      font-size: var(--fs-small);
+    }
+  }
+}
+
+.upload {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-small);
+  color: var(--txt2);
+  cursor: pointer;
+}
+
+.attach-list,
+.timeline-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.attach-list li {
+  display: grid;
+  gap: 2px;
+}
+
+.attach-name {
+  justify-self: start;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.attach-meta,
+.t-time,
+.empty {
+  color: var(--txt3);
+  font-size: var(--fs-small);
+}
+
+.timeline-list li {
+  display: flex;
+  align-items: start;
+  gap: var(--sp-2);
+}
+
+.t-icon {
+  flex: 0 0 auto;
+  width: 1.3rem;
+  text-align: center;
+}
+
+.t-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.t-summary {
+  font-size: var(--fs-small);
+  color: var(--txt2);
+
+  strong {
+    color: var(--txt1);
+  }
+}
+// #endregion
+
+.load-error,
+.hint {
+  color: var(--txt2);
+}
+
+@media (max-width: 720px) {
+  .detail-head,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-head {
+    display: grid;
+  }
+}
