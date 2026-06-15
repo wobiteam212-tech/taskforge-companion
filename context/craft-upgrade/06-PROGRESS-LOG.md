@@ -26,7 +26,7 @@
 | ch15 — Modern CSS 2026 | `04-chapter-specs/ch15-modern-css.md` | DONE — snapshot `c7f7b7d`, content + demo committed (see latest log entry) |
 | ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | DONE — snapshot (`bfc4bb7`/`974f074`/`1de5821`) + demo + content; see latest log entry |
 | ch17 — Kanban DnD | `04-chapter-specs/ch17-kanban-dnd.md` | DONE — backend `b68c9af`; frontend + content + demo `9b3f79a` (entity-store/optimistic spine, accessible pointer+keyboard DnD, runtime-verified) |
-| ch18 — Dashboard | `04-chapter-specs/ch18-dashboard.md` | NOT STARTED |
+| ch18 — Dashboard | `04-chapter-specs/ch18-dashboard.md` | DONE — backend `fecc7f2`; frontend + content + demo `29000ee` (stats GROUP BY + activity log + migration; DashboardStore derived selectors + hand-rolled SVG charts; runtime + layout verified) |
 | ch19 — Rich detail | `04-chapter-specs/ch19-rich-detail.md` | NOT STARTED |
 | ch20 — State capstone | `04-chapter-specs/ch20-state-capstone.md` | NOT STARTED |
 | Wave 5 — Testing (ch21) | (planned in `01-MASTER-PLAN.md`) | NOT STARTED |
@@ -36,6 +36,46 @@
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-15 — ch18 Dashboard & Data-Viz — DONE (Claude)
+- Full chapter done: backend `fecc7f2`, frontend+content+demo `29000ee`. **spine #3 = derived/aggregation selectors.**
+- BACKEND (`reference/ch18/server/`): aggregation seam `IStatsRepository`/`EfStatsRepository` — GROUP BY by status,
+  priority, and `CreatedAtUtc.Date` (per-day trend) → `ProjectStats` DTO (Core/Common); `ActivityEvent` entity +
+  `ActivityType` enum (string-converted), `IActivityRepository`/`EfActivityRepository` (LogAsync + GetRecent w/ Include
+  Actor), `DashboardContracts.ActivityResponse`; `DashboardEndpoints` GET `/api/projects/{id}/stats` + `/activity?take=`
+  (member-authz, take clamp 1..50); activity WRITTEN from handlers (IssueEndpoints create + status-change-only reorder;
+  CommentEndpoints add) via injected IActivityRepository; EF migration `AddActivityLog` (new table + FK cascade/restrict
+  + index) generated in `.build` then copied to overlay (+ ModelSnapshot); DbSeeder seeds 5 events. milestones += ch18 dotnet.
+  Curl-verified: stats p1 total 60 (open21/inProgress20/done19 — matches ch17 kanban), byPriority sums 60, createdPerDay
+  19 days (GroupBy date translates in SQLite!); activity newest-first w/ actor names; anon→401; create issue grows
+  activity 4→5 + total 60→61.
+- FRONTEND (`reference/ch18/client/`): `core/models/dashboard.model.ts`; `core/state/dashboard.store.ts` = two
+  httpResource keyed by projectId (undefined when logged-out) + **derived selectors** summaryCards/statusSlices/
+  prioritySlices/trend (raw counts → chart-ready view models, colors as `var(--chart-*)`); hand-rolled SVG charts
+  `features/dashboard/charts/{donut,bar,sparkline}.ts` (single-file dumb components); `dashboard.{ts,html,scss}` (smart
+  component, DatePipe feed, intrinsic auto-fit grid + container-query card font + clamp + OKLCH series colors); route
+  `/projects/:id/dashboard` (guard+resolver) + board nav link. milestones += ch18 ng. 20-step content + mini-dashboard
+  live demo (regenerate → selectors → SVG). registry ch18 → ready.
+- **LAYOUT BUG caught by Oleg (screenshot) AFTER I prematurely called it done** — charts ballooned (`width:100%`+
+  `aspect-ratio:200/120` → bar ~360px tall) and a cross-tile `grid-row:span 3` subgrid OVERLAPPED tiles. FIX: bound every
+  chart by HEIGHT (donut fixed 140px square, bar `height:150px`, sparkline `height:88px`) + `preserveAspectRatio="xMidYMid
+  meet"` + tile `overflow:hidden`; dropped subgrid for robust flex-column tiles. Re-verified via bounding boxes at 1280
+  (4 cards, 3 aligned chart cols, every svg inside its tile) and 375 (2x2 cards, 1-col charts), `docOverflow:false`, 0
+  console errors. Saved durable feedback memory `verify-layout-before-done.md`.
+- **GOTCHAS (write these on the wall):** (1) ALWAYS visually/measurement-verify layout BEFORE saying done — compile+tests
+  don't catch overflow/overlap. (2) Preview `clientWidth` is often **0** (hidden tab) → forces FALSE overflow readings;
+  `preview_resize` to an EXPLICIT width (1280 AND 375) before measuring. `preview_screenshot` times out on hidden tab —
+  use `preview_eval` bounding-box reads. (3) hand-rolled SVG charts must be HEIGHT-bounded, never width-driven aspect-ratio.
+  (4) content.ts: arrow-ban scans `step.title` + prose + panel captions (NOT JS comments) — no →/←; the bash `code` panel
+  needs `\n` escapes, not literal newlines in `"..."`. (5) `pnpm install --silent` after a fresh materialize can leave
+  `@angular/cdk` unresolved (ng build fails on `@angular/cdk/drag-drop`) — rerun full `pnpm install`; known transient.
+- GATES ALL green: gen:manifest 18 snapshots/1580 entries · verify:coverage 171 files (0 pending) · vitest 114 (+6 ch18) ·
+  guide `pnpm build` clean (only Mermaid CJS warning) · re-materialized + ch18 client `ng build` 0 errors + ch18 server
+  `dotnet build` 0/0. launch.json snapshot config ch17 → ch18.
+- WHAT'S NEXT: **ch19 — Rich Issue Detail** (`04-chapter-specs/ch19-rich-detail.md`): markdown editor, mentions,
+  attachments (safe save), issue-level activity timeline (sits on the ch18 activity log!), undo/rollback around rich
+  actions. Snapshot-first as usual. NOTE master-plan trim order = drop ch19 FIRST if scope must shrink; ch18 was the
+  second-to-keep, so ch19 is the most-trimmable — confirm with Oleg whether to build it or jump to Wave 5 (ch21 testing).
 
 ### 2026-06-14 — ch17 frontend + content + demo — DONE (Claude)
 - Finished ch17 (commit `9b3f79a`). Frontend overlay (`reference/ch17/client/`):
