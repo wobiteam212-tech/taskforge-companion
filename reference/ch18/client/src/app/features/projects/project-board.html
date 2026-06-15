@@ -1,0 +1,55 @@
+<section class="board">
+  <header class="board-head">
+    <a routerLink="/" class="back">Back to projects</a>
+    <h2>
+      {{ project().name }}
+      <tf-badge tone="count">{{ project().openIssues }} open</tf-badge>
+    </h2>
+    @if (project().description; as desc) {
+      <p class="desc">{{ desc }}</p>
+    }
+    <!-- #region step-18.23 -->
+    <!-- קישור לדשבורד הפרויקט — מסך נפרד (לא תצוגה של הלוח), ולכן קישור ניווט -->
+    <a [routerLink]="['/projects', projectId(), 'dashboard']" class="back dash-link">דשבורד הפרויקט ←</a>
+    <!-- #endregion -->
+  </header>
+
+  <!-- #region step-17.20b -->
+  <!-- מתג התצוגה: שני קישורים שכותבים ?view ל-URL (merge שומר את שאר
+       הפרמטרים). list מוחק את המפתח (ברירת מחדל), kanban מוסיף אותו. -->
+  <nav class="filters view-toggle" aria-label="תצוגת הלוח">
+    <a
+      routerLink="."
+      [queryParams]="{ view: null }"
+      queryParamsHandling="merge"
+      [class.on]="!isKanban()"
+      [attr.aria-current]="!isKanban() ? 'page' : null"
+      >רשימה</a
+    >
+    <a
+      routerLink="."
+      [queryParams]="{ view: 'kanban' }"
+      queryParamsHandling="merge"
+      [class.on]="isKanban()"
+      [attr.aria-current]="isKanban() ? 'page' : null"
+      >לוח Kanban</a
+    >
+  </nav>
+
+  @if (isKanban()) {
+    <tf-kanban-board [projectId]="projectId()" />
+  } @else {
+    <!-- הלוח האמיתי הגיע: מסנני הסטטוס מפרק 10 עברו לתוך ה-toolbar שלו,
+         וה-placeholder נמחק. אותם inputs, אותו חוזה URL — יותר מסך. -->
+    <tf-issue-board
+      [projectId]="projectId()"
+      [status]="status()"
+      [search]="q()"
+      [sort]="sort()"
+      [page]="page() ?? 1"
+    />
+  }
+  <!-- #endregion -->
+
+  <tf-project-members [projectId]="projectId()" />
+</section>

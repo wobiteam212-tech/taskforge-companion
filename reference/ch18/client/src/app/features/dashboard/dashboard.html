@@ -1,0 +1,72 @@
+<!-- #region step-18.20 -->
+<section class="dashboard">
+  <header class="dash-head">
+    <a [routerLink]="['/projects', projectId()]" class="back">חזרה ללוח</a>
+    <h2>{{ project().name }} — דשבורד</h2>
+  </header>
+
+  @if (store.loadError() && !store.stats()) {
+    <div class="load-error" role="alert">
+      <p>טעינת הדשבורד נכשלה.</p>
+      <button type="button" (click)="store.reload()">נסו שוב</button>
+    </div>
+  } @else if (store.loading() && !store.stats()) {
+    <div class="skeleton" aria-hidden="true">
+      @for (n of [1, 2, 3, 4]; track n) {
+        <div class="skel-card"></div>
+      }
+    </div>
+  } @else if (store.stats()) {
+    <!-- כרטיסי סיכום: grid אינטרינזי, container query על כל כרטיס -->
+    <ul class="cards" role="list">
+      @for (card of store.summaryCards(); track card.label) {
+        <li class="card" [attr.data-tone]="card.tone">
+          <span class="card-value">{{ card.value }}</span>
+          <span class="card-label">{{ card.label }}</span>
+        </li>
+      }
+    </ul>
+
+    <!-- אריחי הגרפים: subgrid כדי שכותרת/גרף/כיתוב יתיישרו לאורך השורה -->
+    <div class="charts">
+      <section class="tile">
+        <h3 class="tile-title">לפי סטטוס</h3>
+        <div class="tile-body"><tf-donut-chart [slices]="store.statusSlices()" /></div>
+        <p class="tile-cap">חלוקת ה-issues בין העמודות</p>
+      </section>
+
+      <section class="tile">
+        <h3 class="tile-title">לפי עדיפות</h3>
+        <div class="tile-body"><tf-bar-chart [slices]="store.prioritySlices()" /></div>
+        <p class="tile-cap">כמה issues בכל רמת עדיפות</p>
+      </section>
+
+      <section class="tile">
+        <h3 class="tile-title">מגמת יצירה</h3>
+        <div class="tile-body"><tf-sparkline [values]="store.trend()" /></div>
+        <p class="tile-cap">issues חדשים לאורך זמן</p>
+      </section>
+    </div>
+
+    <!-- פיד הפעילות -->
+    <section class="feed">
+      <h3 class="feed-title">פעילות אחרונה</h3>
+      @if (store.activity().length) {
+        <ul class="feed-list" role="list">
+          @for (event of store.activity(); track event.id) {
+            <li class="feed-item">
+              <span class="feed-icon" aria-hidden="true">{{ iconFor(event.type) }}</span>
+              <span class="feed-body">
+                <span class="feed-summary"><strong class="feed-actor">{{ event.actorName }}</strong> {{ event.summary }}</span>
+                <time class="feed-time" [attr.datetime]="event.createdAtUtc">{{ event.createdAtUtc | date: 'short' }}</time>
+              </span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="feed-empty">אין עדיין פעילות בפרויקט הזה.</p>
+      }
+    </section>
+  }
+</section>
+<!-- #endregion -->

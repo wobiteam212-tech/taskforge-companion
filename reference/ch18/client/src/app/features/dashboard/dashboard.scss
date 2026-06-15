@@ -1,0 +1,218 @@
+// #region step-18.21
+:host {
+  display: block;
+}
+
+.dashboard {
+  display: grid;
+  gap: clamp(var(--sp-3), 2vw, var(--sp-5));
+
+  // צבעי הסדרות נגזרים מה-accent ב-OKLCH: הסטטוסים בגוונים נבדלים,
+  // ועדיפות כ-ramp שחולק את גוון ה-ember עם chroma עולה ו-lightness יורד.
+  --chart-open: oklch(0.72 0.17 45);
+  --chart-progress: oklch(0.7 0.13 230);
+  --chart-done: oklch(0.72 0.15 150);
+  --chart-p1: oklch(0.82 0.06 60);
+  --chart-p2: oklch(0.76 0.11 55);
+  --chart-p3: oklch(0.69 0.16 45);
+  --chart-p4: oklch(0.62 0.2 35);
+}
+
+.dash-head {
+  .back {
+    font-size: var(--fs-small);
+    color: var(--txt2);
+  }
+  h2 {
+    margin-block: var(--sp-2) 0;
+  }
+}
+
+// כרטיסי סיכום: grid אינטרינזי שמתקפל לבד; כל כרטיס הוא container query context.
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--sp-3);
+}
+
+.card {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: var(--sp-3);
+  background: var(--sur);
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  border-inline-start: 3px solid var(--accent);
+
+  &[data-tone='open'] {
+    border-inline-start-color: var(--chart-open);
+  }
+  &[data-tone='progress'] {
+    border-inline-start-color: var(--chart-progress);
+  }
+  &[data-tone='done'] {
+    border-inline-start-color: var(--chart-done);
+  }
+}
+
+.card-value {
+  font-size: clamp(1.6rem, 1.2rem + 2cqi, 2.4rem);
+  font-weight: var(--fw-bold);
+  color: var(--txt1);
+  line-height: 1;
+}
+
+.card-label {
+  font-size: var(--fs-small);
+  color: var(--txt2);
+}
+
+// כשהכרטיס צר — מקטינים את המספר עוד, לפי רוחב הכרטיס עצמו (לא המסך)
+@container (max-width: 130px) {
+  .card-value {
+    font-size: 1.5rem;
+  }
+}
+
+// אריחי הגרפים: grid אינטרינזי שמתקפל לבד. align-items:start כדי שאריח לא
+// יימתח לגובה שכנו. כל אריח הוא flex column עם גוף בגובה קבוע — כך הגרפים
+// תחומים ואף פעם לא "מתנפחים" אל מעבר לאריח.
+.charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--sp-3);
+  align-items: start;
+}
+
+.tile {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  background: var(--sur);
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  overflow: hidden; // רשת ביטחון: גרף לא יחרוג מהאריח
+}
+
+.tile-title {
+  margin: 0;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
+  color: var(--txt2);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-tight);
+}
+
+// גוף בגובה קבוע: כל הגרפים תחומים אליו, ולכן האריחים אחידים ואין חריגה.
+.tile-body {
+  display: grid;
+  place-items: center;
+  block-size: 150px;
+  min-height: 0;
+}
+
+.tile-cap {
+  margin: 0;
+  font-size: var(--fs-small);
+  color: var(--txt3);
+}
+
+// פיד הפעילות
+.feed {
+  padding: var(--sp-3);
+  background: var(--sur);
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+}
+
+.feed-title {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
+  color: var(--txt2);
+  text-transform: uppercase;
+}
+
+.feed-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.feed-item {
+  display: flex;
+  align-items: start;
+  gap: var(--sp-2);
+  padding-block: var(--sp-1);
+  border-block-start: 1px solid var(--bdr);
+
+  &:first-child {
+    border-block-start: none;
+  }
+}
+
+.feed-icon {
+  flex: 0 0 auto;
+  width: 1.4rem;
+  text-align: center;
+}
+
+.feed-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.feed-summary {
+  color: var(--txt1);
+  font-size: var(--fs-small);
+}
+
+.feed-actor {
+  color: var(--txt1);
+  font-weight: var(--fw-semibold);
+}
+
+.feed-time {
+  font-size: var(--fs-small);
+  color: var(--txt3);
+}
+
+.feed-empty {
+  color: var(--txt3);
+  font-size: var(--fs-small);
+}
+
+// מצבי שלד ושגיאה
+.skeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--sp-3);
+}
+
+.skel-card {
+  height: 84px;
+  border-radius: var(--rad);
+  background: var(--sur2);
+}
+
+.load-error {
+  padding: var(--sp-3);
+  color: var(--danger);
+
+  button {
+    margin-block-start: var(--sp-2);
+  }
+}
+// #endregion

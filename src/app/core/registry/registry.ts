@@ -252,7 +252,9 @@ export const WAVES: WaveDef[] = [
         blurb:
           'summary cards, activity feed, stats endpoints, derived selectors, ו-SVG charts ידניים שמחוברים לנתוני אמת.',
         wave: 4,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch18-dashboard-data-viz/content').then((m) => m.CH18_CONTENT),
       },
       {
         id: 'ch19',
