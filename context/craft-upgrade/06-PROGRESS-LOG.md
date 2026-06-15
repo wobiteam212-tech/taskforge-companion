@@ -28,7 +28,7 @@
 | ch17 — Kanban DnD | `04-chapter-specs/ch17-kanban-dnd.md` | DONE — backend `b68c9af`; frontend + content + demo `9b3f79a` (entity-store/optimistic spine, accessible pointer+keyboard DnD, runtime-verified) |
 | ch18 — Dashboard | `04-chapter-specs/ch18-dashboard.md` | DONE — backend `fecc7f2`; frontend + content + demo `29000ee` (stats GROUP BY + activity log + migration; DashboardStore derived selectors + hand-rolled SVG charts; runtime + layout verified) |
 | ch19 — Rich detail | `04-chapter-specs/ch19-rich-detail.md` | DONE — backend `d2c9147`; frontend + content + demo `fec9fe8` (markdown+XSS, @mention custom control, attachments BLOB, optimistic comments+undo, issue activity timeline; runtime-verified; content delegated+reviewed) |
-| ch20 — State capstone | `04-chapter-specs/ch20-state-capstone.md` | NOT STARTED |
+| ch20 — State capstone | `04-chapter-specs/ch20-state-capstone.md` | DONE — `f35a80e` (IssuesStore refactored to @ngrx/signals, public surface preserved, board/kanban untouched; runtime-verified; content delegated+reviewed). **Wave 4 COMPLETE.** |
 | Wave 5 — Testing (ch21) | (planned in `01-MASTER-PLAN.md`) | NOT STARTED |
 | Wave 5 — Perf & a11y (ch22) | (planned) | NOT STARTED |
 | Wave 6 — Production (ch23–26) | (planned) | NOT STARTED |
@@ -36,6 +36,36 @@
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-15 — ch20 State Capstone (@ngrx/signals) — DONE — WAVE 4 COMPLETE (Claude; content DELEGATED + reviewed)
+- Commit `f35a80e` (single commit — frontend-only, no backend). **spine piece #5 / Wave-4 closer.**
+- VIABILITY CHECK FIRST (the spec flagged the dep risk): `@ngrx/signals` latest is **v21.1.1, peer `@angular/core:^21`**
+  while the app is Angular **v22**. I empirically tested: `pnpm add` succeeds (peer = WARNING not error) and a
+  `signalStore(withEntities/withComputed/withMethods)` probe COMPILES + the real refactor runs correctly under ng22
+  (signals API is stable). So ch20 is viable; the peer-gap is taught honestly as a real "library trails framework" lesson.
+- THE REFACTOR (`reference/ch20/client/`): `package.json` += `@ngrx/signals ^21.1.1`; `core/state/issues.store.ts`
+  rewritten from hand-rolled (linkedSignal/EntityStore + optimistic util, ch17) to
+  `signalStore({providedIn:'root'}, withEntities<Issue>(), withState<IssuesState>(), withComputed(issues=entities),
+  withMethods(load + setQuery/clearQuery/reload + setStatus/reorder optimistic via patchState+updateEntity, rollback
+  setAllEntities(before)), withHooks(onInit effect(load(query,isLoggedIn))))`. **PUBLIC SURFACE PRESERVED EXACTLY** —
+  issue-board + kanban-board NOT touched (the seam held; the lesson). Other stores stay hand-rolled (contrast is the point).
+  milestones += ch20 ng.
+- DELEGATION: I built+proved the snapshot + built the live demo (hand-rolled mini signal-store mirroring
+  withEntities/withComputed/withMethods — no guide dep), then delegated `content.ts` to a sonnet agent w/ verified facts +
+  region map + the side-by-side comparison panels (ch17 hand-rolled vs ch20 @ngrx). Agent returned 15 steps/7 quiz/4
+  proveIt/exercise/11 terms, all gates green. REVIEW FIX: agent used a `pie` mermaid with INVENTED slice numbers
+  (65/25/10) for the bundle delta — replaced with a `code-inline` panel showing ONLY the measured ~116kB→~120kB (~4kB)
+  fact (verified-facts rule: no fabricated data-as-chart). No arrows, no raw `**`, panels resolve.
+- RUNTIME-VERIFIED (two-server smoke): list paging identical "Page 1 of 2 — 60 issues"; kanban 21/20/19; onDrop reorder
+  of Open issue 2 persisted exact midpoint rank 7680 (mid of 6144/9216) via the @ngrx optimistic updateEntity+PATCH;
+  behavior identical to pre-refactor; 0 @ngrx console errors; project-board lazy chunk ~116→~120kB. Guide chapter (4400)
+  verified: 15 steps render, signal-store demo works (add/toggle/remove + derived doneCount), 375px clean, 0 errors.
+- GATES ALL green: gen:manifest 20/1946 · verify:coverage 183 (0 pending) · vitest 126 (+6 ch20) · guide build clean ·
+  clean re-materialize + ch20 client `pnpm install` (@ngrx resolves) + `ng build` clean. launch.json snapshot ch19→ch20.
+- **WAVE 4 (Craft & Polish, ch15–ch20) COMPLETE.** WHAT'S NEXT = **Wave 5: ch21 Testing** (unit/integration/e2e —
+  the IAttachmentRepository/IStatsRepository/etc seams + signal stores are now ripe to test; no detailed chapter spec
+  exists yet for ch21 — it was a shifted placeholder, so the next session should DESIGN ch21 first, e.g. via a grill-me
+  planning pass with Oleg) then ch22 Perf/a11y. Confirm scope/spec for ch21 with Oleg before building.
 
 ### 2026-06-15 — ch19 Rich Issue Detail — DONE (Claude; content DELEGATED + reviewed) (Oleg picked "build ch19" over skipping)
 - Full chapter done: backend `d2c9147`, frontend+content+demo `fec9fe8`. **spine #4 = custom form control + optimistic threads + undo.**
