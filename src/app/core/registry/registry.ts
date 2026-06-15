@@ -276,7 +276,9 @@ export const WAVES: WaveDef[] = [
         blurb:
           'ריפקטור מבוקר של store אחד ל-‎@ngrx/signals, תוך שימור public surface והסבר איך הכלי ממפה לארכיטקטורה שבנינו ביד.',
         wave: 4,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch20-state-capstone/content').then((m) => m.CH20_CONTENT),
       },
     ],
   },
