@@ -27,7 +27,7 @@
 | ch16 — Command palette | `04-chapter-specs/ch16-command-palette.md` | DONE — snapshot (`bfc4bb7`/`974f074`/`1de5821`) + demo + content; see latest log entry |
 | ch17 — Kanban DnD | `04-chapter-specs/ch17-kanban-dnd.md` | DONE — backend `b68c9af`; frontend + content + demo `9b3f79a` (entity-store/optimistic spine, accessible pointer+keyboard DnD, runtime-verified) |
 | ch18 — Dashboard | `04-chapter-specs/ch18-dashboard.md` | DONE — backend `fecc7f2`; frontend + content + demo `29000ee` (stats GROUP BY + activity log + migration; DashboardStore derived selectors + hand-rolled SVG charts; runtime + layout verified) |
-| ch19 — Rich detail | `04-chapter-specs/ch19-rich-detail.md` | NOT STARTED |
+| ch19 — Rich detail | `04-chapter-specs/ch19-rich-detail.md` | DONE — backend `d2c9147`; frontend + content + demo `fec9fe8` (markdown+XSS, @mention custom control, attachments BLOB, optimistic comments+undo, issue activity timeline; runtime-verified; content delegated+reviewed) |
 | ch20 — State capstone | `04-chapter-specs/ch20-state-capstone.md` | NOT STARTED |
 | Wave 5 — Testing (ch21) | (planned in `01-MASTER-PLAN.md`) | NOT STARTED |
 | Wave 5 — Perf & a11y (ch22) | (planned) | NOT STARTED |
@@ -36,6 +36,44 @@
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-15 — ch19 Rich Issue Detail — DONE (Claude; content DELEGATED + reviewed) (Oleg picked "build ch19" over skipping)
+- Full chapter done: backend `d2c9147`, frontend+content+demo `fec9fe8`. **spine #4 = custom form control + optimistic threads + undo.**
+- BACKEND (`reference/ch19/server/`): `Attachment` entity (BLOB bytes IN the DB — dev-simple/atomic; trade-off taught
+  vs blob-storage); `IAttachmentRepository`/`EfAttachmentRepository` (list uses `.Select` projection that OMITS the BLOB;
+  download loads bytes); `AttachmentContracts.AttachmentResponse`; `AttachmentEndpoints` POST multipart (5MB cap,
+  `.DisableAntiforgery()` — Bearer not cookies so no CSRF), GET list, GET `/api/attachments/{id}` download via
+  `TypedResults.File`; upload logs `ActivityType.AttachmentAdded` (enum value, NO migration — TEXT column);
+  `IActivityRepository.GetRecentForIssueAsync` + `DashboardEndpoints` GET `/api/issues/{id}/activity`; EF migration
+  `AddAttachments`. 201 uploader name from the `name` JWT claim (`with {…}` — nav not loaded). milestones += ch19 dotnet.
+  Curl-verified: upload→201, list "Demo User"/26B, download text/plain bytes round-trip, issue activity incl
+  AttachmentAdded, anon→401, 6MB→400.
+- FRONTEND (`reference/ch19/client/`): `core/markdown/markdown.ts` — **escape-FIRST** then safe tags (the XSS lesson);
+  `shared/ui/markdown-editor/` MarkdownEditor = `FormValueControl<string>` (deepens ch14 priority-picker) with
+  Write/Preview toggle + @mention autocomplete; `IssueDetailStore` += 3 httpResources (attachments/activity/members),
+  optimistic comments with a **4s undo window** (postCommentWithUndo/undoPendingComment/commitPending), addAttachment +
+  blob download; `issue-detail.{ts,html,scss}` two-column workspace (markdown comments via [innerHTML], undo bar,
+  attachments upload/list/download, activity timeline w/ icons). View-transition-name already wired (ch10+ch14).
+  Had to overlay `dashboard.model.ts` (+AttachmentAdded to the ActivityType union) and `dashboard.ts` (+icon) — extending
+  a shared union ripples into existing Record<ActivityType,…>. 25-step content + rich-comment live demo. registry→ready,
+  milestones += ch19 ng.
+- DELEGATION (Oleg's /goal said "delegate what can be"): I built+runtime-proved the snapshot AND built the live demo
+  myself, then delegated ONLY the `content.ts` Hebrew prose to a sonnet general-purpose agent with verified-facts-only +
+  the exact region map. Agent returned all-gates-green (25 steps/7 quiz/5 proveIt/exercise/6 terms) and even caught a real
+  bug in MY demo (literal backticks inside the component `template:` literal → fixed to `&#96;`). My review found 1 issue:
+  a copy-paste title typo "ChartContracts"→"AttachmentContracts" (fixed). All facts checked accurate; no arrows; the
+  ``**bold**`` occurrences are inside backticks (intentional md-syntax examples shown as code), not raw emphasis.
+- RUNTIME-VERIFIED (two-server smoke, explicit widths): markdown **bold**/`code`/@mention render; pasted `<script>`
+  ESCAPED to text (hasScriptTag false) — XSS defense proven; @mention popover filters+inserts; optimistic comment shows
+  instantly (pending), Undo removes it and server count UNCHANGED, break-server→rollback+toast "boom"; file upload via the
+  real input→list+timeline AttachmentAdded; download round-trips (curl); view-transition-name=issue-1; 375px 1-col no
+  overflow; 0 console errors. Guide chapter (port 4400) verified: 25 steps render, live demo works (mention+preview+script
+  escaped), 375px clean, 0 errors.
+- GATES ALL green: gen:manifest 19/1763 · verify:coverage 183 (0 pending) · vitest 120 (+6 ch19) · guide build clean ·
+  clean re-materialize + ch19 server `dotnet build` 0/0 + ch19 client `ng build` clean. launch.json snapshot ch18→ch19.
+- WHAT'S NEXT: **Wave 4 craft is now COMPLETE through ch19.** Per master plan ch20 = State capstone (@ngrx/signals —
+  consolidate the hand-rolled spine: EntityStore + optimistic + selectors + the undo stack into a library-backed store).
+  After ch20, Wave 5 = ch21 Testing, ch22 Perf/a11y. Confirm with Oleg whether to do ch20 next or jump to Wave 5 testing.
 
 ### 2026-06-15 — ch18 Dashboard & Data-Viz — DONE (Claude)
 - Full chapter done: backend `fecc7f2`, frontend+content+demo `29000ee`. **spine #3 = derived/aggregation selectors.**
