@@ -30,12 +30,44 @@
 | ch19 — Rich detail | `04-chapter-specs/ch19-rich-detail.md` | DONE — backend `d2c9147`; frontend + content + demo `fec9fe8` (markdown+XSS, @mention custom control, attachments BLOB, optimistic comments+undo, issue activity timeline; runtime-verified; content delegated+reviewed) |
 | ch20 — State capstone | `04-chapter-specs/ch20-state-capstone.md` | DONE — `f35a80e` (IssuesStore refactored to @ngrx/signals, public surface preserved, board/kanban untouched; runtime-verified; content delegated+reviewed). **Wave 4 COMPLETE.** |
 | Wave 5 — Testing (ch21) | `04-chapter-specs/ch21-testing.md` | DONE — backend `d61ba3d` (xUnit + SQLite-in-memory, 8 tests, gated via dotnet test); frontend + content + demo `5eaa97a` (vitest specs, 15-step content, runtime-verified) |
-| Wave 5 — Perf & a11y (ch22) | (planned) | NOT STARTED |
+| Wave 5 — Perf & a11y (ch22) | `04-chapter-specs/ch22-perf-a11y.md` | DONE — `93f0b1f` snapshot (route preloading + @defer prefetch + skip-link/landmark) + `44e045a` content + demo (16 steps); runtime-verified. **Wave 5 COMPLETE.** |
 | Wave 6 — Production (ch23–26) | (planned) | NOT STARTED |
 
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-16 — ch22 Perf & a11y — DONE — WAVE 5 COMPLETE (Claude; spec self-proposed, content DELEGATED + reviewed)
+- ch22 had no spec; I drafted `04-chapter-specs/ch22-perf-a11y.md` (`6dca7ea`), resolved its OPEN DECISIONS (ONE chapter;
+  perf = measurement + router preloading + @defer prefetch; a11y = skip-link + landmark + focus + reduced-motion audit +
+  teach axe/Lighthouse; a11y framed as "built-in throughout, verified+polished here"), and built it. Frontend-only.
+  Snapshot `93f0b1f`, content+demo `44e045a`.
+- SNAPSHOT (`reference/ch22/client/`): `core/perf/idle-preload.strategy.ts` = custom `PreloadingStrategy` (timer(1500)
+  then load(); opt-out via `data.preload=false`), wired with `withPreloading` in app.config; `app.html` skip-link
+  (`דלג לתוכן`) + focusable `<main id="main-content" tabindex="-1">`; `app.scss` skip-link `:focus` reveal (canonical
+  pattern) + global prefers-reduced-motion net; `issue-board.html` `@defer (on viewport; prefetch on idle)`.
+  milestones += ch22 ng (no backend; ch22 server = ch21 server).
+- DELEGATION: built snapshot + the render-cost live demo (naive vs windowed DOM-node count) myself; delegated only
+  `content.ts` (sonnet, verified facts + region map + explicit "BACKTICK long identifiers" guard from the ch21 lesson).
+  Agent returned 16 steps/7 quiz/5 proveIt/8+ terms, all gates green, self-fixed 3 arrow violations. My review: clean
+  (no arrows, no raw `**`, no long unbacticked tokens, panels resolve) — no fixes needed.
+- RUNTIME-VERIFIED: on the home page with NO navigation, lazy route chunks (project-board/issue-detail/dashboard+charts/
+  not-found) preload in the background after the idle timer; skip-link focus lands + activating jumps to `#main-content`
+  (visual reveal is correct `:focus` CSS — NOT observable in the hidden preview because `:focus` needs the window focused:
+  `document.activeElement===skip` but `matches(':focus')` is false in a blurred tab); demo windowed 25 vs naive 2000
+  rows; guide chapter 16 steps, **docOverflow false at 1280 AND 375** (backticking worked), 0 console errors. Clean
+  re-materialize + ch22 client `ng build` 0 errors.
+- GOTCHA reinforced: `:focus`/`:focus-visible` pseudo-classes don't match in a hidden/blurred preview tab even when the
+  element IS `document.activeElement` — verify focus-reveal CSS by reading the rule + the activeElement, not the computed
+  style. (Same family as the hidden-tab IO/view-transition/ResizeObserver suspensions.)
+- GATES ALL green: gen:manifest 22/2327 · verify:coverage 191 (0 pending) · vitest 138 (+6 ch22) · guide build clean ·
+  clean re-materialize + ch22 client install + `ng build` clean. launch.json snapshot ch20→ch22.
+- **WAVE 5 (Quality, ch21–ch22) COMPLETE.** WHAT'S NEXT = **Wave 6 Production** per the roadmap: ch23 Hardening
+  (OutputCaching/response compression/rate-limiting/secrets/security headers — the `/stats` OutputCaching seam was flagged
+  in ch18), ch24 Realtime (SignalR — live issue/board/comment updates), ch25 Ship (Docker/CI/deploy/env config), ch26
+  Capstone (recap + what's next). NONE have specs yet — DESIGN each first (draft a spec proposal like ch21/ch22, confirm
+  scope w/ Oleg) before building. ch23 is the natural next (cashes in the OutputCaching candidate + adds real backend
+  hardening).
 
 ### 2026-06-16 — ch21 Testing — DONE — opens WAVE 5 (Claude; spec self-proposed, content DELEGATED + reviewed)
 - ch21 had NO spec (shifted placeholder); I drafted `04-chapter-specs/ch21-testing.md` (`c222977`), resolved its OPEN
