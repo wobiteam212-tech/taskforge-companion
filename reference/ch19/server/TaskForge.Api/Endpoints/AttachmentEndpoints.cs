@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using TaskForge.Api.Auth;
 using TaskForge.Api.Contracts;
 using TaskForge.Core.Abstractions;
@@ -11,6 +12,7 @@ public static class AttachmentEndpoints
 {
     // קובץ עד 5MB — מגבלה פשוטה שמונעת העלאות ענק ל-DB בפיתוח
     private const long MaxBytes = 5 * 1024 * 1024;
+    private const long MaxRequestBytes = MaxBytes + 64 * 1024; // multipart headers + file part overhead
 
     // #region step-19.5
     public static IEndpointRouteBuilder MapAttachmentEndpoints(this IEndpointRouteBuilder app)
@@ -22,7 +24,11 @@ public static class AttachmentEndpoints
         perIssue.MapGet("/", ListAttachments);
         // DisableAntiforgery: ה-SPA שולח Bearer, לא קוקי — אין סיכון CSRF, ולכן
         // מוותרים על דרישת ה-antiforgery token שמינimal API מבקש כברירת מחדל ל-multipart.
-        perIssue.MapPost("/", UploadAttachment).DisableAntiforgery();
+        perIssue.MapPost("/", UploadAttachment)
+            .DisableAntiforgery()
+            .WithMetadata(
+                new RequestSizeLimitAttribute(MaxRequestBytes),
+                new RequestFormLimitsAttribute { MultipartBodyLengthLimit = MaxBytes });
 
         var byId = app.MapGroup("/api/attachments")
             .WithTags("Attachments")
@@ -94,14 +100,31 @@ public static class AttachmentEndpoints
             return TypedResults.BadRequest("הקובץ גדול מ-5MB");
         }
 
+        var fileName = Path.GetFileName(file.FileName);
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return TypedResults.BadRequest("שם הקובץ חסר");
+        }
+
+        if (fileName.Length > 260)
+        {
+            return TypedResults.BadRequest("שם הקובץ ארוך מדי");
+        }
+
+        var contentType = string.IsNullOrWhiteSpace(file.ContentType) ? "application/octet-stream" : file.ContentType;
+        if (contentType.Length > 120)
+        {
+            return TypedResults.BadRequest("סוג הקובץ ארוך מדי");
+        }
+
         using var stream = new MemoryStream();
         await file.CopyToAsync(stream, cancellationToken);
 
         var saved = await attachments.AddAsync(new Attachment
         {
             IssueId = issueId,
-            FileName = Path.GetFileName(file.FileName),
-            ContentType = string.IsNullOrWhiteSpace(file.ContentType) ? "application/octet-stream" : file.ContentType,
+            FileName = fileName,
+            ContentType = contentType,
             SizeBytes = file.Length,
             Bytes = stream.ToArray(),
             UploadedByUserId = user.GetUserId(),

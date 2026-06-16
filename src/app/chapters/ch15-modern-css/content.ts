@@ -685,7 +685,7 @@ export const CH15_CONTENT: ChapterContent = {
         {
           kind: 'p',
           text:
-            'הcsss ב-`::view-transition-*` pseudo-elements הם גלובליים, לכן הם ב-`styles.scss` — ' +
+            'ה-CSS ב-`::view-transition-*` pseudo-elements הוא גלובלי, לכן הוא ב-`styles.scss` — ' +
             'לא ב-SCSS של קומפוננטה. זה הדפוס שנוסד ב-ch14 ונמשיך בו ב-ch19.',
         },
         {

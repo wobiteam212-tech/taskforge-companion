@@ -60,31 +60,40 @@ export const IssuesStore = signalStore(
 
   // #region step-20.4
   // load: אותו fetch כמו קודם, אבל setAllEntities מעדכן את אוסף הישויות.
+  // loadVersion מחזיר לנו תכונה חשובה של httpResource: תשובה ישנה לא דורסת
+  // state חדש אם query/login השתנו בזמן שהבקשה הייתה בדרך.
   // null/מנותק מנקה לרשימה ריקה — כמו ש-httpResource החזיר undefined.
-  withMethods((store, http = inject(HttpClient)) => ({
-    async load(q: IssueListQuery | null, loggedIn: boolean): Promise<void> {
-      if (!q || !loggedIn) {
-        patchState(store, setAllEntities<Issue>([]), {
-          total: 0,
-          totalPages: 0,
-          loading: false,
-          loadError: null,
-        });
-        return;
-      }
-      patchState(store, { loading: true, loadError: null });
-      try {
-        const page = await firstValueFrom(http.get<PagedResult<Issue>>(buildUrl(q)));
-        patchState(store, setAllEntities(page.items), {
-          total: page.total,
-          totalPages: page.totalPages,
-          loading: false,
-        });
-      } catch (error) {
-        patchState(store, { loading: false, loadError: error });
-      }
-    },
-  })),
+  withMethods((store, http = inject(HttpClient)) => {
+    let loadVersion = 0;
+
+    return {
+      async load(q: IssueListQuery | null, loggedIn: boolean): Promise<void> {
+        const version = ++loadVersion;
+        if (!q || !loggedIn) {
+          patchState(store, setAllEntities<Issue>([]), {
+            total: 0,
+            totalPages: 0,
+            loading: false,
+            loadError: null,
+          });
+          return;
+        }
+        patchState(store, { loading: true, loadError: null });
+        try {
+          const page = await firstValueFrom(http.get<PagedResult<Issue>>(buildUrl(q)));
+          if (version !== loadVersion) return;
+          patchState(store, setAllEntities(page.items), {
+            total: page.total,
+            totalPages: page.totalPages,
+            loading: false,
+          });
+        } catch (error) {
+          if (version !== loadVersion) return;
+          patchState(store, { loading: false, loadError: error });
+        }
+      },
+    };
+  }),
   // #endregion
 
   // #region step-20.5

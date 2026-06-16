@@ -316,7 +316,7 @@ export const CH21_CONTENT: ChapterContent = {
           text:
             'ה-snapshot client כולל vitest מפרק 06 — לא מוסיפים תלות חדשה. ' +
             '`markdown.spec.ts` ו-`fuzzy.spec.ts` חיים לצד הקבצים שהם בוחנים ב-`core/`. ' +
-            'הספקים רצים עם `ng test` בתוך `reference/.build/ch21/client`. ' +
+            'הספקים רצים עם `ng test` בתוך `reference/.build/ch21/client`, וגם מסומנים כ-gate ב-`reference/milestones.json`. ' +
             'פלט אמיתי: 3 test files, 12 tests passed.',
         },
         {
@@ -329,13 +329,11 @@ export const CH21_CONTENT: ChapterContent = {
         },
         {
           kind: 'callout',
-          tone: 'warn',
-          title: 'ng test לא חלק משער verify:snapshots',
+          tone: 'tip',
+          title: 'ng test עכשיו חלק מהשער',
           body:
-            'שער `verify:snapshots` מריץ `ng build` — שמוציא `.spec.ts` מהבנייה. ' +
-            'רק הבדיקות השרתיות (dotnet test) רצות אוטומטית כחלק מהשער. ' +
-            'את בדיקות ה-vitest צריך להריץ ידנית: `ng test --watch=false` בתוך `reference/.build/ch21/client`. ' +
-            'אמתו שהן ירוקות — זו אחריותכם, לא של ה-CI.',
+            'שער `verify:snapshots` עדיין מריץ `ng build`, אבל milestone עם `"test": true` מריץ אחריו גם ' +
+            '`ng test --watch=false`. כך `.spec.ts` לא נעלמים מאחורי build ירוק.',
         },
         {
           kind: 'term',
@@ -353,16 +351,14 @@ export const CH21_CONTENT: ChapterContent = {
   subgraph "gate: verify:snapshots"
     B["dotnet build"]
     T["dotnet test (auto)"]
-    B --> T
-  end
-  subgraph "ידני: ng test"
+    N["ng build"]
     V["ng test --watch=false"]
-    V2["12 vitest specs pass"]
-    V --> V2
+    B --> T
+    N --> V
   end
-  T -.->|"8 xUnit passed"| OK1["gate green"]
-  V2 -.->|"verify manually"| OK2["specs green"]`,
-        caption: 'xUnit נכלל בשער האוטומטי; vitest מאומת ידנית ב-ng test',
+  T -.->|"8 xUnit passed"| OK1["server gate green"]
+  V -.->|"12 vitest specs pass"| OK2["client gate green"]`,
+        caption: 'xUnit ו-vitest רצים כחלק משער ה-snapshot כאשר milestone מסומן test=true',
       },
     },
 
@@ -743,7 +739,7 @@ export const CH21_CONTENT: ChapterContent = {
             '8 בדיקות xUnit (PasswordHasher×4, IsMemberAsync×1, GetForProjectAsync×1 + pure helpers) ' +
             'עוברות כ-gate אוטומטי בכל `verify:snapshots`. ' +
             '12 בדיקות vitest (markdown×5, fuzzy×4, fuzzyRank×2 + setup) ' +
-            'עוברות ב-`ng test` בתוך snapshot client.',
+            'עוברות באותו שער עבור milestone שמסומן `"test": true`.',
         },
         {
           kind: 'p',
@@ -855,18 +851,17 @@ export const CH21_CONTENT: ChapterContent = {
         'כאן לא משתמשים ב-mock כי בודקים תוצאה (true/false), לא שנקרא.',
     },
     {
-      q: 'מדוע בדיקות xUnit רצות אוטומטית ב-verify:snapshots אבל vitest לא?',
+      q: 'איך `verify:snapshots` מריץ גם בדיקות vitest בצד הקליינט?',
       options: [
-        'כי vitest לא נתמך',
-        'כי verify:snapshots מריץ dotnet test אוטומטית אם יש ספריית tests/, אבל ng build (שruns לng) מוציא .spec.ts',
-        'כי ng test דורש שרת חי',
-        'כי vitest הוא כלי ייצור',
+        'הוא מריץ אותן בכל פרק Angular בלי תנאי',
+        'milestone של Angular עם `"test": true` מריץ `ng test --watch=false` אחרי `ng build`',
+        'ng build מריץ .spec.ts כברירת מחדל',
+        'רק dotnet test יכול לרוץ בשער הזה',
       ],
       answer: 1,
       explain:
-        'verify-snapshots.mjs מריץ dotnet build ואז dotnet test אם tests/ קיימת. ' +
-        'עבור Angular, הוא מריץ ng build — שמוציא קבצי .spec.ts מהbundle. ' +
-        'ng test (vitest) צריך ריצה ידנית נפרדת.',
+        '`verify-snapshots.mjs` מתקין, מריץ `ng build`, ואם ה-milestone מסומן `"test": true` ' +
+        'מריץ גם `ng test --watch=false`. כך בדיקות vitest נכנסות לאותו gate בלי להריץ אותן בפרקים שאין בהם specs משמעותיים.',
     },
   ],
 

@@ -10,13 +10,13 @@ optimistic reordering persisted to the server via a rank model.
 
 ## Backend (`reference/ch17/server/...`) — grow to match
 
-- **Ordering model**: add a rank to `Issue`. Recommended: a `string Rank` using **fractional/LexoRank-style** keys
-  (teaches ordering-at-scale without renumbering rows) OR a `double SortOrder` (simpler; teaches the midpoint trick +
-  its precision limit). Pick one; teach the trade-off. Entity edit: `Issue.cs` (+ default rank on create).
-- **Reorder endpoint**: `PATCH /api/issues/{id}/rank` (or `/reorder`) taking the target status + neighbor ranks,
-  computes the new rank, persists. Resource-based authz (`IsMemberAsync`). `IIssueRepository.ReorderAsync(...)` +
-  `EfIssueRepository` impl. Region `step-17.x`. Update `GetPagedAsync` sort to honor rank for the board view (add a
-  `sort=rank` option, keep existing sorts).
+- **Ordering model**: built as `double Rank` on `Issue`, using midpoint ranks with a clear LexoRank trade-off lesson.
+  The handler now validates that client-supplied ranks are finite, positive, and within the supported board range.
+  Entity edit: `Issue.cs` (+ default rank on create).
+- **Reorder endpoint**: `PATCH /api/issues/{id}/rank` taking target status + client-computed rank, then persisting only
+  after resource-based authz (`IsMemberAsync`) and rank validation. It deliberately reuses `UpdateAsync(...)` instead
+  of adding `IIssueRepository.ReorderAsync(...)`, because the chapter teaches the operation as a narrow two-column
+  update. Update `GetPagedAsync` sort to honor rank for the board view (add a `sort=rank` option, keep existing sorts).
 - **EF migration** required (new column): generate in `.build`, copy back into `reference/ch17/server/.../Migrations/`.
 - Seed: give existing issues initial ranks (update `DbSeeder` deterministically).
 - `milestones.json` += ch17 dotnet + ng.

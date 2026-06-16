@@ -20,7 +20,8 @@ public sealed record UpdateIssueRequest(
 
 // #region step-17.2
 // פקודת הסידור-מחדש: סטטוס היעד (לאיזו עמודה גררו) ו-Rank חדש (נקודת אמצע
-// שהקליינט חישב בין שני השכנים). מינימלי בכוונה — שינוי מיקום, לא עריכת issue.
+// שהקליינט חישב בין שני השכנים). ה-handler מאמת שה-Rank סופי, חיובי ובטווח.
+// מינימלי בכוונה — שינוי מיקום, לא עריכת issue.
 public sealed record ReorderIssueRequest(IssueStatus Status, double Rank);
 // #endregion
 

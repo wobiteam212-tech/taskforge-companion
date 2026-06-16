@@ -238,7 +238,7 @@ export const WAVES: WaveDef[] = [
         slug: 'kanban-dnd',
         title: 'Kanban Drag-and-Drop',
         blurb:
-          'לוח Kanban עם pointer ו-keyboard reorder נגישים, rank keys יציבים, rebalance fallback, ועדכונים אופטימיים.',
+          'לוח Kanban עם pointer ו-keyboard reorder נגישים, Rank מספרי מוגן, trade-off מול LexoRank, ועדכונים אופטימיים.',
         wave: 4,
         status: 'ready',
         loadContent: () =>
@@ -262,7 +262,7 @@ export const WAVES: WaveDef[] = [
         slug: 'rich-issue-detail',
         title: 'Issue עשיר, Markdown ו-Activity',
         blurb:
-          'markdown editor, mentions, attachments עם שמירה בטוחה, timeline של פעילות, undo ו-rollback סביב פעולות עשירות.',
+          'markdown editor, mentions, attachments כ-BLOB בפיתוח עם מגבלות upload, timeline של פעילות, undo ו-rollback סביב פעולות עשירות.',
         wave: 4,
         status: 'ready',
         loadContent: () =>

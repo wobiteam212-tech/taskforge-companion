@@ -176,7 +176,7 @@ export const CH17_CONTENT: ChapterContent = {
           kind: 'p',
           text:
             'במקביל הוספנו Rank ל-IssueResponse, כך שהלקוח מקבל את הדירוג של כל issue ויכול למיין את הלוח. ' +
-            'הקליינט הוא זה שמחשב את ה-Rank החדש (נקודת האמצע) ושולח אותו — השרת רק שומר.',
+            'הקליינט מחשב את ה-Rank החדש (נקודת האמצע), והשרת לא סומך עליו עיוור: הוא שומר רק ערך סופי, חיובי ובטווח.',
         },
         {
           kind: 'term',
@@ -243,6 +243,7 @@ export const CH17_CONTENT: ChapterContent = {
           text:
             'הסידור-מחדש הוא PATCH ל-/api/issues/{id}/rank. הוא משתמש מחדש ב-UpdateAsync(id, apply) מפרק 04 — ' +
             'אין repo method חדש, כי סידור מחדש הוא פשוט שינוי שתי עמודות (Status ו-Rank). ' +
+            'לפני השמירה ה-handler דוחה Rank שאינו finite, שאינו חיובי או שיצא מהטווח שהלוח תומך בו. ' +
             'ההרשאה היא מבוססת-משאב: רק חבר בפרויקט יכול לסדר, בדיוק כמו שאר פעולות ה-issue.',
         },
         {
@@ -253,6 +254,9 @@ export const CH17_CONTENT: ChapterContent = {
             "# העברת issue 2 לעמודת Done עם rank של נקודת-אמצע\n" +
             "PATCH /api/issues/2/rank   { \"status\": \"Done\", \"rank\": 5000.5 }\n" +
             "  -> 200 OK   status=Done  rank=5000.5\n\n" +
+            "# payload פגום לא מזהם את סדר הלוח\n" +
+            "PATCH /api/issues/2/rank   { \"status\": \"Done\", \"rank\": -5 }\n" +
+            "  -> 400 Bad Request\n\n" +
             "# בלי טוקן — נדחה לפני ה-handler\n" +
             "PATCH /api/issues/2/rank   (ללא Authorization)\n" +
             "  -> 401 Unauthorized",

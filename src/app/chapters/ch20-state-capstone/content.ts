@@ -331,6 +331,13 @@ export const CH20_CONTENT: ChapterContent = {
             'אבל כאן זה יותר מוצהר — `setAllEntities([])` מבהיר בכוונה שמרוקנים את האוסף.',
         },
         {
+          kind: 'p',
+          text:
+            'ה-store שומר גם `loadVersion`: מספר שעולה בכל טעינה. כשהבקשה חוזרת, היא מעדכנת state רק אם ' +
+            'המספר שלה עדיין האחרון. כך refactor ידני ל-`@ngrx/signals` לא מאבד תכונה חשובה שקיבלנו מ-`httpResource`: ' +
+            'תגובה ישנה לא דורסת query חדש.',
+        },
+        {
           kind: 'term',
           name: 'patchState',
           definition:
@@ -416,7 +423,7 @@ export const CH20_CONTENT: ChapterContent = {
             'וכשאחד מהם השתנה — בקשה חדשה יצאה אוטומטית. ב-`@ngrx/signals` אין `httpResource`, ' +
             'אז ה-reactivity בא מ-`effect` ידני ב-`withHooks.onInit`: ' +
             '`effect(() => store.load(store.query(), tokenStore.isLoggedIn()))`. ' +
-            'כל שינוי ב-`query` או ב-`isLoggedIn` מפעיל את `load` מחדש.',
+            'כל שינוי ב-`query` או ב-`isLoggedIn` מפעיל את `load` מחדש, ו-`loadVersion` מוודא שרק התשובה האחרונה כותבת state.',
         },
         {
           kind: 'p',
@@ -741,7 +748,8 @@ export const CH20_CONTENT: ChapterContent = {
       answer: 1,
       explain:
         '`effect(() => store.load(store.query(), tokenStore.isLoggedIn()))` מפעיל את `load` ' +
-        'כשאחד מהתלויים משתנה. זה מחליף את ה-reactivity שה-httpResource נתן בחינם בclass הישן.',
+        'כשאחד מהתלויים משתנה. `loadVersion` בתוך load משלים את החסר: תשובה ישנה חוזרת בלי לדרוס query חדש. ' +
+        'כך אנחנו מחליפים את ה-reactivity וה-stale rejection שה-httpResource נתן בחינם בclass הישן.',
     },
     {
       q: 'מה peer dependency gap, ולמה הוא לא בלם אותנו?',

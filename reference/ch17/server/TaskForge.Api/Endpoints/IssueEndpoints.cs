@@ -11,6 +11,8 @@ namespace TaskForge.Api.Endpoints;
 
 public static class IssueEndpoints
 {
+    private const double MaxRank = 9_000_000_000_000_000_000d;
+
     // #region step-4.11
     // קבוצה אחת לכל ה-Issues: prefix משותף, תג OpenAPI משותף, ופילטר משותף.
     // מפרק 05: כל הקבוצה דורשת משתמש מאומת — שורה אחת מגינה על הכול.
@@ -200,7 +202,7 @@ public static class IssueEndpoints
     // #region step-17.4c
     // ReorderIssue: משנה רק Status ו-Rank, דרך אותו UpdateAsync(id, apply) מפרק 04.
     // אין repo method חדש — הסידור-מחדש הוא פשוט שינוי שתי עמודות.
-    private static async Task<Results<Ok<IssueResponse>, NotFound, ForbidHttpResult>> ReorderIssue(
+    private static async Task<Results<Ok<IssueResponse>, NotFound, ForbidHttpResult, BadRequest<string>>> ReorderIssue(
         int id,
         ReorderIssueRequest request,
         ClaimsPrincipal user,
@@ -219,6 +221,11 @@ public static class IssueEndpoints
             return TypedResults.Forbid();
         }
 
+        if (!IsValidRank(request.Rank))
+        {
+            return TypedResults.BadRequest("Rank must be a finite positive number within the supported board range.");
+        }
+
         var issue = await issues.UpdateAsync(id, i =>
         {
             i.Status = request.Status;
@@ -228,6 +235,9 @@ public static class IssueEndpoints
         return TypedResults.Ok(IssueResponse.FromEntity(issue!));
     }
     // #endregion
+
+    private static bool IsValidRank(double rank) =>
+        double.IsFinite(rank) && rank > 0 && rank <= MaxRank;
 
     private static async Task<Results<NoContent, NotFound, ForbidHttpResult>> DeleteIssue(
         int id,

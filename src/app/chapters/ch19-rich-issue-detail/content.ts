@@ -103,7 +103,7 @@ export const CH19_CONTENT: ChapterContent = {
             'שלושה טעמים: (1) גיבויים תופחים — גיבוי שכולל בינאריים גדולים לוקח הרבה יותר זמן ומקום. ' +
             '(2) ביצועים — ה-DB לא אופטימלי לשידור קבצים גדולים; CDN וblob storage כמו S3 בנויים לזה. ' +
             '(3) סקלינג — עלות האחסון בבסיס נתונים גבוהה מאחסון אובייקטים. ' +
-            'בפיתוח ה-BLOB הוא trade-off נכון: פשטות, אטומיות, ואפס תלויות.',
+            'בפיתוח ה-BLOB הוא trade-off נכון: פשטות, אטומיות, ואפס תלויות; בפרודקשן זה בדרך כלל מוחלף ב-object storage.',
         },
       ],
       panel: {
@@ -249,7 +249,8 @@ export const CH19_CONTENT: ChapterContent = {
           body:
             'ב-.NET 8+ Minimal API מבקש antiforgery token כברירת מחדל על כל בקשת multipart/form-data. ' +
             'אפליקציית SPA שמשתמשת ב-Bearer לא מחזיקה את הטוקן הזה. ' +
-            '`.DisableAntiforgery()` על ה-endpoint אומר: "אנחנו מאובטחים אחרת (Bearer) — ויתרו על הדרישה".',
+            '`.DisableAntiforgery()` על ה-endpoint אומר: "אנחנו מאובטחים אחרת (Bearer) — ויתרו על הדרישה". ' +
+            'באותו endpoint מצורפים גם `RequestSizeLimit` ו-`RequestFormLimits`, כדי שהשרת ידחה multipart גדול מדי לפני שה-handler קורא את הקובץ.',
         },
       ],
       panel: {
@@ -272,8 +273,9 @@ export const CH19_CONTENT: ChapterContent = {
           text:
             'שלושת ה-handlers ב-`server/TaskForge.Api/Endpoints/AttachmentEndpoints.cs` עוקבים אחרי אותו דפוס הרשאה: ' +
             '404 אם ה-issue לא קיים, 403 אם המשתמש אינו חבר. ' +
-            'ב-`UploadAttachment`: גודל ריק הוא 400, מעל 5MB הוא 400, ואז קוראים את הזרם לזיכרון, שומרים, ' +
-            'ורושמים `AttachmentAdded` ביומן הפעילות. החזרה היא 201 עם `AttachmentResponse`.',
+            'ב-`UploadAttachment`: גודל ריק הוא 400, מעל 5MB הוא 400, שם קובץ חסר או ארוך מדי הוא 400, ' +
+            'ורק אז קוראים את הזרם לזיכרון, שומרים, ורושמים `AttachmentAdded` ביומן הפעילות. ' +
+            'החזרה היא 201 עם `AttachmentResponse`.',
         },
         {
           kind: 'p',
@@ -293,6 +295,8 @@ export const CH19_CONTENT: ChapterContent = {
             '  -> 400  "הקובץ ריק"\n\n' +
             'POST /api/issues/1/attachments  (קובץ גדול מ-5MB)\n' +
             '  -> 400  "הקובץ גדול מ-5MB"\n\n' +
+            'POST /api/issues/1/attachments  (שם קובץ חסר או ארוך מדי)\n' +
+            '  -> 400  "שם הקובץ חסר" / "שם הקובץ ארוך מדי"\n\n' +
             'GET /api/issues/1/attachments   (ללא טוקן)\n' +
             '  -> 401 Unauthorized\n\n' +
             'GET /api/attachments/{id}  (עם Bearer)\n' +

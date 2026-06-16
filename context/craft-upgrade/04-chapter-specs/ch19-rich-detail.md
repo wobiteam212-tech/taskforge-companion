@@ -51,7 +51,7 @@ toast, "break server" → rollback. Markdown preview toggle. Timers cleaned. (`@
 ## Teaching outline
 
 ~18 steps: custom form control contract, markdown rendering + sanitization (XSS gotcha — interview), @mention
-autocomplete + anchor positioning, attachments upload (multipart, content-type, size limits, storage trade-offs),
+autocomplete + anchor positioning, attachments upload (multipart, content-type metadata guard, size limits, storage trade-offs),
 activity timeline, optimistic threads + undo/redo, View Transitions shared-element. Quiz ≥6, proveIt ≥4 (post comment,
 @mention, upload file, board→detail transition), exercise (add comment editing or reactions), terms ≥6.
 

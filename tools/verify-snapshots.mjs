@@ -7,6 +7,8 @@
 // Each entry compiles reference/.build/<chapter>/<dir>.
 // `kind: "dotnet"` runs `dotnet build` (+ `dotnet test` if a test project exists),
 // `kind: "ng"` runs `pnpm install` + `ng build` in the materialized tree.
+// Add `"test": true` to an Angular milestone when the snapshot contains specs
+// that must run with `ng test --watch=false` as part of the same gate.
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -52,10 +54,11 @@ for (const m of milestones) {
     } else if (m.kind === 'ng') {
       run('pnpm install --silent', dir);
       run('pnpm exec ng build', dir);
+      if (m.test) run('pnpm exec ng test --watch=false', dir);
     } else {
       throw new Error(`unknown milestone kind "${m.kind}"`);
     }
-    console.log(`✓ ${m.chapter} (${m.kind}) compiles`);
+    console.log(`✓ ${m.chapter} (${m.kind}${m.test ? '+test' : ''}) compiles`);
   } catch (err) {
     console.error(`✗ ${m.chapter} (${m.kind}) FAILED: ${err.message}`);
     failed++;

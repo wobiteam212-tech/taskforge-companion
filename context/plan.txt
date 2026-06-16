@@ -28,7 +28,7 @@ Three learning apps have been built in this repo, each proving a different piece
 
 ## Part 1 — The taught app: TaskForge spec
 
-**Backend** (.NET 10 Minimal APIs): layered `TaskForge.Core` / `TaskForge.Infrastructure` / `TaskForge.Api`; EF Core + SQLite; entities `User`, `Project`, `ProjectMember(role)`, `Issue(status, priority, rank)`, `Label`, `IssueLabel`, `Comment`; DTOs as records; MapGroup-organized endpoints; .NET 10 built-in validation; `TypedResults` + `Results<…>` unions; ProblemDetails (RFC 7807); endpoint filters; OpenAPI; manual JWT auth (PBKDF2 hashing, refresh-token rotation, roles/policies); global exception handler; auth-scoped search endpoint, rank/reorder endpoint, dashboard stats + activity endpoints, multipart attachment endpoints with path/size safeguards; xUnit + WebApplicationFactory tests. Production wave adds: OutputCaching, RateLimiter, health checks, SignalR hub for live board updates, Dockerfile, CI.
+**Backend** (.NET 10 Minimal APIs): layered `TaskForge.Core` / `TaskForge.Infrastructure` / `TaskForge.Api`; EF Core + SQLite; entities `User`, `Project`, `ProjectMember(role)`, `Issue(status, priority, rank)`, `Label`, `IssueLabel`, `Comment`; DTOs as records; MapGroup-organized endpoints; .NET 10 built-in validation; `TypedResults` + `Results<…>` unions; ProblemDetails (RFC 7807); endpoint filters; OpenAPI; manual JWT auth (PBKDF2 hashing, refresh-token rotation, roles/policies); global exception handler; auth-scoped search endpoint, rank/reorder endpoint, dashboard stats + activity endpoints, multipart attachment endpoints with DB BLOB storage plus size/filename/content-type metadata safeguards; xUnit + WebApplicationFactory tests. Production wave adds: OutputCaching, RateLimiter, health checks, SignalR hub for live board updates, Dockerfile, CI.
 
 **Frontend** (Angular v22): standalone, zoneless (`provideZonelessChangeDetection()`), signals everywhere, `core/shared/features` layout, smart/dumb split, signal forms, `httpResource`/`resource`, functional interceptors (auth + error), router with guards (`CanActivate`/`CanMatch`) + lazy `loadComponent`/`loadChildren`, signal-based store services with optimistic updates + rollback, command registry/bus, Cmd-K palette, accessible keyboard/pointer Kanban DnD, dashboard selectors + hand-rolled SVG charts, rich issue detail with markdown/mentions/attachments/activity, one capstone refactor to `@ngrx/signals`, `@defer`, OnPush-by-default, NgOptimizedImage, a11y, native animations + View Transitions, Vitest + Playwright.
 
@@ -104,9 +104,9 @@ Per-step teaching contract: see Part 3.5 rule 2 — plus per-chapter quiz, prove
 - **Wave 4 — Craft & Polish**
   - ch15 — Modern CSS 2026: subgrid, container queries, anchor positioning, cascade layers, `:has()`, OKLCH/`color-mix`, fluid type, logical/RTL, scroll-driven animation, View Transitions intro, and a CSS playground demo
   - ch16 — Cmd-K command palette: keyboard service, command registry/bus, focus trap, fuzzy search, shortcuts help, and auth-scoped `GET /api/search?q=`
-  - ch17 — Kanban DnD: accessible pointer + keyboard reorder, optimistic rollback, `Issue.Rank` string rank keys, reorder endpoint, and rebalance fallback
+  - ch17 — Kanban DnD: accessible pointer + keyboard reorder, optimistic rollback, `Issue.Rank` as a guarded `double` midpoint rank, reorder endpoint, and explicit LexoRank/rebalance trade-off
   - ch18 — Dashboard: stats endpoint, activity-log entity/endpoints, derived selectors, summary cards, activity feed, and hand-rolled SVG charts
-  - ch19 — Rich issue detail: markdown editor, mentions, attachments stored under app data with DB metadata, activity timeline, undo and rollback
+  - ch19 — Rich issue detail: markdown editor, mentions, dev-grade DB BLOB attachments with metadata projection and upload limits, activity timeline, undo and rollback
   - ch20 — State architecture capstone: refactor one store to `@ngrx/signals` while preserving its public surface
 - **Wave 5 — Quality**
   - ch21 — Testing: xUnit + WebApplicationFactory, Vitest + TestBed, Playwright e2e — the testing pyramid for this exact app
