@@ -320,10 +320,12 @@ export const WAVES: WaveDef[] = [
         id: 'ch23',
         no: 23,
         slug: 'hardening',
-        title: 'הקשחה',
-        blurb: 'OutputCaching, RateLimiter, health checks ולוגים.',
+        title: 'הקשחה לפרודקשן',
+        blurb: 'OutputCaching עם tag-eviction (caching זה הקל, invalidation זה הקשה), דחיסת תשובות, rate limiting עם 429+Retry-After, כותרות אבטחה, וסודות מחוץ ל-appsettings — Wave 6 Opener.',
         wave: 6,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch23-production-hardening/content').then((m) => m.CH23_CONTENT),
       },
       {
         id: 'ch24',
