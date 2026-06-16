@@ -291,10 +291,12 @@ export const WAVES: WaveDef[] = [
         id: 'ch21',
         no: 21,
         slug: 'testing',
-        title: 'בדיקות',
-        blurb: 'xUnit + WebApplicationFactory, Vitest + TestBed, ו-Playwright — פירמידת הבדיקות של בדיוק האפליקציה הזו.',
+        title: 'Testing — בודקים את מה שבנינו',
+        blurb: 'xUnit + SQLite-in-memory לבדיקות repository, vitest לפונקציות טהורות, ו-e2e קונצפטואלי — פירמידת הבדיקות של בדיוק האפליקציה הזו.',
         wave: 5,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch21-testing/content').then((m) => m.CH21_CONTENT),
       },
       {
         id: 'ch22',

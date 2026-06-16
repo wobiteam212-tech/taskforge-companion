@@ -50139,6 +50139,54 @@ export const GUIDE_MANIFEST = {
           },
           "changedLines": []
         },
+        "client/src/app/core/commands/fuzzy.spec.ts": {
+          "content": "import { describe, expect, it } from 'vitest';\nimport { fuzzyRank, fuzzyScore } from './fuzzy';\n\n// מבחני הדירוג: scoring הוא לוגיקה טהורה עם כללים (גבול-מילה, רצף) — בדיוק סוג\n// הקוד שמבחני יחידה שומרים מפני רגרסיה כשמשנים את הנוסחה.\ndescribe('fuzzyScore', () => {\n  it('returns -1 when a query char is missing or out of order', () => {\n    expect(fuzzyScore('kanban', 'xyz')).toBe(-1);\n    expect(fuzzyScore('kanban', 'nk')).toBe(-1); // הסדר חשוב: n לפני k לא קיים\n  });\n\n  it('returns 0 for an empty query', () => {\n    expect(fuzzyScore('anything', '')).toBe(0);\n  });\n\n  it('scores a word-boundary, consecutive match higher than a scattered one', () => {\n    const boundary = fuzzyScore('dark mode', 'dark'); // d בתחילת מילה + רצף\n    const scattered = fuzzyScore('do a quick reset', 'dark'); // אותם תווים, מפוזרים\n    expect(boundary).toBeGreaterThan(scattered);\n  });\n});\n\ndescribe('fuzzyRank', () => {\n  it('keeps only matches and sorts by score, best first', () => {\n    const items = ['Open the board', 'Toggle dark mode', 'Delete project'];\n    const ranked = fuzzyRank(items, 'dark', (x) => x);\n    expect(ranked[0]).toBe('Toggle dark mode');\n    expect(ranked).not.toContain('Open the board');\n  });\n\n  it('returns everything unchanged for an empty query', () => {\n    const items = ['a', 'b', 'c'];\n    expect(fuzzyRank(items, '   ', (x) => x)).toEqual(items);\n  });\n});\n",
+          "status": "added",
+          "regions": {
+            "step-21.6": {
+              "start": 4,
+              "end": 35
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
         "client/src/app/core/commands/fuzzy.ts": {
           "content": "// התאמת fuzzy בעבודת יד: כל תווי ה-query חייבים להופיע ב-text לפי הסדר.\n// בונוסים על התאמה בתחילת מילה ועל רצף — כדי שתוצאות \"טבעיות\" יעלו למעלה.\n// אין כאן ספרייה: כ-50 שורות מלמדות בדיוק איך scoring כזה עובד.\ninterface Ranked<T> {\n  item: T;\n  score: number;\n}\n\n/** מחזיר ציון; ‎-1 אם ולו תו אחד מה-query לא נמצא לפי הסדר. */\nexport function fuzzyScore(text: string, query: string): number {\n  if (!query) return 0;\n  const t = text.toLowerCase();\n  const q = query.toLowerCase();\n\n  let score = 0;\n  let from = 0;\n  let prevMatch = -2;\n\n  for (const ch of q) {\n    const at = t.indexOf(ch, from);\n    if (at === -1) return -1;\n\n    // בונוס: התאמה בתחילת מילה (אחרי רווח/מקף/לוכסן) או בתחילת המחרוזת\n    const atBoundary = at === 0 || /[\\s\\-/_]/.test(t[at - 1]);\n    score += atBoundary ? 8 : 1;\n\n    // בונוס רצף: תווים סמוכים שווים יותר מתווים מפוזרים\n    if (at === prevMatch + 1) score += 3;\n\n    prevMatch = at;\n    from = at + 1;\n  }\n\n  return score;\n}\n\n/** מסנן לפי התאמה וממיין מהציון הגבוה לנמוך. query ריק = הכול, כסדרו. */\nexport function fuzzyRank<T>(items: readonly T[], query: string, key: (item: T) => string): T[] {\n  if (!query.trim()) return [...items];\n\n  const ranked: Ranked<T>[] = [];\n  for (const item of items) {\n    const score = fuzzyScore(key(item), query);\n    if (score >= 0) ranked.push({ item, score });\n  }\n  ranked.sort((a, b) => b.score - a.score);\n  return ranked.map((r) => r.item);\n}\n",
           "status": "unchanged",
@@ -50160,6 +50208,53 @@ export const GUIDE_MANIFEST = {
             }
           },
           "changedLines": []
+        },
+        "client/src/app/core/markdown/markdown.spec.ts": {
+          "content": "import { describe, expect, it } from 'vitest';\nimport { renderMarkdown } from './markdown';\n\n// מבחני יחידה טהורים לפונקציה טהורה: קלט מחרוזת, פלט מחרוזת — אין DOM, אין שרת.\n// הבדיקה הקריטית היא ה-XSS: escape-first הוא ההגנה, וכאן מוכיחים אותה.\ndescribe('renderMarkdown', () => {\n  it('escapes a pasted <script> instead of executing it', () => {\n    const html = renderMarkdown('<script>alert(1)</script>');\n    expect(html).toContain('&lt;script&gt;');\n    expect(html).not.toContain('<script>');\n  });\n\n  it('renders **bold**, `code` and *italic* as safe tags', () => {\n    expect(renderMarkdown('**b**')).toContain('<strong>b</strong>');\n    expect(renderMarkdown('`c`')).toContain('<code>c</code>');\n    expect(renderMarkdown('*i*')).toContain('<em>i</em>');\n  });\n\n  it('wraps @mentions in a span', () => {\n    expect(renderMarkdown('hi @maya')).toContain('<span class=\"mention\">@maya</span>');\n  });\n\n  it('linkifies only safe URL schemes', () => {\n    expect(renderMarkdown('[t](https://a.b)')).toContain('<a href=\"https://a.b\"');\n    // javascript: is rejected — the link text survives, the href does not\n    const evil = renderMarkdown('[t](javascript:alert(1))');\n    expect(evil).not.toContain('<a ');\n    expect(evil).toContain('t');\n  });\n\n  it('turns newlines into <br>', () => {\n    expect(renderMarkdown('a\\nb')).toBe('a<br>b');\n  });\n});\n",
+          "status": "added",
+          "regions": {
+            "step-21.5": {
+              "start": 4,
+              "end": 34
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35
+          ]
         },
         "client/src/app/core/markdown/markdown.ts": {
           "content": "// Markdown מינימלי ובטוח. הכלל הזהב: בורחים מ-HTML *קודם*, ורק אז מוסיפים\n// תגיות בטוחות. כך טקסט כמו \"<script>alert(1)</script>\" שמישהו מדביק בתגובה\n// הופך לטקסט מוצג, לא לקוד שרץ — הגנת ה-XSS היא בסדר הפעולות, לא בסינון בדיעבד.\n\nconst ESCAPE: Record<string, string> = {\n  '&': '&amp;',\n  '<': '&lt;',\n  '>': '&gt;',\n  '\"': '&quot;',\n  \"'\": '&#39;',\n};\n\nfunction escapeHtml(text: string): string {\n  return text.replace(/[&<>\"']/g, (ch) => ESCAPE[ch]);\n}\n\n// רק סכימות בטוחות לקישורים — חוסם javascript:, data:, וכו'.\n// ה-url כבר עבר escape, ולכן בודקים את התחילית בלבד.\nfunction isSafeUrl(url: string): boolean {\n  return /^(https?:\\/\\/|\\/)/i.test(url);\n}\n\n/**\n * ממיר Markdown מצומצם ל-HTML בטוח: `code`, **bold**, *italic*,\n * [text](url) (סכימות בטוחות בלבד), ‎@mention, ושבירת שורות.\n * הקלט עובר escape מלא לפני כל טרנספורם — מה שלא בתבנית נשאר טקסט.\n */\nexport function renderMarkdown(source: string): string {\n  let html = escapeHtml(source);\n\n  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');\n  html = html.replace(/\\*\\*([^*]+)\\*\\*/g, '<strong>$1</strong>');\n  html = html.replace(/\\*([^*]+)\\*/g, '<em>$1</em>');\n\n  html = html.replace(/\\[([^\\]]+)\\]\\(([^)\\s]+)\\)/g, (_match, text: string, url: string) =>\n    isSafeUrl(url) ? `<a href=\"${url}\" target=\"_blank\" rel=\"noopener noreferrer\">${text}</a>` : text,\n  );\n\n  // ‏@mention — הוזכר חבר. ה-‎@ נשאר טקסט; רק עוטפים אותו לעיצוב.\n  html = html.replace(/(^|\\s)@([\\w.-]+)/g, '$1<span class=\"mention\">@$2</span>');\n\n  html = html.replace(/\\n/g, '<br>');\n\n  return html;\n}\n",
@@ -52337,6 +52432,101 @@ export const GUIDE_MANIFEST = {
         }
       },
       "changes": {
+        "client/src/app/core/commands/fuzzy.spec.ts": {
+          "content": "import { describe, expect, it } from 'vitest';\nimport { fuzzyRank, fuzzyScore } from './fuzzy';\n\n// מבחני הדירוג: scoring הוא לוגיקה טהורה עם כללים (גבול-מילה, רצף) — בדיוק סוג\n// הקוד שמבחני יחידה שומרים מפני רגרסיה כשמשנים את הנוסחה.\ndescribe('fuzzyScore', () => {\n  it('returns -1 when a query char is missing or out of order', () => {\n    expect(fuzzyScore('kanban', 'xyz')).toBe(-1);\n    expect(fuzzyScore('kanban', 'nk')).toBe(-1); // הסדר חשוב: n לפני k לא קיים\n  });\n\n  it('returns 0 for an empty query', () => {\n    expect(fuzzyScore('anything', '')).toBe(0);\n  });\n\n  it('scores a word-boundary, consecutive match higher than a scattered one', () => {\n    const boundary = fuzzyScore('dark mode', 'dark'); // d בתחילת מילה + רצף\n    const scattered = fuzzyScore('do a quick reset', 'dark'); // אותם תווים, מפוזרים\n    expect(boundary).toBeGreaterThan(scattered);\n  });\n});\n\ndescribe('fuzzyRank', () => {\n  it('keeps only matches and sorts by score, best first', () => {\n    const items = ['Open the board', 'Toggle dark mode', 'Delete project'];\n    const ranked = fuzzyRank(items, 'dark', (x) => x);\n    expect(ranked[0]).toBe('Toggle dark mode');\n    expect(ranked).not.toContain('Open the board');\n  });\n\n  it('returns everything unchanged for an empty query', () => {\n    const items = ['a', 'b', 'c'];\n    expect(fuzzyRank(items, '   ', (x) => x)).toEqual(items);\n  });\n});\n",
+          "status": "added",
+          "regions": {
+            "step-21.6": {
+              "start": 4,
+              "end": 35
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ]
+        },
+        "client/src/app/core/markdown/markdown.spec.ts": {
+          "content": "import { describe, expect, it } from 'vitest';\nimport { renderMarkdown } from './markdown';\n\n// מבחני יחידה טהורים לפונקציה טהורה: קלט מחרוזת, פלט מחרוזת — אין DOM, אין שרת.\n// הבדיקה הקריטית היא ה-XSS: escape-first הוא ההגנה, וכאן מוכיחים אותה.\ndescribe('renderMarkdown', () => {\n  it('escapes a pasted <script> instead of executing it', () => {\n    const html = renderMarkdown('<script>alert(1)</script>');\n    expect(html).toContain('&lt;script&gt;');\n    expect(html).not.toContain('<script>');\n  });\n\n  it('renders **bold**, `code` and *italic* as safe tags', () => {\n    expect(renderMarkdown('**b**')).toContain('<strong>b</strong>');\n    expect(renderMarkdown('`c`')).toContain('<code>c</code>');\n    expect(renderMarkdown('*i*')).toContain('<em>i</em>');\n  });\n\n  it('wraps @mentions in a span', () => {\n    expect(renderMarkdown('hi @maya')).toContain('<span class=\"mention\">@maya</span>');\n  });\n\n  it('linkifies only safe URL schemes', () => {\n    expect(renderMarkdown('[t](https://a.b)')).toContain('<a href=\"https://a.b\"');\n    // javascript: is rejected — the link text survives, the href does not\n    const evil = renderMarkdown('[t](javascript:alert(1))');\n    expect(evil).not.toContain('<a ');\n    expect(evil).toContain('t');\n  });\n\n  it('turns newlines into <br>', () => {\n    expect(renderMarkdown('a\\nb')).toBe('a<br>b');\n  });\n});\n",
+          "status": "added",
+          "regions": {
+            "step-21.5": {
+              "start": 4,
+              "end": 34
+            }
+          },
+          "changedLines": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35
+          ]
+        },
         "server/TaskForge.slnx": {
           "content": "<Solution>\n  <Project Path=\"TaskForge.Api/TaskForge.Api.csproj\" />\n  <Project Path=\"TaskForge.Core/TaskForge.Core.csproj\" />\n  <Project Path=\"TaskForge.Infrastructure/TaskForge.Infrastructure.csproj\" />\n  <Project Path=\"tests/TaskForge.Tests/TaskForge.Tests.csproj\" />\n</Solution>\n",
           "status": "modified",
