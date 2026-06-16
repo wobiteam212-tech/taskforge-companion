@@ -1,7 +1,8 @@
-# Spec — ch23: Production Hardening (PROPOSAL / DRAFT — confirm with Oleg before building)
+# Spec — ch23: Production Hardening (BUILT — `106f890` snapshot, `c47ba73` content)
 
-**Status:** DRAFT, like ch21/ch22. Opens **Wave 6 (Production)**. ch23 is mostly **backend**, with concrete, gated
-deliverables (unlike ch22's audit shape), but the exact set of hardening measures is a scope decision — see OPEN DECISIONS.
+**Status:** BUILT + runtime-proven. Opened **Wave 6 (Production)**. Scope confirmed with Oleg (AskUserQuestion) = all five
+measures, tag-based eviction, client 429 toast. OPEN DECISIONS below resolved exactly as the proposal recommended; the
+`06-PROGRESS-LOG.md` top entry is the authoritative record of what was built + the pipeline-order and launchSettings gotchas.
 
 **Type:** new forward chapter. **Theme:** take the working app and make it production-safe and production-fast on the
 server side — caching, compression, rate-limiting, security headers, and secrets — each a small, real, verifiable seam.

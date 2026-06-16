@@ -31,11 +31,52 @@
 | ch20 — State capstone | `04-chapter-specs/ch20-state-capstone.md` | DONE — `f35a80e` (IssuesStore refactored to @ngrx/signals, public surface preserved, board/kanban untouched; runtime-verified; content delegated+reviewed). **Wave 4 COMPLETE.** |
 | Wave 5 — Testing (ch21) | `04-chapter-specs/ch21-testing.md` | DONE — backend `d61ba3d` (xUnit + SQLite-in-memory, 8 tests, gated via dotnet test); frontend + content + demo `5eaa97a` (vitest specs, 15-step content, runtime-verified) |
 | Wave 5 — Perf & a11y (ch22) | `04-chapter-specs/ch22-perf-a11y.md` | DONE — `93f0b1f` snapshot (route preloading + @defer prefetch + skip-link/landmark) + `44e045a` content + demo (16 steps); runtime-verified. **Wave 5 COMPLETE.** |
-| Wave 6 — Production (ch23–26) | (planned) | NOT STARTED |
+| Wave 6 — Hardening (ch23) | `04-chapter-specs/ch23-hardening.md` | DONE — backend+interceptor `106f890`; content+demo `c47ba73` (OutputCaching custom policy + tag-eviction, compression, rate-limit 429, security headers, secrets fail-fast; runtime-proven both servers; content delegated+reviewed). **Opens Wave 6.** |
+| Wave 6 — Production (ch24–26) | (planned) | NOT STARTED |
 
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-16 — ch23 Production Hardening — DONE — OPENS WAVE 6 (Claude; audit reviewed first, then built; content DELEGATED + reviewed)
+- **Session start = reviewed + committed an AUDIT done by Oleg-with-codex** (`14adc56`, uncommitted in the tree): ch17/ch18
+  `IsValidRank` guard on ReorderIssue (400 for non-finite/≤0/out-of-range); ch19 attachment hardening (RequestSizeLimit/
+  RequestFormLimits + filename/content-type guards); ch20 IssuesStore `loadVersion` race-guard; doc reconciliation
+  (ch17/ch19 specs + plan.txt); and **vitest specs now gate-automated** — `verify-snapshots.mjs` runs `ng test
+  --watch=false` for ng milestones flagged `"test": true`; ch21+ch22 got the flag. Verified the whole audit via full
+  `verify:snapshots` (all green incl. ch21 ng+test 12, ch22 ng+test 12; cumulative materialize carries ch21 specs into
+  ch22's `.build`) before committing it as its own baseline.
+- ch23 spec (`0f2d16e`) had OPEN DECISIONS; confirmed scope with Oleg via AskUserQuestion = **all five measures**, **tag-based
+  eviction**, **client 429 toast**. Then built it. Backend+interceptor `106f890`, content+demo `c47ba73`.
+- BACKEND (`reference/ch23/server/`): **OutputCaching** — custom `Caching/StatsCachePolicy.cs : IOutputCachePolicy`
+  (the default policy REFUSES authed requests; we set `EnableOutputCaching=true`, vary by `NameIdentifier`+`projectId`
+  route value — **required for authz safety since a cache HIT skips the in-handler `IsMemberAsync`** — dynamic tag
+  `stats-{projectId}`, 15s TTL, store only 200), registered via `AddOutputCache(AddPolicy("StatsCache", p=>p.AddPolicy(
+  typeof(StatsCachePolicy)), excludeDefaultPolicy:true))`, applied with `.CacheOutput("StatsCache")` on `/stats`, evicted
+  by `IOutputCacheStore.EvictByTagAsync($"stats-{projectId}")` in Create/Update/Reorder/Delete (helper `EvictStatsAsync`).
+  **Compression** (Brotli+Gzip, EnableForHttps). **RateLimiter** (named "auth" fixed-window 5/30s on login+register only —
+  NOT refresh; global per-IP 100/10s; `OnRejected` 429 + `Retry-After`). **Security headers** middleware (nosniff/DENY/
+  no-referrer/CSP) + `UseHsts` in prod. **Secrets**: `Jwt:Key` removed from committed `appsettings.json`, fail-fast on
+  empty; dev key in `appsettings.Development.json`. ALL in the .NET 10 shared framework — **zero NuGet additions**.
+  Pipeline order locked: compression (outer) · CORS · rate-limit · auth · **UseOutputCache AFTER auth** (so User is
+  populated for vary-by-user). FRONTEND (`reference/ch23/client/`): `error.interceptor` 429 branch (soft 'info' toast,
+  reads `Retry-After`).
+- RUNTIME-PROVEN (two-server smoke on `.build/ch23`): `Content-Encoding: br` on /stats; **cache HIT replays frozen
+  `X-Handler-Ms` then a write evicts → next GET recomputes, total 60→60→61 immediately (not after TTL)**; login 1–5 → 200,
+  6–8 → **429 + `Retry-After: 30`** + ProblemDetails; four security headers present; Production w/o key → fail-fast
+  `InvalidOperationException` + process exits. **GOTCHA: `dotnet run` honors `launchSettings.json` (forces Development),
+  hiding the fail-fast — use `--no-launch-profile`** (fixed the proveIt command accordingly).
+- CONTENT delegated to sonnet (verified-facts + region map + BACKTICK guard); returned 17 steps/9 quiz/5 proveIt/8 terms,
+  all 4 gates green. My review fixed 2 things: a unicode arrow in the appsettings code panel; the fail-fast proveIt
+  command (`--no-launch-profile`). Live demo (`cache-invalidation.demo.ts`) = /stats cache with TTL countdown + an
+  **"evict on write" toggle** — the centerpiece: HIT serves STALE while DB moved on (toggle off) vs fresh (on).
+- GATES green: gen:manifest 23/2519 · verify:coverage 192 · vitest 144 (+6 ch23) · guide build clean. Runtime: chapter
+  17 steps, **docOverflow false at 1280 AND 375** (backticking held), 0 console errors, demo HIT/MISS/stale/evict all
+  verified. `verify:snapshots` (incl. new ch23 dotnet + ch23 ng+test milestones) running at commit time.
+- WHAT'S NEXT: **ch24 Realtime (SignalR)** — live board/issue/comment updates via a hub + Angular client + reconnect
+  strategy. NO spec yet — DESIGN first (draft a proposal like ch21/ch22/ch23, confirm scope w/ Oleg) before building.
+  Then ch25 Ship (Docker/CI/deploy), ch26 Capstone. The `/stats` OutputCache + the `IOutputCacheStore` eviction seam are
+  natural SignalR companions (broadcast on the same write points that already evict).
 
 ### 2026-06-16 — ch22 Perf & a11y — DONE — WAVE 5 COMPLETE (Claude; spec self-proposed, content DELEGATED + reviewed)
 - ch22 had no spec; I drafted `04-chapter-specs/ch22-perf-a11y.md` (`6dca7ea`), resolved its OPEN DECISIONS (ONE chapter;
