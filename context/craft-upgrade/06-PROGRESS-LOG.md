@@ -29,13 +29,49 @@
 | ch18 — Dashboard | `04-chapter-specs/ch18-dashboard.md` | DONE — backend `fecc7f2`; frontend + content + demo `29000ee` (stats GROUP BY + activity log + migration; DashboardStore derived selectors + hand-rolled SVG charts; runtime + layout verified) |
 | ch19 — Rich detail | `04-chapter-specs/ch19-rich-detail.md` | DONE — backend `d2c9147`; frontend + content + demo `fec9fe8` (markdown+XSS, @mention custom control, attachments BLOB, optimistic comments+undo, issue activity timeline; runtime-verified; content delegated+reviewed) |
 | ch20 — State capstone | `04-chapter-specs/ch20-state-capstone.md` | DONE — `f35a80e` (IssuesStore refactored to @ngrx/signals, public surface preserved, board/kanban untouched; runtime-verified; content delegated+reviewed). **Wave 4 COMPLETE.** |
-| Wave 5 — Testing (ch21) | (planned in `01-MASTER-PLAN.md`) | NOT STARTED |
+| Wave 5 — Testing (ch21) | `04-chapter-specs/ch21-testing.md` | DONE — backend `d61ba3d` (xUnit + SQLite-in-memory, 8 tests, gated via dotnet test); frontend + content + demo `5eaa97a` (vitest specs, 15-step content, runtime-verified) |
 | Wave 5 — Perf & a11y (ch22) | (planned) | NOT STARTED |
 | Wave 6 — Production (ch23–26) | (planned) | NOT STARTED |
 
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-16 — ch21 Testing — DONE — opens WAVE 5 (Claude; spec self-proposed, content DELEGATED + reviewed)
+- ch21 had NO spec (shifted placeholder); I drafted `04-chapter-specs/ch21-testing.md` (`c222977`), resolved its OPEN
+  DECISIONS to sensible defaults (ONE chapter; xUnit + SQLite-in-memory backend; vitest pure-unit frontend; e2e taught
+  conceptually only), and built it. Backend `d61ba3d`, frontend+content+demo `5eaa97a`.
+- BACKEND (`reference/ch21/server/tests/TaskForge.Tests/`, xUnit) — first test project in the snapshots; added to
+  `TaskForge.slnx` under `server/tests/` so `verify-snapshots` AUTO-RUNS `dotnet test` (the gate already greps for a
+  `tests/` dir). `SqliteInMemory` fixture (shared `:memory:` connection + `EnsureCreated`, IDisposable). Tests:
+  PasswordHasher (correct/wrong/salted/malformed Theory), `EfProjectRepository.IsMemberAsync` member-vs-outsider (the
+  403-authz primitive), `EfStatsRepository.GetForProjectAsync` GROUP BY counts. milestones += ch21 dotnet. Verified:
+  dotnet build 0/0, `dotnet test` 8 passed.
+- FRONTEND (`reference/ch21/client/`) — pure vitest specs: `markdown.spec.ts` (escape-first XSS proven, transforms,
+  javascript: rejected), `fuzzy.spec.ts` (scoring -1/0, boundary>scattered, fuzzyRank filter+sort+empty). Verified:
+  snapshot client `ng test` 3 files / 12 tests pass. NOTE: frontend specs are TAUGHT + runnable but NOT gate-automated
+  (`verify-snapshots` does `ng build`, which excludes `.spec.ts`) — only backend tests are gate-automated. NO ch21 ng
+  milestone (client adds only specs; ng build unchanged). 15-step content + live test-runner demo (red/green via an
+  "introduce a bug" toggle). registry ch21 → ready.
+- DELEGATION: built+proved both test layers + the demo myself; delegated only the `content.ts` prose (sonnet, verified
+  facts + region map). Agent returned all-gates-green (15 steps/7 quiz/4 proveIt/13 terms).
+- REVIEW FIX (caught by the dual-width layout check — exactly why it exists): a 375px horizontal overflow. Root cause was
+  NOT the shell (controlled test: ch20 clean at 375 in the same session; hiding the fixed sidebar didn't help) — it was a
+  **70-char unbreakable plain-text test-method name** (`ProjectRepositoryTests.IsMemberAsync_true_for_a_member_false_for_an_outsider`)
+  in a quiz `q`, rendered as a non-wrapping span (605px). Fix: shortened the question + backticked long identifiers so
+  they render as `code.ic` (which wraps via the ch11 overflow-wrap fix). Re-measured: docOverflow FALSE at 1280 AND 375.
+- GOTCHA: long unbreakable identifiers (dotted/underscored, no spaces) in quiz `q`/callout titles overflow at 375 if NOT
+  backticked — plain prose only breaks at spaces; `code.ic` has `overflow-wrap:anywhere`. Tell content agents: wrap any
+  long identifier in backticks. (To debug doc overflow: hide candidates via eval + re-measure scrollWidth; compare a
+  known-clean chapter in the same session to rule out the shell.)
+- GATES ALL green: gen:manifest 21/2136 · verify:coverage 190 (0 pending) · vitest 132 (+6 ch21) · guide build clean ·
+  ch21 server `dotnet build` 0/0 + `dotnet test` 8 passed · snapshot client `ng test` 12 passed. Guide chapter verified
+  at 1280 + 375, demo green/red/green, 0 console errors.
+- WHAT'S NEXT: **Wave 5 ch22 — Perf & a11y** (also a shifted placeholder with NO spec — DESIGN it first, like ch21:
+  draft a spec proposal + confirm scope with Oleg, then build). Candidate scope: bundle/lazy-loading audit, OnPush/zoneless
+  perf, Lighthouse-style checks, ARIA/focus/keyboard sweeps of the features built in ch16-19 (palette, kanban, dialog,
+  markdown editor), reduced-motion. After ch22, Wave 6 = production (ch23 hardening/caching, ch24 realtime/SignalR,
+  ch25 ship/deploy, ch26 capstone) per the roadmap.
 
 ### 2026-06-15 — ch20 State Capstone (@ngrx/signals) — DONE — WAVE 4 COMPLETE (Claude; content DELEGATED + reviewed)
 - Commit `f35a80e` (single commit — frontend-only, no backend). **spine piece #5 / Wave-4 closer.**
