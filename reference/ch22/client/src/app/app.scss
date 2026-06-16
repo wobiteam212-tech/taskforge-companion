@@ -1,0 +1,107 @@
+// השלד עובר לטוקנים — ורק logical properties.
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  // #region step-16.10d
+  // ה-header נושא עכשיו טריגר נוסף (Cmd+K). flex-wrap מבטיח שהפעולות
+  // יגלשו לשורה שנייה במסך צר במקום לדחוף את הכותרת מחוץ ל-viewport.
+  flex-wrap: wrap;
+  // #endregion
+  padding-block: var(--sp-4);
+  padding-inline: var(--sp-5);
+  border-block-end: 1px solid var(--bdr);
+  background: var(--sur);
+
+  // המותג הפך לקישור הביתה — בלי להיראות כמו קישור
+  .brand {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  h1 {
+    margin: 0;
+  }
+
+  .tagline {
+    margin: var(--sp-1) 0 0;
+    color: var(--txt3);
+    font-size: var(--fs-small);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--sp-2);
+
+    .who {
+      color: var(--txt2);
+      font-size: var(--fs-small);
+    }
+
+    // טריגר לוח הפקודות: תווית + kbd. ה-kbd קטן ומופרד בטוקני v2.
+    .cmdk-trigger {
+      kbd {
+        margin-inline-start: var(--sp-1);
+        font-size: var(--fs-xs);
+        color: var(--txt3);
+        border: 1px solid var(--bdr2);
+        border-radius: var(--rad-sm);
+        padding: 0 5px;
+      }
+    }
+  }
+
+  // מסך צר: ריווח פנימי מצומצם כדי שהשורה הראשונה לא תילחץ
+  @media (max-width: 480px) {
+    padding-inline: var(--sp-3);
+  }
+}
+
+.app-main {
+  padding-block: var(--sp-5);
+  padding-inline: var(--sp-5);
+  max-inline-size: 980px;
+  margin-inline: auto;
+
+  // היעד של ה-skip-link ממוקד בתכנות — בלי טבעת פוקוס על אזור התוכן כולו
+  &:focus {
+    outline: none;
+  }
+}
+
+// #region step-22.4
+// skip-link: מוסתר ויזואלית (לא display:none — חייב להישאר פוקוסבילי), וקופץ
+// לתצוגה כשהוא מקבל פוקוס ב-Tab. ‏inset-block-start שלילי מחביא אותו מעל הקצה.
+.skip-link {
+  position: fixed;
+  inset-inline-start: var(--sp-3);
+  inset-block-start: -100%;
+  z-index: 100;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-radius: var(--rad-sm);
+  text-decoration: none;
+  box-shadow: var(--shadow-2);
+
+  // :focus (לא focus-visible) — ה-skip-link נגיש רק ב-Tab ממילא, וכך הוא
+  // מתגלה בכל מיקוד, כולל מיקוד תכנותי. זה הדפוס הקנוני ל-skip-link.
+  &:focus {
+    inset-block-start: var(--sp-3);
+    outline: 2px solid var(--accent-contrast);
+    outline-offset: 2px;
+  }
+}
+
+// reduced-motion: לכבד את העדפת המערכת ברמת השלד — בלי מעברים מיותרים.
+// כל פיצ׳ר כבר מבטל את האנימציות שלו; זו רשת ביטחון גלובלית.
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+  }
+}
+// #endregion

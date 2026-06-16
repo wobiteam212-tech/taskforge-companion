@@ -1,0 +1,57 @@
+<!-- #region step-22.3 -->
+<!-- skip-link: הקישור הראשון בעמוד. למשתמש מקלדת/קורא-מסך הוא קופץ ישר לתוכן
+     ומדלג על ה-header החוזר בכל מסך. גלוי רק כשהוא מקבל פוקוס (ראו ה-scss). -->
+<a class="skip-link" href="#main-content">דלג לתוכן</a>
+<!-- #endregion -->
+
+<header class="app-header">
+  <a routerLink="/" class="brand">
+    <h1>{{ title() }}</h1>
+    <p class="tagline">{{ tagline() }}</p>
+  </a>
+
+  <div class="header-actions">
+    <!-- #region step-16.10c -->
+    <button
+      tf-button
+      variant="ghost"
+      type="button"
+      class="cmdk-trigger"
+      (click)="palette.toggle()"
+      aria-label="פתיחת לוח הפקודות"
+    >
+      <span>פקודות</span>
+      <kbd class="ltr">⌘K</kbd>
+    </button>
+    <!-- #endregion -->
+
+    @if (tokenStore.user(); as user) {
+      <span class="who">{{ user.displayName }}</span>
+      <button tf-button variant="ghost" type="button" (click)="logout()">Sign out</button>
+    } @else {
+      <button tf-button type="button" (click)="loginOpen.set(true)">Sign in</button>
+    }
+
+    <button
+      tf-button
+      variant="ghost"
+      type="button"
+      (click)="themeSvc.toggle()"
+      [attr.aria-pressed]="themeSvc.theme() === 'light'"
+    >
+      {{ themeSvc.theme() === 'dark' ? 'Light' : 'Dark' }} mode
+    </button>
+  </div>
+</header>
+
+<!-- #region step-22.3b -->
+<!-- יעד ה-skip-link. tabindex="-1" מאפשר למקד את ה-main בתכנות (לא ב-Tab רגיל),
+     כך שאחרי הקפיצה הפוקוס באמת נמצא בתוכן ולא חוזר לראש. -->
+<main class="app-main" id="main-content" tabindex="-1">
+  <router-outlet />
+</main>
+<!-- #endregion -->
+
+<tf-login-dialog [(open)]="loginOpen" />
+<tf-command-palette />
+<tf-toast-container />
