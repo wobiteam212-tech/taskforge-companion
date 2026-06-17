@@ -1,8 +1,9 @@
-# Spec — ch24: Realtime with SignalR (PROPOSAL / DRAFT — confirm with Oleg before building)
+# Spec — ch24: Realtime with SignalR (BUILT — `431ed99` backend, `53eaf78` client, `65e12b6` content)
 
-**Status:** DRAFT, like ch21/ch22/ch23. Wave 6 (Production), chapter 2 of 4. **Both backend + frontend** — the most
-genuinely fullstack chapter since ch11/ch12: a server hub pushing live changes, an Angular client consuming them, and the
-hard parts (auth over WebSockets, groups, reconnection, echo) taught honestly.
+**Status:** BUILT + runtime-proven (real two-client SignalR smoke). Wave 6, chapter 2 of 4. Scope confirmed w/ Oleg
+(AskUserQuestion) = issue-lifecycle + comments push, echo-skip via connection id; defaults = query-string JWT hub auth,
+full-entity payload, `@microsoft/signalr` dep. OPEN DECISIONS resolved per the proposal (presence + live-stats DEFERRED).
+The `06-PROGRESS-LOG.md` top entries are the authoritative record of what was built + the gotchas.
 
 ## Goal
 

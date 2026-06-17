@@ -32,12 +32,45 @@
 | Wave 5 — Testing (ch21) | `04-chapter-specs/ch21-testing.md` | DONE — backend `d61ba3d` (xUnit + SQLite-in-memory, 8 tests, gated via dotnet test); frontend + content + demo `5eaa97a` (vitest specs, 15-step content, runtime-verified) |
 | Wave 5 — Perf & a11y (ch22) | `04-chapter-specs/ch22-perf-a11y.md` | DONE — `93f0b1f` snapshot (route preloading + @defer prefetch + skip-link/landmark) + `44e045a` content + demo (16 steps); runtime-verified. **Wave 5 COMPLETE.** |
 | Wave 6 — Hardening (ch23) | `04-chapter-specs/ch23-hardening.md` | DONE — backend+interceptor `106f890`; content+demo `c47ba73` (OutputCaching custom policy + tag-eviction, compression, rate-limit 429, security headers, secrets fail-fast; runtime-proven both servers; content delegated+reviewed). **Opens Wave 6.** |
-| Wave 6 — Realtime (ch24) | `04-chapter-specs/ch24-realtime-signalr.md` | IN PROGRESS — **backend snapshot DONE** (hub + IBoardNotifier seam + auth-over-WS + per-project groups; compile + negotiate-auth runtime-proven); **client + content + two-client smoke = NEXT** |
+| Wave 6 — Realtime (ch24) | `04-chapter-specs/ch24-realtime-signalr.md` | DONE — backend `431ed99` + client `53eaf78` + content+demo `65e12b6` (hub + IBoardNotifier seam + auth-over-WS + per-project groups + echo-skip + reconnect-reconcile; **real two-client SignalR smoke** + guide runtime verified; content delegated+reviewed) |
 | Wave 6 — Production (ch25–26) | (planned) | NOT STARTED |
 
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-17 — ch24 Realtime (SignalR) — DONE (Claude; client built + two-client-proven; content DELEGATED + reviewed)
+- CLIENT snapshot DONE (`reference/ch24/client/`, commit `feat ch24 snapshot pt2`): `@microsoft/signalr ^10.0.0` (matches
+  .NET 10; main bundle grew to ~428kB raw/~112kB transfer — eager because the interceptor injects the service);
+  `core/realtime/board-connection.ts` = one `HubConnection` in a root service (`accessTokenFactory` = JWT over WS,
+  `withAutomaticReconnect`, connection-state + `connectionId` signals, auto start/stop on `isLoggedIn`,
+  `setActiveProject`/`clearActiveProject` with re-join + `issues.reload()` on `onreconnected`, `.on(IssueChanged/
+  IssueDeleted/CommentAdded)` that **skip self-origin via `isSelf(origin === connectionId)`**); `IssuesStore +=
+  applyRemoteUpsert/applyRemoteRemove` (`upsertEntity`/`removeEntity` — in-place, no refetch); `IssueDetailStore +=
+  applyRemoteComment` (refetch the open issue's thread); `auth.interceptor += X-Connection-Id` (reads the service's
+  `connectionId()`); `project-board` joins/leaves the group in a constructor `effect`+`DestroyRef` and shows a "● חי"
+  `tf-badge` bound to state; `api.ts += HUB_BASE`. milestones += ch24 ng (test:true).
+- **REAL TWO-CLIENT SMOKE** (node + `@microsoft/signalr` against the running API, in `.build/ch24/client/rt-smoke.mjs`):
+  unauth connect rejected (401); clientA `POST /api/projects/1/issues` (201) with its `X-Connection-Id` broadcasts
+  `IssueChanged` to the project-1 group; **both** A and B receive it; `origin === A.connectionId` so B applies
+  (foreign) and A skips (own echo); payload `status: "Open"` (enum-as-string, matches REST); non-member `JoinProject(2)`
+  (maya, member of project 1 only) rejected with `HubException`. The whole loop works end-to-end.
+- CONTENT delegated to sonnet (verified-facts + region map + BACKTICK guard); returned 20 steps/9 quiz/5 proveIt/6 terms,
+  all 4 gates green. My review: factually clean; fixed 4 Hebrew slips (one non-word typo, one spelling variant, two
+  Latin-`l`-in-Hebrew-word glitches). Live demo (`two-client-realtime.demo.ts`) = two boards, A writes/B receives after a
+  hop, disconnect-B drops events, reconnect re-syncs — guide runtime-verified (start 2/2, create 3/3, B-off-create 4/3,
+  reconnect 4/4).
+- GATES green: gen:manifest 24/2716 · verify:coverage 197 · vitest 150 (+6 ch24) · guide build clean. Guide chapter
+  renders 20 steps, **docOverflow false at 1280 AND 375**, 0 console errors, demo verified. `verify:snapshots` (incl. new
+  ch24 dotnet + ch24 ng+test milestones) running at commit time.
+- GOTCHA: running `pnpm exec ng build` (the GUIDE-ROOT build gate) while the preview's `ng serve` is up can kill the
+  preview (both use the root `.angular` cache) — restart the preview after the guide build before browser-verifying.
+  (`verify:snapshots` is safe — it builds in `reference/.build/*/client`, separate caches.)
+- WHAT'S NEXT: **ch25 Ship (Docker/CI/deploy)** — multi-stage Dockerfile(s) for API + client, docker-compose, GitHub
+  Actions CI (build + the gates), env/config story for prod. NO spec yet — DESIGN first (draft a proposal like
+  ch21/22/23/24, confirm scope w/ Oleg) before building. Then ch26 Capstone (recap map + interview drill finale) = the
+  last chapter. Note ch25 is partly NON-code-snapshot (Dockerfiles/CI yaml are the deliverables) — think about how they
+  fit the reference/milestones model (they may be taught via `code-inline`/`app-tree` rather than compiled snapshots).
 
 ### 2026-06-16 — ch24 Realtime (SignalR) — BACKEND DONE, client+content NEXT (Claude; spec self-proposed, scope confirmed w/ Oleg)
 - Drafted `04-chapter-specs/ch24-realtime-signalr.md` (committed) with OPEN DECISIONS; confirmed scope w/ Oleg
