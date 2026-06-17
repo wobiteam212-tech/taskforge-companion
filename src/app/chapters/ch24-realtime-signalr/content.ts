@@ -294,7 +294,8 @@ export const CH24_CONTENT: ChapterContent = {
         {
           kind: 'p',
           text:
-            'הרישום של ה-seam: `builder.Services.AddSingleton<IBoardNotifier, SignalRBoardNotifier>()`. ' +
+            'את ה-seam עצמו רושמים למעלה, בקטע רישום השירותים (ליד ה-repositories): ' +
+            '`builder.Services.AddSingleton<IBoardNotifier, SignalRBoardNotifier>()`. ' +
             'Singleton (לא Scoped) כי `IHubContext<BoardHub>` עצמו הוא singleton — ' +
             'אין per-request state, ואפשר לשתף אותו בבטחה בין בקשות.',
         },
@@ -314,7 +315,7 @@ export const CH24_CONTENT: ChapterContent = {
         file: 'server/TaskForge.Api/Program.cs',
         region: 'step-24.5',
         diff: true,
-        title: 'Program.cs — AddSignalR + AddJsonProtocol camelCase+enum + singleton notifier',
+        title: 'Program.cs — AddSignalR + AddJsonProtocol (camelCase + enum)',
       },
     },
 
@@ -651,7 +652,8 @@ export const CH24_CONTENT: ChapterContent = {
           kind: 'p',
           text:
             'פרק 11 בנה את `authInterceptor` — "מתרגם יחיד" שמצרף `Authorization: Bearer` לכל בקשת API. ' +
-            'פרק 24 מלמד אותו ניב שני: הוא מזריק גם את `BoardConnection` ומצרף `X-Connection-Id` לכל בקשת כתיבה. ' +
+            'פרק 24 מלמד אותו ניב שני: הוא מזריק גם את `BoardConnection` ומצרף `X-Connection-Id` לכל בקשת API. ' +
+            '(השרת קורא את הכותרת רק ב-handlers של כתיבה; ב-GET היא פשוט נושאת מטען ולא משפיעה.) ' +
             'ה-interceptor כבר רץ על כל בקשה — אין צורך לגעת בשום component.',
         },
         {
