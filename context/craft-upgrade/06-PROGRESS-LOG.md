@@ -32,11 +32,60 @@
 | Wave 5 — Testing (ch21) | `04-chapter-specs/ch21-testing.md` | DONE — backend `d61ba3d` (xUnit + SQLite-in-memory, 8 tests, gated via dotnet test); frontend + content + demo `5eaa97a` (vitest specs, 15-step content, runtime-verified) |
 | Wave 5 — Perf & a11y (ch22) | `04-chapter-specs/ch22-perf-a11y.md` | DONE — `93f0b1f` snapshot (route preloading + @defer prefetch + skip-link/landmark) + `44e045a` content + demo (16 steps); runtime-verified. **Wave 5 COMPLETE.** |
 | Wave 6 — Hardening (ch23) | `04-chapter-specs/ch23-hardening.md` | DONE — backend+interceptor `106f890`; content+demo `c47ba73` (OutputCaching custom policy + tag-eviction, compression, rate-limit 429, security headers, secrets fail-fast; runtime-proven both servers; content delegated+reviewed). **Opens Wave 6.** |
-| Wave 6 — Production (ch24–26) | (planned) | NOT STARTED |
+| Wave 6 — Realtime (ch24) | `04-chapter-specs/ch24-realtime-signalr.md` | IN PROGRESS — **backend snapshot DONE** (hub + IBoardNotifier seam + auth-over-WS + per-project groups; compile + negotiate-auth runtime-proven); **client + content + two-client smoke = NEXT** |
+| Wave 6 — Production (ch25–26) | (planned) | NOT STARTED |
 
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-16 — ch24 Realtime (SignalR) — BACKEND DONE, client+content NEXT (Claude; spec self-proposed, scope confirmed w/ Oleg)
+- Drafted `04-chapter-specs/ch24-realtime-signalr.md` (committed) with OPEN DECISIONS; confirmed scope w/ Oleg
+  (AskUserQuestion) = **issue lifecycle push + comments push** (NOT presence, NOT live-dashboard-stats — deferred);
+  **echo handling = skip self-origin via connection id**. Defaults locked from the proposal: query-string JWT for the
+  hub, full-entity payload for issues, `@microsoft/signalr` client dep.
+- BACKEND snapshot DONE (`reference/ch24/server/`, commit = this entry's `feat ch24 snapshot pt1`):
+  - `Hubs/BoardHub.cs` `[Authorize]` — `JoinProject`/`LeaveProject` authorize via the same `IsMemberAsync` as REST, then
+    `Groups.AddToGroupAsync($"project-{id}")`. `HubException` for non-members. `ProjectGroup(id)` static helper.
+  - `Realtime/IBoardNotifier.cs` (seam, DIP like the repos — lives in **Api** not Core because it takes Api Contracts
+    `IssueResponse`/`CommentResponse`) + `SignalRBoardNotifier.cs` (wraps `IHubContext<BoardHub>`, singleton) +
+    `BoardEvents.cs` (3 records `IssueChangedEvent`/`IssueDeletedEvent`/`CommentAddedEvent`, each carries `Origin`).
+  - WIRED into the **same write points that evict the ch23 OutputCache**: IssueEndpoints Create/Update/Reorder (full
+    `IssueChanged`) + Delete (`IssueDeleted {id}`), CommentEndpoints Add (`CommentAdded`). Each handler gained
+    `IBoardNotifier notifier` + `[FromHeader(Name="X-Connection-Id")] string? connectionId` (needs `using
+    Microsoft.AspNetCore.Mvc;`), passing connectionId as `origin`.
+  - Program.cs: `AddSignalR().AddJsonProtocol(camelCase + JsonStringEnumConverter)` (payload matches REST shape);
+    `AddSingleton<IBoardNotifier, SignalRBoardNotifier>()`; **JWT `OnMessageReceived` lifts `access_token` from query for
+    `/hubs` paths** (browsers can't set Authorization on a WebSocket); CORS **`+ AllowCredentials()`** (legal because
+    `WithOrigins` is explicit — `AllowAnyOrigin` + credentials would throw); `MapHub<BoardHub>("/hubs/board")`.
+  - No new entity/migration (events derived from existing writes). milestones += ch24 dotnet.
+- VERIFIED: ch24 server `dotnet build` 0/0 + 8 xUnit pass; app boots with all ch23 hardening intact; **hub negotiate =
+  401 without a token, 200 (+connectionId, transports WebSockets/SSE/LongPolling) with `?access_token=`** — proves the
+  auth-over-WS wiring. (Full two-client broadcast loop needs the client lib — deferred to the client step.)
+- **WHAT'S NEXT — the ch24 CLIENT (precise plan, all in `reference/ch24/client/`):**
+  1. `package.json` += `@microsoft/signalr` (latest; framework-agnostic, works zoneless — check peer like ch20 did).
+  2. `core/realtime/board-connection.ts`: service wrapping `HubConnectionBuilder().withUrl('/hubs/board', {
+     accessTokenFactory: () => tokenStore token }).withAutomaticReconnect().build()`; connection-state signal
+     (disconnected|connecting|connected|reconnecting); expose `connectionId()` signal; `joinProject(id)`/`leaveProject(id)`;
+     register `.on('IssueChanged'|'IssueDeleted'|'CommentAdded', ...)` that **skip events whose `origin === connectionId()`**
+     then dispatch into `IssuesStore`; clean up in `DestroyRef`. On `onreconnected`, re-join + reload (reconcile).
+  3. `IssuesStore` (@ngrx/signals, ch20) += `applyRemoteUpsert(issue)` / `applyRemoteRemove(id)` methods
+     (`patchState` + `setAllEntities`/`updateEntity`/`removeEntity`) — public optimistic surface preserved.
+  4. Send `X-Connection-Id` on mutating requests: add to `auth.interceptor` (or a small new interceptor) reading the
+     realtime service's `connectionId()`, set the header on POST/PUT/PATCH/DELETE to the API.
+  5. `issue-board`/`project-board`: `joinProject` on init, `leaveProject` on destroy; a small "live" pill bound to the
+     connection-state signal.
+  6. milestones += ch24 ng (test:true — carries forward specs).
+  7. RUNTIME SMOKE (the real proof): two hub connections (a node script using `@microsoft/signalr`, or two browser
+     contexts) — client A creates/moves/comments via HTTP (with its X-Connection-Id) → client B receives the event and
+     updates; A does NOT double-apply its own echo; unauthenticated connect rejected; non-member `JoinProject` rejected;
+     drop+reconnect re-syncs. Then DELEGATE `content.ts` (sonnet, verified-facts + region map below) + the two-client live
+     demo (I build the demo). GATES + review + commit + log.
+- REGION MAP for content (chapter 'ch24'): Hub `step-24.2`; BoardEvents `step-24.3`; IBoardNotifier `step-24.3b`;
+  SignalRBoardNotifier `step-24.4`; Program AddSignalR `step-24.5` / MapHub `step-24.5b` / JWT OnMessageReceived
+  `step-24.6` / CORS AllowCredentials `step-24.7` / notifier DI `step-24.4b`; IssueEndpoints broadcasts `step-24.8`
+  (+8b create, 8c update, 8d reorder, 8e delete); CommentEndpoints `step-24.9`/`24.9b`. (Client regions get `step-24.1x`
+  when built.)
 
 ### 2026-06-16 — ch23 Production Hardening — DONE — OPENS WAVE 6 (Claude; audit reviewed first, then built; content DELEGATED + reviewed)
 - **Session start = reviewed + committed an AUDIT done by Oleg-with-codex** (`14adc56`, uncommitted in the tree): ch17/ch18
