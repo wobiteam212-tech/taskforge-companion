@@ -36,21 +36,21 @@ function render(src: string): string {
             <span class="rc-body" [innerHTML]="renderBody(c.body)"></span>
           </div>
         } @empty {
-          <p class="rc-empty">אין תגובות עדיין.</p>
+          <p class="rc-empty">No comments yet.</p>
         }
       </div>
 
       @if (pending()) {
         <div class="rc-undo" role="status">
-          <span>התגובה נשלחת…</span>
-          <button type="button" (click)="undo()">בטל</button>
+          <span>Posting comment…</span>
+          <button type="button" (click)="undo()">Undo</button>
         </div>
       }
 
       <div class="rc-editor">
         <div class="rc-tabs">
-          <button type="button" [class.on]="!preview()" (click)="preview.set(false)">כתיבה</button>
-          <button type="button" [class.on]="preview()" (click)="preview.set(true)">תצוגה מקדימה</button>
+          <button type="button" [class.on]="!preview()" (click)="preview.set(false)">Write</button>
+          <button type="button" [class.on]="preview()" (click)="preview.set(true)">Preview</button>
         </div>
 
         @if (!preview()) {
@@ -59,7 +59,7 @@ function render(src: string): string {
               #ta
               rows="2"
               [value]="draft()"
-              placeholder="‎**מודגש**, &#96;קוד&#96;, או ‎@ להזכרה"
+              placeholder="**bold**, &#96;code&#96;, or @ to mention"
               (input)="onInput($event)"
               (keydown)="onKey($event)"
             ></textarea>
@@ -72,22 +72,22 @@ function render(src: string): string {
             }
           </div>
         } @else {
-          <div class="rc-preview" [innerHTML]="renderBody(draft() || '_כלום עדיין_')"></div>
+          <div class="rc-preview" [innerHTML]="renderBody(draft() || '_Nothing yet_')"></div>
         }
 
         <div class="rc-actions">
           <label class="rc-break">
             <input type="checkbox" [checked]="breakServer()" (change)="breakServer.set($any($event.target).checked)" />
-            שבור את השרת
+            Break the server
           </label>
-          <button type="button" class="rc-post" [disabled]="!draft().trim()" (click)="post()">פרסם</button>
+          <button type="button" class="rc-post" [disabled]="!draft().trim()" (click)="post()">Post</button>
         </div>
       </div>
     </div>
   `,
   styles: [
     `
-      :host { display: block; }
+      :host { display: block; direction: ltr; }
       .rc { display: grid; gap: var(--sp-3); }
       .rc-list { display: grid; gap: var(--sp-2); }
       .rc-item {
@@ -132,7 +132,7 @@ export class RichCommentDemo {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly comments = signal<DemoComment[]>([
-    { id: 1, author: 'Maya Levi', body: 'הבעיה היא ב-**guard** שרץ לפני שחזור הטוקן.', pending: false },
+    { id: 1, author: 'Maya Levi', body: 'The issue is in the **guard** that runs before the token is refreshed.', pending: false },
   ]);
   protected readonly draft = signal('');
   protected readonly preview = signal(false);

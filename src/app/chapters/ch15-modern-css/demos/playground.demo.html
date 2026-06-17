@@ -1,6 +1,6 @@
 <div class="pg">
   <div class="pg-controls">
-    <div class="seg" role="group" aria-label="מנגנון פריסה">
+    <div class="seg" role="group" aria-label="Layout mode">
       @for (m of modes; track m) {
         <button
           type="button"
@@ -20,7 +20,7 @@
         step="10"
         [value]="width()"
         (input)="onWidth($event)"
-        aria-label="רוחב ה-container"
+        aria-label="Container width"
       />
     </label>
   </div>
@@ -41,8 +41,8 @@
   </div>
 
   <p class="pg-hint">
-    בחרו כרטיס: ה-parent מגיב דרך <code class="ltr">:has(input:checked)</code> בלי class ובלי signal.
-    הזיזו את הסליידר מתחת ל-<code class="ltr">22rem</code> וה-<code class="ltr">&#64;container</code> מקפל לעמודה אחת —
-    ה-viewport לא זז, רק ה-container.
+    Pick a card: the parent reacts through <code class="ltr">:has(input:checked)</code> — no class, no signal.
+    Drag the slider below <code class="ltr">22rem</code> and <code class="ltr">&#64;container</code> folds to one column —
+    the viewport doesn't move, only the container.
   </p>
 </div>

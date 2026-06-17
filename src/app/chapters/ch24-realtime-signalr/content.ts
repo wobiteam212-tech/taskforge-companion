@@ -827,10 +827,10 @@ export const CH24_CONTENT: ChapterContent = {
           kind: 'p',
           text:
             'הדמו שלמטה ממחיש שני לקוחות זה לצד זה. ' +
-            '"A: צור issue" ו-"A: הזז issue" — A מעדכן אופטימית (ללא הד); ' +
+            '"A: Create issue" ו-"A: Move issue" — A מעדכן אופטימית (ללא הד); ' +
             'B מקבל את האירוע תוך ~550ms ומעדכן את הלוח שלו מהדחיפה. ' +
-            '"נתק את B" מוריד את החיבור ב-B; אירועים שנשלחו בזמן הניתוק אובדים ("X updates missed"); ' +
-            '"חבר מחדש" מחבר מחדש וטוען מהשרת — reconcile.',
+            '"Disconnect B" מוריד את החיבור ב-B; אירועים שנשלחו בזמן הניתוק אובדים ("X updates missed"); ' +
+            '"Reconnect B" מחבר מחדש וטוען מהשרת — reconcile.',
         },
         {
           kind: 'callout',
@@ -865,13 +865,13 @@ export const CH24_CONTENT: ChapterContent = {
           kind: 'p',
           text:
             'הדמו מממש סצנריו ריאלי: שני לקוחות מחוברים לאותו פרויקט. ' +
-            'לחצן "A: צור issue" שולח בקשה מ-A; A מעדכן אופטימית מיד. ' +
+            'לחצן "A: Create issue" שולח בקשה מ-A; A מעדכן אופטימית מיד. ' +
             'B מקבל `IssueChanged` דרך ה-hub תוך ~550ms ומציג את ה-issue.',
         },
         {
           kind: 'p',
           text:
-            '"נתק את B" ו-"חבר מחדש את B" מדגימים את best-effort: ' +
+            '"Disconnect B" ו-"Reconnect B" מדגימים את best-effort: ' +
             'אירועים שנשלחו בזמן הניתוק מופיעים כ-"X updates missed" — הם אבדו, לא חיכו. ' +
             'חיבור מחדש קורא `reload()` ו-B מסתנכרן עם מצב A הנוכחי. ' +
             'זה ה-mental model: realtime מצוין ל-"אפס זמן lag"; ' +

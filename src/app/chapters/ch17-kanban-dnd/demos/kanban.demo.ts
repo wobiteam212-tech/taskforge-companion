@@ -10,16 +10,16 @@ interface DemoCard {
 }
 
 const COLUMNS: { id: ColumnId; label: string }[] = [
-  { id: 'todo', label: 'לעשות' },
-  { id: 'doing', label: 'בעבודה' },
-  { id: 'done', label: 'הושלם' },
+  { id: 'todo', label: 'To do' },
+  { id: 'doing', label: 'In progress' },
+  { id: 'done', label: 'Done' },
 ];
 
 const SEED: DemoCard[] = [
-  { id: 1, title: 'עיצוב מסך הבית', col: 'todo', rank: 1024 },
-  { id: 2, title: 'תיקון לולאת הניתוב', col: 'todo', rank: 2048 },
-  { id: 3, title: 'בדיקת טופס הקשר', col: 'doing', rank: 1024 },
-  { id: 4, title: 'אופטימיזציה לתמונות', col: 'done', rank: 1024 },
+  { id: 1, title: 'Design home screen', col: 'todo', rank: 1024 },
+  { id: 2, title: 'Fix routing loop', col: 'todo', rank: 2048 },
+  { id: 3, title: 'Test contact form', col: 'doing', rank: 1024 },
+  { id: 4, title: 'Optimize images', col: 'done', rank: 1024 },
 ];
 
 /**
@@ -79,7 +79,7 @@ export class KanbanDemo {
       list.map((c) => (c.id === card.id ? { ...c, col: toCol, rank } : c)),
     );
     this.savingId.set(card.id);
-    this.pushLog(`הוזז "${card.title}" → ${this.labelOf(toCol)} (rank ${Math.round(rank)})`);
+    this.pushLog(`Moved "${card.title}" → ${this.labelOf(toCol)} (rank ${Math.round(rank)})`);
 
     // "שלח לשרת"
     const t = setTimeout(() => {
@@ -87,10 +87,10 @@ export class KanbanDemo {
       this.savingId.set(null);
       if (this.breakServer()) {
         this.cards.set(before);
-        this.pushLog(`✗ השמירה נכשלה — "${card.title}" הוחזר`);
+        this.pushLog(`✗ Save failed — "${card.title}" rolled back`);
         this.grabbedId.set(null);
       } else {
-        this.pushLog(`✓ נשמר "${card.title}"`);
+        this.pushLog(`✓ Saved "${card.title}"`);
       }
     }, 600);
     this.timers.add(t);
@@ -103,17 +103,17 @@ export class KanbanDemo {
       event.preventDefault();
       if (this.grabbedId() === card.id) {
         this.grabbedId.set(null);
-        this.pushLog(`הונח "${card.title}"`);
+        this.pushLog(`Dropped "${card.title}"`);
       } else {
         this.grabbedId.set(card.id);
-        this.pushLog(`הורם "${card.title}" — חיצים להזזה, רווח להנחה`);
+        this.pushLog(`Picked up "${card.title}" — arrows to move, Space to drop`);
       }
       return;
     }
     if (key === 'Escape' && this.grabbedId() === card.id) {
       event.preventDefault();
       this.grabbedId.set(null);
-      this.pushLog(`בוטל`);
+      this.pushLog(`Cancelled`);
       return;
     }
     if (this.grabbedId() !== card.id) return;
@@ -160,7 +160,7 @@ export class KanbanDemo {
     this.cards.set(structuredClone(SEED));
     this.grabbedId.set(null);
     this.savingId.set(null);
-    this.pushLog('אופס');
+    this.pushLog('Reset');
   }
 
   private labelOf(col: ColumnId): string {

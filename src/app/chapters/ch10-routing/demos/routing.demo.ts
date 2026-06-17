@@ -53,7 +53,7 @@ export class RoutingDemo {
         query,
         guard: pass ? 'pass' : 'redirect',
         resolver: pass,
-        component: pass ? 'ProjectBoard' : '(חזרה אל /)',
+        component: pass ? 'ProjectBoard' : '(redirect to /)',
       };
     }
 

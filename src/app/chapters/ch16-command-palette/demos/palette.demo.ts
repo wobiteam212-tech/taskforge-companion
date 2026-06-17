@@ -8,12 +8,12 @@ interface DemoCommand {
 }
 
 const COMMANDS: DemoCommand[] = [
-  { id: 'nav.projects', title: 'מעבר לכל הפרויקטים', group: 'Navigation', keywords: 'home projects' },
-  { id: 'view.theme', title: 'החלפת מצב כהה / בהיר', group: 'View', keywords: 'theme dark light' },
-  { id: 'issue.create', title: 'יצירת issue חדש', group: 'Issues', keywords: 'new issue create' },
-  { id: 'board.open', title: 'פתיחת הלוח', group: 'Navigation', keywords: 'board kanban' },
-  { id: 'auth.signout', title: 'התנתקות', group: 'Identity', keywords: 'sign out logout' },
-  { id: 'search.issues', title: 'חיפוש issues', group: 'Issues', keywords: 'search find' },
+  { id: 'nav.projects', title: 'Go to all projects', group: 'Navigation', keywords: 'home projects' },
+  { id: 'view.theme', title: 'Toggle dark / light mode', group: 'View', keywords: 'theme dark light' },
+  { id: 'issue.create', title: 'Create new issue', group: 'Issues', keywords: 'new issue create' },
+  { id: 'board.open', title: 'Open the board', group: 'Navigation', keywords: 'board kanban' },
+  { id: 'auth.signout', title: 'Sign out', group: 'Identity', keywords: 'sign out logout' },
+  { id: 'search.issues', title: 'Search issues', group: 'Issues', keywords: 'search find' },
 ];
 
 // אותו scorer של fuzzy.ts בפרק 16, בגרסה עצמאית לדמו: כל תווי ה-query
@@ -79,6 +79,6 @@ export class CommandPaletteDemo {
   }
 
   protected run(cmd: DemoCommand): void {
-    this.log.update((l) => [`הורץ: ${cmd.title}`, ...l].slice(0, 5));
+    this.log.update((l) => [`Ran: ${cmd.title}`, ...l].slice(0, 5));
   }
 }

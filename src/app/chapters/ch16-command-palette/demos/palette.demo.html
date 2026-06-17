@@ -7,10 +7,10 @@
         type="text"
         name="demo-command-query"
         autocomplete="off"
-        placeholder="הקלידו פקודה…"
+        placeholder="Type a command…"
         [value]="query()"
         (input)="onInput($any($event.target).value)"
-        aria-label="חיפוש פקודות (דמו)"
+        aria-label="Search commands (demo)"
       />
     </div>
 
@@ -31,18 +31,18 @@
         }
       </ul>
     } @else {
-      <p class="pal-empty">אין פקודה תואמת.</p>
+      <p class="pal-empty">No matching command.</p>
     }
   </div>
 
   <div class="pal-log">
-    <div class="pal-log-head">לוג הרצה</div>
+    <div class="pal-log-head">Run log</div>
     @if (log().length) {
       @for (line of log(); track $index) {
         <div class="pal-log-line">{{ line }}</div>
       }
     } @else {
-      <div class="pal-log-empty">בחרו פקודה (חיצים + Enter, או לחיצה) כדי לראות מה רץ.</div>
+      <div class="pal-log-empty">Select a command (arrows + Enter, or click) to see what ran.</div>
     }
   </div>
 </div>

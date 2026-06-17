@@ -17,9 +17,9 @@ interface Row {
   template: `
     <div class="ss">
       <div class="ss-head">
-        <span class="ss-stat">{{ entities().length }} פריטים</span>
-        <span class="ss-stat done">{{ doneCount() }} הושלמו</span>
-        <span class="ss-stat">{{ remaining() }} נותרו</span>
+        <span class="ss-stat">{{ entities().length }} items</span>
+        <span class="ss-stat done">{{ doneCount() }} done</span>
+        <span class="ss-stat">{{ remaining() }} remaining</span>
       </div>
 
       <ul class="ss-list">
@@ -29,23 +29,23 @@ interface Row {
               <input type="checkbox" [checked]="row.done" (change)="toggle(row.id)" />
               <span>{{ row.title }}</span>
             </label>
-            <button type="button" class="ss-x" (click)="remove(row.id)" aria-label="הסר">✕</button>
+            <button type="button" class="ss-x" (click)="remove(row.id)" aria-label="Remove">✕</button>
           </li>
         } @empty {
-          <li class="ss-empty">הרשימה ריקה — הוסיפו פריט.</li>
+          <li class="ss-empty">The list is empty — add an item.</li>
         }
       </ul>
 
       <form class="ss-add" (submit)="add(); $event.preventDefault()">
-        <input [value]="draft()" (input)="draft.set($any($event.target).value)" placeholder="פריט חדש…" />
-        <button type="button" class="ss-btn" (click)="add()" [disabled]="!draft().trim()">הוסף</button>
-        <button type="button" class="ss-btn ghost" (click)="reset()">איפוס</button>
+        <input [value]="draft()" (input)="draft.set($any($event.target).value)" placeholder="New item…" />
+        <button type="button" class="ss-btn" (click)="add()" [disabled]="!draft().trim()">Add</button>
+        <button type="button" class="ss-btn ghost" (click)="reset()">Reset</button>
       </form>
     </div>
   `,
   styles: [
     `
-      :host { display: block; }
+      :host { display: block; direction: ltr; }
       .ss { display: grid; gap: var(--sp-3); }
       .ss-head { display: flex; gap: var(--sp-3); font-size: var(--fs-small); color: var(--txt2); }
       .ss-stat.done { color: var(--accent); }
@@ -70,8 +70,8 @@ export class SignalStoreDemo {
   // withEntities ביד: מפת ישויות. signal של Map שומר זהות וסדר הכנסה.
   private readonly map = signal<Map<number, Row>>(
     new Map([
-      [1, { id: 1, title: 'לכתוב את ה-store ביד', done: true }],
-      [2, { id: 2, title: 'למפות ל-@ngrx/signals', done: false }],
+      [1, { id: 1, title: 'Write the store by hand', done: true }],
+      [2, { id: 2, title: 'Map it to @ngrx/signals', done: false }],
     ]),
   );
   protected readonly draft = signal('');
@@ -110,8 +110,8 @@ export class SignalStoreDemo {
   protected reset(): void {
     this.map.set(
       new Map([
-        [1, { id: 1, title: 'לכתוב את ה-store ביד', done: true }],
-        [2, { id: 2, title: 'למפות ל-@ngrx/signals', done: false }],
+        [1, { id: 1, title: 'Write the store by hand', done: true }],
+        [2, { id: 2, title: 'Map it to @ngrx/signals', done: false }],
       ]),
     );
     this.nextId = 3;

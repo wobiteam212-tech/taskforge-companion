@@ -1,5 +1,6 @@
 :host {
   display: block;
+  direction: ltr;
   /* בלי container-type ה-@container של demo-body לעולם לא תופס */
   container-type: inline-size;
 }

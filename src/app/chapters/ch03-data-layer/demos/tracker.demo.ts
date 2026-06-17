@@ -76,7 +76,7 @@ export class TrackerDemo {
         statements.push(`DELETE FROM Projects WHERE Id = ${r.id};`);
       }
     }
-    this.sql.set(statements.length ? statements : ['-- אין שינויים; שום SQL לא נשלח']);
+    this.sql.set(statements.length ? statements : ['-- No changes; no SQL was sent']);
     this.rows.update((rows) =>
       rows
         .filter((r) => r.state !== 'Deleted')

@@ -66,12 +66,12 @@ export class IoDemo {
       list.map((p) => (p.id === id ? { ...p, boosts: p.boosts + 1 } : p)),
     );
     const name = this.projects().find((p) => p.id === id)?.name ?? '?';
-    this.push(`output boost(${id}) עלה מהילד; ההורה עדכן את ה-signal; ה-input של "${name}" ירד מחדש`);
+    this.push(`output boost(${id}) rose from child; parent updated the signal; input for "${name}" flowed back down`);
   }
 
   protected reset(): void {
     this.projects.update((list) => list.map((p) => ({ ...p, boosts: 0 })));
-    this.push('ההורה איפס את ה-state — כל הילדים קיבלו inputs טריים, בלי לדעת למה');
+    this.push('Parent reset state — all children received fresh inputs, without knowing why');
   }
 
   private push(line: string): void {

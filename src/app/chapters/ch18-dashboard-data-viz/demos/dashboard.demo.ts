@@ -28,7 +28,7 @@ interface Bar {
 
 const STATUS_COLORS = ['#ff8a3d', '#3da5ff', '#4ade80'];
 const PRIORITY_COLORS = ['#d9c7a8', '#e0a36a', '#e07a3d', '#d8442f'];
-const PRIORITY_LABELS = ['נמוך', 'בינוני', 'גבוה', 'קריטי'];
+const PRIORITY_LABELS = ['Low', 'Medium', 'High', 'Critical'];
 
 function rand(min: number, max: number): number {
   return Math.floor(min + Math.random() * (max - min + 1));
@@ -44,14 +44,14 @@ function rand(min: number, max: number): number {
   template: `
     <div class="dd">
       <div class="dd-bar">
-        <button type="button" class="dd-btn" (click)="regenerate()">רענן נתונים</button>
-        <span class="dd-total">סה״כ {{ total() }} issues</span>
+        <button type="button" class="dd-btn" (click)="regenerate()">Refresh data</button>
+        <span class="dd-total">{{ total() }} issues total</span>
       </div>
 
       <div class="dd-grid">
         <figure class="dd-tile">
-          <figcaption>לפי סטטוס</figcaption>
-          <svg viewBox="0 0 120 120" class="dd-donut" role="img" aria-label="התפלגות סטטוס">
+          <figcaption>By status</figcaption>
+          <svg viewBox="0 0 120 120" class="dd-donut" role="img" aria-label="Status distribution">
             @for (s of statusSlices(); track s.label) {
               <circle
                 cx="60"
@@ -70,8 +70,8 @@ function rand(min: number, max: number): number {
         </figure>
 
         <figure class="dd-tile">
-          <figcaption>לפי עדיפות</figcaption>
-          <svg viewBox="0 0 200 120" preserveAspectRatio="xMidYMid meet" class="dd-bars" role="img" aria-label="התפלגות עדיפות">
+          <figcaption>By priority</figcaption>
+          <svg viewBox="0 0 200 120" preserveAspectRatio="xMidYMid meet" class="dd-bars" role="img" aria-label="Priority distribution">
             @for (b of priorityBars(); track b.label) {
               <rect [attr.x]="b.x" [attr.y]="b.y" [attr.width]="b.w" [attr.height]="b.h" [attr.fill]="b.color" rx="3" />
               <text [attr.x]="b.x + b.w / 2" y="112" text-anchor="middle" class="dd-bar-label">{{ b.label }}</text>
@@ -80,8 +80,8 @@ function rand(min: number, max: number): number {
         </figure>
 
         <figure class="dd-tile">
-          <figcaption>מגמת יצירה</figcaption>
-          <svg viewBox="0 0 200 60" preserveAspectRatio="none" class="dd-spark" role="img" aria-label="מגמה">
+          <figcaption>Creation trend</figcaption>
+          <svg viewBox="0 0 200 60" preserveAspectRatio="none" class="dd-spark" role="img" aria-label="Creation trend">
             <polyline [attr.points]="sparkPoints()" />
           </svg>
         </figure>
@@ -92,6 +92,7 @@ function rand(min: number, max: number): number {
     `
       :host {
         display: block;
+        direction: ltr;
       }
       .dd {
         display: grid;
@@ -205,9 +206,9 @@ export class DashboardDemo {
   protected readonly statusSlices = computed<Slice[]>(() => {
     const s = this.stats();
     const values = [
-      { label: 'פתוח', value: s.open, color: STATUS_COLORS[0] },
-      { label: 'בעבודה', value: s.inProgress, color: STATUS_COLORS[1] },
-      { label: 'הושלם', value: s.done, color: STATUS_COLORS[2] },
+      { label: 'Open', value: s.open, color: STATUS_COLORS[0] },
+      { label: 'In progress', value: s.inProgress, color: STATUS_COLORS[1] },
+      { label: 'Done', value: s.done, color: STATUS_COLORS[2] },
     ];
     const total = this.total() || 1;
     let acc = 0;

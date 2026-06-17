@@ -8,19 +8,19 @@ interface Stage {
 const STAGES: Stage[] = [
   {
     name: 'Logging',
-    desc: 'נכנס ראשון ומסיים אחרון: רושם את תחילת הבקשה, מחכה ל-next, ורושם את הסטטוס הסופי. כמו השומר בכניסה לבניין.',
+    desc: 'Enters first, exits last: logs the start of the request, waits for next, then logs the final status. Like a guard at the building entrance.',
   },
   {
     name: 'Timing',
-    desc: 'מפעיל Stopwatch ורושם OnStarting שיוסיף X-Elapsed-Ms לכותרות. הוא עוטף את כל מי שאחריו, ולכן מודד את הזמן האמיתי.',
+    desc: 'Starts a Stopwatch and registers OnStarting to append X-Elapsed-Ms to the response headers. It wraps everything after it, so it measures the true elapsed time.',
   },
   {
     name: 'Routing',
-    desc: 'משווה את ה-method וה-path לטבלת ה-endpoints. אם אין התאמה, הבקשה חוזרת מכאן עם 404 — בלי להגיע ל-handler אף פעם.',
+    desc: 'Matches the method and path against the endpoint table. If no match is found, the request returns here with 404 — never reaching a handler.',
   },
   {
     name: 'Endpoint',
-    desc: 'היעד הסופי: ה-handler של MapGet רץ, מחזיר ערך, וה-framework מסדרל אותו ל-JSON. מכאן התשובה מתחילה את דרכה חזרה.',
+    desc: 'The final destination: the MapGet handler runs, returns a value, and the framework serialises it to JSON. The response begins its journey back from here.',
   },
 ];
 

@@ -568,8 +568,8 @@ export const CH21_CONTENT: ChapterContent = {
         mermaid: `flowchart LR
   A["פונקציה טהורה\nרenderMarkdown, fuzzyScore\nrank midpoint"] -->|"yes: unit test"| T["בדוק"]
   B["repository + DB\nIsMemberAsync\nGetForProjectAsync"] -->|"yes: integration"| T
-  C["getter טריוויאלי\nAngular binding\nEF mapping"'] -->|"no: skip"| S["אל תבדוק"]
-  D["Framework internals\n@if / router"'] -->|"no: skip"| S`,
+  C["getter טריוויאלי\nAngular binding\nEF mapping"] -->|"no: skip"| S["אל תבדוק"]
+  D["Framework internals\n@if / router"] -->|"no: skip"| S`,
         caption: 'כלל האצבע: בדקו לוגיקה שלכם, דלגו על framework',
       },
     },
@@ -646,7 +646,7 @@ export const CH21_CONTENT: ChapterContent = {
           kind: 'p',
           text:
             'הדמו מציג ארבע assertions על פונקציות טהורות: rank midpoint ו-escape-first. ' +
-            'כולן ירוקות. לחצו "הכנס באג" — פונקציה אחת מוחלפת בגרסה שגויה, ' +
+            'כולן ירוקות. לחצו "Inject bug" — פונקציה אחת מוחלפת בגרסה שגויה, ' +
             'ובדיקה אחת הופכת לאדומה. לחצו שוב — חזרה לירוק. ' +
             'זו לולאת TDD במיניאטורה: אדום, תקן, ירוק.',
         },
@@ -670,7 +670,7 @@ export const CH21_CONTENT: ChapterContent = {
       panel: {
         kind: 'live-demo',
         load: () => import('./demos/test-runner.demo').then((m) => m.TestRunnerDemo),
-        caption: 'דמו חי: ארבע assertions ירוקות — "הכנס באג" הופך אחת לאדומה ומראה לולאת TDD במיניאטורה',
+        caption: 'דמו חי: ארבע assertions ירוקות — "Inject bug" הופך אחת לאדומה ומראה לולאת TDD במיניאטורה',
       },
     },
 

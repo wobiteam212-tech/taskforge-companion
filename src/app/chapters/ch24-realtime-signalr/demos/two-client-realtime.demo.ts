@@ -20,12 +20,12 @@ const HOP_MS = 550;
   template: `
     <div class="rt">
       <div class="rt-controls">
-        <button type="button" class="rt-btn rt-a" (click)="createFromA()">A: צור issue</button>
+        <button type="button" class="rt-btn rt-a" (click)="createFromA()">A: Create issue</button>
         <button type="button" class="rt-btn rt-a" [disabled]="!a().length" (click)="moveFromA()">
-          A: הזז issue
+          A: Move issue
         </button>
         <button type="button" class="rt-btn" (click)="toggleB()">
-          {{ bConnected() ? 'נתק את B' : 'חבר מחדש את B' }}
+          {{ bConnected() ? 'Disconnect B' : 'Reconnect B' }}
         </button>
       </div>
 
@@ -33,7 +33,7 @@ const HOP_MS = 550;
         <div class="rt-client">
           <header>
             <strong>Client A</strong>
-            <span class="rt-pill on">● חי</span>
+            <span class="rt-pill on">● live</span>
           </header>
           @for (c of a(); track c.id) {
             <div class="rt-card" [attr.data-status]="c.status">
@@ -41,14 +41,14 @@ const HOP_MS = 550;
               <span class="rt-status">{{ c.status }}</span>
             </div>
           } @empty {
-            <p class="rt-muted">אין issues עדיין</p>
+            <p class="rt-muted">No issues yet</p>
           }
         </div>
 
         <div class="rt-client" [class.off]="!bConnected()">
           <header>
             <strong>Client B</strong>
-            <span class="rt-pill" [class.on]="bConnected()">{{ bConnected() ? '● חי' : '○ מנותק' }}</span>
+            <span class="rt-pill" [class.on]="bConnected()">{{ bConnected() ? '● live' : '○ offline' }}</span>
           </header>
           @for (c of b(); track c.id) {
             <div class="rt-card" [attr.data-status]="c.status">
@@ -56,10 +56,10 @@ const HOP_MS = 550;
               <span class="rt-status">{{ c.status }}</span>
             </div>
           } @empty {
-            <p class="rt-muted">אין issues עדיין</p>
+            <p class="rt-muted">No issues yet</p>
           }
           @if (drift() > 0) {
-            <p class="rt-drift">{{ drift() }} עדכונים הוחמצו — חברו מחדש כדי לסנכרן</p>
+            <p class="rt-drift">{{ drift() }} update(s) missed — reconnect to sync</p>
           }
         </div>
       </div>
@@ -73,7 +73,7 @@ const HOP_MS = 550;
   `,
   styles: [
     `
-      :host { display: block; }
+      :host { display: block; direction: ltr; }
       .rt { display: grid; gap: var(--sp-3); }
       .rt-controls { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
       .rt-btn { padding: var(--sp-1) var(--sp-3); border: 1px solid var(--bdr2); border-radius: var(--rad-sm); background: var(--sur3); color: var(--txt1); font-size: var(--fs-small); cursor: pointer; }
@@ -155,9 +155,9 @@ export class TwoClientRealtimeDemo {
     if (willConnect) {
       // reconnect-reconcile: אירועים שהוחמצו אבדו, אז B מסתנכרן ממצב A הנוכחי.
       this.b.set(this.a().map((c) => ({ ...c })));
-      this.append('B התחבר מחדש — re-join + reload, מסונכרן מהשרת', 'sync');
+      this.append('B reconnected — re-join + reload, synced from server', 'sync');
     } else {
-      this.append('B מנותק — broadcasts בזמן הזה ילכו לאיבוד', 'miss');
+      this.append('B disconnected — broadcasts during this time will be lost', 'miss');
     }
   }
 
@@ -167,14 +167,14 @@ export class TwoClientRealtimeDemo {
     const t = setTimeout(() => {
       this.timers.delete(t);
       if (!this.bConnected() || !connectedAtSend) {
-        this.append(`B לא קיבל "${card.title}" (${kind}) — היה מנותק`, 'miss');
+        this.append(`B did not receive "${card.title}" (${kind}) — was disconnected`, 'miss');
         return;
       }
       this.b.update((list) => {
         const exists = list.some((c) => c.id === card.id);
         return exists ? list.map((c) => (c.id === card.id ? card : c)) : [...list, card];
       });
-      this.append(`B קיבל broadcast: "${card.title}" (${kind}) — בלי refetch`, 'push');
+      this.append(`B received broadcast: "${card.title}" (${kind}) — no refetch`, 'push');
     }, HOP_MS);
     this.timers.add(t);
   }

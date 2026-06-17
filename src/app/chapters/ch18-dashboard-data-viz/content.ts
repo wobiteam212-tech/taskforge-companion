@@ -676,13 +676,13 @@ export const CH18_CONTENT: ChapterContent = {
         {
           kind: 'p',
           text:
-            'הדמו הוא דשבורד-מוקטן בלי שרת. כפתור "רענן נתונים" מגריל RawStats חדש, ואותם selectors נגזרים ' +
+            'הדמו הוא דשבורד-מוקטן בלי שרת. כפתור "Refresh data" מגריל RawStats חדש, ואותם selectors נגזרים ' +
             '(computed) מעצבים אותו לשלושת הגרפים: donut, bar, ו-sparkline — מצוירים ביד ב-SVG.',
         },
         {
           kind: 'p',
           text:
-            'לחצו "רענן נתונים" כמה פעמים: הטבעת, העמודות והקו מצטיירים מחדש מהמספרים החדשים. זה בדיוק ה-pipeline ' +
+            'לחצו "Refresh data" כמה פעמים: הטבעת, העמודות והקו מצטיירים מחדש מהמספרים החדשים. זה בדיוק ה-pipeline ' +
             'של הפרק — נתונים גולמיים, selector שמעצב, ו-SVG שמצייר. ה-transition על הפרוסות והעמודות מבוטל ' +
             'תחת prefers-reduced-motion.',
         },

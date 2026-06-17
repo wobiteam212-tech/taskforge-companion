@@ -52,7 +52,7 @@
   </div>
 
   <p class="demo-hint">
-    בלי <code class="ic">Break the server</code>: הרשימה מתהפכת מיד (<code class="ic">optimistic</code>), ואחרי ~900ms השרת מאשר.
-    עם <code class="ic">Break the server</code>: הרשימה מתהפכת, ואחרי ~900ms חוזרת לסטטוס הקודם (<code class="ic">rollback</code>).
+    Without <code class="ic">Break the server</code>: the list updates instantly (<code class="ic">optimistic</code>), and after ~900ms the server confirms.
+    With <code class="ic">Break the server</code>: the list updates, then after ~900ms it reverts to the previous status (<code class="ic">rollback</code>).
   </p>
 </div>

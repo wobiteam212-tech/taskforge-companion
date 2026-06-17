@@ -10,7 +10,7 @@ import { Component, computed, signal } from '@angular/core';
     <div class="rc">
       <div class="rc-controls">
         <label>
-          פריטים: <strong>{{ total() }}</strong>
+          Items: <strong>{{ total() }}</strong>
           <input type="range" min="50" max="5000" step="50" [value]="total()"
                  (input)="total.set(+$any($event.target).value)" />
         </label>
@@ -21,20 +21,20 @@ import { Component, computed, signal } from '@angular/core';
       </div>
 
       <div class="rc-stats">
-        <span>צמתי DOM מרונדרים: <strong [class.hot]="rendered() > 200">{{ rendered() }}</strong></span>
-        <span class="rc-note">{{ windowed() ? 'רק מה שנראה — שאר הפריטים לא קיימים ב-DOM' : 'כל הפריטים ב-DOM בבת אחת' }}</span>
+        <span>DOM nodes rendered: <strong [class.hot]="rendered() > 200">{{ rendered() }}</strong></span>
+        <span class="rc-note">{{ windowed() ? 'Only the visible slice — other items do not exist in the DOM' : 'All items in the DOM at once' }}</span>
       </div>
 
       <div class="rc-viewport">
         @for (row of visible(); track row) {
-          <div class="rc-row">שורה {{ row }}</div>
+          <div class="rc-row">Row {{ row }}</div>
         }
       </div>
     </div>
   `,
   styles: [
     `
-      :host { display: block; }
+      :host { display: block; direction: ltr; }
       .rc { display: grid; gap: var(--sp-3); }
       .rc-controls { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); flex-wrap: wrap; }
       .rc-controls label { display: inline-flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-small); color: var(--txt2); }

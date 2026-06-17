@@ -1,5 +1,7 @@
 :host {
   display: block;
+  /* התוכן אנגלי — LTR מפורש כדי שכל ה-logical properties יתיישבו עקבי */
+  direction: ltr;
 }
 
 .pg {
@@ -145,11 +147,15 @@
     box-shadow var(--dur-1) var(--ease-out),
     transform var(--dur-1) var(--ease-out);
 
+  /* ה-radio מוסתר חזותית (נגיש + ממוקד) — הבחירה מסומנת על ידי ה-:has() של
+     הכרטיס וה-outline של ה-lab, בדיוק השיעור של הפרק. כך אין עיגול שמכסה כותרת. */
   input {
     position: absolute;
-    inset-block-start: var(--sp-1);
-    inset-inline-end: var(--sp-1);
-    accent-color: var(--accent);
+    inline-size: 1px;
+    block-size: 1px;
+    opacity: 0;
+    margin: 0;
+    pointer-events: none;
   }
 
   &:hover {
@@ -165,7 +171,6 @@
   .card-title {
     font-weight: 600;
     font-size: var(--fs-small);
-    padding-inline-end: var(--sp-3);
   }
 
   .card-meta {

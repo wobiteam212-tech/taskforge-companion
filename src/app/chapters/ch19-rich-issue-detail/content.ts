@@ -919,7 +919,7 @@ export const CH19_CONTENT: ChapterContent = {
           text:
             'הדמו מציג תיבת תגובה עצמאית: כתיבה / תצוגה מקדימה, autocomplete ל-@mention ' +
             '(Maya Levi / Demo User / Dana Cohen), ופרסום אופטימי עם חלון Undo של כ-2.5 שניות. ' +
-            'מתג "שבור את השרת" מסיר את התגובה הזמנית אחרי הטיימר (rollback), ובלעדיו היא "מתאשרת". ' +
+            'מתג "Break the server" מסיר את התגובה הזמנית אחרי הטיימר (rollback), ובלעדיו היא "מתאשרת". ' +
             'כל הטיימרים מנוקים ב-`DestroyRef.onDestroy`.',
         },
         {

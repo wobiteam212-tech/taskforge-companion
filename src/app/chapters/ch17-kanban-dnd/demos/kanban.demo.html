@@ -2,9 +2,9 @@
   <div class="kb-toolbar">
     <label class="kb-break">
       <input type="checkbox" [checked]="breakServer()" (change)="breakServer.set($any($event.target).checked)" />
-      <span>שבור את השרת</span>
+      <span>Break the server</span>
     </label>
-    <button type="button" class="kb-reset" (click)="reset()">איפוס</button>
+    <button type="button" class="kb-reset" (click)="reset()">Reset</button>
   </div>
 
   <div class="kb-cols">
@@ -24,7 +24,7 @@
               tabindex="0"
               role="button"
               draggable="true"
-              aria-roledescription="כרטיס הניתן לגרירה"
+              aria-roledescription="draggable card"
               [attr.aria-pressed]="grabbedId() === card.id"
               [attr.aria-label]="card.title + ', ' + col.label"
               (keydown)="onKey($event, card)"
@@ -34,7 +34,7 @@
               <span class="kb-handle" aria-hidden="true">⋮⋮</span>
             </li>
           } @empty {
-            <li class="kb-empty" aria-hidden="true">גררו לכאן</li>
+            <li class="kb-empty" aria-hidden="true">Drop here</li>
           }
         </ul>
       </section>
@@ -42,15 +42,15 @@
   </div>
 
   <div class="kb-log">
-    <div class="kb-log-head">לוג פעולות</div>
+    <div class="kb-log-head">Action log</div>
     @if (log().length) {
       @for (line of log(); track $index) {
         <div class="kb-log-line">{{ line }}</div>
       }
     } @else {
       <div class="kb-log-empty">
-        מקדו כרטיס, רווח כדי להרים, חיצים כדי להזיז, רווח כדי להניח — או גררו עם העכבר.
-        הדליקו "שבור את השרת" כדי לראות rollback.
+        Focus a card, Space to pick up, arrows to move, Space to drop — or drag with the mouse.
+        Toggle "Break the server" to see a rollback.
       </div>
     }
   </div>

@@ -27,13 +27,13 @@ function escapeFirst(src: string): string {
     <div class="tr">
       <div class="tr-bar">
         <span class="tr-summary" [class.ok]="allPass()" [class.bad]="!allPass()">
-          {{ passCount() }}/{{ cases().length }} עוברים
+          {{ passCount() }}/{{ cases().length }} passing
         </span>
         <label class="tr-bug">
           <input type="checkbox" [checked]="bug()" (change)="bug.set($any($event.target).checked)" />
-          הכנס באג
+          Inject bug
         </label>
-        <button type="button" class="tr-run" (click)="bump()">הרץ שוב</button>
+        <button type="button" class="tr-run" (click)="bump()">Run again</button>
       </div>
 
       <ul class="tr-list">
@@ -49,7 +49,7 @@ function escapeFirst(src: string): string {
   `,
   styles: [
     `
-      :host { display: block; }
+      :host { display: block; direction: ltr; }
       .tr { display: grid; gap: var(--sp-3); }
       .tr-bar { display: flex; align-items: center; gap: var(--sp-3); }
       .tr-summary { font-weight: var(--fw-bold); }

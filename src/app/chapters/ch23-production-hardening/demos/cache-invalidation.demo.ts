@@ -29,7 +29,7 @@ interface CacheEntry {
       <div class="ci-grid">
         <!-- ה-cache -->
         <div class="ci-card" [class.empty]="!live()">
-          <header>תשובה ב-cache</header>
+          <header>Cached response</header>
           @if (live()) {
             <div class="ci-num" [class.stale]="isStale()">
               Open: <strong>{{ cache()!.open }}</strong>
@@ -38,24 +38,24 @@ interface CacheEntry {
             <div class="ci-ttl">
               <div class="ci-ttl-bar" [style.inline-size.%]="ttlPct()"></div>
             </div>
-            <small>פג בעוד {{ ttlLeft() }}s</small>
+            <small>expires in {{ ttlLeft() }}s</small>
           } @else {
-            <div class="ci-num ci-muted">— ריק —</div>
-            <small>ה-GET הבא יפנה ל-DB</small>
+            <div class="ci-num ci-muted">— empty —</div>
+            <small>Next GET will hit the DB</small>
           }
         </div>
 
         <!-- ה-DB -->
         <div class="ci-card ci-db">
-          <header>DB (האמת)</header>
+          <header>DB (truth)</header>
           <div class="ci-num">Open: <strong>{{ dbOpen() }}</strong></div>
-          <small>{{ loading() ? 'מריץ אגרגציה…' : 'מקור האמת' }}</small>
+          <small>{{ loading() ? 'Running aggregation…' : 'Source of truth' }}</small>
         </div>
       </div>
 
       <div class="ci-controls">
         <button type="button" class="ci-btn" [disabled]="loading()" (click)="get()">GET /stats</button>
-        <button type="button" class="ci-btn ci-write" (click)="createIssue()">צור issue (כתיבה)</button>
+        <button type="button" class="ci-btn ci-write" (click)="createIssue()">Create issue (write)</button>
         <label class="ci-toggle">
           <input type="checkbox" [checked]="evictOnWrite()" (change)="evictOnWrite.set($any($event.target).checked)" />
           evict on write
@@ -71,7 +71,7 @@ interface CacheEntry {
   `,
   styles: [
     `
-      :host { display: block; }
+      :host { display: block; direction: ltr; }
       .ci { display: grid; gap: var(--sp-3); }
       .ci-row { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; }
       .ci-top { justify-content: space-between; }
@@ -157,8 +157,8 @@ export class CacheInvalidationDemo {
       const stale = this.isStale();
       this.append(
         stale
-          ? `HIT (0ms) — הוגש מ-cache: Open=${this.cache()!.open} (אבל ב-DB כבר ${this.dbOpen()} — stale!)`
-          : `HIT (0ms) — הוגש מ-cache: Open=${this.cache()!.open}, בלי לגעת ב-DB`,
+          ? `HIT (0ms) — served from cache: Open=${this.cache()!.open} (but DB already has ${this.dbOpen()} — stale!)`
+          : `HIT (0ms) — served from cache: Open=${this.cache()!.open}, DB untouched`,
         stale ? 'stale' : 'hit',
       );
       return;
@@ -167,11 +167,11 @@ export class CacheInvalidationDemo {
     // MISS: רצים ל-DB (סימולציה של אגרגציה), ואז שומרים ל-cache ל-15 שניות.
     this.lastResult.set('miss');
     this.loading.set(true);
-    this.append('MISS — אין cache בתוקף, מריץ אגרגציה ב-DB…', 'miss');
+    this.append('MISS — no valid cache, running DB aggregation…', 'miss');
     setTimeout(() => {
       this.cache.set({ open: this.dbOpen(), storedAt: Date.now() });
       this.loading.set(false);
-      this.append(`נשמר ל-cache: Open=${this.dbOpen()}, תקף ל-15s`, 'miss');
+      this.append(`Cached: Open=${this.dbOpen()}, valid for 15s`, 'miss');
     }, 600);
   }
 
@@ -179,9 +179,9 @@ export class CacheInvalidationDemo {
     this.dbOpen.update((n) => n + 1);
     if (this.evictOnWrite()) {
       this.cache.set(null);
-      this.append(`issue נוצר → EvictByTag("stats-1") → cache נוקה (ה-GET הבא = MISS)`, 'evict');
+      this.append(`issue created → EvictByTag("stats-1") → cache cleared (next GET = MISS)`, 'evict');
     } else {
-      this.append(`issue נוצר, אבל evict כבוי → ה-cache נשאר ישן (stale risk)`, 'stale');
+      this.append(`issue created, but evict is off → cache stays stale (stale risk)`, 'stale');
     }
   }
 
