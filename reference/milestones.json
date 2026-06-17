@@ -32,5 +32,6 @@
   { "chapter": "ch22", "kind": "ng", "dir": "client", "test": true },
   { "chapter": "ch23", "kind": "dotnet", "dir": "server" },
   { "chapter": "ch23", "kind": "ng", "dir": "client", "test": true },
-  { "chapter": "ch24", "kind": "dotnet", "dir": "server" }
+  { "chapter": "ch24", "kind": "dotnet", "dir": "server" },
+  { "chapter": "ch24", "kind": "ng", "dir": "client", "test": true }
 ]
