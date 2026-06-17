@@ -332,9 +332,11 @@ export const WAVES: WaveDef[] = [
         no: 24,
         slug: 'realtime-signalr',
         title: 'זמן אמת — SignalR',
-        blurb: 'לוח חי: hub בשרת, קליינט Angular, ואסטרטגיית reconnect.',
+        blurb: 'לוח חי: hub עם groups לפי פרויקט, auth מעל WebSocket, broadcast בנקודות הכתיבה, echo-skip לפי connection id, ו-reconnect שמסנכרן מחדש.',
         wave: 6,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch24-realtime-signalr/content').then((m) => m.CH24_CONTENT),
       },
       {
         id: 'ch25',
