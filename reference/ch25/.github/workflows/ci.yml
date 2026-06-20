@@ -1,0 +1,42 @@
+# #region step-25.7
+# CI ב-GitHub Actions. הרעיון: ה-gates שהרצנו ידנית כל הספר (gen:manifest,
+# verify:coverage, test, build, verify:snapshots) הופכים לצינור אוטומטי שרץ על
+# כל push ו-PR. ירוק = מותר למזג; אדום = עוצר. אותה אמת, בלי "עובד אצלי".
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # .NET ל-build ול-dotnet test של ה-snapshots
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      # Node + pnpm ל-build ול-vitest
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install
+
+      # אותם gates, אותו סדר כמו בפיתוח:
+      - run: pnpm gen:manifest
+      - run: pnpm verify:coverage
+      - run: pnpm test
+      - run: pnpm build
+      # הכבד מכולם: בונה כל snapshot של כל פרק (dotnet build/test + ng build/test).
+      # מוכיח את ההבטחה של הספר: "בנו פרק אחרי פרק — זה מתקמפל".
+      - run: pnpm verify:snapshots
+# #endregion

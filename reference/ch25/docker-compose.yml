@@ -1,0 +1,32 @@
+# #region step-25.6
+# compose מתאר את כל הסטאק כיחידה אחת: API + client + רשת + volume. `docker
+# compose up` בונה ומריץ את שניהם, מחווט ביניהם, ומגיש את האפליקציה על :4500.
+services:
+  # ── ה-API ──
+  api:
+    build: ./server
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      # פרק 23: הסוד מגיע מהסביבה, לא מ-appsettings. בלעדיו האפליקציה נכשלת
+      # ב-startup (fail-fast). ${JWT_KEY} נקרא מקובץ .env (ראו .env.example).
+      - Jwt__Key=${JWT_KEY}
+      # ה-DB נשמר על volume מתמשך, לא בתוך השכבה הארעית של הקונטיינר
+      - ConnectionStrings__Default=Data Source=/data/taskforge.db
+    volumes:
+      - taskforge-data:/data
+    restart: unless-stopped
+
+  # ── ה-client (nginx) ──
+  client:
+    build: ./client
+    ports:
+      # החוץ רואה רק את ה-client; הוא ה-reverse proxy אל ה-API דרך הרשת הפנימית
+      - "4500:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  # ה-SQLite שורד restart/rebuild של הקונטיינר כי הוא חי כאן, לא ב-image
+  taskforge-data:
+# #endregion

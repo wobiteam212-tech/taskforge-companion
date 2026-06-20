@@ -343,9 +343,11 @@ export const WAVES: WaveDef[] = [
         no: 25,
         slug: 'ship-it',
         title: 'משחררים',
-        blurb: 'Dockerfile רב-שלבי, docker-compose, CI עם GitHub Actions, והמודלים המנטליים של deployment.',
+        blurb: 'Dockerfile רב-שלבי (API + client), nginx כ-reverse proxy עם שדרוג WebSocket ל-SignalR, docker-compose עם סוד מהסביבה, ו-CI שבו ה-gates הם הצינור.',
         wave: 6,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch25-ship-it/content').then((m) => m.CH25_CONTENT),
       },
       {
         id: 'ch26',
@@ -354,7 +356,9 @@ export const WAVES: WaveDef[] = [
         title: 'Capstone',
         blurb: 'מפת סיכום של כל האפליקציה ופינאלה של תרגול ראיונות.',
         wave: 6,
-        status: 'soon',
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch26-capstone/content').then((m) => m.CH26_CONTENT),
       },
     ],
   },

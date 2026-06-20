@@ -1,0 +1,10 @@
+# #region step-25.2b
+# מה לא נכנס ל-build context: פלט build, חבילות, ו-DB מקומי. כך ה-context קטן,
+# ה-build מהיר, ולא "מבריחים" בטעות taskforge.db מקומי או bin/obj ישנים ל-image.
+**/bin
+**/obj
+**/.vs
+*.db
+*.db-shm
+*.db-wal
+# #endregion

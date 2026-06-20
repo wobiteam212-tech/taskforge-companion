@@ -1,0 +1,7 @@
+# #region step-25.4b
+# לא שולחים node_modules/dist/.angular ל-build context — הם נבנים מחדש בתוך
+# ה-image, וההעתקה שלהם רק מאיטה את ה-build ומסכנת אי-עקביות.
+node_modules
+dist
+.angular
+# #endregion
