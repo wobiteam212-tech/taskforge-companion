@@ -736,9 +736,9 @@ export const CH21_CONTENT: ChapterContent = {
           kind: 'p',
           text:
             'פרק 21 פתח את Wave 5 (Quality) עם שכבת בדיקות אוטומטיות שמגנה על מה שבנינו. ' +
-            '8 בדיקות xUnit (PasswordHasher×4, IsMemberAsync×1, GetForProjectAsync×1 + pure helpers) ' +
+            '8 בדיקות xUnit (PasswordHasher×6 — 3 Facts + Theory עם 3 InlineData, IsMemberAsync×1, GetForProjectAsync×1) ' +
             'עוברות כ-gate אוטומטי בכל `verify:snapshots`. ' +
-            '12 בדיקות vitest (markdown×5, fuzzy×4, fuzzyRank×2 + setup) ' +
+            '12 בדיקות vitest (markdown×5, fuzzyScore×3, fuzzyRank×2, ו-app.spec מפרק 06×2) ' +
             'עוברות באותו שער עבור milestone שמסומן `"test": true`.',
         },
         {
@@ -873,7 +873,7 @@ export const CH21_CONTENT: ChapterContent = {
       command: 'cd reference\\.build\\ch21\\server && dotnet test',
       expect:
         'פלט: "Passed! - Failed: 0, Passed: 8, Skipped: 0". ' +
-        '8 בדיקות: 4 PasswordHasher, 1 IsMemberAsync, 1 GetForProjectAsync + שתי בדיקות helpers. ' +
+        '8 בדיקות: 6 PasswordHasher (3 Facts + Theory עם 3 InlineData), 1 IsMemberAsync, 1 GetForProjectAsync. ' +
         'אפס שגיאות, אפס warnings.',
     },
     {
@@ -882,21 +882,19 @@ export const CH21_CONTENT: ChapterContent = {
         'בתוך `reference/.build/ch21/client`, הריצו `ng test --watch=false` וראו את הפלט של vitest.',
       command: 'cd reference\\.build\\ch21\\client && pnpm exec ng test --watch=false',
       expect:
-        '3 test files, 12 tests passed. markdown.spec.ts: 5 tests. fuzzy.spec.ts (fuzzyScore + fuzzyRank): 4+3 tests. ' +
-        'אפס failed.',
+        '3 test files, 12 tests passed. markdown.spec.ts: 5 tests. fuzzy.spec.ts (fuzzyScore + fuzzyRank): 3+2 tests. ' +
+        'app.spec.ts מפרק 06: 2 tests. אפס failed.',
     },
     {
       title: 'הכניסו באג — ראו בדיקה אדומה',
       body:
-        'ב-`reference/.build/ch21/client/src/app/core/markdown/markdown.ts`, ' +
-        'שנו את הבדיקה `scheme === "https:" || scheme === "http:"` ' +
-        'ל-`scheme === "https:"` בלבד, ' +
+        'ב-`reference/.build/ch21/client/src/app/core/markdown/markdown.ts`, החלישו את ' +
+        '`isSafeUrl`: החליפו את גוף הפונקציה ב-`return true;` (כלומר "כל URL בטוח"), ' +
         'ואז הריצו `ng test --watch=false` שוב.',
       expect:
-        'בדיקת "linkifies only safe URL schemes" תעבור (כי https עדיין עובד) — ' +
-        'אבל הבדיקה שמוכיחה ש-javascript: נדחה לא תשנה. ' +
-        'נסו להחליף את `renderMarkdown("<script>")` לפונקציה שמחזירה קלט ישירות ' +
-        '— הבדיקה הראשונה תאדים. שחזרו ותראו את הירוק.',
+        'הבדיקה שמוכיחה ש-`javascript:` נדחה (ה-XSS) תאדים — כי עכשיו `isSafeUrl` מאשר הכול, ' +
+        'ו-`javascript:alert(1)` הופך ל-`<a href>` במקום טקסט רגיל. ' +
+        'שחזרו את הפונקציה המקורית ותראו את הירוק חוזר — לולאת red/green בזעיר אנפין.',
     },
     {
       title: 'IsMemberAsync מוכיחה את נתיב ה-403',
