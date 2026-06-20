@@ -33,7 +33,9 @@
 | Wave 5 — Perf & a11y (ch22) | `04-chapter-specs/ch22-perf-a11y.md` | DONE — `93f0b1f` snapshot (route preloading + @defer prefetch + skip-link/landmark) + `44e045a` content + demo (16 steps); runtime-verified. **Wave 5 COMPLETE.** |
 | Wave 6 — Hardening (ch23) | `04-chapter-specs/ch23-hardening.md` | DONE — backend+interceptor `106f890`; content+demo `c47ba73` (OutputCaching custom policy + tag-eviction, compression, rate-limit 429, security headers, secrets fail-fast; runtime-proven both servers; content delegated+reviewed). **Opens Wave 6.** |
 | Wave 6 — Realtime (ch24) | `04-chapter-specs/ch24-realtime-signalr.md` | DONE — backend `431ed99` + client `53eaf78` + content+demo `65e12b6` (hub + IBoardNotifier seam + auth-over-WS + per-project groups + echo-skip + reconnect-reconcile; **real two-client SignalR smoke** + guide runtime verified; content delegated+reviewed) |
-| Wave 6 — Production (ch25–26) | (planned) | NOT STARTED |
+| Wave 6 — Ship (ch25) | (self-designed) | DONE — `eb08493` (multi-stage Dockerfiles API+client, nginx reverse-proxy + WebSocket upgrade for SignalR, docker-compose w/ env secret + SQLite volume, GitHub Actions CI = the gates; 14-step content delegated + CI-pipeline demo; runtime-verified). Config/yaml — NO compile milestone. |
+| Wave 6 — Capstone (ch26) | (self-designed) | DONE — `eb08493` (14-step whole-app recap, full-architecture mermaid, interview finale, vertical-slice exercise; no new code; runtime-verified, diagram renders). **APP COMPLETE — ch00–ch26 all `ready`. WAVE 6 COMPLETE.** |
+| Hardening pass (demos→English, mermaid fix, ch15 refactor, accuracy audit) | (this session) | DONE — mermaid ch21 21.11 fixed; all 18 demos English+LTR; ch15 overlap fixed; accuracy-audited ch17–24 (ch21 breakdowns + proveIt fixed, rest accurate). Gates green. |
 
 ---
 
