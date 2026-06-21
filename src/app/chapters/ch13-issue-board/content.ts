@@ -466,8 +466,8 @@ export const CH13_CONTENT: ChapterContent = {
           kind: 'p',
           text:
             'skeleton list משתמש ב-`skel-row` בגובה 52px — ' +
-            'זהה ל-`itemSize` של ה-viewport. ' +
-            'כך מעבר בין skeleton לרשימה אמיתית חלק ללא layout shift. ' +
+            'קרוב ל-`itemSize` (56px) של ה-viewport. ' +
+            'כך מעבר בין skeleton לרשימה אמיתית חלק כמעט ללא layout shift. ' +
             'האנימציה על `opacity` בלבד — זולה ל-compositor, ' +
             'בדיוק כמו ב-ch12.',
         },

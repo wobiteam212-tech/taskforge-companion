@@ -58,7 +58,7 @@ export const CH00_CONTENT: ChapterContent = {
   TF --- C["Comments<br/>דיון על כל Issue"]
   TF --- A["Auth<br/>JWT + Refresh"]
   TF --- B["Board<br/>סינון, מיון, דפדוף"]
-  TF --- R["Real-time<br/>SignalR (גל 5)"]`,
+  TF --- R["Real-time<br/>SignalR (גל 6)"]`,
         caption: 'TaskForge במבט אחד: הדומיין שתבנו לאורך כל המדריך',
       },
     },
@@ -484,7 +484,7 @@ ng version
     /* ------------------------------------------------------------ 0.10 */
     {
       id: '0.10',
-      title: 'מפת הדרכים: 6 גלים, 21 פרקים',
+      title: 'מפת הדרכים: 7 גלים, 27 פרקים (ch00–ch26)',
       blocks: [
         {
           kind: 'p',
@@ -496,11 +496,12 @@ ng version
         {
           kind: 'ul',
           items: [
-            'גל 1 — Backend Core: אנטומיה, ארכיטקטורה, נתונים, API מלא, Auth.',
-            'גל 2 — Frontend Foundation: יסודות Angular, ארכיטקטורה, עיצוב, UI, ניתוב, HTTP.',
-            'גל 3 — Features: פרויקטים, לוח Issues, תגובות וטפסים. הלב.',
-            'גל 4 — Quality: בדיקות בכל השכבות, ביצועים ונגישות.',
-            'גל 5 — Production: הקשחה, SignalR, ‏Docker + CI, ופינאלה.',
+            'גל 1 — Backend Core: אנטומיה, ארכיטקטורה, נתונים, API מלא, Auth (ch01–05).',
+            'גל 2 — Frontend Foundation: יסודות Angular, ארכיטקטורה, עיצוב, UI, ניתוב, HTTP (ch06–11).',
+            'גל 3 — Features: פרויקטים, לוח Issues, תגובות וטפסים (ch12–14). הלב.',
+            'גל 4 — Craft & Polish: CSS מודרני, command palette, Kanban DnD, דשבורד, issue עשיר, ו-state capstone (ch15–20).',
+            'גל 5 — Quality: בדיקות בכל השכבות, ביצועים ונגישות (ch21–22).',
+            'גל 6 — Production: הקשחה, SignalR בזמן אמת, Docker + CI, ופינאלה (ch23–26).',
           ],
         },
         {
@@ -524,8 +525,9 @@ ng version
   W0["Wave 0<br/>Setup"] --> W1["Wave 1<br/>Backend Core<br/>ch01-05"]
   W1 --> W2["Wave 2<br/>Frontend Foundation<br/>ch06-11"]
   W2 --> W3["Wave 3<br/>Features<br/>ch12-14"]
-  W3 --> W4["Wave 4<br/>Quality<br/>ch15-16"]
-  W4 --> W5["Wave 5<br/>Production<br/>ch17-20"]
+  W3 --> W4["Wave 4<br/>Craft & Polish<br/>ch15-20"]
+  W4 --> W5["Wave 5<br/>Quality<br/>ch21-22"]
+  W5 --> W6["Wave 6<br/>Production<br/>ch23-26"]
   style W0 fill:#ff8a3d,color:#1a0e04`,
         caption: 'כל גל נשען על קודמו — ואתם כבר בסוף גל 0',
       },

@@ -74,14 +74,14 @@ export const CH04_CONTENT: ChapterContent = {
                 {
                   items: [
                     {
-                      id: 1,
-                      title: 'Fix login redirect loop',
-                      description: 'Users bounce between /login and /home',
+                      id: 2,
+                      title: 'New hero section',
+                      description: 'Design and ship the new landing hero',
                       status: 'Open',
-                      priority: 'Critical',
+                      priority: 'High',
                       projectId: 1,
                       createdAtUtc: '2026-06-10T09:14:13Z',
-                      labels: [{ id: 1, name: 'bug', color: '#e11d48' }],
+                      labels: [{ id: 2, name: 'feature', color: '#2dd4bf' }],
                     },
                   ],
                   total: 1,
