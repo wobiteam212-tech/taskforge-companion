@@ -7,6 +7,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { AnnotateDirective } from './annotate.directive';
 import { DraggableDirective, Point } from './draggable.directive';
 import { ResizableDirective, Size } from './resizable.directive';
 
@@ -45,7 +46,7 @@ const NOTES: Note[] = [
  */
 @Component({
   selector: 'demo-interactions',
-  imports: [DraggableDirective, ResizableDirective],
+  imports: [DraggableDirective, ResizableDirective, AnnotateDirective],
   templateUrl: './interactions.demo.html',
   styleUrl: './interactions.demo.scss',
 })
@@ -68,6 +69,16 @@ export class InteractionsDemo implements AfterViewInit {
 
   // ---- resize readout ----
   protected readonly size = signal<Size>({ w: 168, h: 120 });
+
+  // ---- annotate ON a real element (issue card) ----
+  protected readonly annTool = signal<Tool>('marker');
+  protected readonly annColor = signal(this.colors[0]);
+  protected readonly assigned = signal(false);
+
+  protected assign(): void {
+    // proves the card stays interactive while the overlay tool is "off"
+    this.assigned.update((a) => !a);
+  }
 
   ngAfterViewInit(): void {
     const cv = this.canvasRef()?.nativeElement;

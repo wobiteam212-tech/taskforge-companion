@@ -71,4 +71,42 @@
       </div>
     </div>
   </section>
+
+  <!-- D. Annotate ON a real element (appAnnotate overlay) -->
+  <section class="ix-block">
+    <header class="ix-head">
+      <span class="ix-title">Annotate — draw on a real card</span>
+      <div class="ix-tools">
+        <button type="button" class="ix-btn" [class.on]="annTool() === 'pen'" (click)="annTool.set('pen')">pen</button>
+        <button type="button" class="ix-btn" [class.on]="annTool() === 'marker'" (click)="annTool.set('marker')">marker</button>
+        <button type="button" class="ix-btn" [class.on]="annTool() === 'off'" (click)="annTool.set('off')">off (interact)</button>
+        @for (c of colors; track c) {
+          <button
+            type="button"
+            class="ix-swatch"
+            [style.background]="c"
+            [class.sel]="annColor() === c"
+            (click)="annColor.set(c)"
+            [attr.aria-label]="'color ' + c"
+          ></button>
+        }
+        <button type="button" class="ix-btn" (click)="ann.clear()">clear</button>
+      </div>
+    </header>
+    <div class="ix-card" appAnnotate #ann="appAnnotate" [tool]="annTool()" [color]="annColor()">
+      <div class="ix-card-top">
+        <span class="ix-card-tag">BUG</span>
+        <span class="ix-card-id">#482</span>
+      </div>
+      <h4 class="ix-card-title">Login dropdown clips on Safari at 375px</h4>
+      <p class="ix-card-body">Repro: open the user menu on mobile width — the panel overflows the viewport and the last item is unreachable.</p>
+      <div class="ix-card-foot">
+        <span class="ix-card-prio">● High</span>
+        <button type="button" class="ix-card-btn" (click)="assign()">
+          {{ assigned() ? 'Assigned ✓' : 'Assign to me' }}
+        </button>
+      </div>
+    </div>
+    <p class="ix-hint">סמן עם marker על הטקסט; עבור ל-"off" כדי ללחוץ Assign — שכבת ה-overlay נעשית שקופה לאירועים.</p>
+  </section>
 </div>

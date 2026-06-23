@@ -206,6 +206,74 @@
     );
 }
 
+/* ---- D. annotate on a real card ---- */
+.ix-card {
+  max-width: 360px;
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  background: var(--sur2);
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  box-shadow: var(--shadow-1);
+}
+
+.ix-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ix-card-tag {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
+  padding: 1px var(--sp-2);
+  border-radius: var(--rad-sm);
+  color: var(--danger, #e8590c);
+  background: color-mix(in oklab, var(--danger, #e8590c) 14%, transparent);
+}
+
+.ix-card-id {
+  font-size: var(--fs-small);
+  color: var(--txt4);
+  font-variant-numeric: tabular-nums;
+}
+
+.ix-card-title {
+  margin: 0;
+  font-size: var(--fs-base);
+  color: var(--txt1);
+}
+
+.ix-card-body {
+  margin: 0;
+  font-size: var(--fs-small);
+  color: var(--txt2);
+  line-height: 1.5;
+}
+
+.ix-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.ix-card-prio {
+  font-size: var(--fs-small);
+  color: var(--danger, #e8590c);
+}
+
+.ix-card-btn {
+  font-size: var(--fs-small);
+  padding: var(--sp-1) var(--sp-3);
+  border: 1px solid var(--bdr2);
+  border-radius: var(--rad-sm);
+  background: var(--sur);
+  color: var(--txt2);
+  cursor: pointer;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ix-note {
     transition: none;

@@ -12,7 +12,7 @@
 > משפט-פתיחה לראיון: "אני לא מתחיל מ-library. אני שואל: מה משתנה בין down ל-up? מיקום? גודל? קו? זה קובע
 > מה אני כותב ב-move. שאר הזהה — capture, delta, commit."
 
-## ארבע הטכניקות
+## חמש הטכניקות
 
 ### 1. Drag-and-drop מאפס (free-position)
 - `pointerdown`: שמור `startX/Y` (העכבר) ואת מקור הפתק; `setPointerCapture(e.pointerId)`.
@@ -78,6 +78,35 @@ startDraw(e) { ctx.beginPath(); ctx.moveTo(...local(e)); this.current = { color,
 moveDraw(e)  { const p = local(e); this.current.pts.push(p); ctx.lineTo(p.x,p.y); ctx.stroke(); }
 // ResizeObserver: cv.width = rect.width (מנקה!) → redraw(strokes)
 ```
+
+### 5. ציור על אלמנט קיים — annotation overlay ("צייר על הכרטיס/הפתק/כל אלמנט")
+ה-canvas של טכניקה 2 הוא משטח ריק. כדי לסמן **על אלמנט אמיתי** (issue card, פתק, צילום מסך) המודל הוא
+**"שכבת-על שמדליקים ומכבים":**
+1. הופכים את האלמנט ל-positioning context: `position: relative`.
+2. מזריקים מעליו `<canvas>` ב-`position: absolute; inset: 0`, בגודל האלמנט (ResizeObserver שומר על התאמה).
+3. אותה מכונת-מצבים של pointer מציירת — marker שקוף-למחצה נהדר לסימון טקסט על הכרטיס.
+4. **מתג `pointer-events`:** כשהכלי "off" ה-overlay שקוף-לאירועים (`pointer-events: none`) והאלמנט מתפקד
+   רגיל (אפשר ללחוץ כפתורים); כשבוחרים pen/marker ה-overlay תופס את ה-pointer (`auto`) ומאפשר לצייר.
+- בנינו את זה כ-**directive** `appAnnotate` עם `exportAs` (לשימוש חוזר על **כל** אלמנט, לא רק על אחד). זה הניסוח
+  הישיר ל"צייר על הפתק או כל אלמנט": הצמדה דקלרטיבית של שכבת אנוטציה לכל host.
+```typescript
+// appAnnotate — overlay על ה-host; pointer-events מתחלף לפי הכלי
+@Directive({ selector: '[appAnnotate]', exportAs: 'appAnnotate' })
+export class AnnotateDirective implements OnInit {
+  readonly tool = input<'pen' | 'marker' | 'off'>('off');
+  ngOnInit() {
+    const host = this.hostRef.nativeElement;
+    if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+    const cv = document.createElement('canvas');
+    Object.assign(cv.style, { position: 'absolute', inset: '0', touchAction: 'none' });
+    host.appendChild(cv);                         // overlay מעל האלמנט
+    new ResizeObserver(() => this.fit()).observe(host);   // נשאר בגודל האלמנט
+  }
+  // effect: cv.style.pointerEvents = tool() === 'off' ? 'none' : 'auto'
+}
+```
+- **שאלת ראיון צמודה:** "איך מציירים על אלמנט בלי לשבור אותו?" התשובה: overlay canvas + `pointer-events` toggle.
+  "איך הציור נשאר מיושר כשהאלמנט זז/משתנה?" ResizeObserver שמתאים את ה-canvas ומצייר מחדש מ-strokes שמורים.
 
 ## הדמו החי (verified facts לכותב)
 רכיב `demo-interactions` (`interactions.demo.ts`) + שתי directives (`draggable.directive.ts`,
