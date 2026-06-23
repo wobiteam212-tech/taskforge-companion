@@ -1,0 +1,74 @@
+<div class="ix">
+  <!-- A. Drag (pointer DnD via appDraggable) -->
+  <section class="ix-block">
+    <header class="ix-head">
+      <span class="ix-title">Drag — pointer DnD</span>
+      <span class="ix-hint">גרור פתק. במקלדת: Tab למקד, חצים להזיז, Shift+חץ לקפיצה.</span>
+    </header>
+    <div class="ix-board">
+      @for (note of notes(); track note.id) {
+        <div
+          class="ix-note"
+          [style.--note]="note.color"
+          [appDraggable]="note.pos"
+          (dragEnd)="onDragEnd(note, $event)"
+        >
+          <span class="ix-grip" aria-hidden="true">⠿</span>
+          <span class="ix-note-text">{{ note.title }}</span>
+        </div>
+      }
+    </div>
+    @if (log().length) {
+      <ul class="ix-log" aria-live="polite">
+        @for (line of log(); track $index) {
+          <li class="ix-log-line">moved {{ line }}</li>
+        }
+      </ul>
+    }
+  </section>
+
+  <!-- B. Draw (canvas marker) -->
+  <section class="ix-block">
+    <header class="ix-head">
+      <span class="ix-title">Draw — pen + marker</span>
+      <div class="ix-tools">
+        <button type="button" class="ix-btn" [class.on]="tool() === 'pen'" (click)="tool.set('pen')">pen</button>
+        <button type="button" class="ix-btn" [class.on]="tool() === 'marker'" (click)="tool.set('marker')">marker</button>
+        <button type="button" class="ix-btn" [class.on]="tool() === 'off'" (click)="tool.set('off')">off</button>
+        @for (c of colors; track c) {
+          <button
+            type="button"
+            class="ix-swatch"
+            [style.background]="c"
+            [class.sel]="color() === c"
+            (click)="color.set(c)"
+            [attr.aria-label]="'color ' + c"
+          ></button>
+        }
+        <button type="button" class="ix-btn" (click)="clearCanvas()">clear</button>
+      </div>
+    </header>
+    <canvas
+      #canvas
+      class="ix-canvas"
+      [class.armed]="tool() !== 'off'"
+      (pointerdown)="startDraw($event)"
+      (pointermove)="moveDraw($event)"
+      (pointerup)="endDraw($event)"
+    ></canvas>
+  </section>
+
+  <!-- C. Resize (appResizable) -->
+  <section class="ix-block">
+    <header class="ix-head">
+      <span class="ix-title">Resize</span>
+      <span class="ix-hint">{{ size().w }} × {{ size().h }} px — גרור את הפינה הימנית-תחתונה.</span>
+    </header>
+    <div class="ix-resize-wrap">
+      <div class="ix-resizable" appResizable (resized)="onResize($event)">
+        <span>resize me</span>
+        <span class="ix-corner" aria-hidden="true"></span>
+      </div>
+    </div>
+  </section>
+</div>

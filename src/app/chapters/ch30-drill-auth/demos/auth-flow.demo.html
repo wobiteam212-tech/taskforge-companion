@@ -1,0 +1,71 @@
+<div class="af">
+  <div class="af-controls">
+    <div class="af-modes" role="tablist" aria-label="token carrier">
+      <button
+        type="button"
+        role="tab"
+        class="af-mode"
+        [class.sel]="mode() === 'bearer'"
+        [attr.aria-selected]="mode() === 'bearer'"
+        (click)="setMode('bearer')"
+      >
+        Bearer header
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="af-mode"
+        [class.sel]="mode() === 'cookie'"
+        [attr.aria-selected]="mode() === 'cookie'"
+        (click)="setMode('cookie')"
+      >
+        Cookie + withCredentials
+      </button>
+    </div>
+
+    <div class="af-actions">
+      <button type="button" class="af-btn primary" (click)="login()" [disabled]="busy() || loggedIn()">login</button>
+      <button type="button" class="af-btn" (click)="callApi()" [disabled]="busy()">call API</button>
+      <button type="button" class="af-btn" (click)="forceExpiry()" [disabled]="busy() || !loggedIn() || expired()">expire token</button>
+      <button type="button" class="af-btn ghost" (click)="reset()" [disabled]="busy()">reset</button>
+    </div>
+  </div>
+
+  <div class="af-status">
+    <span class="af-pill" [class.on]="loggedIn()">{{ loggedIn() ? 'session active' : 'no session' }}</span>
+    <span class="af-pill" [class.warn]="expired()">{{ expired() ? 'access expired' : 'access valid' }}</span>
+    <span class="af-pill carrier">{{ carrier() }}</span>
+  </div>
+
+  <div class="af-log" aria-live="polite">
+    @for (line of log(); track $index) {
+      <div class="af-line" [attr.data-kind]="line.kind">
+        <span class="af-tag">{{ line.kind }}</span>
+        <span class="af-text">{{ line.text }}</span>
+      </div>
+    }
+    @if (!log().length) {
+      <div class="af-empty">— לחץ login, אז expire token, אז call API כדי לראות 401 → refresh → retry —</div>
+    }
+  </div>
+
+  <!-- config that changes with the carrier -->
+  <div class="af-config">
+    @if (mode() === 'bearer') {
+      <pre class="af-code">// client interceptor
+req.clone(&#123; setHeaders: &#123; Authorization: `Bearer $&#123;token&#125;` &#125; &#125;);
+
+// server CORS — no credentials needed
+policy.WithOrigins("http://localhost:4500")
+      .AllowAnyHeader().AllowAnyMethod();</pre>
+    } @else {
+      <pre class="af-code">// client — opt in to send/receive the cookie cross-origin
+http.get(url, &#123; withCredentials: true &#125;);
+
+// server CORS — MUST be explicit origin (not AllowAnyOrigin)
+policy.WithOrigins("http://localhost:4500")
+      .AllowCredentials();        // + cookie: SameSite=None; Secure; HttpOnly
+                                  // + CSRF protection</pre>
+    }
+  </div>
+</div>

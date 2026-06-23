@@ -1,0 +1,122 @@
+<div class="pg">
+  <div class="pg-tabs" role="tablist">
+    @for (m of modes; track m.id) {
+      <button
+        type="button"
+        role="tab"
+        class="pg-tab"
+        [class.sel]="mode() === m.id"
+        [attr.aria-selected]="mode() === m.id"
+        (click)="mode.set(m.id)"
+      >
+        {{ m.label }}
+      </button>
+    }
+  </div>
+
+  <!-- 1. LOCAL -->
+  @if (mode() === 'local') {
+    <div class="pg-panel">
+      <p class="pg-note">כל ה-{{ localTotalPages * pageSize }} שורות כבר בזיכרון — חיתוך עם <code>computed()</code>, בלי רשת.</p>
+      <ul class="pg-list">
+        @for (row of localView(); track row.id) {
+          <li class="pg-row">{{ row.name }}</li>
+        }
+      </ul>
+      <div class="pg-bar">
+        <button type="button" class="pg-btn" (click)="localPrev()" [disabled]="localPage() === 1">‹ prev</button>
+        <span class="pg-meta">page {{ localPage() }} / {{ localTotalPages }}</span>
+        <button type="button" class="pg-btn" (click)="localNext()" [disabled]="localPage() === localTotalPages">next ›</button>
+      </div>
+    </div>
+  }
+
+  <!-- 2. SERVER OFFSET -->
+  @if (mode() === 'offset') {
+    <div class="pg-panel">
+      <p class="pg-note">השרת מחזיר חלון (<code>skip/take</code>) + מעטפת <code>total</code>. כל מעבר עמוד = בקשה.</p>
+      @if (offsetResult(); as res) {
+        <ul class="pg-list" [class.dim]="offsetLoading()">
+          @for (row of res.items; track row.id) {
+            <li class="pg-row">{{ row.name }}</li>
+          }
+        </ul>
+      } @else {
+        <p class="pg-empty">לחץ "load" כדי להביא את העמוד הראשון.</p>
+      }
+      <div class="pg-bar">
+        <button type="button" class="pg-btn" (click)="offsetGo(offsetPage() - 1)" [disabled]="offsetPage() === 1 || offsetLoading()">‹ prev</button>
+        <span class="pg-meta">
+          page {{ offsetPage() }} / {{ offsetTotalPages() }}
+          @if (offsetLoading()) { <span class="pg-spin">loading…</span> }
+        </span>
+        <button type="button" class="pg-btn" (click)="offsetGo(offsetPage() + 1)" [disabled]="offsetLoading()">next ›</button>
+        @if (!offsetResult()) {
+          <button type="button" class="pg-btn primary" (click)="offsetGo(1)">load</button>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- 3. RXJS -->
+  @if (mode() === 'rxjs') {
+    <div class="pg-panel">
+      <p class="pg-note">חיפוש עובר <code>debounceTime</code> + <code>distinctUntilChanged</code>; דפדוף נכנס ישר ל-<code>switchMap</code>.</p>
+      <input
+        type="search"
+        class="pg-search"
+        placeholder="search issues…"
+        (input)="onSearch($any($event.target).value)"
+      />
+      @if (rxResult(); as res) {
+        <ul class="pg-list" [class.dim]="rxLoading()">
+          @for (row of res.items; track row.id) {
+            <li class="pg-row">{{ row.name }}</li>
+          }
+          @if (!res.items.length) { <li class="pg-empty">no matches</li> }
+        </ul>
+      }
+      <div class="pg-bar">
+        <button type="button" class="pg-btn" (click)="rxPrev()" [disabled]="rxPage() === 1">‹ prev</button>
+        <span class="pg-meta">page {{ rxPage() }} / {{ rxTotalPages() || 1 }} @if (rxLoading()) { <span class="pg-spin">loading…</span> }</span>
+        <button type="button" class="pg-btn" (click)="rxNext()">next ›</button>
+        <button type="button" class="pg-btn primary" (click)="rapidNext()">rapid ×4 →</button>
+      </div>
+      <div class="pg-log">
+        <div class="pg-log-head">
+          <span>request log</span>
+          <button type="button" class="pg-link" (click)="clearLog()">clear</button>
+        </div>
+        @for (line of reqLog(); track $index) {
+          <div
+            class="pg-log-line"
+            [class.ok]="line.startsWith('applied')"
+            [class.cancel]="line.startsWith('cancelled')"
+          >{{ line }}</div>
+        }
+        @if (!reqLog().length) { <div class="pg-log-empty">— הקלק "rapid" כדי לראות switchMap מבטל בקשות ישנות —</div> }
+      </div>
+    </div>
+  }
+
+  <!-- 4. INFINITE -->
+  @if (mode() === 'infinite') {
+    <div class="pg-panel">
+      <p class="pg-note"><code>IntersectionObserver</code> על שורת-זקיף בתחתית טוען את החלון הבא ומצרף (<code>scan</code>-style).</p>
+      <div class="pg-scroll">
+        <ul class="pg-list">
+          @for (row of infinite(); track row.id) {
+            <li class="pg-row">{{ row.name }}</li>
+          }
+        </ul>
+        @if (infinite().length < (localTotalPages * pageSize)) {
+          <div #sentinel class="pg-sentinel">
+            {{ infiniteLoading() ? 'loading…' : 'scroll for more' }}
+          </div>
+        } @else {
+          <div class="pg-sentinel done">— end ({{ infinite().length }} rows) —</div>
+        }
+      </div>
+    </div>
+  }
+</div>

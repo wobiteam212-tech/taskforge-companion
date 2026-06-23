@@ -36,10 +36,43 @@
 | Wave 6 — Ship (ch25) | (self-designed) | DONE — `eb08493` (multi-stage Dockerfiles API+client, nginx reverse-proxy + WebSocket upgrade for SignalR, docker-compose w/ env secret + SQLite volume, GitHub Actions CI = the gates; 14-step content delegated + CI-pipeline demo; runtime-verified). Config/yaml — NO compile milestone. |
 | Wave 6 — Capstone (ch26) | (self-designed) | DONE — `eb08493` (14-step whole-app recap, full-architecture mermaid, interview finale, vertical-slice exercise; no new code; runtime-verified, diagram renders). **APP COMPLETE — ch00–ch26 all `ready`. WAVE 6 COMPLETE.** |
 | Hardening pass (demos→English, mermaid fix, ch15 refactor, accuracy audit) | (this session) | DONE — mermaid ch21 21.11 fixed; all 18 demos English+LTR; ch15 overlap fixed; accuracy-audited ch17–24 (ch21 breakdowns + proveIt fixed, rest accurate). Gates green. |
+| Wave 7 — Interview Drills ch27–30 | `interview-drills/ch27..ch30-*.md` | DONE — 4 drills (architecture / pagination / interactions / auth), each = chapter + live demo; demo-only (no `reference/`); content delegated+reviewed; gates green (test 186, build clean, 375px clean). See latest log entry. |
 
 ---
 
 ## Log entries (newest first)
+
+### 2026-06-23 — Wave 7 Interview Drills (ch27–ch30) — DONE (Claude; demos built+verified, content DELEGATED+reviewed)
+- What I did: new **Wave 7 "War Room — דרילים לראיון"** = 4 interview-prep drills targeting the 4 spots Oleg froze on
+  in a Hebrew sim (architecture story, pagination "all the ways", interactions-from-scratch, auth/`withCredentials`).
+  Each drill = a chapter (Mental Model → Talk-Track → Build It → Interview Q&A) + a self-contained live demo. Also wrote
+  5 portable study sheets (Hebrew talk-track + English code) under `context/craft-upgrade/interview-drills/`
+  (`00-EXAM-MORNING.md` crib + `ch27..ch30-*.md`) that double as the verified-facts delegation specs.
+- Demos (built by me, **no `@angular/cdk` — pure pointer events**, which is the point):
+  - `ch28 pagination-modes.demo` — 4 tabs (local slice / server offset / RxJS switchMap / infinite scroll); rapid×4
+    shows `switchMap` cancelling stale requests in a log; search via `debounceTime+distinctUntilChanged`; IntersectionObserver sentinel.
+  - `ch29 interactions.demo` + `draggable.directive` + `resizable.directive` — free-position pointer drag (transform +
+    `@HostBinding`/`@HostListener`, arrow-key a11y), **canvas pen + marker** (pen opaque / marker translucent highlighter,
+    strokes stored as point arrays, ResizeObserver redraw so they survive resize), corner-grab resize.
+  - `ch30 auth-flow.demo` — Bearer⇄Cookie toggle + force-expiry drives the `401, then /auth/refresh, then retry`
+    animation; config card shows the interceptor + CORS-with-credentials difference per carrier.
+- CONTENT delegated to 4 sonnet agents (one per chapter) from the spec sheets; I reviewed + fixed. **GOTCHA found:**
+  two agents escaped `@` as `&#64;` in content.ts prose — but that rule is for demo .html TEMPLATES only; content data
+  renders via `<inline-parts>` and raw `@` is house style (see ch24). Fixed 29 occurrences back to raw `@`. Also fixed a
+  `Step` type mismatch in the auth demo (bare `LogLine` vs `{ line }`) and unicode arrows in the ch30 registry blurb.
+- Where: `src/app/chapters/ch27-drill-architecture..ch30-drill-auth/{content.ts,demos/*}`, registry Wave 7 (4 chapters
+  flipped to `ready`), `context/craft-upgrade/interview-drills/*`. Demo-only — **no `reference/` snapshots touched**, so
+  `verify:snapshots` not needed.
+- Gate outcomes: gen:manifest 25/2921 · **test 186 passed** (+36 from 150) · verify:coverage 205 files · build clean
+  (Initial 84.75 kB transfer).
+- Runtime smoke (port 4400): pagination tabs/rows/pipeline live; interactions drag (host-binding transform 6,6 to 9,18 via
+  keyboard), **pen opaque + marker translucent both paint** (verified via pixel alpha), resize box present; auth full
+  `login, 401, refresh, retry` sequence renders. **375px sweep clean on all four** (no page overflow; wide code `<pre>`s
+  scroll inside their container). Console errors during verify were only my synthetic-pointer test artifacts —
+  hardened all 6 `setPointerCapture`/`releasePointerCapture` calls with try/catch.
+- Decisions: drills stay as isolated teaching demos (better for live-coding rehearsal); promoting ch29/ch30 new code
+  into the real app as `reference/ch29|ch30` snapshots is an explicit OPTIONAL post-interview appendix.
+- WHAT'S NEXT: optional — promote interactions/cookie-auth into real `reference/` snapshots; otherwise Wave 7 complete.
 
 ### 2026-06-17 — ch24 Realtime (SignalR) — DONE (Claude; client built + two-client-proven; content DELEGATED + reviewed)
 - CLIENT snapshot DONE (`reference/ch24/client/`, commit `feat ch24 snapshot pt2`): `@microsoft/signalr ^10.0.0` (matches

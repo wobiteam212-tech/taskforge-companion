@@ -362,6 +362,61 @@ export const WAVES: WaveDef[] = [
       },
     ],
   },
+  {
+    no: 7,
+    title: 'War Room — דרילים לראיון',
+    tagline: 'המודל המנטלי, ה-talk track, וה-build מאפס לארבעת הנושאים שנפלת בהם בסימולציה',
+    chapters: [
+      {
+        id: 'ch27',
+        no: 27,
+        slug: 'drill-architecture',
+        title: 'Build & Explain — ארכיטקטורת fullstack',
+        blurb:
+          'איך לבנות ולהסביר אפליקציית todo/task מקצה לקצה: הטבעת component / service / HTTP / endpoint / repository / DB, סדר הבנייה, ולמה כל שכבה.',
+        wave: 7,
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch27-drill-architecture/content').then((m) => m.CH27_CONTENT),
+      },
+      {
+        id: 'ch28',
+        no: 28,
+        slug: 'drill-pagination',
+        title: 'Pagination — כל הדרכים',
+        blurb:
+          'דפדוף כפונקציית חלון: local מול server, offset מול keyset, infinite scroll, ואופרטורי RxJS (switchMap / debounceTime / distinctUntilChanged / tap / take) עם דמו חי.',
+        wave: 7,
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch28-drill-pagination/content').then((m) => m.CH28_CONTENT),
+      },
+      {
+        id: 'ch29',
+        no: 29,
+        slug: 'drill-interactions',
+        title: 'אינטראקציות מאפס — DnD, ציור, resize, host',
+        blurb:
+          'מכונת המצבים של pointer events: גרירת sticky note חופשית, ציור marker על canvas, resize עם ידית, ו-directive עם ‎@HostBinding/@HostListener — והניגוד מול CDK.',
+        wave: 7,
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch29-drill-interactions/content').then((m) => m.CH29_CONTENT),
+      },
+      {
+        id: 'ch30',
+        no: 30,
+        slug: 'drill-auth',
+        title: 'Auth ו-withCredentials',
+        blurb:
+          'הזרימה המלאה: login, access/refresh, Bearer מול cookie, מה ‎withCredentials עושה, CORS עם credentials, ו-interceptor של ‎401 ל-refresh ול-retry.',
+        wave: 7,
+        status: 'ready',
+        loadContent: () =>
+          import('../../chapters/ch30-drill-auth/content').then((m) => m.CH30_CONTENT),
+      },
+    ],
+  },
 ];
 
 export const ALL_CHAPTERS: ChapterMeta[] = WAVES.flatMap((w) => w.chapters);

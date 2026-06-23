@@ -1,0 +1,213 @@
+:host {
+  display: block;
+  direction: ltr;
+}
+
+.ix {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+.ix-block {
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.ix-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.ix-title {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
+  color: var(--txt2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ix-hint {
+  font-size: var(--fs-small);
+  color: var(--txt3);
+  direction: rtl;
+}
+
+/* ---- A. drag board ---- */
+.ix-board {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 1px 1px, var(--bdr) 1px, transparent 0) 0 0 / 16px 16px;
+  background-color: var(--sur);
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+}
+
+.ix-note {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 150px;
+  padding: var(--sp-2) var(--sp-3);
+  background: color-mix(in oklab, var(--note) 16%, var(--sur2));
+  border: 1px solid color-mix(in oklab, var(--note) 50%, var(--bdr));
+  border-inline-start: 3px solid var(--note);
+  border-radius: var(--rad-sm);
+  font-size: var(--fs-small);
+  color: var(--txt1);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  box-shadow: var(--shadow-1);
+  transition:
+    box-shadow var(--dur-2) var(--ease-out),
+    filter var(--dur-1) var(--ease-out);
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--ring);
+  }
+
+  &.dragging {
+    cursor: grabbing;
+    z-index: 2;
+    box-shadow: var(--shadow-3);
+    filter: brightness(1.04);
+  }
+}
+
+.ix-grip {
+  color: var(--txt4);
+  letter-spacing: -3px;
+}
+
+.ix-note-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ix-log {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-2) var(--sp-3);
+  display: grid;
+  gap: 2px;
+  background: var(--sur);
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad-sm);
+  font-size: var(--fs-small);
+  color: var(--txt2);
+}
+
+/* ---- B. draw canvas ---- */
+.ix-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.ix-btn {
+  font-size: var(--fs-small);
+  padding: var(--sp-1) var(--sp-3);
+  border: 1px solid var(--bdr2);
+  border-radius: var(--rad-sm);
+  background: var(--sur2);
+  color: var(--txt2);
+  cursor: pointer;
+
+  &.on {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+}
+
+.ix-swatch {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 2px solid var(--bdr2);
+  border-radius: 50%;
+  cursor: pointer;
+
+  &.sel {
+    border-color: var(--txt1);
+    transform: scale(1.12);
+  }
+}
+
+.ix-canvas {
+  display: block;
+  width: 100%;
+  height: 180px;
+  background: var(--sur2);
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+  touch-action: none;
+  cursor: crosshair;
+
+  &:not(.armed) {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+/* ---- C. resize ---- */
+.ix-resize-wrap {
+  padding: var(--sp-3);
+  background: var(--sur);
+  border: 1px solid var(--bdr);
+  border-radius: var(--rad);
+}
+
+.ix-resizable {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 168px;
+  height: 120px;
+  background: var(--sur2);
+  border: 1px solid var(--bdr2);
+  border-radius: var(--rad-sm);
+  font-size: var(--fs-small);
+  color: var(--txt2);
+  touch-action: none;
+  user-select: none;
+
+  &.resizing {
+    border-color: var(--accent);
+    box-shadow: var(--ring);
+  }
+}
+
+.ix-corner {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
+  background:
+    linear-gradient(
+      135deg,
+      transparent 0 50%,
+      var(--txt4) 50% 60%,
+      transparent 60% 72%,
+      var(--txt4) 72% 82%,
+      transparent 82%
+    );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ix-note {
+    transition: none;
+  }
+}
