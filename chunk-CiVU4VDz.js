@@ -1,0 +1,1 @@
+import {O as Ot,m as mf}from'./chunk-BnRD9nxG.js';var g=Ot((t,e)=>{let n;return e==="sandbox"&&(n=mf("#i"+t)),(e==="sandbox"?mf(n.nodes()[0].contentDocument.body):mf("body")).select(`[id="${t}"]`)},"getDiagramElement");export{g};

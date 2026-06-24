@@ -1,0 +1,1 @@
+import {K as Ke,H as He,j as je,z as ze}from'./chunk-BCmkB0ZF.js';import'./chunk-CiVU4VDz.js';import'./chunk-CmYa4wtV.js';import {O as Ot}from'./chunk-BnRD9nxG.js';import'./main-XABO7U3B.js';var v={parser:je,get db(){return new ze(2)},renderer:He,styles:Ke,init:Ot(t=>{t.state||(t.state={}),t.state.arrowMarkerAbsolute=t.arrowMarkerAbsolute;},"init")};export{v as diagram};
